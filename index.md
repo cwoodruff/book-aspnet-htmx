@@ -161,17 +161,17 @@ To find translations, please check out the [Translations](./Translations.md) pag
         </tr>
         <tr>
             <td rowspan=3>Appendices</td>
-            <td></td>
+            <td>A</td>
             <td>htmx Command Reference</td>
             <td></td>
         </tr>
         <tr>
-            <td></td>
+            <td>B</td>
             <td>Hyperscript Quick Guide</td>
             <td></td>
         </tr>
         <tr>
-            <td></td>
+            <td>C</td>
             <td>Valuable Tools and Resources for htmx and Razor Pages Development</td>
             <td></td>
         </tr>
