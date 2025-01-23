@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 26
 icon: stack
 label: Chap 5 - Mastering hx-get and hx-post
 meta:

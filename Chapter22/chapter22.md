@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 9
 icon: stack
 label: Chap 22 - Developing an E-Commerce Application
 meta:

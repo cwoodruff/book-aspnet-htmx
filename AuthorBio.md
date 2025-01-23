@@ -1,5 +1,5 @@
 ---
-order: -1
+order: 0
 icon: id-badge
 label: Author Bio
 meta:

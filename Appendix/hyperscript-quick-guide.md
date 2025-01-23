@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 3
 icon: stack
 label: Appendix B - Hyperscript Quick Guide
 meta:

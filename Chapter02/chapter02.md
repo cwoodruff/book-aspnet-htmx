@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 29
 icon: stack
 label: Chap 2 - Setting Up Your Development Environment
 meta:

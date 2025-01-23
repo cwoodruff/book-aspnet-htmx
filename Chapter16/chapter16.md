@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 15
 icon: stack
 label: Chap 16 - Scoped Updates with hx-select and hx-select-oob
 meta:

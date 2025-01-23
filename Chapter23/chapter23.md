@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 8
 icon: stack
 label: Chap 23 - Creating a Chat Application
 meta:

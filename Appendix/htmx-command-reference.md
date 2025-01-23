@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 4
 icon: stack
 label: Appendix A - htmx Command Reference
 meta:

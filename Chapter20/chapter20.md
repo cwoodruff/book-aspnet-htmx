@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 11
 icon: stack
 label: Chap 20 - Performance Optimization
 meta:

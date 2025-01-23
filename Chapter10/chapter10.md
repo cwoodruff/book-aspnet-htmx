@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 21
 icon: stack
 label: Chap 10 - Navigating with hx-push-url and hx-replace-url
 meta:

@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 24
 icon: stack
 label: Chap 7 - Working with hx-target and hx-swap
 meta:

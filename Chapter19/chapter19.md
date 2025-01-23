@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 12
 icon: stack
 label: Chap 19 - Optimizing Requests with hx-disable and hx-request
 meta:

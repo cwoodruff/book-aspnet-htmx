@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 16
 icon: stack
 label: Chap 15 - Visual Feedback with hx-indicator and hx-preserve
 meta:

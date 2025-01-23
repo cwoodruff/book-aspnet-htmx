@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 5
 icon: stack
 label: Chap 26 - Deploying htmx Applications on Azure
 meta:

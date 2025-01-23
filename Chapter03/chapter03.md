@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 28
 icon: stack
 label: Chap 3 - First Steps with htmx
 meta:

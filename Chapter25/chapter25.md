@@ -1,5 +1,5 @@
 ---
-order: 19
+order: 6
 icon: stack
 label: Chap 25 - Testing htmx Applications
 meta:
