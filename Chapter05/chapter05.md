@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 5 - Mastering hx-get and hx-post
 meta:
-title: ""
+title: "Mastering hx-get and hx-post"
+visibility: hidden
 ---
-# XX
+# Mastering hx-get and hx-post
 
 ![]()
 

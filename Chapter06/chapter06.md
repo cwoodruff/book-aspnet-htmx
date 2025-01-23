@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 6 - Working with hx-put, hx-patch, and hx-delete
 meta:
-title: ""
+title: "Working with hx-put, hx-patch, and hx-delete"
+visibility: hidden
 ---
-# XX
+# Working with hx-put, hx-patch, and hx-delete
 
 ![]()
 

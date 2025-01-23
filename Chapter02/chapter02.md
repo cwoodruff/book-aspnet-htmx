@@ -1,9 +1,10 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 2 - Setting Up Your Development Environment
 meta:
-title: ""
+title: "Setting Up Your Development Environment"
+visibility: hidden
 ---
 # XX
 

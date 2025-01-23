@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 21 - Building a Dashboard with htmx
 meta:
-title: ""
+title: "Building a Dashboard with htmx"
+visibility: hidden
 ---
-# XX
+# Building a Dashboard with htmx
 
 ![]()
 

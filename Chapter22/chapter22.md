@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 22 - Developing an E-Commerce Application
 meta:
-title: ""
+title: "Developing an E-Commerce Application"
+visibility: hidden
 ---
-# XX
+# Developing an E-Commerce Application
 
 ![]()
 

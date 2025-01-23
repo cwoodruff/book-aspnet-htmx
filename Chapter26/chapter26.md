@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 26 - Deploying htmx Applications on Azure
 meta:
-title: ""
+title: "Deploying htmx Applications on Azure"
+visibility: hidden
 ---
-# XX
+# Deploying htmx Applications on Azure
 
 ![]()
 

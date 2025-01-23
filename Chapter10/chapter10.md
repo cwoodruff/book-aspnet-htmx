@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 10 - Navigating with hx-push-url and hx-replace-url
 meta:
-title: ""
+title: "Navigating with hx-push-url and hx-replace-url"
+visibility: hidden
 ---
-# XX
+# Navigating with hx-push-url and hx-replace-url
 
 ![]()
 

@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 25 - Testing htmx Applications
 meta:
-title: ""
+title: "Testing htmx Applications"
+visibility: hidden
 ---
-# XX
+# Testing htmx Applications
 
 ![]()
 

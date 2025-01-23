@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 14 - Buttons and Action Links
 meta:
-title: ""
+title: "Buttons and Action Links"
+visibility: hidden
 ---
-# XX
+# Buttons and Action Links
 
 ![]()
 

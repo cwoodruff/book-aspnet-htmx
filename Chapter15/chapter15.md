@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 15 - Visual Feedback with hx-indicator and hx-preserve
 meta:
-title: ""
+title: "Visual Feedback with hx-indicator and hx-preserve"
+visibility: hidden
 ---
-# XX
+# Visual Feedback with hx-indicator and hx-preserve
 
 ![]()
 

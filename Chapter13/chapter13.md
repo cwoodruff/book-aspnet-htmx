@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 13 - Lists and Tables
 meta:
-title: ""
+title: "Lists and Tables"
+visibility: hidden
 ---
-# XX
+# Lists and Tables
 
 ![]()
 

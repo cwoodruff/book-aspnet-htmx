@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 9 - Integrating Hyperscript for Complex Logic
 meta:
-title: ""
+title: "Integrating Hyperscript for Complex Logic"
+visibility: hidden
 ---
-# XX
+# Integrating Hyperscript for Complex Logic
 
 ![]()
 

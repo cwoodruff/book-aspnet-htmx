@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 24 - Debugging htmx Applications
 meta:
-title: ""
+title: "Debugging htmx Applications"
+visibility: hidden
 ---
-# XX
+# Debugging htmx Applications
 
 ![]()
 

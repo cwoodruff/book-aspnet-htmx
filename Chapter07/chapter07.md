@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 7 - Working with hx-target and hx-swap
 meta:
-title: ""
+title: "Working with hx-target and hx-swap"
+visibility: hidden
 ---
-# XX
+# Working with hx-target and hx-swap
 
 ![]()
 

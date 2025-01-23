@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Appendix B - Hyperscript Quick Guide
 meta:
-title: ""
+title: "Hyperscript Quick Guide"
+visibility: hidden
 ---
-# XX
+# Hyperscript Quick Guide
 
 ![]()
 

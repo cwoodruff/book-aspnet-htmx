@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 16 - Scoped Updates with hx-select and hx-select-oob
 meta:
-title: ""
+title: "Scoped Updates with hx-select and hx-select-oob"
+visibility: hidden
 ---
-# XX
+# Scoped Updates with hx-select and hx-select-oob
 
 ![]()
 

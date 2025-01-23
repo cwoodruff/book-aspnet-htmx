@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 19 - Optimizing Requests with hx-disable and hx-request
 meta:
-title: ""
+title: "Optimizing Requests with hx-disable and hx-request"
+visibility: hidden
 ---
-# XX
+# Optimizing Requests with hx-disable and hx-request
 
 ![]()
 

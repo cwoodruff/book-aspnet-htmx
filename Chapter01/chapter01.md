@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX - 
+label: Chap 1 - Why htmx with ASP.NET Core 9 Razor Pages?
 meta:
-title: ""
+title: "Why htmx with ASP.NET Core 9 Razor Pages?"
+visibility: hidden
 ---
-# XX
+# Why htmx with ASP.NET Core 9 Razor Pages?
 
 ![]()
 

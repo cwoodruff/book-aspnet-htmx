@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 11 - Forms and Modal Forms
 meta:
-title: ""
+title: "Forms and Modal Forms"
+visibility: hidden
 ---
-# XX
+# Forms and Modal Forms
 
 ![]()
 

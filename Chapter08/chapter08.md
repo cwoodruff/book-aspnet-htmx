@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 8 - Handling Events with hx-trigger and hx-on
 meta:
-title: ""
+title: "Handling Events with hx-trigger and hx-on"
+visibility: hidden
 ---
-# XX
+# Handling Events with hx-trigger and hx-on
 
 ![]()
 

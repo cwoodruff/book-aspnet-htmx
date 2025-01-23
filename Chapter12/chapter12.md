@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 12 - Tabs and Accordions
 meta:
-title: ""
+title: "Tabs and Accordions"
+visibility: hidden
 ---
-# XX
+# Tabs and Accordions
 
 ![]()
 

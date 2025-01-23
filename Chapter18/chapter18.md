@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 18 - Caching and History with hx-history and hx-history-elt
 meta:
-title: ""
+title: "Caching and History with hx-history and hx-history-elt"
+visibility: hidden
 ---
-# XX
+# Caching and History with hx-history and hx-history-elt
 
 ![]()
 

@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 17 - Form Enhancements with hx-params, hx-vals, and hx-validate
 meta:
-title: ""
+title: "Form Enhancements with hx-params, hx-vals, and hx-validate"
+visibility: hidden
 ---
-# XX
+# Form Enhancements with hx-params, hx-vals, and hx-validate
 
 ![]()
 

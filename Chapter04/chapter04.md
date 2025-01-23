@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 4 - Understanding htmx Commands
 meta:
-title: ""
+title: "Understanding htmx Commands"
+visibility: hidden
 ---
-# XX
+# Understanding htmx Commands
 
 ![]()
 

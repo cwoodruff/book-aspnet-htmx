@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Appendix A - htmx Command Reference
 meta:
-title: ""
+title: "htmx Command Reference"
+visibility: hidden
 ---
-# XX
+# htmx Command Reference
 
 ![]()
 

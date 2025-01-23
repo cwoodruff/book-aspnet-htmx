@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Appendix C - Valuable Tools and Resources for htmx and Razor Pages Development
 meta:
-title: ""
+title: "Valuable Tools and Resources for htmx and Razor Pages Development"
+visibility: hidden
 ---
-# XX
+# Valuable Tools and Resources for htmx and Razor Pages Development
 
 ![]()
 

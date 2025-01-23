@@ -1,11 +1,12 @@
 ---
 order: 19
 icon: stack
-label: Chap XX -
+label: Chap 23 - Creating a Chat Application
 meta:
-title: ""
+title: "Creating a Chat Application"
+visibility: hidden
 ---
-# XX
+# Creating a Chat Application
 
 ![]()
 
