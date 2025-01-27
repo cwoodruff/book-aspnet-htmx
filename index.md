@@ -2,8 +2,6 @@
 
 ![](images/aspnet-htmx-header.png)
 
-[//]: # (**NEWS!!** Now you can get the book in PDF or EPub formats! [Leanpub Book Page]&#40;https://leanpub.com/csharp-networking&#41;)
-
 Have questions or feedback about the book? My email is [cwoodruff@live.com](mailto:cwoodruff@live.com).
 
 For the source code for the book, visit the book's GitHub repo. [htmx-razor-workshop
