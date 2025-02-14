@@ -1,10 +1,10 @@
-# ASP.NET Core Reimagined with htmx Book Home
+# ASP.NET Core Reimagined with htmx Book
 
 ![](images/aspnet-htmx-header.png)
 
 Have questions or feedback about the book? My email is [cwoodruff@live.com](mailto:cwoodruff@live.com).
 
-For the source code for the book, visit the book's GitHub repo. [htmx-razor-workshop
+For the source code for the book, visit the book's GitHub repo -- [htmx-razor-workshop
 ](https://github.com/cwoodruff/htmx-razor-workshop)
 
 To find translations, please check out the [Translations](./Translations.md) page.
