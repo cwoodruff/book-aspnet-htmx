@@ -22,17 +22,17 @@ To find translations, please check out the [Translations](./Translations.md) pag
         <tr>
             <td rowspan=3>Introduction</td>
             <td>1</td>
-            <td>Why htmx with ASP.NET Core 9 Razor Pages?</td>
+            <td><a href="https://aspnet-htmx.com/chapter01/">Why htmx with ASP.NET Core 9 Razor Pages?</a></td>
             <td></td>
         </tr>
         <tr>
             <td>2</td>
-            <td>Setting Up Your Development Environment</td>
+            <td><a href="https://aspnet-htmx.com/chapter02/">Setting Up Your Development Environment</a></td>
             <td></td>
         </tr>
         <tr>
             <td>3</td>
-            <td>First Steps with htmx</td>
+            <td><a href="https://aspnet-htmx.com/chapter03/">First Steps with htmx</a></td>
             <td></td>
         </tr>
         <tr>
