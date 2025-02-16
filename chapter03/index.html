@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792866574721">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793042945805">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>First Steps with htmx</title>
     <meta name="title" content="First Steps with htmx">
+    <meta name="description" content="The way we build web applications is evolving. While client-side JavaScript frameworks dominate modern development, they often introduce unnecessary...">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter03/">
@@ -23,20 +24,25 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter03/">
     <meta property="og:title" content="First Steps with htmx">
+    <meta property="og:description" content="The way we build web applications is evolving. While client-side JavaScript frameworks dominate modern development, they often introduce unnecessary...">
+    <meta property="og:image" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter03/images/chapter03-first-steps-with-htmx.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter03/">
     <meta property="twitter:title" content="First Steps with htmx">
+    <meta property="twitter:description" content="The way we build web applications is evolving. While client-side JavaScript frameworks dominate modern development, they often introduce unnecessary...">
+    <meta property="twitter:image" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter03/images/chapter03-first-steps-with-htmx.png">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.792866574721" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.793042945805" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.792866574721" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793042945805" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.792866574721" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793042945805" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793042945805" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -243,23 +249,255 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="first-steps-with-htmx" class="break-words">
+<doc-anchor-target id="3" class="break-words">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#3">#</doc-anchor-trigger>
+        <span>3</span>
+    </h1>
+</doc-anchor-target>
+<doc-anchor-target id="first-steps-with-htmx">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#first-steps-with-htmx">#</doc-anchor-trigger>
         <span>First Steps with htmx</span>
     </h1>
 </doc-anchor-target>
 <p><figure class="content-center">
-    <img src="" alt="">
+    <img src="images/chapter03-first-steps-with-htmx.png" alt="">
     <figcaption class="caption"></figcaption>
 </figure>
 </p>
-<doc-anchor-target id="xxxxxxxx">
+<p>The way we build web applications is evolving. While client-side JavaScript frameworks dominate modern development, they often introduce unnecessary complexity—forcing developers to juggle state management, bundlers, and intricate frontend tooling. htmx, on the other hand, plays a crucial role in simplifying this process, enhancing HTML’s native capabilities and allowing developers to craft highly interactive experiences with minimal JavaScript. This chapter will guide you through integrating htmx with ASP.NET Core Razor Pages to build seamless, dynamic web applications without the burden of complex JavaScript frameworks.</p>
+<p>By focusing on server-driven interactions, htmx makes it possible to create fluid user experiences without requiring a full-fledged JavaScript framework. It leverages the power of declarative attributes to handle AJAX requests, event-driven interactions, and form submissions—all while keeping your markup clean and understandable. When combined with Razor Pages, htmx offers a robust way to blend server-side rendering with just the right amount of interactivity, making your applications efficient, easy to maintain, and giving you control over your projects. This efficiency and maintainability are key benefits of using htmx.</p>
+<p>This chapter is designed to take you from the fundamental principles of htmx to implementing fully functional Razor Pages. You will learn to dynamically fetch, update, and submit content without needing a full page reload. We’ll cover everything from using <code v-pre>hx-get</code> and <code v-pre>hx-post</code> for data retrieval and submission to debugging common issues and fine-tuning request behaviors. By the end, you will be well-prepared to build interactive web applications that are both modern and maintainable.</p>
+<doc-anchor-target id="understanding-the-basics-of-htmx-in-razor-pages">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#understanding-the-basics-of-htmx-in-razor-pages">#</doc-anchor-trigger>
+        <span>Understanding the Basics of htmx in Razor Pages</span>
     </h1>
 </doc-anchor-target>
+<p>At its core, htmx allows you to send AJAX requests using simple HTML attributes. The two most fundamental ones are:</p>
+<ul>
+<li><code v-pre>hx-get</code>: Makes an HTTP <code v-pre>GET</code> request to fetch content from the server.</li>
+<li><code v-pre>hx-post</code>: Sends a <code v-pre>POST</code> request to submit data to the server.</li>
+</ul>
+<p>Example:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/hello&quot; hx-target=&quot;#message&quot;&gt;Click me!&lt;/button&gt;
+&lt;div id=&quot;message&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>When the button is clicked, an asynchronous <code v-pre>GET</code> request is made to <code v-pre>/hello</code>, and the response updates the <code v-pre>#message</code> div.</p>
+<doc-anchor-target id="the-request-response-cycle-with-htmx-in-razor-pages">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-request-response-cycle-with-htmx-in-razor-pages">#</doc-anchor-trigger>
+        <span>The Request-Response Cycle with htmx in Razor Pages</span>
+    </h2>
+</doc-anchor-target>
+<p>Under the hood, htmx works just like a normal browser request but without a full-page reload. Here’s how a typical request-response cycle looks:</p>
+<ol>
+<li>User interacts with an element (e.g., clicks a button).</li>
+<li>htmx sends an AJAX request to the specified endpoint.</li>
+<li>The Razor Page processes the request and returns partial HTML.</li>
+<li>htmx updates the target element with the returned HTML.</li>
+</ol>
+<p>This means you can build dynamic experiences while keeping your app’s logic centralized in your Razor Page Model (<code v-pre>.cshtml.cs</code>).</p>
+<doc-anchor-target id="examining-how-partial-updates-work-in-the-browser">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#examining-how-partial-updates-work-in-the-browser">#</doc-anchor-trigger>
+        <span>Examining How Partial Updates Work in the Browser</span>
+    </h2>
+</doc-anchor-target>
+<p>Unlike traditional AJAX, where you manually manipulate the DOM, htmx automatically swaps the response into a specified target. This is controlled using <code v-pre>hx-target</code> and <code v-pre>hx-swap</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">ASP.NET (C#)</div>
+<pre class="language-none"><code v-pre class="language-none">&lt;button hx-get=&quot;/getSnippet&quot; hx-target=&quot;#container&quot; hx-swap=&quot;outerHTML&quot;&gt;Load Content&lt;/button&gt;
+&lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<ul>
+<li><code v-pre>hx-target</code> determines which element will be updated.</li>
+<li><code v-pre>hx-swap</code> decides how the response is inserted (<code v-pre>innerHTML</code>, <code v-pre>outerHTML</code>, <code v-pre>beforebegin</code>, etc.).</li>
+</ul>
+<p>By returning only the relevant snippet from the server, you make updates feel instant and efficient.</p>
+<doc-anchor-target id="creating-your-first-interactive-razor-page-with-htmx">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#creating-your-first-interactive-razor-page-with-htmx">#</doc-anchor-trigger>
+        <span>Creating Your First Interactive Razor Page with htmx</span>
+    </h1>
+</doc-anchor-target>
+<p>Let’s create a simple Razor Page that dynamically loads a message when a button is clicked.</p>
+<p><strong>Pages/Index.cshtml</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">ASP.NET (C#)</div>
+<pre class="language-none"><code v-pre class="language-none">@page
+@model IndexModel
+
+&lt;h1&gt;Welcome to htmx!&lt;/h1&gt;
+&lt;button hx-get=&quot;/Index?handler=Message&quot; hx-target=&quot;#message&quot;&gt;Load Message&lt;/button&gt;
+&lt;div id=&quot;message&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Index.cshtml.cs</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc;
+
+public class IndexModel : PageModel
+{
+    public IActionResult OnGetMessage()
+    {
+        return Content(&quot;&lt;p&gt;Hello from the server!&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="using-hx-get-to-dynamically-load-content-from-another-page">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#using-hx-get-to-dynamically-load-content-from-another-page">#</doc-anchor-trigger>
+        <span>Using <code v-pre>hx-get</code> to Dynamically Load Content from Another Page</span>
+    </h2>
+</doc-anchor-target>
+<p>In the above example, clicking the button triggers an <code v-pre>hx-get</code> request to <code v-pre>OnGetMessage()</code>, which returns a snippet of HTML. htmx then injects this snippet into the #message div.</p>
+<doc-anchor-target id="understanding-hx-trigger-for-event-driven-interactions">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#understanding-hx-trigger-for-event-driven-interactions">#</doc-anchor-trigger>
+        <span>Understanding <code v-pre>hx-trigger</code> for Event-Driven Interactions</span>
+    </h2>
+</doc-anchor-target>
+<p>By default, htmx triggers requests on clicks, but you can customize it with <code v-pre>hx-trigger</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">ASP.NET (C#)</div>
+<pre class="language-none"><code v-pre class="language-none">&lt;input type=&quot;text&quot; hx-get=&quot;/search&quot; hx-target=&quot;#results&quot; hx-trigger=&quot;keyup changed delay:500ms&quot; /&gt;
+&lt;div id=&quot;results&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Here, every keystroke (after a 500ms delay) triggers a request to update the results dynamically.</p>
+<doc-anchor-target id="implementing-a-button-click-that-fetches-and-displays-content">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#implementing-a-button-click-that-fetches-and-displays-content">#</doc-anchor-trigger>
+        <span>Implementing a Button Click That Fetches and Displays Content</span>
+    </h2>
+</doc-anchor-target>
+<p>Let’s modify our earlier example to display different content each time the button is clicked.</p>
+<p><strong>Updated Index.cshtml.cs</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+public class IndexModel : PageModel
+{
+    private static readonly string[] Messages =
+    {
+        &quot;Hello, World!&quot;, &quot;Welcome to htmx!&quot;, &quot;Dynamic content is fun!&quot;
+    };
+
+    public IActionResult OnGetMessage()
+    {
+        var message = Messages[new Random().Next(Messages.Length)];
+        return Content($&quot;&lt;p&gt;{message}&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>Now, each click returns a different message from the list.</p>
+<doc-anchor-target id="handling-form-submissions-with-htmx">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#handling-form-submissions-with-htmx">#</doc-anchor-trigger>
+        <span>Handling Form Submissions with htmx</span>
+    </h1>
+</doc-anchor-target>
+<doc-anchor-target id="using-hx-post-to-submit-forms-without-reloading-the-page">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#using-hx-post-to-submit-forms-without-reloading-the-page">#</doc-anchor-trigger>
+        <span>Using <code v-pre>hx-post</code> to Submit Forms Without Reloading the Page</span>
+    </h2>
+</doc-anchor-target>
+<p>htmx makes form submissions seamless by eliminating full-page reloads.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">ASP.NET (C#)</div>
+<pre class="language-none"><code v-pre class="language-none">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-target=&quot;#result&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;name&quot; required /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="processing-form-data-in-the-razor-page-model">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#processing-form-data-in-the-razor-page-model">#</doc-anchor-trigger>
+        <span>Processing Form Data in the Razor Page Model</span>
+    </h2>
+</doc-anchor-target>
+<p><strong>Index.cshtml.cs</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostSubmit(string name)
+{
+    return Content($&quot;&lt;p&gt;Thank you, {name}!&lt;/p&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>When the form is submitted, htmx sends the data, and the response dynamically updates #result.</p>
+<doc-anchor-target id="displaying-server-responses-dynamically-with-hx-target-and-hx-swap">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#displaying-server-responses-dynamically-with-hx-target-and-hx-swap">#</doc-anchor-trigger>
+        <span>Displaying Server Responses Dynamically with <code v-pre>hx-target</code> and <code v-pre>hx-swap</code></span>
+    </h2>
+</doc-anchor-target>
+<p>By default, <code v-pre>hx-target</code> updates a specific element, and <code v-pre>hx-swap</code> determines how the response is inserted. You can change the behavior like so:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">ASP.NET (C#)</div>
+<pre class="language-none"><code v-pre class="language-none">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-target=&quot;#result&quot; hx-swap=&quot;beforeend&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;name&quot; required /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>This appends new responses instead of replacing them.</p>
+<doc-anchor-target id="introducing-hx-validate-for-basic-client-side-validation">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#introducing-hx-validate-for-basic-client-side-validation">#</doc-anchor-trigger>
+        <span>Introducing <code v-pre>hx-validate</code> for Basic Client-Side Validation</span>
+    </h2>
+</doc-anchor-target>
+<p>htmx supports built-in validation with <code v-pre>hx-validate</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">ASP.NET (C#)</div>
+<pre class="language-none"><code v-pre class="language-none">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-validate&gt;
+    &lt;input type=&quot;email&quot; name=&quot;email&quot; required /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="debugging-and-observing-htmx-requests">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-and-observing-htmx-requests">#</doc-anchor-trigger>
+        <span>Debugging and Observing htmx Requests</span>
+    </h1>
+</doc-anchor-target>
+<doc-anchor-target id="inspecting-htmx-network-requests-using-browser-dev-tools">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#inspecting-htmx-network-requests-using-browser-dev-tools">#</doc-anchor-trigger>
+        <span>Inspecting htmx Network Requests Using Browser Dev Tools</span>
+    </h2>
+</doc-anchor-target>
+<p>You can inspect AJAX requests in the browser’s dev tools under the Network tab.</p>
+<doc-anchor-target id="common-errors-and-how-to-debug-them">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-errors-and-how-to-debug-them">#</doc-anchor-trigger>
+        <span>Common Errors and How to Debug Them</span>
+    </h2>
+</doc-anchor-target>
+<ul>
+<li>Incorrect Content-Type: Ensure responses return text/html.</li>
+<li>Server Errors: Check the console for 500 errors.</li>
+</ul>
+<doc-anchor-target id="using-the-htmxconfigrequest-event-for-debugging">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#using-the-htmxconfigrequest-event-for-debugging">#</doc-anchor-trigger>
+        <span>Using the htmx:configRequest Event for Debugging</span>
+    </h2>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">document.body.addEventListener('htmx:configRequest', function(event) {
+    console.log(&quot;HTMX request&quot;, event.detail);
+});</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="preview-of-next-chapter-understanding-htmx-commands">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter-understanding-htmx-commands">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter: Understanding htmx Commands</span>
+    </h1>
+</doc-anchor-target>
+<p>In the next chapter, we’ll dive deeper into htmx commands and interactions, including <code v-pre>hx-push-url</code>, <code v-pre>hx-replace-url</code>, and Hyperscript.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -273,6 +511,27 @@
                                     </a>
                                 </div>
                             
+                                <nav class="flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../chapter02/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
+                                                <span class="block mt-1">Chap 2 - Setting Up Your Development Environment</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../updates-corrections/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
+                                                <span class="block mt-1">Updates-​Corrections</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
                             </footer>
                         </main>
                 
@@ -331,6 +590,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 3 - First Steps with htmx", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 3 - First Steps with htmx", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
