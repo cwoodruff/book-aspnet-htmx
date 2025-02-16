@@ -1,0 +1,37 @@
+﻿@page
+@model IndexModel
+
+<h1>Welcome to htmx!</h1>
+<br/>
+<br/>
+<button hx-get="/Index?handler=Message" hx-target="#message">Load Message</button>
+<div id="message"></div>
+<br/>
+<br/>
+<form method="post" hx-post="/Index?handler=Submit" hx-target="#result">
+    <input type="text" name="name" required />
+    <button type="submit">Submit</button>
+</form>
+<br/>
+<br/>
+<div hx-target="this">
+    <button hx-get="/Index?handler=Snippet"
+            hx-swap="outerHtml">
+        Click Me
+    </button>
+</div>
+<br/>
+<br/>
+<form method="post" hx-post="/Index?handler=SubmitBefore" hx-target="#result" hx-swap="beforeend">
+    <input type="text" name="name" required />
+    <button type="submit">Submit</button>
+</form>
+<br/>
+<br/>
+<form method="post" hx-post="/Index?handler=SubmitValidate" hx-target="#result" hx-validate>
+    <input type="email" name="email" required />
+    <button type="submit">Submit</button>
+</form>
+<br/>
+<br/>
+<div id="result"></div>
