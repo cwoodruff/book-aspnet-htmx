@@ -11,6 +11,8 @@ title: "First Steps with htmx"
 
 ![](Images/chapter03-first-steps-with-htmx.png)
 
+_**You can find the source examples for this chapter [here](https://github.com/cwoodruff/book-aspnet-htmx/tree/main/src/chap03).**_
+
 The way we build web applications is evolving. While client-side JavaScript frameworks dominate modern development, they often introduce unnecessary complexity—forcing developers to juggle state management, bundlers, and intricate frontend tooling. htmx, on the other hand, plays a crucial role in simplifying this process, enhancing HTML’s native capabilities and allowing developers to craft highly interactive experiences with minimal JavaScript. This chapter will guide you through integrating htmx with ASP.NET Core Razor Pages to build seamless, dynamic web applications without the burden of complex JavaScript frameworks.
 
 By focusing on server-driven interactions, htmx makes it possible to create fluid user experiences without requiring a full-fledged JavaScript framework. It leverages the power of declarative attributes to handle AJAX requests, event-driven interactions, and form submissions—all while keeping your markup clean and understandable. When combined with Razor Pages, htmx offers a robust way to blend server-side rendering with just the right amount of interactivity, making your applications efficient, easy to maintain, and giving you control over your projects. This efficiency and maintainability are key benefits of using htmx.
