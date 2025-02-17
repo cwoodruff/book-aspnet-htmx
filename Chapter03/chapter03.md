@@ -11,7 +11,7 @@ title: "First Steps with htmx"
 
 ![](Images/chapter03-first-steps-with-htmx.png)
 
-_**You can find the source examples for this chapter [here](https://github.com/cwoodruff/book-aspnet-htmx/tree/main/src/chap03).**_
+_**You can find the source examples for this chapter [here](https://github.com/cwoodruff/book-aspnet-htmx/tree/main/_src/chap03).**_
 
 The way we build web applications is evolving. While client-side JavaScript frameworks dominate modern development, they often introduce unnecessary complexity—forcing developers to juggle state management, bundlers, and intricate frontend tooling. htmx, on the other hand, plays a crucial role in simplifying this process, enhancing HTML’s native capabilities and allowing developers to craft highly interactive experiences with minimal JavaScript. This chapter will guide you through integrating htmx with ASP.NET Core Razor Pages to build seamless, dynamic web applications without the burden of complex JavaScript frameworks.
 
