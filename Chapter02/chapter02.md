@@ -48,7 +48,7 @@ Alternatively, if you prefer to host the file locally, [download htmx.min.js](ht
 To confirm that htmx is working correctly, create a simple button that triggers an AJAX request when clicked. Add the following to `Pages/Index.cshtml`:
 
 ```ASP.NET (C#)
-<button hx-get="/hello" hx-target="#message">Click Me!</button>
+<button hx-get="/Index?handler=hello" hx-target="#message">Click Me!</button>
 <div id="message"></div>
 ```
 
