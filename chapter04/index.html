@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793158127415">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793365284511">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Understanding htmx Commands</title>
     <meta name="title" content="Understanding htmx Commands">
+    <meta name="description" content="Welcome to the beating heart of htmx—the commands that empower you to make it all work! In this chapter, we'll take a deep dive into the fundamental...">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter04/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter04/">
     <meta property="og:title" content="Understanding htmx Commands">
+    <meta property="og:description" content="Welcome to the beating heart of htmx—the commands that empower you to make it all work! In this chapter, we'll take a deep dive into the fundamental...">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter04/">
     <meta property="twitter:title" content="Understanding htmx Commands">
+    <meta property="twitter:description" content="Welcome to the beating heart of htmx—the commands that empower you to make it all work! In this chapter, we'll take a deep dive into the fundamental...">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.793158127415" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.793365284511" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793158127415" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793365284511" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793158127415" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793365284511" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793365284511" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -254,12 +258,165 @@
     <figcaption class="caption"></figcaption>
 </figure>
 </p>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>Welcome to the beating heart of htmx—the commands that empower you to make it all work! In this chapter, we&#x27;ll take a deep dive into the fundamental building blocks of htmx, exploring how simple HTML attributes can transform your Razor Pages into interactive, server-driven applications. Forget about wrestling with JavaScript-heavy frameworks; with htmx, your markup does the talking, fetching, swapping, and updating content dynamically with just a sprinkle of attributes.</p>
+<p>We&#x27;ll start with an overview of the htmx API, dissecting how it extends standard HTML with powerful commands like <code v-pre>hx-get</code>, <code v-pre>hx-post</code>, and <code v-pre>hx-swap</code>. You&#x27;ll see firsthand how these attributes enable seamless interactions, handling everything from fetching data to submitting forms, all without a single line of JavaScript. By the end of this chapter, you&#x27;ll understand not just what each command does but when and why to use them in an ASP.NET Core 9 Razor Pages project.</p>
+<p>But we&#x27;re not stopping at theory. You&#x27;ll get hands-on experience with practical examples, tackling common scenarios like dynamic content updates, form submissions, and RESTful operations—all with concise, effective code that you can immediately apply in your projects. So gear up, because by the time you reach the last page of this chapter, you&#x27;ll be wielding htmx commands like a pro, making your Razor Pages apps more interactive, responsive, and efficient than ever before.</p>
+<doc-anchor-target id="overview-of-the-htmx-api">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#overview-of-the-htmx-api">#</doc-anchor-trigger>
+        <span>Overview of the htmx API</span>
+    </h2>
 </doc-anchor-target>
+<doc-anchor-target id="the-role-of-htmx-in-modern-web-applications">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-role-of-htmx-in-modern-web-applications">#</doc-anchor-trigger>
+        <span>The Role of htmx in Modern Web Applications</span>
+    </h3>
+</doc-anchor-target>
+<p>Modern web applications demand dynamic interactivity, and htmx serves as a bridge between traditional server-side rendering and the need for fast, smooth updates. Historically, developers leaned on JavaScript-heavy frameworks to provide this interactivity, but this often came at the cost of complexity, maintainability, and performance. htmx offers a more efficient alternative by enabling HTML itself to handle these interactions while keeping business logic on the server where it belongs.</p>
+<p>With htmx, an element on your page can directly request and update content from the server without requiring JavaScript event handlers or API requests structured around JSON. This makes applications lighter, easier to debug, and much more maintainable in the long run, allowing you to focus on the core functionality of your application and be more productive in your development tasks.</p>
+<doc-anchor-target id="how-htmx-extends-html-with-built-in-commands">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#how-htmx-extends-html-with-built-in-commands">#</doc-anchor-trigger>
+        <span>How htmx Extends HTML with Built-in Commands</span>
+    </h3>
+</doc-anchor-target>
+<p>At the core of htmx is its ability to enrich HTML elements with <code v-pre>hx-attributes</code>, which instruct the browser to interact with the server in a declarative way. Instead of writing JavaScript to handle AJAX requests and manually update the DOM, htmx allows you to express these interactions directly in your markup.</p>
+<p>For instance, consider the following example:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">asp.net (c#)</div>
+<pre class="language-none"><code v-pre class="language-none">&lt;button hx-get=&quot;/api/message&quot; hx-target=&quot;#result&quot;&gt;Fetch Message&lt;/button&gt;
+&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Here, the <code v-pre>hx-get</code> attribute ensures that when the button is clicked, a <code v-pre>GET</code> request is sent to <code v-pre>/api/message</code>. The server&#x27;s response will then be inserted into the <code v-pre>&lt;div id= &quot;result&quot;&gt;</code>. This approach makes it incredibly easy to build interactive applications with minimal code.</p>
+<doc-anchor-target id="key-components-of-the-htmx-api">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#key-components-of-the-htmx-api">#</doc-anchor-trigger>
+        <span>Key Components of the htmx API</span>
+    </h3>
+</doc-anchor-target>
+<p>htmx provides several attributes that make dynamic interactions intuitive and expressive. Each serves a specific purpose in how elements communicate with the server and handle responses. Let&#x27;s explore them in detail:</p>
+<doc-anchor-target id="hx-get-retrieving-data-from-the-server">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-get-retrieving-data-from-the-server">#</doc-anchor-trigger>
+        <span><code v-pre>hx-get</code>: Retrieving Data from the Server</span>
+    </h4>
+</doc-anchor-target>
+<p>This attribute sends a <code v-pre>GET</code> request to the specified URL and updates the target element with the response. It&#x27;s ideal for retrieving data without refreshing the page.</p>
+<doc-anchor-target id="hx-post-submitting-forms-and-sending-data">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-post-submitting-forms-and-sending-data">#</doc-anchor-trigger>
+        <span><code v-pre>hx-post</code>: Submitting Forms and Sending Data</span>
+    </h4>
+</doc-anchor-target>
+<p>Instead of handling form submissions through JavaScript, <code v-pre>hx-post</code> sends form data to the server and updates the page with the returned HTML. This simplifies interactions such as comment submissions or user input processing.</p>
+<doc-anchor-target id="hx-put-hx-patch-hx-delete-restful-operations">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-put-hx-patch-hx-delete-restful-operations">#</doc-anchor-trigger>
+        <span><code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, <code v-pre>hx-delete</code>: RESTful Operations</span>
+    </h4>
+</doc-anchor-target>
+<p>For scenarios where you need to update or delete data dynamically, these attributes send appropriate HTTP requests while keeping the logic minimal and readable.</p>
+<doc-anchor-target id="hx-target-where-should-the-response-go">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-target-where-should-the-response-go">#</doc-anchor-trigger>
+        <span><code v-pre>hx-target</code>: Where Should the Response Go?</span>
+    </h4>
+</doc-anchor-target>
+<p>By default, responses replace the element that initiated the request. However, hx-target allows developers to specify exactly where the new content should be inserted.</p>
+<doc-anchor-target id="hx-swap-how-should-the-response-be-inserted">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-swap-how-should-the-response-be-inserted">#</doc-anchor-trigger>
+        <span><code v-pre>hx-swap</code>: How Should the Response Be Inserted?</span>
+    </h4>
+</doc-anchor-target>
+<p>Different parts of an application may require responses to be inserted in different ways. The <code v-pre>hx-swap</code> attribute determines whether the new content replaces the target&#x27;s inner content (<code v-pre>innerHTML</code>), the entire element (<code v-pre>outerHTML</code>), or should be inserted in a different position like <code v-pre>beforebegin</code> or <code v-pre>afterend</code>.</p>
+<doc-anchor-target id="introducing-server-side-interactivity-with-razor-pages">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#introducing-server-side-interactivity-with-razor-pages">#</doc-anchor-trigger>
+        <span>Introducing Server-Side Interactivity with Razor Pages</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="the-htmx-powered-razor-pages-workflow">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-htmx-powered-razor-pages-workflow">#</doc-anchor-trigger>
+        <span>The htmx-Powered Razor Pages Workflow</span>
+    </h3>
+</doc-anchor-target>
+<p>Traditional Razor Pages rely on full-page reloads for updates, but htmx enhances this model by enabling seamless, partial updates. The result is a workflow where user interactions trigger lightweight AJAX requests that fetch updated content from the server, reducing unnecessary data transfer and improving performance.</p>
+<p>For example, suppose you want to update a section of your page dynamically based on a user&#x27;s interaction. With htmx, this is straightforward:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">ASP.NET (C#)</div>
+<pre class="language-none"><code v-pre class="language-none">&lt;button hx-get=&quot;/Index?handler=List&quot; hx-target=&quot;#user-list&quot;&gt;Load Users&lt;/button&gt;
+&lt;div id=&quot;user-list&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>And on the server:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public class IndexModel : PageModel
+{
+    public IActionResult OnGetList()
+    {
+        var users = new List&lt;string&gt; {&quot;Maarten&quot;, &quot;Woody&quot;, &quot;Khalid&quot;};
+        return Content($&quot;&lt;ul&gt;{string.Join(&quot;&quot;, users.Select(u =&gt; $&quot;&lt;li&gt;{u}&lt;/li&gt;&quot;))}&lt;/ul&gt;&quot;, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="partial-responses-vs-json-responses">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#partial-responses-vs-json-responses">#</doc-anchor-trigger>
+        <span>Partial Responses vs. JSON Responses</span>
+    </h3>
+</doc-anchor-target>
+<p>A key difference between htmx and traditional client-side JavaScript frameworks is its reliance on partial HTML responses rather than JSON. When a request is made, htmx sends the request to the server, which processes it and returns a partial HTML response. This response is then inserted into the page, updating the content without the need for a full page reload. This approach allows Razor Pages to remain the central authority for rendering, reducing duplication of logic between client and server.</p>
+<p>Partial HTML Example:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetUserInfo()
+{
+    User user = new User { Name = &quot;Tracy&quot;, Age = 29 };
+    return Partial(&quot;_UserInfo&quot;, user);
+}</code></pre>
+</doc-codeblock></div>
+<p>JSON Example (if needed):</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">public JsonResult OnGetUserData()
+{
+    return new JsonResult(new { Name = &quot;Tracy&quot;, Age = 29 });
+}</code></pre>
+</doc-codeblock></div>
+<p>If a JSON API is necessary, htmx can still handle it by processing the response and updating the UI accordingly. However, in most cases, returning small HTML fragments is more efficient and simplifies development. We will examine htmx Partials for ASP.NET in a latter chapter.</p>
+<doc-anchor-target id="preparing-for-advanced-htmx-usage">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preparing-for-advanced-htmx-usage">#</doc-anchor-trigger>
+        <span>Preparing for Advanced htmx Usage</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="security-considerations">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#security-considerations">#</doc-anchor-trigger>
+        <span>Security Considerations</span>
+    </h3>
+</doc-anchor-target>
+<p>Because htmx enables direct server interaction, developers must ensure their applications remain secure. This includes enforcing authentication, validating input on the server, and implementing CSRF protection when processing POST requests. Razor Pages have built-in anti-forgery mechanisms that should be leveraged to safeguard sensitive operations.</p>
+<doc-anchor-target id="debugging-and-performance-optimization">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-and-performance-optimization">#</doc-anchor-trigger>
+        <span>Debugging and Performance Optimization</span>
+    </h3>
+</doc-anchor-target>
+<p>htmx simplifies interactions, but debugging remains essential. Using browser dev tools to inspect network requests, checking logs on the server, and enabling <code v-pre>hx-debug= &quot;true&quot;</code> in problematic elements helps diagnose issues. Performance optimization strategies include:</p>
+<ul>
+<li><strong>Caching Responses</strong>: If frequently requested content doesn&#x27;t change often, caching can significantly boost performance.</li>
+<li><strong>Minimizing Server Processing</strong>: Keep handlers efficient to prevent slowdowns.</li>
+<li><strong>Using hx-trigger Wisely</strong>: Instead of sending a request on every keystroke, introduce a delay (e.g., keyup changed delay:500ms).</li>
+</ul>
+<doc-anchor-target id="looking-ahead-deep-diving-into-hx-get-and-hx-post">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#looking-ahead-deep-diving-into-hx-get-and-hx-post">#</doc-anchor-trigger>
+        <span>Looking Ahead: Deep Diving into hx-get and hx-post</span>
+    </h3>
+</doc-anchor-target>
+<p>Now that we&#x27;ve explored htmx commands, the next step is mastering how data is fetched and submitted. The upcoming chapter will break down advanced techniques for handling form submissions, optimizing data retrieval, and structuring Razor Pages applications for maximum efficiency.</p>
+<p>By now, you should have a strong grasp of how htmx can transform Razor Pages development. With its ability to simplify interactivity and reduce reliance on JavaScript, it&#x27;s an invaluable tool for modern web applications that prioritize performance and maintainability.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -273,6 +430,27 @@
                                     </a>
                                 </div>
                             
+                                <nav class="flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../chapter03/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
+                                                <span class="block mt-1">Chap 3 - First Steps with htmx</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../authorbio/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
+                                                <span class="block mt-1">Author Bio</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
                             </footer>
                         </main>
                 
@@ -331,6 +509,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 4 - Understanding htmx Commands", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 4 - Understanding htmx Commands", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
