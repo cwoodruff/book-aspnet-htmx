@@ -1,0 +1,17 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Chapter 4 - Understanding htmx Commands</h1>
+    <br/>
+    <br/>
+    <button hx-get="/Index?handler=List" hx-target="#user-list">Load Users</button>
+    <div id="user-list"></div>
+    <br/>
+    <br/>
+    <button hx-get="/Index?handler=UserInfo" hx-target="#user">Load User</button>
+    <div id="user"></div>
+</div>

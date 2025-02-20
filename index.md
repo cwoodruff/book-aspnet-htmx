@@ -38,7 +38,7 @@ To find translations, please check out the [Translations](./Translations.md) pag
         <tr>
             <td rowspan=3>Section 1: Core Concepts of htmx</td>
             <td>4</td>
-            <td>Understanding htmx Commands</td>
+            <td><a href="https://aspnet-htmx.com/chapter04/">Understanding htmx Commands</a></td>
             <td></td>
         </tr>
         <tr>
