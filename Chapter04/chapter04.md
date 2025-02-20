@@ -5,6 +5,8 @@ label: Chap 4 - Understanding htmx Commands
 meta:
 title: "Understanding htmx Commands"
 ---
+# 4
+
 # Understanding htmx Commands
 
 _**You can find the source examples for this chapter [here](https://github.com/cwoodruff/book-aspnet-htmx/tree/main/_src/chap04).**_
