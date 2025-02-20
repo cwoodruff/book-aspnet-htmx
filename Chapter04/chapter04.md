@@ -9,6 +9,8 @@ title: "Understanding htmx Commands"
 
 ![]()
 
+_**You can find the source examples for this chapter [here](https://github.com/cwoodruff/book-aspnet-htmx/tree/main/_src/chap04).**_
+
 Welcome to the beating heart of htmx—the commands that empower you to make it all work! In this chapter, we'll take a deep dive into the fundamental building blocks of htmx, exploring how simple HTML attributes can transform your Razor Pages into interactive, server-driven applications. Forget about wrestling with JavaScript-heavy frameworks; with htmx, your markup does the talking, fetching, swapping, and updating content dynamically with just a sprinkle of attributes.
 
 We'll start with an overview of the htmx API, dissecting how it extends standard HTML with powerful commands like `hx-get`, `hx-post`, and `hx-swap`. You'll see firsthand how these attributes enable seamless interactions, handling everything from fetching data to submitting forms, all without a single line of JavaScript. By the end of this chapter, you'll understand not just what each command does but when and why to use them in an ASP.NET Core 9 Razor Pages project.
