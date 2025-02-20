@@ -9,8 +9,6 @@ title: "Why htmx with ASP.NET Core 9 Razor Pages?"
 
 # Why htmx with ASP.NET Core 9 Razor Pages?
 
-![](Images/chapter01-why-htmx-razor-pages.png)
-
 Web development has evolved significantly over the past decade, shifting from server-rendered applications to JavaScript-heavy frontends that rely on client-side frameworks like React, Angular, and Vue. However, these solutions often introduce excessive complexity, forcing developers to juggle state management, bundlers, and frontend dependencies.
 
 With the rise of htmx, many developers are rediscovering the power of server-side rendering while maintaining dynamic interactivity. htmx enhances HTML, allowing it to handle interactions that traditionally require JavaScript, offering a more straightforward way to create fast, interactive, and maintainable web applications. Unlike frontend-heavy frameworks, which offload rendering and logic to the client, htmx enables a seamless experience by keeping the logic on the server and sending only the necessary updates to the client. This means developers can build highly interactive applications without the overhead of managing complex client-side code.

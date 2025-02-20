@@ -9,8 +9,6 @@ title: "Setting Up Your Development Environment"
 
 # Setting Up Your Development Environment
 
-![chapter02-setting-up-dev-env.png](Images/chapter02-setting-up-dev-env.png)
-
 The goal is to help you build a solid development environment for htmx in ASP.NET Core 9. This will ensure a smooth workflow and allow you to focus on building interactive web applications without unnecessary distractions. In this chapter, we will guide you through the process of installing .NET 9, setting up an ASP.NET Core Razor Pages project, adding htmx to the project, and configuring tools for an efficient development workflow.
 
 # Installing ASP.NET Core 9 and Required Tools

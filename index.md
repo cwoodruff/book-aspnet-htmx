@@ -1,7 +1,5 @@
 # ASP.NET Core Reimagined with htmx Book
 
-![](images/aspnet-htmx-header.png)
-
 Have questions or feedback about the book? My email is [cwoodruff@live.com](mailto:cwoodruff@live.com).
 
 For the source code for the book, visit the book's GitHub repo -- [htmx-razor-workshop
