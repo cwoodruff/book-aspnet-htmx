@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # htmx Command Reference
 
-![]()
+
 
 # XXXXXXXX
 

@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Valuable Tools and Resources for htmx and Razor Pages Development
 
-![]()
+
 
 # XXXXXXXX
 

@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Building a Dashboard with htmx
 
-![]()
+
 
 # XXXXXXXX
 

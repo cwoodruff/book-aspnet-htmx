@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Tabs and Accordions
 
-![]()
+
 
 # XXXXXXXX
 

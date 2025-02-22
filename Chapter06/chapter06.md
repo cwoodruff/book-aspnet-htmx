@@ -8,7 +8,3 @@ visibility: hidden
 ---
 # Working with hx-put, hx-patch, and hx-delete
 
-![]()
-
-# XXXXXXXX
-

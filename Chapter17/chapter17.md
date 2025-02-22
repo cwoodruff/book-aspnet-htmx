@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Form Enhancements with hx-params, hx-vals, and hx-validate
 
-![]()
+
 
 # XXXXXXXX
 

@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Testing htmx Applications
 
-![]()
+
 
 # XXXXXXXX
 

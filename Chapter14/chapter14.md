@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Buttons and Action Links
 
-![]()
+
 
 # XXXXXXXX
 

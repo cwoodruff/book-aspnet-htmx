@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Visual Feedback with hx-indicator and hx-preserve
 
-![]()
+
 
 # XXXXXXXX
 

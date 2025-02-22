@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Working with hx-target and hx-swap
 
-![]()
+
 
 # XXXXXXXX
 

@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Creating a Chat Application
 
-![]()
+
 
 # XXXXXXXX
 

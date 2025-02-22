@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Optimizing Requests with hx-disable and hx-request
 
-![]()
+
 
 # XXXXXXXX
 

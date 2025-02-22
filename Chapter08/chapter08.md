@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Handling Events with hx-trigger and hx-on
 
-![]()
+
 
 # XXXXXXXX
 

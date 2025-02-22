@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Lists and Tables
 
-![]()
+
 
 # XXXXXXXX
 

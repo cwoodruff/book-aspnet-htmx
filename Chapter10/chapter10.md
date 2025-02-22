@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Navigating with hx-push-url and hx-replace-url
 
-![]()
+
 
 # XXXXXXXX
 

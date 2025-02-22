@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Hyperscript Quick Guide
 
-![]()
+
 
 # XXXXXXXX
 

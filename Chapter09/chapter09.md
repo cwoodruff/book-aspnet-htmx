@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Integrating Hyperscript for Complex Logic
 
-![]()
+
 
 # XXXXXXXX
 

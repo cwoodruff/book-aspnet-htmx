@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Developing an E-Commerce Application
 
-![]()
+
 
 # XXXXXXXX
 

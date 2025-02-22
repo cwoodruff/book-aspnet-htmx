@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Caching and History with hx-history and hx-history-elt
 
-![]()
+
 
 # XXXXXXXX
 

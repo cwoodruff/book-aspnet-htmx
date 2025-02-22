@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Performance Optimization
 
-![]()
+
 
 # XXXXXXXX
 

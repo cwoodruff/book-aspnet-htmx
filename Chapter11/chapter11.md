@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Forms and Modal Forms
 
-![]()
+
 
 # XXXXXXXX
 

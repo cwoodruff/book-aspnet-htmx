@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Deploying htmx Applications on Azure
 
-![]()
+
 
 # XXXXXXXX
 

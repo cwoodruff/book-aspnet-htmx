@@ -8,7 +8,7 @@ visibility: hidden
 ---
 # Scoped Updates with hx-select and hx-select-oob
 
-![]()
+
 
 # XXXXXXXX
 
