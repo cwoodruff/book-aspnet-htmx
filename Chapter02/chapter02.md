@@ -37,7 +37,7 @@ To use htmx, you must include its JavaScript file in your project. The easiest w
 <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 ```
 
-Alternatively, if you prefer to host the file locally, [download htmx.min.js](https://github.com/bigskysoftware/htmx/tree/master/dist) from the official htmx GitHub repo and place it inside the `wwwroot/js/` folder. Then, update _Layout.cshtml to reference it locally:
+Alternatively, if you prefer to host the file locally, [download htmx.min.js](https://github.com/bigskysoftware/htmx/tree/master/dist) from the official htmx GitHub repo and place it inside the `wwwroot/js/` folder. Then, update `_Layout.cshtml` to reference it locally:
 
 ```ASP.NET (C#)
 <script src="/js/htmx.min.js"></script>
