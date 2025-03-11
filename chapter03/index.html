@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793829521428">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795037457358">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -35,12 +35,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.793829521428" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.795037457358" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793829521428" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795037457358" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793829521428" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793829521428" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795037457358" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.795037457358" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -302,8 +302,7 @@
 </doc-anchor-target>
 <p>Unlike traditional AJAX, where you manually manipulate the DOM, htmx automatically swaps the response into a specified target. This is controlled using <code v-pre>hx-target</code> and <code v-pre>hx-swap</code>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;button hx-get=&quot;/getSnippet&quot; hx-target=&quot;#container&quot; hx-swap=&quot;outerHTML&quot;&gt;Load Content&lt;/button&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/getSnippet&quot; hx-target=&quot;#container&quot; hx-swap=&quot;outerHTML&quot;&gt;Load Content&lt;/button&gt;
 &lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <ul>
@@ -320,8 +319,7 @@
 <p>Let’s create a simple Razor Page that dynamically loads a message when a button is clicked.</p>
 <p><strong>Pages/Index.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">@page
+<pre class="language-markup"><code v-pre class="language-markup">@page
 @model IndexModel
 
 &lt;h1&gt;Welcome to htmx!&lt;/h1&gt;
@@ -356,8 +354,7 @@ public class IndexModel : PageModel
 </doc-anchor-target>
 <p>By default, htmx triggers requests on clicks, but you can customize it with <code v-pre>hx-trigger</code>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;input type=&quot;text&quot; hx-get=&quot;/search&quot; hx-target=&quot;#results&quot; hx-trigger=&quot;keyup changed delay:500ms&quot; /&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; hx-get=&quot;/search&quot; hx-target=&quot;#results&quot; hx-trigger=&quot;keyup changed delay:500ms&quot; /&gt;
 &lt;div id=&quot;results&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <p>Here, every keystroke (after a 500ms delay) triggers a request to update the results dynamically.</p>
@@ -402,8 +399,7 @@ public class IndexModel : PageModel
 </doc-anchor-target>
 <p>htmx makes form submissions seamless by eliminating full-page reloads.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-target=&quot;#result&quot;&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-target=&quot;#result&quot;&gt;
     &lt;input type=&quot;text&quot; name=&quot;name&quot; required /&gt;
     &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
 &lt;/form&gt;</code></pre>
@@ -430,8 +426,7 @@ public class IndexModel : PageModel
 </doc-anchor-target>
 <p>By default, <code v-pre>hx-target</code> updates a specific element, and <code v-pre>hx-swap</code> determines how the response is inserted. You can change the behavior like so:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-target=&quot;#result&quot; hx-swap=&quot;beforeend&quot;&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-target=&quot;#result&quot; hx-swap=&quot;beforeend&quot;&gt;
     &lt;input type=&quot;text&quot; name=&quot;name&quot; required /&gt;
     &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
 &lt;/form&gt;</code></pre>
@@ -445,8 +440,7 @@ public class IndexModel : PageModel
 </doc-anchor-target>
 <p>htmx supports built-in validation with <code v-pre>hx-validate</code>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-validate&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form method=&quot;post&quot; hx-post=&quot;/Index?handler=Submit&quot; hx-validate&gt;
     &lt;input type=&quot;email&quot; name=&quot;email&quot; required /&gt;
     &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
 &lt;/form&gt;</code></pre>

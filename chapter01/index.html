@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793829521428">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795037457358">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -35,12 +35,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.793829521428" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.795037457358" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793829521428" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795037457358" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793829521428" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793829521428" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795037457358" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.795037457358" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -279,8 +279,7 @@
 <p>htmx is a lightweight JavaScript library that extends HTML&#x27;s capabilities, allowing it to make HTTP requests and dynamically update the page without requiring JavaScript. Instead of writing JavaScript to handle AJAX interactions, developers can use htmx’s HTML attributes to perform tasks like sending HTTP requests, updating the DOM, and handling events.</p>
 <p>For example, consider a simple interaction where a user clicks a button to load a message dynamically:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;button hx-get=&quot;/hello&quot; hx-target=&quot;#message&quot;&gt;Click Me!&lt;/button&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/hello&quot; hx-target=&quot;#message&quot;&gt;Click Me!&lt;/button&gt;
 &lt;div id=&quot;message&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <p>In this example, clicking the button sends an HTTP GET request to the <code v-pre>/hello</code> endpoint. The response from the server replaces the content inside the <code v-pre>&lt;div id=&quot;message&quot;&gt;</code> element, all without needing any JavaScript.</p>
@@ -314,8 +313,7 @@
 </doc-anchor-target>
 <p>Forms are a fundamental part of most web applications, and htmx makes handling them straightforward. Instead of requiring JavaScript to process form submissions, htmx can handle the interaction declaratively:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;form hx-post=&quot;/submit&quot; hx-target=&quot;#result&quot;&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/submit&quot; hx-target=&quot;#result&quot;&gt;
     &lt;input type=&quot;text&quot; name=&quot;name&quot; required /&gt;
     &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
 &lt;/form&gt;
@@ -337,8 +335,7 @@
 </doc-anchor-target>
 <p>Another common use case for htmx is dynamically loading content without a full-page refresh. For instance, a user might want to open a modal form without navigating to another page. Instead of using JavaScript to load content dynamically, htmx can handle it:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;button hx-get=&quot;/modal/form&quot; hx-target=&quot;#modal&quot;&gt;Open Form&lt;/button&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/modal/form&quot; hx-target=&quot;#modal&quot;&gt;Open Form&lt;/button&gt;
 &lt;div id=&quot;modal&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <p>When the button is clicked, htmx fetches the modal content from the server and injects it into the designated container. This makes building interactive interfaces much simpler than manually manipulating the DOM with JavaScript.</p>

@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793829521428">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795037457358">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -35,12 +35,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.793829521428" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.795037457358" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793829521428" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795037457358" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793829521428" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793829521428" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795037457358" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.795037457358" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -285,18 +285,15 @@ dotnet run</code></pre>
 </doc-anchor-target>
 <p>To use htmx, you must include its JavaScript file in your project. The easiest way to do this is by linking to the htmx CDN inside your <code v-pre>_Layout.cshtml</code> file. Open <code v-pre>Pages/Shared/_Layout.cshtml</code> and add the following inside the <code v-pre>&lt;head&gt;</code> tag:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;script src=&quot;https://unpkg.com/htmx.org@2.0.4&quot;&gt;&lt;/script&gt;</code></pre>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;script src=&quot;https://unpkg.com/htmx.org@2.0.4&quot;&gt;&lt;/script&gt;</code></pre>
 </doc-codeblock></div>
 <p>Alternatively, if you prefer to host the file locally, <a href="https://github.com/bigskysoftware/htmx/tree/master/dist">download htmx.min.js</a> from the official htmx GitHub repo and place it inside the <code v-pre>wwwroot/js/</code> folder. Then, update <code v-pre>_Layout.cshtml</code> to reference it locally:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;script src=&quot;/js/htmx.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;script src=&quot;/js/htmx.min.js&quot;&gt;&lt;/script&gt;</code></pre>
 </doc-codeblock></div>
 <p>To confirm that htmx is working correctly, create a simple button that triggers an AJAX request when clicked. Add the following to <code v-pre>Pages/Index.cshtml</code>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">ASP.NET (C#)</div>
-<pre class="language-none"><code v-pre class="language-none">&lt;button hx-get=&quot;/Index?handler=hello&quot; hx-target=&quot;#message&quot;&gt;Click Me!&lt;/button&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Index?handler=hello&quot; hx-target=&quot;#message&quot;&gt;Click Me!&lt;/button&gt;
 &lt;div id=&quot;message&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <p>Now, modify <code v-pre>Pages/Index.cshtml.cs</code> to handle the request and return a response:</p>
