@@ -33,19 +33,19 @@ This command initializes a basic Razor Pages project and starts a development se
 
 To use htmx, you must include its JavaScript file in your project. The easiest way to do this is by linking to the htmx CDN inside your `_Layout.cshtml` file. Open `Pages/Shared/_Layout.cshtml` and add the following inside the `<head>` tag:
 
-```ASP.NET (C#)
+```HTML
 <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 ```
 
 Alternatively, if you prefer to host the file locally, [download htmx.min.js](https://github.com/bigskysoftware/htmx/tree/master/dist) from the official htmx GitHub repo and place it inside the `wwwroot/js/` folder. Then, update `_Layout.cshtml` to reference it locally:
 
-```ASP.NET (C#)
+```HTML
 <script src="/js/htmx.min.js"></script>
 ```
 
 To confirm that htmx is working correctly, create a simple button that triggers an AJAX request when clicked. Add the following to `Pages/Index.cshtml`:
 
-```ASP.NET (C#)
+```HTML
 <button hx-get="/Index?handler=hello" hx-target="#message">Click Me!</button>
 <div id="message"></div>
 ```

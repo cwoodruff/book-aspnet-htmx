@@ -31,7 +31,7 @@ At the core of htmx is its ability to enrich HTML elements with `hx-attributes`,
 
 For instance, consider the following example:
 
-```asp.net (c#)
+```HTML
 <button hx-get="/api/message" hx-target="#result">Fetch Message</button>
 <div id="result"></div>
 ```
@@ -70,7 +70,7 @@ Traditional Razor Pages rely on full-page reloads for updates, but htmx enhances
 
 For example, suppose you want to update a section of your page dynamically based on a user's interaction. With htmx, this is straightforward:
 
-```ASP.NET (C#)
+```HTML
 <button hx-get="/Index?handler=List" hx-target="#user-list">Load Users</button>
 <div id="user-list"></div>
 ```

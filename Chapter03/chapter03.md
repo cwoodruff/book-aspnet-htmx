@@ -46,7 +46,7 @@ This means you can build dynamic experiences while keeping your app’s logic ce
 
 Unlike traditional AJAX, where you manually manipulate the DOM, htmx automatically swaps the response into a specified target. This is controlled using `hx-target` and `hx-swap`:
 
-```ASP.NET (C#)
+```HTML
 <button hx-get="/getSnippet" hx-target="#container" hx-swap="outerHTML">Load Content</button>
 <div id="container"></div>
 ```
@@ -62,7 +62,7 @@ Let’s create a simple Razor Page that dynamically loads a message when a butto
 
 **Pages/Index.cshtml**
 
-```ASP.NET (C#)
+```HTML
 @page
 @model IndexModel
 
@@ -94,7 +94,7 @@ In the above example, clicking the button triggers an `hx-get` request to `OnGet
 
 By default, htmx triggers requests on clicks, but you can customize it with `hx-trigger`:
 
-```ASP.NET (C#)
+```HTML
 <input type="text" hx-get="/search" hx-target="#results" hx-trigger="keyup changed delay:500ms" />
 <div id="results"></div>
 ```
@@ -134,7 +134,7 @@ Now, each click returns a different message from the list.
 
 htmx makes form submissions seamless by eliminating full-page reloads.
 
-```ASP.NET (C#)
+```HTML
 <form method="post" hx-post="/Index?handler=Submit" hx-target="#result">
     <input type="text" name="name" required />
     <button type="submit">Submit</button>
@@ -158,7 +158,7 @@ When the form is submitted, htmx sends the data, and the response dynamically up
 
 By default, `hx-target` updates a specific element, and `hx-swap` determines how the response is inserted. You can change the behavior like so:
 
-```ASP.NET (C#)
+```HTML
 <form method="post" hx-post="/Index?handler=Submit" hx-target="#result" hx-swap="beforeend">
     <input type="text" name="name" required />
     <button type="submit">Submit</button>
@@ -171,7 +171,7 @@ This appends new responses instead of replacing them.
 
 htmx supports built-in validation with `hx-validate`:
 
-```ASP.NET (C#)
+```HTML
 <form method="post" hx-post="/Index?handler=Submit" hx-validate>
     <input type="email" name="email" required />
     <button type="submit">Submit</button>

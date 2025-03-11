@@ -27,7 +27,7 @@ htmx is a lightweight JavaScript library that extends HTML's capabilities, allow
 
 For example, consider a simple interaction where a user clicks a button to load a message dynamically:
 
-```ASP.NET (C#)
+```HTML
 <button hx-get="/hello" hx-target="#message">Click Me!</button>
 <div id="message"></div>
 ```
@@ -54,7 +54,7 @@ htmx is particularly useful in scenarios where minimal JavaScript is preferred a
 
 Forms are a fundamental part of most web applications, and htmx makes handling them straightforward. Instead of requiring JavaScript to process form submissions, htmx can handle the interaction declaratively:
 
-```ASP.NET (C#)
+```HTML
 <form hx-post="/submit" hx-target="#result">
     <input type="text" name="name" required />
     <button type="submit">Submit</button>
@@ -77,7 +77,7 @@ The result is dynamically updated without reloading the entire page, leading to 
 
 Another common use case for htmx is dynamically loading content without a full-page refresh. For instance, a user might want to open a modal form without navigating to another page. Instead of using JavaScript to load content dynamically, htmx can handle it:
 
-```ASP.NET (C#)
+```HTML
 <button hx-get="/modal/form" hx-target="#modal">Open Form</button>
 <div id="modal"></div>
 ```
