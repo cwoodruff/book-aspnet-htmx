@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795085570978">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795085606156">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Handling Events with hx-trigger and hx-on</title>
     <meta name="title" content="Handling Events with hx-trigger and hx-on">
+    <meta name="description" content="Welcome to a deeper look at how htmx manages user interactions in Razor Pages. Until now, we’ve explored how attributes like ">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter08/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter08/">
     <meta property="og:title" content="Handling Events with hx-trigger and hx-on">
+    <meta property="og:description" content="Welcome to a deeper look at how htmx manages user interactions in Razor Pages. Until now, we’ve explored how attributes like ">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter08/">
     <meta property="twitter:title" content="Handling Events with hx-trigger and hx-on">
+    <meta property="twitter:description" content="Welcome to a deeper look at how htmx manages user interactions in Razor Pages. Until now, we’ve explored how attributes like ">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.795085570978" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.795085606156" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795085570978" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795085606156" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795085570978" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795085606156" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.795085606156" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -243,18 +247,110 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="handling-events-with-hx-trigger-and-hx-on" class="break-words">
+<doc-anchor-target id="8" class="break-words">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#8">#</doc-anchor-trigger>
+        <span>8</span>
+    </h1>
+</doc-anchor-target>
+<doc-anchor-target id="handling-events-with-hx-trigger-and-hx-on">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#handling-events-with-hx-trigger-and-hx-on">#</doc-anchor-trigger>
-        <span>Handling Events with hx-trigger and hx-on</span>
+        <span>Handling Events with <code v-pre>hx-trigger</code> and <code v-pre>hx-on</code></span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>Welcome to a deeper look at how htmx manages user interactions in Razor Pages. Until now, we’ve explored how attributes like <code v-pre>hx-get</code> and hx-post can handle requests on a basic click or form submission. In this chapter, we’ll focus on precisely controlling when those requests occur, as well as how to set up custom behaviors for more interactive scenarios. This is where <code v-pre>hx-trigger</code> and <code v-pre>hx-on</code> step into the spotlight—two powerful attributes that give you fine-grained control over user events and responses.</p>
+<p>We’ll explore how <code v-pre>hx-trigger</code> can turn practically any browser event into a chance for your server to provide dynamic content. Whether you want to react to a simple mouse hover, a keyboard press, or something more creative, <code v-pre>hx-trigger</code> allows you to specify exactly when your htmx-powered elements should call home. Beyond that, we’ll look at <code v-pre>hx-on</code>, a feature that lets you define your own event listeners, opening the door to custom logic and expanded interactivity.</p>
+<p>By the end of this chapter, you’ll see just how flexible your Razor Pages can become once you master these event-driven techniques. With <code v-pre>hx-trigger</code> and <code v-pre>hx-on</code>, your application will be equipped to respond to user actions in real time without piling on extra JavaScript, keeping the focus on clean, server-side code that feels both modern and refreshingly simple.</p>
+<doc-anchor-target id="mastering-hx-trigger-for-real-time-user-engagement">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#mastering-hx-trigger-for-real-time-user-engagement">#</doc-anchor-trigger>
+        <span>Mastering <code v-pre>hx-trigger</code> for Real-Time User Engagement</span>
+    </h2>
 </doc-anchor-target>
+<p><code v-pre>hx-trigger</code> is an htmx attribute that controls when server requests get fired, giving you precise control over how your pages interact with user actions. If you leave <code v-pre>hx-trigger</code> unspecified, htmx typically defaults to firing a request on the most logical event for that element, such as click for a button or submit for a form. By customizing <code v-pre>hx-trigger</code>, you can expand beyond these built-in defaults and tap into virtually any browser event, from the common click to more advanced possibilities like intersect or a timed interval.</p>
+<p>The difference between default events and custom triggers can significantly influence user experience. Default events keep your code simple and work perfectly for many scenarios. On the other hand, custom triggers let you tune performance and responsiveness, especially in situations where you want an action to occur only after a specific sequence of events or under certain conditions. By treating triggers as your application’s traffic lights, you ensure data moves between client and server at precisely the right moments.</p>
+<p>Standard triggers like click, change, and submit generally work out of the box. A button with <code v-pre>hx-get</code> will fire on click, an input with <code v-pre>hx-post</code> will fire on form submission, and a select element might default to change for updating on selection. These defaults reduce boilerplate code and make everyday interactions seamless for you and your users, while still allowing you to override or refine them when needed.</p>
+<p>Advanced triggers shine in more specialized scenarios. If you want repeated polling from the server, you can set <code v-pre>hx-trigger</code> to every 5s. If you need a request to happen when an element scrolls into view, <code v-pre>hx-trigger</code> can be assigned intersect. For real-time text monitoring, keyup changed ensures updates happen only if the user actually modifies the input. This allows you to avoid excessive requests and handle user actions more gracefully.</p>
+<p>A powerful illustration of <code v-pre>hx-trigger</code> in action is building a live search. Imagine a simple text input that hits your server with each keystroke, but only when the input has truly changed. In your Razor Page, you might have something like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; hx-get=&quot;/Search?handler=Live&quot; `hx-trigger`=&quot;keyup changed delay:300ms&quot; hx-target=&quot;#searchResults&quot; placeholder=&quot;Type to search...&quot; /&gt;
+&lt;div id=&quot;searchResults&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The keyup changed delay:300ms tells htmx to wait 300 milliseconds after the most recent keyup event before sending a GET request, and only if the text has indeed changed. This helps reduce noisy interactions and keeps server load under control. On the server side, your Razor Page might include a handler like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetLive(string searchTerm)
+{
+    var results = _context.Products
+        .Where(p =&gt; p.Name.Contains(searchTerm))
+        .Select(p =&gt; p.Name)
+        .ToList();
+
+    var htmlSnippet = &quot;&lt;ul&gt;&quot;;
+    foreach (var item in results)
+    {
+        htmlSnippet += $&quot;&lt;li&gt;{item}&lt;/li&gt;&quot;;
+    }
+    htmlSnippet += &quot;&lt;/ul&gt;&quot;;
+
+    return Content(htmlSnippet, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>The user begins typing in the search field, triggers are activated on keyup if the input changes, and the server responds with matching items. By mixing standard and advanced triggers, you can design interactions that feel modern and efficient without the overhead of a sprawling JavaScript setup.</p>
+<doc-anchor-target id="elevating-interactions-with-hx-on">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#elevating-interactions-with-hx-on">#</doc-anchor-trigger>
+        <span>Elevating Interactions with <code v-pre>hx-on</code></span>
+    </h2>
+</doc-anchor-target>
+<p><code v-pre>hx-on</code> is an attribute that lets you tap into both built-in and custom JavaScript events in htmx, effectively broadening your control beyond the straightforward timing of requests that <code v-pre>hx-trigger</code> provides. While <code v-pre>hx-trigger</code> is all about specifying when a request should fire, <code v-pre>hx-on</code> is about telling htmx, “When you see this event, run that action.” You can think of <code v-pre>hx-trigger</code> as scheduling server requests, whereas <code v-pre>hx-on</code> is about hooking into an event-driven workflow where you can validate input, run animations, or even stop a request from ever leaving the browser.</p>
+<p>You might decide to use <code v-pre>hx-on</code> when you need to respond to something that’s not purely about firing a request. A custom JavaScript event is a perfect example. You could dispatch an event from your client code—say, <code v-pre>document.dispatchEvent(new CustomEvent(&quot;myCustomEvent&quot;, { detail: &quot;someData&quot; }))</code>—and <code v-pre>hx-on</code> can then listen for <code v-pre>myCustomEvent</code> on a specific HTML element. Once caught, you can do anything from updating the UI to prepping data before a request goes out, all within a clean, attribute-based syntax.</p>
+<p>Preventing a form submission is an essential use case for <code v-pre>hx-on</code>. Suppose you want to validate that a user’s input meets certain criteria before letting the request proceed. You can intercept the form submission event by using something like <code v-pre>hx-on=&quot;submit: if(!validateInputs()) event.preventDefault()&quot;</code>. This means if your <code v-pre>validateInputs()</code> function fails, you keep the submission local. The rest of your Razor Page remains blissfully unaware that the user tried to submit invalid data, which can significantly improve your user experience.</p>
+<p>Here’s a small example of preventing form submission with <code v-pre>hx-on</code>. The form tries to post data to the server, but we only let the request proceed if our validation logic passes:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Contact?handler=Submit&quot; hx-target=&quot;#response&quot; `hx-on`=&quot;submit: if(!validateForm()) event.preventDefault()&quot;&gt;
+    &lt;input type=&quot;email&quot; name=&quot;email&quot; id=&quot;email&quot; placeholder=&quot;Enter your email&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Send&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id=&quot;response&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+    function validateForm() {
+        const email = document.getElementById('email').value;
+        return email.includes('@');
+    }
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p>Another place <code v-pre>hx-on</code> shines is in orchestrating UI animations on request completion. Suppose you want a fade-in effect after the server returns new content. You can attach <code v-pre>hx-on</code> to watch for an htmx event like <code v-pre>htmx:afterSwap</code>, which fires once the response is placed into the DOM. If you have a fadeIn(element) helper, you can tie it in by writing <code v-pre>hx-on=&quot;htmx:afterSwap: fadeIn(document.getElementById('response'))&quot;</code>. This approach ensures the animation triggers only after the new HTML chunk is actually rendered.</p>
+<p>Debugging event-based issues sometimes requires pinpointing the exact moment your code runs. htmx includes a suite of lifecycle events like <code v-pre>htmx:configRequest</code>, <code v-pre>htmx:beforeRequest</code>, and <code v-pre>htmx:afterRequest</code> that can be valuable for logging. In your HTML, you might write <code v-pre>hx-on=&quot;htmx:beforeRequest: console.log('About to send request');&quot;</code> to see if the event is firing as expected. That way, you can confirm the request sequence and see where things might be going wrong.</p>
+<p><code v-pre>hx-on</code> tends to shine in tandem with <code v-pre>hx-trigger</code> since the two can coexist on the same element—one controls when requests happen, and the other manages event listeners. By combining them, you can create flows where user input triggers requests at exactly the right time, and custom scripts or UI effects run reliably afterward, keeping your ASP.NET Core application responsive and maintainable.</p>
+<doc-anchor-target id="custom-server-driven-events-for-seamless-ui-refresh">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#custom-server-driven-events-for-seamless-ui-refresh">#</doc-anchor-trigger>
+        <span>Custom Server-Driven Events for Seamless UI Refresh</span>
+    </h2>
+</doc-anchor-target>
+<p>Custom events in htmx provide a way to trigger dynamic updates without exclusively relying on user actions or polling intervals. Instead of using out-of-band swaps, which instruct htmx to render HTML outside the normal page flow, you can dispatch a custom event from the server response that initiates a new AJAX request to refresh specific parts of the UI. This approach grants you a powerful mechanism to respond to server-side changes as they happen, while still writing minimal JavaScript in your Razor Pages application.</p>
+<p>One typical scenario is refreshing a notifications panel. Suppose your server finishes a background task that has just created new notifications for the user. Rather than waiting for another user click or a time-based poll, you can include a small script in the server’s response that dispatches a custom event. By pairing <code v-pre>hx-on</code> with that custom event, you can instruct htmx to fetch updated content for the notifications panel immediately, resulting in a near real-time experience.</p>
+<p>A simple Razor Page might look like this in your <code v-pre>Notifications.cshtml</code> file, which is in charge of fetching the latest notifications:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;notificationsPanel&quot; `hx-on`=&quot;notifications-updated: this.closest('[hx-get]').click()&quot;
+     hx-get=&quot;/Notifications?handler=List&quot; hx-target=&quot;#notificationsPanel&quot;&gt;
+    &lt;!-- existing notifications here --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>When the server completes a process that spawns new notifications, it can return a snippet of HTML containing a script like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostCreateNotification()
+{
+    // ... logic that creates a new notification ...
+    var scriptToTriggerRefresh = &quot;&lt;script&gt;document.dispatchEvent(new CustomEvent('notifications-updated'));&lt;/script&gt;&quot;;
+    return Content(scriptToTriggerRefresh, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>As soon as this script runs in the browser, it dispatches the notifications-updated event. Because <code v-pre>hx-on</code> is listening for notifications-updated on the panel, it immediately invokes the existing hx-get request, pulling fresh notifications from the server and injecting them into the panel. This bypasses the need for out-of-band swaps, since your UI remains coherent under the direction of custom events, ensuring the data is always in sync without cluttering your markup with OOB directives.</p>
+<p>Dynamically updating a user’s status follows the same principle. Rather than forcing the client to poll for changes, you embed a small script whenever a status update occurs on the server. The newly dispatched event triggers an htmx request that retrieves the updated status. This means your UI can instantaneously reflect shifts from “online” to “away,” or from “busy” to “available,” with minimal overhead and minimal JavaScript.</p>
+<p>The real power here is in how little code you need to orchestrate a thoroughly responsive UI. By dispatching events only when meaningful changes occur on the server, you avoid unnecessary queries and maintain tight control over which components refresh. This helps reduce load on your server while also keeping the user experience fast and responsive.</p>
+<p>Next, we will explore &quot;Integrating Hyperscript for Complex Logic,&quot; where you will see how even more sophisticated client-side behaviors become possible. Rather than resorting to large JavaScript frameworks, you can solve a surprising array of interaction challenges with a few lines of Hyperscript, letting you blend dynamic server updates with advanced in-browser logic in an elegant, minimalistic way.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -326,6 +422,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 8 - Handling Events with hx-trigger and hx-on", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 8 - Handling Events with hx-trigger and hx-on", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

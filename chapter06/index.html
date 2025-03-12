@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795085570978">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795085606156">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Working with hx-put, hx-patch, and hx-delete</title>
     <meta name="title" content="Working with hx-put, hx-patch, and hx-delete">
+    <meta name="description" content="By incorporating hx-put, hx-patch, and hx-delete into your server interactions, you can significantly enhance your use of HTTP verbs.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter06/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter06/">
     <meta property="og:title" content="Working with hx-put, hx-patch, and hx-delete">
+    <meta property="og:description" content="By incorporating hx-put, hx-patch, and hx-delete into your server interactions, you can significantly enhance your use of HTTP verbs.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter06/">
     <meta property="twitter:title" content="Working with hx-put, hx-patch, and hx-delete">
+    <meta property="twitter:description" content="By incorporating hx-put, hx-patch, and hx-delete into your server interactions, you can significantly enhance your use of HTTP verbs.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.795085570978" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.795085606156" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795085570978" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795085606156" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795085570978" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795085606156" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.795085606156" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -243,12 +247,134 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="working-with-hx-put-hx-patch-and-hx-delete" class="break-words">
+<doc-anchor-target id="6" class="break-words">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#6">#</doc-anchor-trigger>
+        <span>6</span>
+    </h1>
+</doc-anchor-target>
+<doc-anchor-target id="working-with-hx-put-hx-patch-and-hx-delete">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#working-with-hx-put-hx-patch-and-hx-delete">#</doc-anchor-trigger>
         <span>Working with hx-put, hx-patch, and hx-delete</span>
     </h1>
 </doc-anchor-target>
+<p>By incorporating <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code> into your server interactions, you can significantly enhance your use of HTTP verbs. These commands, when combined with <code v-pre>hx-get</code> and <code v-pre>hx-post</code>, provide a comprehensive toolkit for robust, REST-like capabilities directly within your Razor Pages. This approach simplifies data updates and deletions, removing the need for complex JavaScript or extensive client-side frameworks.</p>
+<p>In this chapter, you will discover how these htmx attributes can effortlessly manage tasks such as modifying partial records, handling complex data updates, and removing unwanted elements—all while keeping your server-side logic centralized. You&#x27;ll see how using these verbs can streamline your workflow, maintain clean code, and enhance the user experience by providing near-instant feedback.</p>
+<p>Once you have explored <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code>, you will be equipped to perform real-world updates with minimal difficulty. These techniques will deepen your understanding of htmx and demonstrate how to leverage the full range of HTTP methods to keep your Razor Pages clean, efficient, and highly interactive.</p>
+<doc-anchor-target id="embracing-restful-updates-in-razor-pages">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#embracing-restful-updates-in-razor-pages">#</doc-anchor-trigger>
+        <span>Embracing RESTful Updates in Razor Pages</span>
+    </h2>
+</doc-anchor-target>
+<p>RESTful principles emphasize the importance of using the correct HTTP methods to perform different actions, and htmx is an excellent fit for this approach. It provides easy-to-use HTML attributes for PUT, PATCH, and DELETE requests, aligning with RESTful conventions. Instead of relying solely on POST requests for every action, RESTful principles advocate using PUT for full updates, PATCH for partial modifications, and DELETE for removing data. This adherence to RESTful standards ensures that your code is both expressive and readable while following best practices, giving you confidence in your choice of technology.</p>
+<p>Transitioning from using <code v-pre>hx-post</code> to <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, or <code v-pre>hx-delete</code> is a straightforward process. You&#x27;re essentially instructing htmx to issue a different verb in the HTTP request, while the mechanics of fetching partial HTML and swapping it into your page remain unchanged. PUT is typically used to completely overwrite a resource, PATCH modifies it partially, and DELETE, as the name suggests, removes it entirely. The server code you write in your Razor Pages will handle these verbs by naming the handler methods appropriately, such as <code v-pre>OnPut()</code>, <code v-pre>OnPatch()</code>, and <code v-pre>OnDelete()</code>.</p>
+<p>To set up these handlers, define them in your Razor Page’s code-behind. For example, if you have a page called <code v-pre>EditUser.cshtml.cs</code>, you might include methods like:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPutEdit(int userId, string newName)
+{
+    // Replace old data entirely
+    // Update the user’s name in your data store
+    return Content($&quot;&lt;div&gt;Updated user {userId} to {newName}&lt;/div&gt;&quot;, &quot;text/html&quot;);
+}
+
+public IActionResult OnPatchEdit(int userId, string newName)
+{
+    // Partially update the user’s record, just changing the name
+    return Content($&quot;&lt;div&gt;Patched user {userId} to {newName}&lt;/div&gt;&quot;, &quot;text/html&quot;);
+}
+
+public IActionResult OnDeleteRemove(int userId)
+{
+    // Remove user from data store
+    return Content($&quot;&lt;div&gt;User {userId} has been removed&lt;/div&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>Once the Razor Page logic is established, you can create the appropriate views that trigger these HTTP verbs using htmx attributes. For example, consider implementing inline content editing for a user&#x27;s name with the <code v-pre>hx-put</code> attribute. When the user clicks on their name, a text field appears, allowing them to enter a new value and save it. This text field acts as an input for the new username.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;span hx-get=&quot;/EditUser?handler=Edit&amp;userId=1&quot; hx-target=&quot;#editForm&quot; hx-swap=&quot;innerHTML&quot;&gt;
+    John Doe
+&lt;/span&gt;
+&lt;div id=&quot;editForm&quot;&gt;&lt;/div&gt;
+
+&lt;!-- In the partial that returns on hx-get --&gt;
+&lt;form hx-put=&quot;/EditUser?handler=Edit&amp;userId=1&quot; hx-target=&quot;#result&quot; hx-swap=&quot;innerHTML&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;newName&quot; value=&quot;John Doe&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>When you click on the name, a small form is loaded into the <code v-pre>editForm</code> container via an <code v-pre>hx-get</code> request. After entering a new name and submitting the form, htmx sends a PUT request to <code v-pre>/EditUser?handler=Edit&amp;userId=1</code>. The <code v-pre>OnPutEdit</code> method in your Razor Page handles the request, updates the data store, and returns a snippet of HTML that is swapped into the <code v-pre>#result</code> div, which is essential for updating the user interface.</p>
+<p>By adopting these methods, you create a more intuitive setup with a clearer separation of responsibilities. The server immediately understands the type of operation you want to perform, even before processing the code’s logic. This approach can lead to more consistent code across larger projects and prepares you to work with any tool or system that expects RESTful conventions by default.</p>
+<doc-anchor-target id="streamlining-removals-with-hx-delete">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#streamlining-removals-with-hx-delete">#</doc-anchor-trigger>
+        <span>Streamlining Removals with hx-delete</span>
+    </h2>
+</doc-anchor-target>
+<p>Implementing data deletions with <code v-pre>hx-delete</code> not only allows you to seamlessly remove records but also provides users with immediate visual feedback, helping them understand the impact of your actions. By using the DELETE method instead of POST, your code becomes more expressive, clearly indicating the purpose of the request. When combined with Razor Pages’ <code v-pre>OnDelete()</code> handler, this method results in concise logic that communicates intent at a glance.</p>
+<p>For instance, if your application has a list of items to manage, you can provide a button or link that issues a DELETE request when clicked. In Razor Pages, you would name your handler method <code v-pre>OnDeleteSomething()</code>, allowing htmx to send a DELETE request to that endpoint. This is a common approach to effectively handling deletions.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteUser(int userId)
+{
+    // Perform data store removal of user
+    bool success = DeleteUserFromDatabase(userId);
+    if (!success)
+        return BadRequest(&quot;Unable to delete user.&quot;);
+    return Content($&quot;&lt;div&gt;User {userId} was successfully deleted.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>For the UI side, you can attach hx-delete to a link or button that targets your Razor Page handler. Each user row or entry in your HTML might include a removal link like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;user-1&quot;&gt;
+    &lt;span&gt;Alice Smith&lt;/span&gt;
+    &lt;button hx-delete=&quot;/Users?handler=User&amp;userId=1&quot;
+            hx-target=&quot;#user-1&quot;
+            hx-swap=&quot;outerHTML&quot;&gt;
+        Delete
+    &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>When clicked, this triggers a DELETE request, which the server processes in the <code v-pre>OnDeleteUser()</code> method. If the request is successful, it returns a snippet of HTML. In this case, we use <code v-pre>outerHTML</code> for the <code v-pre>hx-swap</code> attribute, allowing us to remove the user’s entire container from the DOM once the response is received. This creates a smooth effect where the user disappears from the list without requiring a page refresh.</p>
+<p>To provide users with additional feedback, you might choose to replace the deleted item’s row with a confirmation message. You can adjust the content returned in your <code v-pre>OnDelete</code> method or consider returning a partial view that confirms the user has been removed. Additionally, you could handle error conditions by returning an error message snippet, which htmx can then insert into the target area, informing users if something went wrong.</p>
+<p>Using <code v-pre>hx-delete</code> enhances clarity by allowing you to differentiate removal operations from other interactions. It also makes your code easier to understand and maintain. You naturally adhere to REST-like conventions within Razor Pages, resulting in an interface that feels immediate and responsive. This keeps your users engaged and connected without the complexities of managing multiple frontend frameworks.</p>
+<doc-anchor-target id="streamlined-restful-responses">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#streamlined-restful-responses">#</doc-anchor-trigger>
+        <span>Streamlined RESTful Responses</span>
+    </h2>
+</doc-anchor-target>
+<p>When using <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code>, it&#x27;s essential to customize your server responses to accurately indicate the success or failure of each request. For example, a <code v-pre>200 OK</code> status allows htmx to process an HTML snippet for updating your user interface. In contrast, a <code v-pre>204 No Content</code> status signals a successful update or deletion without needing to return any additional data. On the other hand, a <code v-pre>400 Bad Request</code> status indicates an error, and you can provide an error message to display on your page.</p>
+<p>Returning a 200 status code along with a small HTML partial to update a section of the page is a common scenario. This status code, which represents a complete success, can be implemented in your Razor Page as follows:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPutUpdate(int id, string value)
+{
+    // Perform your update logic...
+    return Content($&quot;&lt;div&gt;Update successful for item {id}.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>If you don&#x27;t need to send back any new content, returning a 204 status code helps keep the process lightweight. This is especially useful when the user interface needs to remove the old element or make adjustments following a successful request. You can use the <code v-pre>NoContent()</code> method for this purpose.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteItem(int id)
+{
+    // Perform delete logic...
+    return NoContent(); // Tells htmx there's nothing to replace, but it was successful
+}</code></pre>
+</doc-codeblock></div>
+<p>When dealing with invalid input or failures, returning a 400 status code can help you clearly communicate errors. You can include a brief explanation of what went wrong in the response body:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPatchData(int id, string newValue)
+{
+    if (string.IsNullOrEmpty(newValue))
+        return BadRequest(&quot;Value cannot be empty.&quot;);
+    // Otherwise, perform your partial update...
+    return Content($&quot;&lt;p&gt;Item {id} successfully patched to '{newValue}'&lt;/p&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>To ensure your user interface (UI) accurately reflects each response, consider the location where the snippet is being injected. For a 200 response that includes HTML, it&#x27;s advisable to target the parent container of the item so that htmx can visibly update the Document Object Model (DOM). If you return a 204 response, htmx won’t replace anything; therefore, make sure your client code accounts for the removal or refresh of relevant elements as necessary. In error cases, you can send back HTML that displays a message, targeting a specific container in the UI to ensure the message is clearly visible.</p>
+<p>Debugging these RESTful htmx operations is straightforward using your browser’s developer tools. Simply open the Network tab to view the headers and status codes of each request. A quick scan will show the issued verb, the data sent, and the server&#x27;s response. For real-time details, you can also attach event listeners for htmx hooks, such as htmx:beforeRequest or htmx:afterRequest, making the debugging process even easier.</p>
+<p>In the next chapter, we will explore how to gain precise control over where and how UI elements are updated once your server responds. By mastering <code v-pre>hx-target</code> and <code v-pre>hx-swap</code>, you will be able to fine-tune everything from small inline changes to entire page segments, all while maintaining a consistent UI and ensuring quick interactions.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -320,6 +446,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 6 - Working with hx-put, hx-patch, and hx-delete", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 6 - Working with hx-put, hx-patch, and hx-delete", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
