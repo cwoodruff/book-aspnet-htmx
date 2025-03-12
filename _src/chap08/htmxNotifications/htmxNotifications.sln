@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "htmxNotifications", "htmxNotifications\htmxNotifications.csproj", "{AD994D20-3D43-414B-A731-9CB8ED62573C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD994D20-3D43-414B-A731-9CB8ED62573C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD994D20-3D43-414B-A731-9CB8ED62573C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD994D20-3D43-414B-A731-9CB8ED62573C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD994D20-3D43-414B-A731-9CB8ED62573C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
