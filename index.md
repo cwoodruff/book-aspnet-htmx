@@ -41,23 +41,23 @@ To find translations, please check out the [Translations](./Translations.md) pag
         </tr>
         <tr>
             <td>5</td>
-            <td>Mastering hx-get and hx-post</td>
+            <td><a href="https://aspnet-htmx.com/chapter05/">Mastering hx-get and hx-post</a></td>
             <td></td>
         </tr>
         <tr>
             <td>6</td>
-            <td>Working with hx-put, hx-patch, and hx-delete</td>
+            <td><a href="https://aspnet-htmx.com/chapter06/">Working with hx-put, hx-patch, and hx-delete</a></td>
             <td></td>
         </tr>
         <tr>
             <td rowspan=4>Section 2: Advanced Interactivity</td>
             <td>7</td>
-            <td>Working with hx-target and hx-swap</td>
+            <td><a href="https://aspnet-htmx.com/chapter07/">Working with hx-target and hx-swap</a></td>
             <td></td>
         </tr>
         <tr>
             <td>8</td>
-            <td>Handling Events with hx-trigger and hx-on</td>
+            <td><a href="https://aspnet-htmx.com/chapter08/">Handling Events with hx-trigger and hx-on</a></td>
             <td></td>
         </tr>
         <tr>

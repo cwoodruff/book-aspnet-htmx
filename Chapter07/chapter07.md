@@ -4,7 +4,6 @@ icon: stack
 label: Chap 7 - Working with hx-target and hx-swap
 meta:
 title: "Working with hx-target and hx-swap"
-visibility: hidden
 ---
 # 7
 
