@@ -193,7 +193,7 @@ You can inspect AJAX requests in the browser’s dev tools under the Network tab
 
 ```C#
 document.body.addEventListener('htmx:configRequest', function(event) {
-    console.log("HTMX request", event.detail);
+    console.log("htmx request", event.detail);
 });
 ```
 
