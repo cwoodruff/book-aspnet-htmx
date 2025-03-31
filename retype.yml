@@ -2,7 +2,7 @@ input: ./
 output: .retype
 url: https://cwoodruff.github.io/book-aspnet-htmx/
 branding:
-  title: ASP.NET Core Reimagined with HTMX
+  title: ASP.NET Core Reimagined with htmx
   label: v1
   logo: images/network200.png
   logoDark: images/network200.png

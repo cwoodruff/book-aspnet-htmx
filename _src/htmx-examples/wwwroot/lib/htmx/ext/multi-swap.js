@@ -21,7 +21,7 @@
                     var elementSwapStyle = typeof (split[1]) !== "undefined" ? split[1] : "innerHTML";
 
                     if (elementSelector.charAt(0) !== '#') {
-                        console.error("HTMX multi-swap: unsupported selector '" + elementSelector + "'. Only ID selectors starting with '#' are supported.");
+                        console.error("htmx multi-swap: unsupported selector '" + elementSelector + "'. Only ID selectors starting with '#' are supported.");
                         return;
                     }
 
@@ -34,7 +34,7 @@
                     if (elementToSwap) {
                         api.oobSwap(swapStyle, elementToSwap, settleInfo);
                     } else {
-                        console.warn("HTMX multi-swap: selector '" + selector + "' not found in source content.");
+                        console.warn("htmx multi-swap: selector '" + selector + "' not found in source content.");
                     }
                 }
 

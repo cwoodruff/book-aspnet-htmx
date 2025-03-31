@@ -13,7 +13,7 @@ This extension adds support for Server Sent Events to htmx.  See /www/extensions
     htmx.defineExtension("sse", {
 
         /**
-         * Init saves the provided reference to the internal HTMX API.
+         * Init saves the provided reference to the internal htmx API.
          *
          * @param {import("../htmx").HtmxInternalApi} api
          * @returns void
