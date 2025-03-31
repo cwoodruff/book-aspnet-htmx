@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.796686743745">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.796737204639">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -35,12 +35,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.796686743745" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.796737204639" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.796686743745" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.796737204639" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.796686743745" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.796686743745" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.796737204639" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.796737204639" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -276,7 +276,7 @@
 </ul>
 <p>Example:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/hello&quot; hx-target=&quot;#message&quot;&gt;Click me!&lt;/button&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Index?handler=hello&quot; hx-target=&quot;#message&quot;&gt;Click me!&lt;/button&gt;
 &lt;div id=&quot;message&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <p>When the button is clicked, an asynchronous <code v-pre>GET</code> request is made to <code v-pre>/hello</code>, and the response updates the <code v-pre>#message</code> div.</p>
@@ -302,7 +302,7 @@
 </doc-anchor-target>
 <p>Unlike traditional AJAX, where you manually manipulate the DOM, htmx automatically swaps the response into a specified target. This is controlled using <code v-pre>hx-target</code> and <code v-pre>hx-swap</code>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/getSnippet&quot; hx-target=&quot;#container&quot; hx-swap=&quot;outerHTML&quot;&gt;Load Content&lt;/button&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Index?handler=getSnippet&quot; hx-target=&quot;#container&quot; hx-swap=&quot;outerHTML&quot;&gt;Load Content&lt;/button&gt;
 &lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <ul>
@@ -354,7 +354,7 @@ public class IndexModel : PageModel
 </doc-anchor-target>
 <p>By default, htmx triggers requests on clicks, but you can customize it with <code v-pre>hx-trigger</code>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; hx-get=&quot;/search&quot; hx-target=&quot;#results&quot; hx-trigger=&quot;keyup changed delay:500ms&quot; /&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; hx-get=&quot;/Index?handler=search&quot; hx-target=&quot;#results&quot; hx-trigger=&quot;keyup changed delay:500ms&quot; /&gt;
 &lt;div id=&quot;results&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <p>Here, every keystroke (after a 500ms delay) triggers a request to update the results dynamically.</p>
