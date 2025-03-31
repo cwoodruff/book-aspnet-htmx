@@ -28,7 +28,7 @@ htmx is a lightweight JavaScript library that extends HTML's capabilities, allow
 For example, consider a simple interaction where a user clicks a button to load a message dynamically:
 
 ```HTML
-<button hx-get="/hello" hx-target="#message">Click Me!</button>
+<button hx-get="/Index?handler=hello" hx-target="#message">Click Me!</button>
 <div id="message"></div>
 ```
 

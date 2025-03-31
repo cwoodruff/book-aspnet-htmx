@@ -25,7 +25,7 @@ At its core, htmx allows you to send AJAX requests using simple HTML attributes.
 
 Example:
 ```HTML
-<button hx-get="/hello" hx-target="#message">Click me!</button>
+<button hx-get="/Index?handler=hello" hx-target="#message">Click me!</button>
 <div id="message"></div>
 ```
 
@@ -47,7 +47,7 @@ This means you can build dynamic experiences while keeping your app’s logic ce
 Unlike traditional AJAX, where you manually manipulate the DOM, htmx automatically swaps the response into a specified target. This is controlled using `hx-target` and `hx-swap`:
 
 ```HTML
-<button hx-get="/getSnippet" hx-target="#container" hx-swap="outerHTML">Load Content</button>
+<button hx-get="/Index?handler=getSnippet" hx-target="#container" hx-swap="outerHTML">Load Content</button>
 <div id="container"></div>
 ```
 
@@ -95,7 +95,7 @@ In the above example, clicking the button triggers an `hx-get` request to `OnGet
 By default, htmx triggers requests on clicks, but you can customize it with `hx-trigger`:
 
 ```HTML
-<input type="text" hx-get="/search" hx-target="#results" hx-trigger="keyup changed delay:500ms" />
+<input type="text" hx-get="/Index?handler=search" hx-target="#results" hx-trigger="keyup changed delay:500ms" />
 <div id="results"></div>
 ```
 
