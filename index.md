@@ -92,7 +92,7 @@ To find translations, please check out the [Translations](./Translations.md) pag
             <td></td>
         </tr>
         <tr>
-            <td rowspan=3>Section 4: Enhancing User Experience</td>
+            <td rowspan=4>Section 4: Enhancing User Experience</td>
             <td>15</td>
             <td>Visual Feedback with hx-indicator and hx-preserve</td>
             <td></td>
