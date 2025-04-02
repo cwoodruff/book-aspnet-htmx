@@ -109,7 +109,7 @@ To find translations, please check out the [Translations](./Translations.md) pag
         </tr>
         <tr>
             <td>18</td>
-            <td>Drag, Drop, and Dynamism: Creating Interactive UIs with Drag and Drop</td>
+            <td>Creating Interactive UIs with Drag and Drop</td>
             <td></td>
         </tr>
         <tr>
