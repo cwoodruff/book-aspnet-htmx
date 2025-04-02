@@ -1,12 +1,12 @@
 ---
 order: 5
 icon: stack
-label: Chap 26 - Deploying htmx Applications on Azure
+label: Chap 26 - Testing htmx Applications
 meta:
-title: "Deploying htmx Applications on Azure"
+title: "Testing htmx Applications"
 visibility: hidden
 ---
-# Deploying htmx Applications on Azure
+# Testing htmx Applications
 
 
 

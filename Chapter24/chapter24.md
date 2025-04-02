@@ -1,12 +1,12 @@
 ---
 order: 7
 icon: stack
-label: Chap 24 - Debugging htmx Applications
+label: Chap 24 - Creating a Chat Application
 meta:
-title: "Debugging htmx Applications"
+title: "Creating a Chat Application"
 visibility: hidden
 ---
-# Debugging htmx Applications
+# Creating a Chat Application
 
 
 

@@ -1,12 +1,12 @@
 ---
 order: 6
 icon: stack
-label: Chap 25 - Testing htmx Applications
+label: Chap 25 - Debugging htmx Applications
 meta:
-title: "Testing htmx Applications"
+title: "Debugging htmx Applications"
 visibility: hidden
 ---
-# Testing htmx Applications
+# Debugging htmx Applications
 
 
 

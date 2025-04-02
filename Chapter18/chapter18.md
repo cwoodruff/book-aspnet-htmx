@@ -1,12 +1,12 @@
 ---
 order: 13
 icon: stack
-label: Chap 18 - Caching and History with hx-history and hx-history-elt
+label: Chap 18 - Drag, Drop, and Dynamism- Creating Interactive UIs with Drag and Drop
 meta:
-title: "Caching and History with hx-history and hx-history-elt"
+title: "Drag, Drop, and Dynamism: Creating Interactive UIs with Drag and Drop"
 visibility: hidden
 ---
-# Caching and History with hx-history and hx-history-elt
+# Drag, Drop, and Dynamism: Creating Interactive UIs with Drag and Drop
 
 
 

@@ -108,50 +108,55 @@ To find translations, please check out the [Translations](./Translations.md) pag
             <td></td>
         </tr>
         <tr>
-            <td rowspan=3>Section 5: Performance and Optimization</td>
             <td>18</td>
+            <td>Drag, Drop, and Dynamism: Creating Interactive UIs with Drag and Drop</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td rowspan=3>Section 5: Performance and Optimization</td>
+            <td>19</td>
             <td>Caching and History with hx-history and hx-history-elt</td>
             <td></td>
         </tr>
         <tr>
-            <td>19</td>
+            <td>20</td>
             <td>Optimizing Requests with hx-disable and hx-request</td>
             <td></td>
         </tr>
         <tr>
-            <td>20</td>
+            <td>21</td>
             <td>Performance Optimization</td>
             <td></td>
         </tr>
         <tr>
             <td rowspan=3>Section 6: Real-World Scenarios</td>
-            <td>21</td>
+            <td>22</td>
             <td>Building a Dashboard with htmx</td>
             <td></td>
         </tr>
         <tr>
-            <td>22</td>
+            <td>23</td>
             <td>Developing an E-Commerce Application</td>
             <td></td>
         </tr>
         <tr>
-            <td>23</td>
+            <td>24</td>
             <td>Creating a Chat Application</td>
             <td></td>
         </tr>
         <tr>
             <td rowspan=3>Section 7: Deployment and Maintenance</td>
-            <td>24</td>
+            <td>25</td>
             <td>Debugging htmx Applications</td>
             <td></td>
         </tr>
         <tr>
-            <td>25</td>
+            <td>26</td>
             <td>Testing htmx Applications</td>
             <td></td>
         </tr>
         <tr>
-            <td>26</td>
+            <td>27</td>
             <td>Deploying htmx Applications on Azure</td>
             <td></td>
         </tr>

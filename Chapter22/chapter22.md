@@ -1,12 +1,12 @@
 ---
 order: 9
 icon: stack
-label: Chap 22 - Developing an E-Commerce Application
+label: Chap 22 - Building a Dashboard with htmx
 meta:
-title: "Developing an E-Commerce Application"
+title: "Building a Dashboard with htmx"
 visibility: hidden
 ---
-# Developing an E-Commerce Application
+# Building a Dashboard with htmx
 
 
 

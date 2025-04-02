@@ -1,12 +1,12 @@
 ---
 order: 11
 icon: stack
-label: Chap 20 - Performance Optimization
+label: Chap 20 - Optimizing Requests with hx-disable and hx-request
 meta:
-title: "Performance Optimization"
+title: "Optimizing Requests with hx-disable and hx-request"
 visibility: hidden
 ---
-# Performance Optimization
+# Optimizing Requests with hx-disable and hx-request
 
 
 

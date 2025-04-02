@@ -1,12 +1,12 @@
 ---
 order: 10
 icon: stack
-label: Chap 21 - Building a Dashboard with htmx
+label: Chap 21 - Performance Optimization
 meta:
-title: "Building a Dashboard with htmx"
+title: "Performance Optimization"
 visibility: hidden
 ---
-# Building a Dashboard with htmx
+# Performance Optimization
 
 
 
