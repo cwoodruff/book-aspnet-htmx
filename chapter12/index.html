@@ -7,14 +7,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.796951986895">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.796999948787">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
 
     <!-- Primary Meta Tags -->
-    <title>Tabs and Accordions</title>
-    <meta name="title" content="Tabs and Accordions">
+    <title>Building Blocks with HTML Components: Tabs and Accordions</title>
+    <meta name="title" content="Building Blocks with HTML Components: Tabs and Accordions">
+    <meta name="description" content="If you've followed along so far, you've seen how htmx can inject interactivity into your ASP.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter12/">
@@ -22,21 +23,24 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter12/">
-    <meta property="og:title" content="Tabs and Accordions">
+    <meta property="og:title" content="Building Blocks with HTML Components: Tabs and Accordions">
+    <meta property="og:description" content="If you've followed along so far, you've seen how htmx can inject interactivity into your ASP.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter12/">
-    <meta property="twitter:title" content="Tabs and Accordions">
+    <meta property="twitter:title" content="Building Blocks with HTML Components: Tabs and Accordions">
+    <meta property="twitter:description" content="If you've followed along so far, you've seen how htmx can inject interactivity into your ASP.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.796951986895" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.796999948787" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.796951986895" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.796999948787" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.796951986895" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.796999948787" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.796999948787" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -243,18 +247,261 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="tabs-and-accordions" class="break-words">
+<doc-anchor-target id="building-blocks-with-html-components--tabs-and-accordions" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#tabs-and-accordions">#</doc-anchor-trigger>
-        <span>Tabs and Accordions</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#building-blocks-with-html-components--tabs-and-accordions">#</doc-anchor-trigger>
+        <span>Building Blocks with HTML Components- Tabs and Accordions</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>If you&#x27;ve followed along so far, you&#x27;ve seen how htmx can inject interactivity into your ASP.NET Core Razor Pages apps with minimal effort—and even less JavaScript. We&#x27;ve tackled forms, modals, and lists, showing how htmx makes everyday UI patterns feel lighter and more dynamic. Now it&#x27;s time to bring that same approachability to a couple of common, yet surprisingly fiddly, UI elements: tabs and accordions.</p>
+<p>Tabs and accordions are everywhere—from dashboards and documentation pages to mobile menus and feature comparisons. But implementing them usually means reaching for JavaScript-heavy solutions, custom components, or client-side frameworks. Not here. In this chapter, we’ll show you how to build flexible, fully server-driven tabs and accordions using nothing more than HTML, Razor Pages, and htmx. No complex frontend logic, just smart, dynamic updates from your server.</p>
+<p>You’ll learn how to dynamically swap content, manage user-triggered state, and even enhance the experience further with a little Hyperscript magic—all while keeping your markup clean and your code easy to reason about. By the end, you’ll have practical, reusable components that fit right into your Razor Pages project, delivering a polished user experience without the usual overhead. Let&#x27;s get into it.</p>
+<doc-anchor-target id="building-tabbed-content-with-razor-pages-and-htmx">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#building-tabbed-content-with-razor-pages-and-htmx">#</doc-anchor-trigger>
+        <span>Building Tabbed Content with Razor Pages and htmx</span>
+    </h2>
 </doc-anchor-target>
+<p>Tabbed interfaces are a staple of web applications. They let users quickly switch between different content panels without navigating away from the current page. Traditionally, tabs are powered by JavaScript: click handlers toggle classes, show and hide elements, and sometimes fetch data using fetch or jQuery’s AJAX. While this works, it often leads to bloated client-side logic and tight coupling between presentation and behavior. With htmx and Razor Pages, you can skip the JavaScript and let the server handle the logic—cleanly and declaratively.</p>
+<p>Let’s say you’re building a product details page in an e-commerce application. You want to show product information, specifications, and reviews as separate tabs. Instead of preloading everything or writing a JavaScript tab manager, you can load each section on demand using hx-get, and target a shared container using hx-target.</p>
+<p>Start with your base Razor Page. Here&#x27;s the layout of the Product.cshtml page:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">@page
+@model ProductModel
+
+&lt;h2&gt;@Model.ProductName&lt;/h2&gt;
+
+&lt;div class=&quot;tabs&quot;&gt;
+    &lt;button hx-get=&quot;/Product?handler=Info&amp;productId=@Model.ProductId&quot; hx-target=&quot;#tab-content&quot; hx-swap=&quot;innerHTML&quot;&gt;Info&lt;/button&gt;
+    &lt;button hx-get=&quot;/Product?handler=Specs&amp;productId=@Model.ProductId&quot; hx-target=&quot;#tab-content&quot; hx-swap=&quot;innerHTML&quot;&gt;Specifications&lt;/button&gt;
+    &lt;button hx-get=&quot;/Product?handler=Reviews&amp;productId=@Model.ProductId&quot; hx-target=&quot;#tab-content&quot; hx-swap=&quot;innerHTML&quot;&gt;Reviews&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;tab-content&quot; class=&quot;tab-content&quot;&gt;
+    &lt;p&gt;Select a tab to view details.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Each tab is a button that triggers an hx-get request. The target is the #tab-content div, which means the content returned by the server will be swapped into that element. We&#x27;re using hx-swap=&quot;innerHTML&quot; to ensure we’re only replacing the content inside the container, not the element itself—so any layout or CSS styles applied to #tab-content remain intact.</p>
+<p>Now let’s look at the Product.cshtml.cs page model. We’ll handle each tab request with a separate handler:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public class ProductModel : PageModel
+{
+    public string ProductName { get; set; } = &quot;Contoso Headphones&quot;;
+    public int ProductId { get; set; } = 42;
+
+    public IActionResult OnGetInfo(int productId)
+    {
+        var html = &quot;&lt;p&gt;This is a great pair of wireless headphones with noise cancellation and 20-hour battery life.&lt;/p&gt;&quot;;
+        return Content(html, &quot;text/html&quot;);
+    }
+
+    public IActionResult OnGetSpecs(int productId)
+    {
+        var html = &quot;&lt;ul&gt;&lt;li&gt;Bluetooth 5.2&lt;/li&gt;&lt;li&gt;Noise Cancellation&lt;/li&gt;&lt;li&gt;USB-C Charging&lt;/li&gt;&lt;/ul&gt;&quot;;
+        return Content(html, &quot;text/html&quot;);
+    }
+
+    public IActionResult OnGetReviews(int productId)
+    {
+        var html = &quot;&lt;p&gt;⭐️⭐️⭐️⭐️☆ - Sounds amazing and battery lasts all day.&lt;/p&gt;&quot;;
+        return Content(html, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>Each tab triggers a unique handler based on the ?handler= query string. Razor Pages routes the request appropriately, and each handler returns a snippet of HTML. Because htmx expects just a fragment, there’s no need to wrap this in a full layout or view—just return the markup you want injected into the tab container.</p>
+<p>This approach is refreshingly simple. You don’t preload any unnecessary content, you don’t maintain tab state on the client, and you don’t worry about client-side lifecycle events. The tabs remain clickable HTML buttons, and your Razor Pages backend handles the logic of what to render and when.</p>
+<p>You can make it even more elegant by moving the HTML fragments into partial views, but the core idea remains the same: using hx-get to fetch content, hx-target to decide where it goes, and hx-swap to control how it’s inserted. Combined, they give you a robust tab interface with almost no JavaScript and all the power of Razor Pages behind the scenes.</p>
+<doc-anchor-target id="crafting-lazy-loaded-faq-accordions-with-razor-pages-and-htmx">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#crafting-lazy-loaded-faq-accordions-with-razor-pages-and-htmx">#</doc-anchor-trigger>
+        <span>Crafting Lazy-Loaded FAQ Accordions with Razor Pages and htmx</span>
+    </h2>
+</doc-anchor-target>
+<p>While tabs present side-by-side content views that users toggle between, accordions follow a more vertical, stacked pattern. They’re often used when you want to let users drill into specific content without overwhelming the page visually—think FAQs, documentation, or expandable panels in a dashboard. The challenge with traditional accordion implementations is that they either load all content up front (leading to bloated pages) or require JavaScript to manage show/hide logic. With htmx, we can ditch the JavaScript and avoid the preload penalty by lazily loading content as users expand each section.</p>
+<p>Let’s build an FAQ section where clicking a question expands the answer—but the answer isn’t fetched until the user wants to see it. This is where hx-get and hx-target really shine. You send a request when the accordion header is clicked and inject the response into a specific area under that question.</p>
+<p>Start with a Razor Page called Faq.cshtml. Here’s what the markup might look like:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">@page
+@model FaqModel
+
+&lt;h2&gt;Frequently Asked Questions&lt;/h2&gt;
+
+&lt;div class=&quot;accordion&quot;&gt;
+    &lt;div class=&quot;question&quot;&gt;
+        &lt;h3&gt;
+            &lt;button hx-get=&quot;/Faq?handler=Answer&amp;id=1&quot; hx-target=&quot;#answer-1&quot; hx-swap=&quot;innerHTML&quot;&gt;
+                What is your return policy?
+            &lt;/button&gt;
+        &lt;/h3&gt;
+        &lt;div id=&quot;answer-1&quot; class=&quot;answer&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;question&quot;&gt;
+        &lt;h3&gt;
+            &lt;button hx-get=&quot;/Faq?handler=Answer&amp;id=2&quot; hx-target=&quot;#answer-2&quot; hx-swap=&quot;innerHTML&quot;&gt;
+                Do you ship internationally?
+            &lt;/button&gt;
+        &lt;/h3&gt;
+        &lt;div id=&quot;answer-2&quot; class=&quot;answer&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;question&quot;&gt;
+        &lt;h3&gt;
+            &lt;button hx-get=&quot;/Faq?handler=Answer&amp;id=3&quot; hx-target=&quot;#answer-3&quot; hx-swap=&quot;innerHTML&quot;&gt;
+                How do I request a refund?
+            &lt;/button&gt;
+        &lt;/h3&gt;
+        &lt;div id=&quot;answer-3&quot; class=&quot;answer&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Each question has a button that makes a lazy request to load the answer. When clicked, htmx sends an HTTP GET request to the appropriate handler and injects the returned answer into the div just beneath the question. The rest of the page remains untouched—no full reloads, no DOM juggling.</p>
+<p>The Faq.cshtml.cs page model handles the responses. Here&#x27;s how you could return answers based on an ID:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public class FaqModel : PageModel
+{
+    private readonly Dictionary&lt;int, string&gt; _answers = new()
+    {
+        { 1, &quot;You can return any item within 30 days of delivery for a full refund.&quot; },
+        { 2, &quot;Yes, we ship to over 50 countries worldwide. Shipping costs vary by region.&quot; },
+        { 3, &quot;To request a refund, visit your order history and click 'Request Refund' next to the item.&quot; }
+    };
+
+    public IActionResult OnGetAnswer(int id)
+    {
+        if (_answers.TryGetValue(id, out var answer))
+        {
+            return Content($&quot;&lt;p&gt;{answer}&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        return NotFound();
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p id="">This model keeps things simple. Each answer is returned as a raw HTML snippet, injected directly into the #answer- element targeted by the button. You avoid bloating the initial page load, and each section only loads when needed—making it perfect for mobile or bandwidth-sensitive users.</p>
+<p>This lazy loading pattern also scales well. You could pull FAQ content from a database or CMS and still only query what&#x27;s necessary. And since the interaction is server-driven, you don’t have to manage state in the browser. It’s all declarative and minimal.</p>
+<p>By leaning on htmx’s ability to surgically update the DOM, you create a snappy, interactive accordion interface that feels modern without leaning on a frontend framework. No JavaScript toggling, no preloading unnecessary data—just a clean, efficient FAQ that works out of the box.</p>
+<doc-anchor-target id="polishing-tab-interactions-with-hyperscript-and-razor-pages">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#polishing-tab-interactions-with-hyperscript-and-razor-pages">#</doc-anchor-trigger>
+        <span>Polishing Tab Interactions with Hyperscript and Razor Pages</span>
+    </h2>
+</doc-anchor-target>
+<p>htmx makes it easy to fetch and swap content for tab interfaces, but it doesn’t manage visual state—like highlighting which tab is active or animating content transitions. That’s where Hyperscript comes in. Hyperscript is a small scripting language that plays beautifully with htmx and HTML, allowing you to add behavior directly to elements without reaching for full JavaScript. In a tabbed interface, it helps tie the whole experience together with just a few readable attributes.</p>
+<p>Let’s take a simple tabbed dashboard and level it up. We’ll show active tab highlighting, apply a smooth fade-in animation when switching content, and even enable keyboard navigation for accessibility. Start with a basic layout for Dashboard.cshtml:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">@page
+@model DashboardModel
+
+&lt;h2&gt;My Dashboard&lt;/h2&gt;
+
+&lt;div class=&quot;tabs&quot;&gt;
+    &lt;button _=&quot;on click
+                remove .active from .tabs button
+                add .active to me
+                get my @hx-get then
+                put it into #panel with a fade transition&quot;
+            hx-get=&quot;/Dashboard?handler=Overview&quot;&gt;Overview&lt;/button&gt;
+
+    &lt;button _=&quot;on click
+                remove .active from .tabs button
+                add .active to me
+                get my @hx-get then
+                put it into #panel with a fade transition&quot;
+            hx-get=&quot;/Dashboard?handler=Reports&quot;&gt;Reports&lt;/button&gt;
+
+    &lt;button _=&quot;on click
+                remove .active from .tabs button
+                add .active to me
+                get my @hx-get then
+                put it into #panel with a fade transition&quot;
+            hx-get=&quot;/Dashboard?handler=Settings&quot;&gt;Settings&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;panel&quot; class=&quot;tab-panel fade&quot;&gt;
+    &lt;p&gt;Select a tab to view content.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Notice the _= attribute. That’s Hyperscript. When a button is clicked, Hyperscript removes the .active class from all buttons, adds it to the clicked one, performs the fetch using the @hx-get attribute, and injects the result into the #panel element—with a fade effect for smoothness. You get both state management and animation in a single, declarative snippet.</p>
+<p>To make the transitions feel polished, we define the .fade class in your CSS:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-css"><code v-pre class="language-css">.tab-panel.fade {
+opacity: 0;
+transition: opacity 0.3s ease-in-out;
+}
+
+.tab-panel.fade:load {
+opacity: 1;
+}</code></pre>
+</doc-codeblock></div>
+<p>This subtle transition improves the user experience by gently fading in the new content. No jarring swaps, no sudden layout shifts—just a smoother feel that modern users expect.</p>
+<p>But let’s not forget accessibility. Tabs should be keyboard-navigable. Hyperscript can help here too. You can use the on keydown event to support left/right navigation between tab buttons:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button tabindex=&quot;0&quot;
+        _=&quot;on keydown[key is 'ArrowRight'] then
+            call nextElementSibling.click()
+            on keydown[key is 'ArrowLeft'] then
+            call previousElementSibling.click()&quot;
+        hx-get=&quot;/Dashboard?handler=Overview&quot;&gt;
+    Overview
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>Each tab button listens for arrow key presses and programmatically triggers the next or previous button’s click event. With just a few more lines, all your tabs are now keyboard-friendly without needing a full ARIA role setup.</p>
+<p>Finally, here’s how the backend handles the content. In Dashboard.cshtml.cs:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public class DashboardModel : PageModel
+{
+public IActionResult OnGetOverview() =&gt;
+Content(&quot;&lt;p&gt;Welcome to your personalized overview.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+
+    public IActionResult OnGetReports() =&gt;
+        Content(&quot;&lt;p&gt;Here are your latest reports and analytics.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+
+    public IActionResult OnGetSettings() =&gt;
+        Content(&quot;&lt;p&gt;Update your preferences and configurations here.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>Combining htmx, Razor Pages, and Hyperscript creates a powerful pattern: the server controls what content is shown, htmx controls how it&#x27;s fetched and inserted, and Hyperscript enhances the UX with visual polish and behavior—all without reaching for a heavyweight framework. The result is a dashboard that feels dynamic and professional, with minimal code and maximum clarity.</p>
+<doc-anchor-target id="refining-tab-and-accordion-ux-with-state-caching-and-reusability">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#refining-tab-and-accordion-ux-with-state-caching-and-reusability">#</doc-anchor-trigger>
+        <span>Refining Tab and Accordion UX with State, Caching, and Reusability</span>
+    </h2>
+</doc-anchor-target>
+<p>As you start introducing more interactivity into your Razor Pages app with tabs and accordions, user experience becomes more than just the visuals—it’s about performance, state awareness, and reusability. A polished UI doesn’t just look nice; it behaves intuitively. That’s what we’ll focus on in this final section: how to optimize your tab and accordion components for a smooth, stateful, and maintainable user experience.</p>
+<p>One of the most underrated improvements you can make to tabbed interfaces is handling browser history. With htmx, you can easily enable deep-linking into specific tabs by using hx-push-url. When a user clicks a tab, the URL updates with a query or fragment that reflects the active section. This allows bookmarking and sharing of specific views. For example:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Product?handler=Specs&amp;productId=42&quot;
+        hx-target=&quot;#tab-content&quot;
+        hx-swap=&quot;innerHTML&quot;
+        hx-push-url=&quot;true&quot;&gt;
+    Specifications
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>In your page model, you can detect the query string on initial load and preselect the right tab server-side. If someone shares a link to the Specs tab, it will load directly into that state, giving a seamless deep-link experience.</p>
+<p>Another important UX consideration is performance. If users frequently switch between tabs or accordion panels, hitting the server each time can feel sluggish and unnecessary. You can cache previously loaded content on the client using a little Hyperscript or htmx’s hx-boost and hx-history-elt to prevent re-fetching. An easy pattern is to store the loaded HTML in a local element’s dataset, and reuse it if it’s already there, like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+            if my.dataset.loaded is not 'true'
+            get my @hx-get then put it into #tab-content
+            set my.dataset.loaded to 'true'
+        else
+            put my.nextElementSibling.innerHTML into #tab-content&quot;&gt;
+    Overview
+&lt;/button&gt;
+&lt;div hidden&gt;
+    &lt;div&gt;Cached content goes here after first load&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>By caching the response in a sibling element or data attribute, you can prevent repeat network calls while still delivering dynamic behavior. You can also make use of htmx’s hx-trigger=&quot;load once&quot; or hx-request=&quot;once&quot; attributes depending on your specific needs.</p>
+<p>To ensure maintainability as your app grows, it’s worth breaking out tabs and accordions into partials. Keep the layout shell in your main page and render the dynamic content from partial views using Razor. Not only does this reduce code duplication, but it also lets you reuse patterns across the app—especially helpful for admin dashboards or product views that share common UI structures.</p>
+<p>For example, a reusable tab section might look like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">@await Html.PartialAsync(&quot;_ProductTabs&quot;, new ProductTabModel { ProductId = Model.ProductId })</code></pre>
+</doc-codeblock></div>
+<p>And each tab’s content is fetched from dedicated partials returned by their respective page handlers. This structure scales well and keeps concerns separated.</p>
+<p>With these refinements—history awareness, lazy-loading with caching, and component reusability—you’re not just building interactive UI, you’re building thoughtful, production-ready experiences. Tabs and accordions should feel fast, remember user context, and integrate naturally into your Razor Pages application.</p>
+<p>In the next chapter, we’ll take this same mindset into dynamic lists and tables. You’ll learn how to build interfaces that support real-time updates, client-driven filtering, and pagination—all with the same htmx fundamentals we’ve covered here. Lists and tables are the backbone of many business apps, and now that you’ve got a solid foundation with tabs and accordions, you’ll be ready to level up the complexity.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -326,6 +573,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 12 - Tabs and Accordions", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 12 - Building Blocks with HTML Components- Tabs and Accordions", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

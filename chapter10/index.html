@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.796951986895">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.796999948787">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Navigating with hx-push-url and hx-replace-url</title>
     <meta name="title" content="Navigating with hx-push-url and hx-replace-url">
+    <meta name="description" content="In previous chapters, we explored how to enhance interactivity in ASP.NET Core Razor Pages using htmx—without the weight of client-side frameworks.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter10/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter10/">
     <meta property="og:title" content="Navigating with hx-push-url and hx-replace-url">
+    <meta property="og:description" content="In previous chapters, we explored how to enhance interactivity in ASP.NET Core Razor Pages using htmx—without the weight of client-side frameworks.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter10/">
     <meta property="twitter:title" content="Navigating with hx-push-url and hx-replace-url">
+    <meta property="twitter:description" content="In previous chapters, we explored how to enhance interactivity in ASP.NET Core Razor Pages using htmx—without the weight of client-side frameworks.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.796951986895" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.796999948787" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.796951986895" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.796999948787" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.796951986895" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.796999948787" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.796999948787" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -249,12 +253,163 @@
         <span>Navigating with hx-push-url and hx-replace-url</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>In previous chapters, we explored how to enhance interactivity in ASP.NET Core Razor Pages using htmx—without the weight of client-side frameworks. We tackled partials, triggers, and response handling, all in service of creating richer, more dynamic user experiences. Now, we turn our attention to a pair of features that subtly yet powerfully influence user navigation: hx-push-url and hx-replace-url.</p>
+<p>At first glance, these attributes may seem minor—just toggles for browser history, perhaps. But used thoughtfully, they become key players in making your htmx-powered applications feel seamless and intuitive. Whether you&#x27;re building a single-page app experience or simply want back and forward buttons to behave as users expect, understanding how htmx manipulates the browser’s URL bar without a full-page reload is essential.</p>
+<p>In this chapter, we’ll explore how to integrate these attributes into your htmx workflows and discuss the practical differences between pushing and replacing URLs. Along the way, we’ll cover when and why you&#x27;d use each option, how they affect browser history, and how to handle the subtle edge cases they introduce. Let’s get into how to shape navigation behavior that feels natural, even when you&#x27;re not reloading the page.</p>
+<doc-anchor-target id="modern-navigation-patterns-with-htmx">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#modern-navigation-patterns-with-htmx">#</doc-anchor-trigger>
+        <span>Modern Navigation Patterns with htmx</span>
+    </h2>
 </doc-anchor-target>
+<p>In traditional web applications, navigating from one page to another typically involves a full-page reload. That means tearing down the DOM, reinitializing scripts, re-fetching layout elements, and generally making the browser do more work than necessary. This isn&#x27;t just inefficient—it disrupts the user experience. Even with a fast connection, the visible flicker and brief loss of context during a reload make an app feel sluggish and clunky, especially compared to native apps or modern SPAs.</p>
+<p>htmx offers a middle ground. With attributes like hx-push-url and hx-replace-url, you can load new content dynamically via AJAX while still updating the browser’s URL bar—no full reload required. This allows you to maintain context, improve perceived performance, and make better use of browser navigation features like the back and forward buttons. Users stay on the same page, technically speaking, but the content and URL change as if they weren’t.</p>
+<p>The distinction between hx-push-url and hx-replace-url is subtle but important. When you use hx-push-url, htmx appends the new URL to the browser history stack, just like a normal navigation event. That means hitting the back button will return the user to the previous content. On the other hand, hx-replace-url updates the current entry in the history stack without creating a new one—ideal for flows where you want to reflect a state change (like filtering a list) but not necessarily let the user “go back” to the unfiltered view.</p>
+<p>Let’s look at an example. Suppose you&#x27;re building a blog using Razor Pages and htmx. Instead of reloading the entire page when someone clicks a blog post title, you want to dynamically load the post content and update the URL. Here’s the markup in your Index.cshtml view where the list of blog post titles is rendered:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;a href=&quot;/blog/post-1&quot;
+        hx-get=&quot;/blog/post-1&quot;
+        hx-target=&quot;#post-container&quot;
+        hx-swap=&quot;innerHTML&quot;
+        hx-push-url=&quot;true&quot;&gt;
+    First Post
+&lt;/a&gt;</code></pre>
+</doc-codeblock></div>
+<p>When clicked, htmx will make an AJAX request to /blog/post-1, swap the response into the #post-container element, and update the browser&#x27;s address bar to reflect the new URL. Most importantly, the user doesn’t experience a full reload—they stay right where they are, and the back button works as expected.</p>
+<p>If instead you were doing something like selecting a filter or paging through results and didn’t want to pollute the browser history, hx-replace-url=&quot;true&quot; would be a better fit:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;a href=&quot;/blog?page=2&quot;
+        hx-get=&quot;/blog?page=2&quot;
+        hx-target=&quot;#blog-list&quot;
+        hx-swap=&quot;innerHTML&quot;
+        hx-replace-url=&quot;true&quot;&gt;
+    Next Page
+&lt;/a&gt;</code></pre>
+</doc-codeblock></div>
+<p>These navigation enhancements don’t just make your web app feel faster—they also help align user expectations with behavior. They allow your app to behave more like a traditional multi-page app in terms of navigation, while still delivering the responsiveness users expect from modern interfaces. Understanding how and when to use each option will help you build more polished, intuitive Razor Pages applications with htmx.</p>
+<doc-anchor-target id="enhancing-statefulness-with-hx-push-url">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#enhancing-statefulness-with-hx-push-url">#</doc-anchor-trigger>
+        <span>Enhancing Statefulness with hx-push-url</span>
+    </h2>
+</doc-anchor-target>
+<p>One of the challenges when building dynamic web interfaces is preserving user expectations around navigation. Users expect the back and forward buttons to work. If they click on a tab, view its content, and then hit the back button, they expect to land back where they were—not be stuck on the same tab wondering if their click registered. htmx’s hx-push-url makes it possible to create dynamic, AJAX-driven interactions that integrate cleanly with the browser’s history stack.</p>
+<p>The hx-push-url attribute tells htmx to push a new entry into the browser history whenever the request is made and a response is successfully swapped. That means every time you load new content via hx-get, you can optionally update the URL, creating a breadcrumb trail the browser understands. This works well with features like window.onpopstate or htmx’s own built-in support for re-triggering requests when the user navigates back or forward.</p>
+<p>Let’s say you’re building a profile page with tab-based navigation—tabs for Overview, Posts, and Settings. You want clicking each tab to load its content without refreshing the page, but you also want the URL to change and support the browser&#x27;s back button. Here’s how the markup might look in your Profile.cshtml Razor Page:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;tabs&quot;&gt;
+    &lt;a href=&quot;/profile/overview&quot;
+       hx-get=&quot;/profile/overview&quot;
+       hx-target=&quot;#tab-content&quot;
+       hx-swap=&quot;innerHTML&quot;
+       hx-push-url=&quot;true&quot;&gt;
+       Overview
+    &lt;/a&gt;
+    &lt;a href=&quot;/profile/posts&quot;
+       hx-get=&quot;/profile/posts&quot;
+       hx-target=&quot;#tab-content&quot;
+       hx-swap=&quot;innerHTML&quot;
+       hx-push-url=&quot;true&quot;&gt;
+       Posts
+    &lt;/a&gt;
+    &lt;a href=&quot;/profile/settings&quot;
+       hx-get=&quot;/profile/settings&quot;
+       hx-target=&quot;#tab-content&quot;
+       hx-swap=&quot;innerHTML&quot;
+       hx-push-url=&quot;true&quot;&gt;
+       Settings
+    &lt;/a&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;tab-content&quot;&gt;
+    &lt;!-- Tab content will be loaded here --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Now, as users click between tabs, the content updates dynamically, the URL changes, and the browser history grows accordingly. More importantly, htmx listens for history navigation events and can automatically re-fetch the appropriate content when the user clicks the back or forward buttons. This creates a more cohesive and polished experience, especially in multi-view interfaces where users expect their path through the app to be remembered.</p>
+<p>By embracing hx-push-url, you&#x27;re effectively combining the smoothness of client-side interactivity with the robustness of server-side rendering and traditional navigation. It’s a great tool for making your ASP.NET Core Razor Pages feel just as interactive as any SPA, but without sacrificing simplicity or maintainability.</p>
+<doc-anchor-target id="streamlining-navigation-with-hx-replace-url">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#streamlining-navigation-with-hx-replace-url">#</doc-anchor-trigger>
+        <span>Streamlining Navigation with hx-replace-url</span>
+    </h2>
+</doc-anchor-target>
+<p>While hx-push-url is perfect when you want the user’s journey to be traceable via the browser’s back and forward buttons, sometimes you don’t want that. Some page transitions—like switching between steps in a form or showing a modal—are temporary or contextual and shouldn’t leave a breadcrumb trail in the history stack. That’s where hx-replace-url comes in. Instead of adding a new entry to the browser’s history, it quietly replaces the current one with the new URL, making the change seamless from the user’s perspective.</p>
+<p>Imagine you&#x27;re building a modal-based interface in Razor Pages where clicking on a product loads details into a modal. You want the URL to reflect the product being viewed (so someone could bookmark it), but you don’t want the back button to go through every modal the user opened. Using hx-replace-url lets you show the correct URL for the current view while keeping history clean. Here&#x27;s how that might look:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;a href=&quot;/products/42&quot;
+        hx-get=&quot;/products/42&quot;
+        hx-target=&quot;#modal-content&quot;
+        hx-swap=&quot;innerHTML&quot;
+        hx-replace-url=&quot;true&quot;&gt;
+    View Product
+&lt;/a&gt;
+
+&lt;div id=&quot;modal-content&quot;&gt;
+    &lt;!-- Modal will be filled dynamically --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Now let’s take this a step further—literally. Suppose you&#x27;re building a multi-step form, like a checkout process, and you want each step to update the URL to reflect progress (/checkout/shipping, /checkout/payment, etc.) without leaving a trail for each step in the browser’s history. Users expect to go back to the previous page they visited, not each intermediate form step. Here&#x27;s how each step link might be defined:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;a href=&quot;/checkout/payment&quot;
+        hx-get=&quot;/checkout/payment&quot;
+        hx-target=&quot;#form-content&quot;
+        hx-swap=&quot;innerHTML&quot;
+        hx-replace-url=&quot;true&quot;&gt;
+    Continue to Payment
+&lt;/a&gt;
+
+&lt;div id=&quot;form-content&quot;&gt;
+    &lt;!-- Current form step gets loaded here --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Each new form step replaces the URL in-place, keeping the user experience tight and focused. When they complete the process, they can still hit the back button to leave the form entirely, rather than backing through every form stage. This keeps the navigation behavior intuitive and avoids bloating the history stack with temporary state changes.</p>
+<p>By using hx-replace-url in the right scenarios, you enhance user experience without overwhelming browser history. It’s a subtle touch, but one that communicates a deep respect for user intent and browser conventions—something that elevates your application from functional to delightful.</p>
+<doc-anchor-target id="deep-linking-with-state-making-urls-work-for-you">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#deep-linking-with-state-making-urls-work-for-you">#</doc-anchor-trigger>
+        <span>Deep-Linking with State: Making URLs Work for You</span>
+    </h2>
+</doc-anchor-target>
+<p>One of the biggest wins with htmx is how easily you can create dynamic, fast-loading UIs. But there’s a catch: if you’re not careful, your app can lose state when someone refreshes the page or shares a link. That’s where deep-linking comes in. You want every view your user lands on—whether they click, refresh, or paste a URL into a new tab—to render the expected content. This is especially important in filterable lists or tabbed interfaces where the content is tied to specific state values in the URL.</p>
+<p>Razor Pages plays well with deep-linking, thanks to route and query parameters. When combined with htmx, you can build interfaces that respond to URL changes and restore the expected content. Let’s walk through an example: a filterable product listing where the selected category is stored in the URL so users can share or bookmark it.</p>
+<p>Suppose you have a page at /products and you want to support filtering by category with links like /products?category=Books. First, set up your Products.cshtml.cs Razor Page model to accept the query parameter:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public class ProductsModel : PageModel
+{
+    public string? Category { get; set; }
+    
+    public void OnGet(string? category)
+    {
+        Category = category;
+        // Use the category to load filtered products from the database
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>Next, in the Razor Page view, render the filter links and product listing container:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;a href=&quot;/products?category=Books&quot;
+        hx-get=&quot;/products?category=Books&quot;
+        hx-target=&quot;#product-list&quot;
+        hx-swap=&quot;innerHTML&quot;
+        hx-push-url=&quot;true&quot;&gt;
+    Books
+&lt;/a&gt;
+
+&lt;a href=&quot;/products?category=Games&quot;
+        hx-get=&quot;/products?category=Games&quot;
+        hx-target=&quot;#product-list&quot;
+        hx-swap=&quot;innerHTML&quot;
+        hx-push-url=&quot;true&quot;&gt;
+    Games
+&lt;/a&gt;
+
+&lt;div id=&quot;product-list&quot;&gt;
+    @* Initial product list will render here *@
+    @await Html.PartialAsync(&quot;_ProductList&quot;, Model.FilteredProducts)
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The key piece is hx-push-url=&quot;true&quot;, which updates the browser’s address bar when users filter the list. htmx handles the AJAX request, and if someone reloads the page or lands directly on /products?category=Books, Razor Pages will rehydrate the correct product list thanks to the parameter handling in OnGet.</p>
+<p>By implementing deep-linking like this, you get the best of both worlds: the fluid interactivity of htmx and the reliability of traditional server-rendered pages. You’re also preparing your app for more complex UI interactions—something we’ll dig into in the next chapter, “Building Blocks with HTML Components: Forms and Modal Forms.” There, we’ll use the navigation strategies you&#x27;ve just learned to drive highly interactive UI components like multi-step forms and modals, all while keeping things sharable, bookmarkable, and refresh-proof.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -326,6 +481,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 10 - Navigating with hx-push-url and hx-replace-url", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 10 - Navigating with hx-push-url and hx-replace-url", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.796951986895">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.796999948787">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Integrating Hyperscript for Complex Logic</title>
     <meta name="title" content="Integrating Hyperscript for Complex Logic">
+    <meta name="description" content="Up to this point, we have explored how htmx brings delightful simplicity to ASP.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter09/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter09/">
     <meta property="og:title" content="Integrating Hyperscript for Complex Logic">
+    <meta property="og:description" content="Up to this point, we have explored how htmx brings delightful simplicity to ASP.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter09/">
     <meta property="twitter:title" content="Integrating Hyperscript for Complex Logic">
+    <meta property="twitter:description" content="Up to this point, we have explored how htmx brings delightful simplicity to ASP.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.796951986895" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.796999948787" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.796951986895" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.796999948787" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.796951986895" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.796999948787" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.796999948787" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -249,12 +253,123 @@
         <span>Integrating Hyperscript for Complex Logic</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>Up to this point, we have explored how htmx brings delightful simplicity to ASP.NET Core Razor Pages by handling requests, updating UI fragments, and interacting with the server with minimal JavaScript. However, there are moments when this declarative approach may not suffice. We may require conditional logic, event chaining, or dynamic decision-making that doesn’t fit neatly into the hx-* attributes. This is where Hyperscript comes into play.</p>
+<p>Think of Hyperscript as the missing piece of the htmx puzzle. It is a lightweight scripting language designed specifically for browsers, allowing you to express complex behaviors while maintaining an HTML-native feel. Unlike JavaScript, which often requires switching mental contexts, Hyperscript resides directly within your markup, keeping your logic closely tied to your HTML and easy to follow. It is declarative, readable, and surprisingly powerful for tasks typically handled by JavaScript.</p>
+<p>In this chapter, we will explore how Hyperscript complements htmx by enabling more advanced client-side logic without disrupting the clean, server-first development model we have established. You will learn how to trigger custom sequences of events, incorporate decision-making logic into your UI, and enhance interactivity without relying on a full JavaScript framework. Let’s dive in and elevate your Razor Pages with the elegance of Hyperscript.</p>
+<doc-anchor-target id="getting-reactive-hyperscript-in-the-flow-of-htmx">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#getting-reactive-hyperscript-in-the-flow-of-htmx">#</doc-anchor-trigger>
+        <span>Getting Reactive: Hyperscript in the Flow of htmx</span>
+    </h2>
 </doc-anchor-target>
+<p>htmx is a powerful tool for adding dynamic behavior to Razor Pages without needing a full frontend framework. However, sometimes you might require a bit more client-side logic. This is where Hyperscript comes in. It’s a lightweight scripting language designed to work seamlessly with htmx and HTML. You can think of it as a more concise and focused version of JavaScript—specifically created to enhance user interactions without the need for an entire script file or complicating your code with imperative logic.</p>
+<p>Hyperscript allows you to define behavior in a natural, readable format directly within HTML attributes. Rather than using JavaScript event listeners, conditionals, and DOM manipulation APIs, you can declaratively express your logic right alongside your HTML elements. This approach keeps your Razor Pages organized and ensures that the behavior is contextual, complementing htmx&#x27;s philosophy of placing behavior close to the markup.</p>
+<p>For instance, if you want to execute a sequence of actions when a user clicks a button—like hiding a message, updating a class, and making an htmx request—doing this in JavaScript would typically involve setting up an event listener, executing multiple DOM calls, and utilizing a fetch or <code v-pre>htmx.trigger()</code> method. With Hyperscript, however, you can express the entire process inline using plain language. The outcome is simpler, more maintainable templates.</p>
+<p>Hyperscript is especially useful when you want to chain actions together, respond to user inputs based on conditions, or reflect changes in client-side state within your UI. For example, if you want to show a tooltip only when certain conditions are met or to animate a modal opening only if it’s not already visible, you can easily express this logic directly in your markup without referring to a JavaScript file or a global state manager.</p>
+<p>Here’s a practical example—let’s create a lightweight tooltip system without using any JavaScript. You’ll define a tooltip component and utilize Hyperscript to control its visibility on hover.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;span _=&quot;on mouseenter
+         add .visible to #tooltip
+         then wait 100ms
+         then remove .hidden from #tooltip
+       on mouseleave
+         add .hidden to #tooltip
+         then wait 100ms
+         then remove .visible from #tooltip&quot;&gt;
+  Hover over me
+&lt;/span&gt;
+
+&lt;div id=&quot;tooltip&quot; class=&quot;tooltip hidden&quot;&gt;This is your tooltip&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>And your CSS:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-css"><code v-pre class="language-css">.tooltip {
+    position: absolute;
+    background: #333;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: opacity 0.2s ease;
+}
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.visible {
+    opacity: 1;
+}</code></pre>
+</doc-codeblock></div>
+<p>That <code v-pre>_=</code> attribute is Hyperscript in action. It listens for mouse events, modifies classes, and adds delays for smooth transitions—all inline and all readable. There’s no JavaScript file, no document.querySelector, and no external dependencies. This approach keeps your code clean, maintainable, and easy to debug, especially within Razor Pages where tight coupling between markup and behavior is a plus.</p>
+<p>When paired with htmx, Hyperscript is the perfect tool for those “just a bit of logic” moments that would otherwise balloon into unnecessary complexity. It&#x27;s not here to replace JavaScript for heavy lifting, but for 80% of UI interactivity use cases—especially when working with server-rendered apps—Hyperscript hits the sweet spot.</p>
+<doc-anchor-target id="leveling-up-events-hyperscript--htmx-in-harmony">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#leveling-up-events-hyperscript--htmx-in-harmony">#</doc-anchor-trigger>
+        <span>Leveling Up Events: Hyperscript + htmx in Harmony</span>
+    </h2>
+</doc-anchor-target>
+<p>htmx gives you a fantastic way to wire up interactions using attributes like <code v-pre>hx-get</code>, <code v-pre>hx-post</code>, and <code v-pre>hx-trigger</code>. But sometimes, the built-in triggers aren’t quite enough—you need to wait, sequence actions, or respond to one event by firing another. That’s where Hyperscript becomes your secret weapon. You can use it to dynamically extend or respond to htmx-driven behavior, enabling smoother and smarter interactions in your Razor Pages without writing JavaScript.</p>
+<p>Let’s say you have a dashboard widget that refreshes itself after a background update. htmx can fetch new content from the server, but how do you wait until the update is complete before triggering the refresh? With Hyperscript, you can hook into htmx events like <code v-pre>htmx:afterRequest</code> or <code v-pre>htmx:afterSwap</code> and trigger additional actions from there. These custom sequences keep the user interface responsive and tightly orchestrated.</p>
+<p>Here’s how you might implement this. Suppose you have a component that updates via an hx-post request—like a status toggle. You want to refresh a summary section once the update completes:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Status/Toggle&quot; hx-target=&quot;#status-section&quot; hx-swap=&quot;outerHTML&quot; _=&quot;
+    on htmx:afterRequest 
+        wait 250ms 
+        then send refresh to #summary&quot;&gt;
+    &lt;button type=&quot;submit&quot;&gt;Toggle Status&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;summary&quot; hx-get=&quot;/Status/Summary&quot; hx-trigger=&quot;refresh from:body&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>In this example, Hyperscript listens for the <code v-pre>htmx:afterRequest</code> event on the form. Once it fires, Hyperscript waits a short moment, then triggers a synthetic <code v-pre>refresh</code> event that causes htmx to re-fetch the updated summary. This kind of choreography would usually require JavaScript and DOM listeners, but here it’s self-contained and crystal clear in the markup.</p>
+<p>When debugging Hyperscript behaviors in Razor Pages, your best friend is the browser console. Hyperscript provides helpful runtime error messages, and you can enable verbose output with a query string like <code v-pre>?hyperscript-debug=true</code> or by setting <code v-pre>window._hyperscript.debug = true</code> in a small inline script. If you’re not seeing the behavior you expect, check that your Hyperscript is correctly bound (the <code v-pre>_=</code> attribute must be on the right element), and that events are properly scoped.</p>
+<p>The real power of Hyperscript in Razor Pages apps is how seamlessly it fits into the htmx flow. Instead of bouncing between HTML and JavaScript files, you stay in the same mental space—markup, behavior, and logic all in one place. As your interactivity needs grow, Hyperscript helps you grow with them—without ever dragging you into the deep waters of full SPA complexity.</p>
+<doc-anchor-target id="from-clicks-to-conversations-building-interaction-flows-with-hyperscript">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#from-clicks-to-conversations-building-interaction-flows-with-hyperscript">#</doc-anchor-trigger>
+        <span>From Clicks to Conversations: Building Interaction Flows with Hyperscript</span>
+    </h2>
+</doc-anchor-target>
+<p>One of the hardest parts of client-side development is managing the branching logic that comes with real-world user interactions. Should something happen only under a certain condition? Should a sequence wait on a user action, or pause before progressing? JavaScript gives you full control, but that control often comes with boilerplate, complexity, and separation from your markup. Hyperscript flips the script, letting you express those same ideas right in your HTML in a clean, declarative way.</p>
+<p>Imagine a scenario where you want to confirm a user’s intent before executing a destructive action—say, deleting a record. With Hyperscript, you can handle the prompt and the conditional follow-up without ever leaving your Razor Page.</p>
+<p>Here’s an example:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+        if confirm('Are you sure you want to delete this?')
+        then add .loading to me
+        then send deleteRequest to #deleteForm&quot;&gt;
+    Delete
+&lt;/button&gt;
+
+&lt;form id=&quot;deleteForm&quot; hx-delete=&quot;/Item/Delete&quot; hx-target=&quot;#item-list&quot; hx-swap=&quot;outerHTML&quot;&gt;&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>This one snippet introduces conditional logic, a state change (adding a class), and an htmx-triggered request—all from inside a Hyperscript attribute. There’s no JavaScript file, no click event handler, and no global state. It’s expressive, readable, and maintains the tight markup-behavior cohesion that makes Razor Pages so productive.</p>
+<p>You can also use Hyperscript to build complex, multi-step interactions that evolve in response to user input. One common pattern is a modal dialog that appears, fetches content asynchronously, then allows for form submission inside it. Normally, this involves multiple scripts and nested callbacks. But with Hyperscript and htmx, it’s much more approachable.</p>
+<p>Let’s walk through a fully dynamic modal flow:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+        add .open to #modal
+        then put 'Loading...' into #modal-body
+        then get '/Product/Details?id=42'
+        then put the result into #modal-body&quot;&gt;
+    View Details
+&lt;/button&gt;
+
+&lt;div id=&quot;modal&quot; class=&quot;modal&quot;&gt;
+  &lt;div id=&quot;modal-body&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>This snippet adds a class to show the modal, displays a loading message, and then asynchronously loads the content into the modal’s body. All this happens in a single readable sequence, and because htmx handles the get request and Hyperscript binds the actions, you don’t write a line of JavaScript.</p>
+<p>You can even hook into form submissions inside the modal using htmx as usual. If you wanted to post a form and close the modal on success, you might have something like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Product/Update&quot; hx-target=&quot;#modal-body&quot; hx-swap=&quot;innerHTML&quot; 
+      _=&quot;on htmx:afterRequest remove .open from #modal&quot;&gt;
+  &lt;!-- form fields here --&gt;
+  &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>The modal closes itself when the form is successfully submitted, providing an elegant interaction loop with just Hyperscript and htmx.</p>
+<p>These kinds of flows—simple but nuanced—are where Hyperscript truly shines. You can orchestrate interactions that feel thoughtful and responsive, all without leaving the Razor Pages model or introducing additional libraries. Hyperscript bridges the last mile of user experience in server-rendered apps, letting you finesse the client side without surrendering to complexity.</p>
+<p>In the next chapter, we’ll shift from handling dynamic content to managing browser behavior. We’ll look at how hx-push-url and hx-replace-url let you take control of navigation in a single-page style—without a full page reload or needing a JavaScript router. You’ll learn how to keep URLs in sync with the UI, enable back-button support, and build deep-linkable components that feel seamless and fast.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -326,6 +441,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 9 - Integrating Hyperscript for Complex Logic", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 9 - Integrating Hyperscript for Complex Logic", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
