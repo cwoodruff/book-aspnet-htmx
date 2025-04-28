@@ -1,0 +1,6 @@
+
+@model HtmxFormsModalDemo.Data.Comment
+<div class="comment">
+    <p>@Model.Message</p>
+    <small>Posted at @Model.CreatedAt.ToLocalTime().ToString("g")</small>
+</div>

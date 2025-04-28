@@ -1,0 +1,22 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+}
+
+textarea {
+    width: 300px;
+    margin-bottom: 10px;
+}
+
+.comment {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}

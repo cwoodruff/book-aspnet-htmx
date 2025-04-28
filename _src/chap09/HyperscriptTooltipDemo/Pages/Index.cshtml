@@ -1,0 +1,20 @@
+﻿@page
+@model HyperscriptTooltipDemo.Pages.IndexModel
+@{
+    ViewData["Title"] = "Tooltip Demo";
+}
+
+<div style="margin: 100px;">
+    <span _="on mouseenter
+                 add .visible to #tooltip
+                 then wait 100ms
+                 then remove .hidden from #tooltip
+               on mouseleave
+                 add .hidden to #tooltip
+                 then wait 100ms
+                 then remove .visible from #tooltip">
+        Hover over me
+    </span>
+
+    <div id="tooltip" class="tooltip hidden">This is your tooltip</div>
+</div>

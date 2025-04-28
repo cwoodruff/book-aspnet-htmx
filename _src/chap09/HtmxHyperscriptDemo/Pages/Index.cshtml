@@ -1,0 +1,35 @@
+
+@page
+@model HtmxHyperscriptDemo.Pages.IndexModel
+@{
+    ViewData["Title"] = "HTMX and Hyperscript Demo";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
+</head>
+<body>
+    <h1>HTMX + Hyperscript Status Toggle Demo</h1>
+
+<form hx-post="/Status/Toggle" hx-target="#status-section" hx-swap="outerHTML" _="
+        on htmx:afterRequest 
+            wait 250ms 
+            then send refresh to #summary">
+    @Html.AntiForgeryToken()
+    <button type="submit">Toggle Status</button>
+</form>
+
+    <div id="status-section">
+        <p>Status: Not toggled yet.</p>
+    </div>
+
+    <div id="summary" hx-get="/Status/Summary" hx-trigger="refresh from:body"></div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+
+@page
+@model HtmxTabsAccordionsDemo.Pages.ProductModel
+@{
+    ViewData["Title"] = "HTMX Tabs and Accordions Demo";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css"/>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
+</head>
+<body>
+<div>
+    <h2>@Model.ProductName</h2>
+
+    <div class="tabs">
+        <button hx-get="/Index?handler=Info&productId=@Model.ProductId" hx-target="#tab-content" hx-swap="innerHTML">
+            Info
+        </button>
+        <button hx-get="/Index?handler=Specs&productId=@Model.ProductId" hx-target="#tab-content" hx-swap="innerHTML">
+            Specifications
+        </button>
+        <button hx-get="/Index?handler=Reviews&productId=@Model.ProductId" hx-target="#tab-content" hx-swap="innerHTML">
+            Reviews
+        </button>
+    </div>
+
+    <div id="tab-content" class="tab-content">
+        <p>Select a tab to view details.</p>
+    </div>
+</div>
+
+<div class="accordion">
+    <div class="question">
+        <h3>
+            <button hx-get="/Index?handler=Answer&id=1" hx-target="#answer-1" hx-swap="innerHTML">
+                What is your return policy?
+            </button>
+        </h3>
+        <div id="answer-1" class="answer"></div>
+    </div>
+
+    <div class="question">
+        <h3>
+            <button hx-get="/Index?handler=Answer&id=2" hx-target="#answer-2" hx-swap="innerHTML">
+                Do you ship internationally?
+            </button>
+        </h3>
+        <div id="answer-2" class="answer"></div>
+    </div>
+
+    <div class="question">
+        <h3>
+            <button hx-get="/Index?handler=Answer&id=3" hx-target="#answer-3" hx-swap="innerHTML">
+                How do I request a refund?
+            </button>
+        </h3>
+        <div id="answer-3" class="answer"></div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "HTMX Dashboard Demo";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css"/>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
+</head>
+<body>
+<h2>My Dashboard</h2>
+
+<div class="tabs" _="on click(target) from button
+                     if target matches button
+                       remove .active from .tabs button
+                       add .active to target
+                       get target.getAttribute('hx-get') then put it into #panel with a fade transition">
+    <button class="active" hx-get="/Index?handler=Overview">Overview</button>
+    <button hx-get="/Index?handler=Reports">Reports</button>
+    <button hx-get="/Index?handler=Settings">Settings</button>
+</div>
+
+
+<div id="panel" class="tab-panel fade">
+    <p>Select a tab to view content.</p>
+</div>
+</body>
+</html>

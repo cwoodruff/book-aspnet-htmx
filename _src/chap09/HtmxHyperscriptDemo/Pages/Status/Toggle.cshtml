@@ -1,0 +1,11 @@
+
+@page
+@using System
+@model HtmxHyperscriptDemo.Pages.Status.ToggleModel
+@{
+    var currentStatus = DateTime.Now.Second % 2 == 0 ? "Active" : "Inactive";
+}
+
+<div id="status-section">
+    <p>Status: @currentStatus (Refreshed at @DateTime.Now.ToLongTimeString())</p>
+</div>

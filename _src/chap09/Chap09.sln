@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyperscriptTooltipDemo", "HyperscriptTooltipDemo\HyperscriptTooltipDemo.csproj", "{72547539-7A01-41AD-98E2-4A59F3F2ED65}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmxHyperscriptDemo", "HtmxHyperscriptDemo\HtmxHyperscriptDemo.csproj", "{CF8CFA5A-F182-41D3-A7AD-DAFF5D819666}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72547539-7A01-41AD-98E2-4A59F3F2ED65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72547539-7A01-41AD-98E2-4A59F3F2ED65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72547539-7A01-41AD-98E2-4A59F3F2ED65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72547539-7A01-41AD-98E2-4A59F3F2ED65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF8CFA5A-F182-41D3-A7AD-DAFF5D819666}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF8CFA5A-F182-41D3-A7AD-DAFF5D819666}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF8CFA5A-F182-41D3-A7AD-DAFF5D819666}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF8CFA5A-F182-41D3-A7AD-DAFF5D819666}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

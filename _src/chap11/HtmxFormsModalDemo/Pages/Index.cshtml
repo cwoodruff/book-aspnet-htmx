@@ -1,0 +1,33 @@
+
+@page
+@model HtmxFormsModalDemo.Pages.IndexModel
+@{
+    ViewData["Title"] = "HTMX Forms and Modal Forms Demo";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css"/>
+    <script src="https://unpkg.com/htmx.org"></script>
+</head>
+<body>
+<h1>HTMX Forms and Modal Forms Demo</h1>
+
+<form hx-post="/comment" hx-target="#comments-list" hx-swap="beforeend">
+    @Html.AntiForgeryToken()
+    <textarea name="message" rows="4" class="form-control" required></textarea>
+    <button type="submit" class="btn btn-primary" hx-disable="true">Post Comment</button>
+</form>
+
+<div id="comments-list" style="margin-top: 20px;">
+    @foreach (var comment in Model.Comments)
+    {
+        <partial name="_CommentPartial" model="comment"/>
+    }
+</div>
+</body>
+</html>
