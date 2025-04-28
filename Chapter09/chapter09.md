@@ -4,7 +4,6 @@ icon: stack
 label: Chap 9 - Integrating Hyperscript for Complex Logic
 meta:
 title: "Integrating Hyperscript for Complex Logic"
-visibility: hidden
 ---
 
 # Integrating Hyperscript for Complex Logic
@@ -137,6 +136,7 @@ You can even hook into form submissions inside the modal using htmx as usual. If
 ```html
 <form hx-post="/Product/Update" hx-target="#modal-body" hx-swap="innerHTML" 
       _="on htmx:afterRequest remove .open from #modal">
+  @Html.AntiForgeryToken()
   <!-- form fields here -->
   <button type="submit">Save</button>
 </form>

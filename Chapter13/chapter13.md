@@ -4,7 +4,6 @@ icon: stack
 label: Chap 13 - Building Blocks with HTML Components- Lists and Tables
 meta:
 title: "Building Blocks with HTML Components: Lists and Tables"
-visibility: hidden
 ---
 
 # Building Blocks with HTML Components: Lists and Tables

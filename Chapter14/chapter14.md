@@ -4,14 +4,13 @@ icon: stack
 label: Chap 14 - Building Blocks with HTML Components- Buttons and Action Links
 meta:
 title: "Building Blocks with HTML Components: Buttons and Action Links"
-visibility: hidden
 ---
 
 # Building Blocks with HTML Components: Buttons and Action Links
 
-Buttons and links may seem like the simplest elements in your HTML toolbox, but in an htmx-powered Razor Pages application, they unlock a whole world of interactivity. In this chapter, we’ll take a focused look at how these humble components can become powerful conduits for user-driven behavior—without requiring a single line of custom JavaScript. Whether it’s triggering actions, prompting confirmations, or dynamically swapping content, buttons and action links form the bridge between your users and your server.
+Buttons and links may seem like the simplest elements in your HTML toolbox, but in an htmx-powered Razor Pages application, they unlock a whole world of interactivity. In this chapter, we’ll take a focused look at how these humble components can become powerful conduits for user-driven behavior, without requiring a single line of custom JavaScript. Whether it’s triggering actions, prompting confirmations, or dynamically swapping content, buttons and action links form the bridge between your users and your server.
 
-By now, you've built dynamic forms, interactive lists, and even modal popups using htmx. But as we step into this chapter, the spotlight is on how to make user interaction feel intuitive and immediate. Buttons and links are often the primary way users engage with your app, so it's crucial they behave as expected—with just the right amount of feedback and control. We'll explore how `hx-trigger` gives you granular control over when and how actions fire, and how prompts and confirmations can guide user intent without being intrusive.
+By now, you've built dynamic forms, interactive lists, and even modal popups using htmx. But as we step into this chapter, the spotlight is on how to make user interaction feel intuitive and immediate. Buttons and links are often the primary way users engage with your app, so it's crucial they behave as expected, with just the right amount of feedback and control. We'll explore how `hx-trigger` gives you granular control over when and how actions fire, and how prompts and confirmations can guide user intent without being intrusive.
 
 The beauty of htmx is that you can enrich these components without leaving HTML. Want a delete button that asks for confirmation before proceeding? Easy. Need a link that fetches and renders content inline? No sweat. With the right combination of attributes and server responses, your application starts to feel dynamic and responsive, all while keeping the logic server-side and your markup clean.
 

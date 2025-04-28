@@ -4,10 +4,9 @@ icon: stack
 label: Chap 12 - Building Blocks with HTML Components- Tabs and Accordions
 meta:
 title: "Building Blocks with HTML Components: Tabs and Accordions"
-visibility: hidden
 ---
 
-# Building Blocks with HTML Components- Tabs and Accordions
+# Building Blocks with HTML Components: Tabs and Accordions
 
 If you've followed along so far, you've seen how htmx can inject interactivity into your ASP.NET Core Razor Pages apps with minimal effort—and even less JavaScript. We've tackled forms, modals, and lists, showing how htmx makes everyday UI patterns feel lighter and more dynamic. Now it's time to bring that same approachability to a couple of common, yet surprisingly fiddly, UI elements: tabs and accordions.
 
@@ -19,7 +18,7 @@ You’ll learn how to dynamically swap content, manage user-triggered state, and
 
 Tabbed interfaces are a staple of web applications. They let users quickly switch between different content panels without navigating away from the current page. Traditionally, tabs are powered by JavaScript: click handlers toggle classes, show and hide elements, and sometimes fetch data using fetch or jQuery’s AJAX. While this works, it often leads to bloated client-side logic and tight coupling between presentation and behavior. With htmx and Razor Pages, you can skip the JavaScript and let the server handle the logic—cleanly and declaratively.
 
-Let’s say you’re building a product details page in an e-commerce application. You want to show product information, specifications, and reviews as separate tabs. Instead of preloading everything or writing a JavaScript tab manager, you can load each section on demand using hx-get, and target a shared container using hx-target.
+Let’s say you’re building a product details page in an e-commerce application. You want to show product information, specifications, and reviews as separate tabs. Instead of preloading everything or writing a JavaScript tab manager, you can load each section on demand using hx-get and target a shared container using hx-target.
 
 Start with your base Razor Page. Here's the layout of the Product.cshtml page:
 
@@ -163,28 +162,16 @@ Let’s take a simple tabbed dashboard and level it up. We’ll show active tab 
 
 <h2>My Dashboard</h2>
 
-<div class="tabs">
-    <button _="on click
-                remove .active from .tabs button
-                add .active to me
-                get my @hx-get then
-                put it into #panel with a fade transition"
-            hx-get="/Dashboard?handler=Overview">Overview</button>
-
-    <button _="on click
-                remove .active from .tabs button
-                add .active to me
-                get my @hx-get then
-                put it into #panel with a fade transition"
-            hx-get="/Dashboard?handler=Reports">Reports</button>
-
-    <button _="on click
-                remove .active from .tabs button
-                add .active to me
-                get my @hx-get then
-                put it into #panel with a fade transition"
-            hx-get="/Dashboard?handler=Settings">Settings</button>
+<div class="tabs" _="on click(target) from button
+                     if target matches button
+                       remove .active from .tabs button
+                       add .active to target
+                       get target.getAttribute('hx-get') then put it into #panel with a fade transition">
+    <button class="active" hx-get="/Index?handler=Overview">Overview</button>
+    <button hx-get="/Index?handler=Reports">Reports</button>
+    <button hx-get="/Index?handler=Settings">Settings</button>
 </div>
+
 
 <div id="panel" class="tab-panel fade">
     <p>Select a tab to view content.</p>
@@ -201,7 +188,7 @@ opacity: 0;
 transition: opacity 0.3s ease-in-out;
 }
 
-.tab-panel.fade:load {
+.tab-panel.fade.active {
 opacity: 1;
 }
 ```

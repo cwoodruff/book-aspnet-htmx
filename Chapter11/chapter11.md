@@ -4,7 +4,6 @@ icon: stack
 label: Chap 11 - Building Blocks with HTML Components- Forms and Modal Forms
 meta:
 title: "Building Blocks with HTML Components: Forms and Modal Forms"
-visibility: hidden
 ---
 
 # Building Blocks with HTML Components: Forms and Modal Forms
@@ -26,13 +25,14 @@ This is where htmx steps in with hx-post, a simple yet powerful attribute that r
 Let’s say we’re building a basic comment form in Razor Pages. Here’s the form markup using htmx:
 
 ```html
-<form hx-post="/comments" hx-target="#comments-list" hx-swap="beforeend">
+<form hx-post="/comment" hx-target="#comments-list" hx-swap="beforeend">
+    @Html.AntiForgeryToken()
     <textarea name="message" rows="4" class="form-control" required></textarea>
     <button type="submit" class="btn btn-primary" hx-disable="true">Post Comment</button>
 </form>
 ```
 
-This form posts to the /comments endpoint when submitted, and whatever HTML is returned will be inserted just before the end of the #comments-list element. No page reload, no scroll jump—just a new comment appearing instantly where it belongs. This feels far more natural for users and avoids jarring context shifts.
+This form posts to the /comment endpoint when submitted, and whatever HTML is returned will be inserted just before the end of the #comments-list element. No page reload, no scroll jump—just a new comment appearing instantly where it belongs. This feels far more natural for users and avoids jarring context shifts.
 
 We’ve also added hx-disable="true" to the submit button. This attribute prevents users from submitting the form multiple times by disabling the button during the request. It's a small touch that helps maintain clean server-side data and reduces accidental duplicates—something that becomes increasingly important as your forms grow in complexity or involve transactional operations.
 
@@ -66,6 +66,7 @@ Here’s a basic registration form with htmx validation in place:
       hx-validate
       hx-target="#form-messages"
       hx-swap="innerHTML">
+    @Html.AntiForgeryToken()
     <input type="text" name="username" required class="form-control" placeholder="Username" />
     <input type="email" name="email" required class="form-control" placeholder="Email" />
     <input type="password" name="password" required minlength="6" class="form-control" placeholder="Password" />
@@ -135,6 +136,7 @@ Now, let’s look at what happens when the user submits the form inside the moda
       hx-target="#user-list"
       hx-swap="beforeend"
       _="on htmx:afterRequest remove .show from #modal">
+    @Html.AntiForgeryToken()
     <input type="text" name="name" required class="form-control" placeholder="Name" />
     <input type="email" name="email" required class="form-control" placeholder="Email" />
     <button type="submit" class="btn btn-primary">Create User</button>
@@ -171,6 +173,7 @@ Here's an example using a spinner on a submit button:
 <form hx-post="/users/update"
       hx-target="#user-info"
       hx-indicator="#loading-spinner">
+    @Html.AntiForgeryToken()
     <input type="text" name="name" required />
     <button type="submit" class="btn btn-primary">
         Save

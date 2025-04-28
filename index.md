@@ -62,33 +62,33 @@ To find translations, please check out the [Translations](./Translations.md) pag
         </tr>
         <tr>
             <td>9</td>
-            <td>Integrating Hyperscript for Complex Logic</td>
+            <td><a href="https://aspnet-htmx.com/chapter09/">Integrating Hyperscript for Complex Logic</a></td>
             <td></td>
         </tr>
         <tr>
             <td>10</td>
-            <td>Navigating with hx-push-url and hx-replace-url</td>
+            <td><a href="https://aspnet-htmx.com/chapter10/">Navigating with hx-push-url and hx-replace-url</a></td>
             <td></td>
         </tr>
         <tr>
             <td rowspan=4>Section 3: Building Blocks with HTML Components</td>
             <td>11</td>
-            <td>Forms and Modal Forms</td>
+            <td><a href="https://aspnet-htmx.com/chapter11/">Forms and Modal Forms</a></td>
             <td></td>
         </tr>
         <tr>
             <td>12</td>
-            <td>Tabs and Accordions</td>
+            <td><a href="https://aspnet-htmx.com/chapter12/">Tabs and Accordions</a></td>
             <td></td>
         </tr>
         <tr>
             <td>13</td>
-            <td>Lists and Tables</td>
+            <td><a href="https://aspnet-htmx.com/chapter13/">Lists and Tables</a></td>
             <td></td>
         </tr>
         <tr>
             <td>14</td>
-            <td>Buttons and Action Links</td>
+            <td><a href="https://aspnet-htmx.com/chapter14/">Buttons and Action Links</a></td>
             <td></td>
         </tr>
         <tr>
