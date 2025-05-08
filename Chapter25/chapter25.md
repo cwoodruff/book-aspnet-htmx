@@ -4,7 +4,7 @@ icon: stack
 label: Chap 25 - Debugging htmx Applications
 meta:
 title: "Debugging htmx Applications"
-visibility: hidden
+visibility: protected
 ---
 # Debugging htmx Applications
 

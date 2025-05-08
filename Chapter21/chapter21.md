@@ -4,7 +4,8 @@ icon: stack
 label: Chap 21 - Performance Optimization
 meta:
 title: "Performance Optimization"
-visibility: hidden
+visibility: protected
+
 ---
 # Performance Optimization
 

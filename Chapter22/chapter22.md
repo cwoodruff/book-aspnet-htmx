@@ -4,7 +4,7 @@ icon: stack
 label: Chap 22 - Building a Dashboard with htmx
 meta:
 title: "Building a Dashboard with htmx"
-visibility: hidden
+visibility: protected
 ---
 # Building a Dashboard with htmx
 

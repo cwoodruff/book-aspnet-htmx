@@ -4,7 +4,7 @@ icon: stack
 label: Chap 24 - Creating a Chat Application
 meta:
 title: "Creating a Chat Application"
-visibility: hidden
+visibility: protected
 ---
 # Creating a Chat Application
 
