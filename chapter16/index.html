@@ -7,14 +7,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.7.0.799461367072">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.8.1.800017542943">
 
     <!-- See retype.com -->
-    <meta name="generator" content="Retype 3.7.0">
+    <meta name="generator" content="Retype 3.8.1">
 
     <!-- Primary Meta Tags -->
     <title>Scoped Updates with hx-select and hx-select-oob</title>
     <meta name="title" content="Scoped Updates with hx-select and hx-select-oob">
+    <meta name="description" content="By now, you've built a solid foundation with htmx, swapping content, managing triggers, and crafting dynamic forms that just work.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter16/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter16/">
     <meta property="og:title" content="Scoped Updates with hx-select and hx-select-oob">
+    <meta property="og:description" content="By now, you've built a solid foundation with htmx, swapping content, managing triggers, and crafting dynamic forms that just work.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter16/">
     <meta property="twitter:title" content="Scoped Updates with hx-select and hx-select-oob">
+    <meta property="twitter:description" content="By now, you've built a solid foundation with htmx, swapping content, managing triggers, and crafting dynamic forms that just work.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.7.0.799461367072" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.8.1.800017542943" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.7.0.799461367072" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../resources/js/retype.js?v=3.7.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.7.0.799461367072" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.8.1.800017542943" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=3.8.1" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.8.1.800017542943" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.8.1.800017542943" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -56,7 +60,7 @@
                                 <img class="max-h-10 dark:hidden md:inline-block" src="../images/network200.png">
                                 <img class="max-h-10 hidden dark:inline-block" src="../images/network200.png">
                             </span>
-                            <span class="dark:text-white font-semibold line-clamp-1 md:line-clamp-2">ASP.NET Core Reimagined with htmx</span>
+                            <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">ASP.NET Core Reimagined with htmx</span>
                         </a><span class="hidden px-2 py-1 ml-4 text-sm font-semibold leading-none text-root-logo-label-text bg-root-logo-label-bg rounded-sm md:inline-block">v1</span>
                     </div>
         
@@ -149,7 +153,7 @@
     
         <div class="container relative flex bg-white">
             <!-- Sidebar Skeleton -->
-            <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-gray-100 border-gray-200 sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton dark:bg-dark-800 dark:border-dark-650">
+            <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-white border-gray-200 sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton dark:bg-dark-800 dark:border-dark-650">
             
                 <div class="flex items-center h-16 px-6">
                     <input class="w-full h-8 px-3 py-2 transition-colors duration-200 ease-linear bg-white border border-gray-200 rounded shadow-none text-sm focus:outline-none focus:border-gray-600 dark:bg-dark-600 dark:border-dark-600" type="text" placeholder="Filter">
@@ -245,15 +249,185 @@
 <doc-anchor-target id="scoped-updates-with-hx-select-and-hx-select-oob" class="break-words">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#scoped-updates-with-hx-select-and-hx-select-oob">#</doc-anchor-trigger>
-        <span>Scoped Updates with hx-select and hx-select-oob</span>
+        <span>Scoped Updates with <code v-pre>hx-select</code> and <code v-pre>hx-select-oob</code></span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>By now, you&#x27;ve built a solid foundation with htmx, swapping content, managing triggers, and crafting dynamic forms that just work. But as your pages grow more interactive, you&#x27;ll inevitably hit a point where updating a single target isn’t enough. Maybe you want to update a sidebar while changing the main content, or inject a modal without touching the rest of the page. That’s where scoped updates come in, and <code v-pre>hx-select</code> and <code v-pre>hx-select-oob</code> are your new best friends.</p>
+<p>This chapter is all about refining how updates flow through your application. Instead of relying on a single target to receive server responses, <code v-pre>hx-select</code> lets you narrow down the specific part of the returned HTML to inject. It gives you surgical precision, which is ideal when your response contains more than one usable fragment. Meanwhile, <code v-pre>hx-select-oob</code> opens the door to out-of-band updates, letting you update multiple, unrelated areas of the DOM in one go, without tying them to a single interaction or target.</p>
+<p>If you’ve ever wished you could keep your UI responsive without duplicating server logic or bloating your Razor Pages with conditionals, this is your chapter. We&#x27;ll walk through how to structure responses for selective updates, coordinate multiple components, and keep your frontend logic minimal and clear. These techniques help you break free from rigid page structures and unlock more flexible interactions, without resorting to JavaScript frameworks.</p>
+<p>Mastering scoped updates is your bridge to building rich, responsive layouts with htmx. Once you&#x27;re comfortable here, you’ll be ready to tackle advanced form enhancements in the next chapter, taking everything you&#x27;ve learned so far and making it even more powerful.</p>
+<doc-anchor-target id="understanding-scoped-updates-with-hx-select">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#understanding-scoped-updates-with-hx-select">#</doc-anchor-trigger>
+        <span>Understanding Scoped Updates with <code v-pre>hx-select</code></span>
+    </h2>
 </doc-anchor-target>
+<p>As your Razor Pages application grows, you’ll find yourself working with more complex responses, maybe a modal, a notification bar, and some freshly fetched content, all delivered in a single response. By default, htmx will drop the entire response into the target you specify. That works great for simple interactions. But what if your response contains more than one part, and you only want to insert a specific piece? That’s where <code v-pre>hx-select</code> comes in.</p>
+<p><code v-pre>hx-select</code> gives you surgical control over what gets swapped into the DOM. Instead of injecting the full response, you can instruct htmx to extract just the part you want using a CSS selector. This small change makes your interactions more efficient, especially when returning a large chunk of HTML but only updating a single widget or section on the page.</p>
+<p>Let’s say you have a blog post page with a comment section at the bottom. When a user submits a new comment, you don’t want to re-render the entire post; you just want to refresh the comments. You could structure your Razor Page handler to return the entire page, or even a full layout. But with <code v-pre>hx-select</code>, you can return a full HTML document or section, and still update only the relevant part on the client side.</p>
+<p>Here’s how that might look. In your form, you define where the response should be inserted and how much of it to use:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Post?handler=AddComment&quot;
+      hx-target=&quot;#comments&quot;
+      hx-select=&quot;#comments&quot;&gt;
+    &lt;textarea name=&quot;commentText&quot;&gt;&lt;/textarea&gt;
+    &lt;button type=&quot;submit&quot;&gt;Add Comment&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>The important part here is <code v-pre>hx-select=&quot;#comments&quot;</code>. This tells htmx to scan the returned HTML and grab only the element that matches that CSS selector, in this case, the <code v-pre>#comments</code> div. That element then updates the target, replacing its contents with the fresh comment list.</p>
+<p>Your Razor Page handler could return the full comment section, possibly as part of a partial view:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostAddComment(string commentText)
+{
+    // Save the comment
+    _commentService.Add(commentText);
+
+    var comments = _commentService.GetAll();
+    return Partial(&quot;_CommentSection&quot;, comments);
+}</code></pre>
+</doc-codeblock></div>
+<p>The _CommentSection.cshtml partial might look like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;comments&quot;&gt;
+    @foreach (var comment in Model)
+    {
+        &lt;div class=&quot;comment&quot;&gt;
+            &lt;p&gt;@comment.Text&lt;/p&gt;
+            &lt;small&gt;@comment.Timestamp.ToString(&quot;g&quot;)&lt;/small&gt;
+        &lt;/div&gt;
+    }
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Even if the server ends up returning more than just the comment list, maybe due to shared layout wrappers or helper components, <code v-pre>hx-select</code> ensures that only the <code v-pre>#comments</code> portion is actually used in the swap. This not only keeps your page efficient but also prevents flickers or layout shifts caused by unnecessary updates.</p>
+<p>By relying on standard CSS selectors, <code v-pre>hx-select</code> gives you a familiar and flexible way to grab nested elements. You can use IDs, classes, or even tag names to identify the part of the response you care about. This keeps your Razor Pages logic clean and your frontend interactions highly targeted, which is precisely the kind of control you need when building maintainable, server-driven applications.</p>
+<doc-anchor-target id="implementing-out-of-band-updates-with-hx-select-oob">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#implementing-out-of-band-updates-with-hx-select-oob">#</doc-anchor-trigger>
+        <span>Implementing Out-of-Band Updates with <code v-pre>hx-select-oob</code></span>
+    </h2>
+</doc-anchor-target>
+<p>Sometimes, one update just isn’t enough. You might need to update multiple parts of a page as the result of a single interaction like refreshing a list and adjusting a notification badge simultaneously. That’s where out-of-band (OOB) updates come into play. With <code v-pre>hx-select-oob</code>, htmx lets you reach beyond your designated <code v-pre>hx-target</code> and update other elements elsewhere in the DOM, all from the same server response.</p>
+<p>Out-of-band updates work by embedding special HTML fragments inside your response, marked with the <code v-pre>hx-oob</code> attribute. These elements are processed separately and matched to elements already on the page based on their ID. It’s like sending little update packets along with your main response, each one destined for a different part of the UI.</p>
+<p>Let’s walk through a practical example. Imagine you’re building a simple messaging interface. When a user submits a message, the message list is updated, but you also want to increment a badge in the navigation bar that shows the count of unread messages. The message list lives in one section of the page; the badge lives in another. Rather than firing off two separate requests or bundling extra JavaScript logic, you can handle both in a single htmx interaction using <code v-pre>hx-select-oob</code>.</p>
+<p>Here’s what the form might look like:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Messages?handler=Send&quot;
+      hx-target=&quot;#message-list&quot;
+      hx-swap=&quot;outerHTML&quot;
+      hx-select=&quot;#message-list&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;text&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Send&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>This setup updates the <code v-pre>#message-list</code> div with the new list of messages. But in your server-side response, you can include an additional fragment targeting the badge, like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;message-list&quot;&gt;
+    &lt;!-- Rendered list of messages --&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;unread-count&quot; hx-oob=&quot;true&quot;&gt;
+    3
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The Razor Page handler could return this via a partial or even inline:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostSend(string text)
+{
+    _messageService.Send(text);
+    var messages = _messageService.GetAll();
+    var unreadCount = _messageService.GetUnreadCount();
+
+    var html = $@&quot;
+        {RenderPartialView(&quot;_MessageList&quot;, messages)}
+        &lt;div id='unread-count' hx-oob='true'&gt;{unreadCount}&lt;/div&gt;
+    &quot;;
+
+    return Content(html, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>When the response comes back, htmx swaps the <code v-pre>#message-list</code> as usual. Then it finds the <code v-pre>hx-oob=&quot;true&quot;</code> element, looks for an element on the page with a matching ID (<code v-pre>unread-count</code>), and swaps it using the default strategy (<code v-pre>innerHTML</code>). The best part is: you didn’t need any client-side code to handle it.</p>
+<p>If you need finer control over how the OOB content is inserted, you can combine <code v-pre>hx-select-oob</code> with <code v-pre>hx-swap</code>. For instance, if your badge is a container that wraps more than just a number, you can return:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;unread-count&quot; hx-oob=&quot;true&quot; hx-swap=&quot;outerHTML&quot;&gt;
+    &lt;span class=&quot;badge&quot;&gt;3&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>This ensures the entire badge element gets replaced rather than just its inner content.</p>
+<p>Out-of-band updates shine when your server already knows what needs to change. Instead of orchestrating multiple client-initiated requests or tightly coupling components, you let the server dictate the update story in one go. It’s a powerful, clean way to keep your UI in sync, especially in more complex Razor Pages apps where form submissions often affect more than just one element on the screen.</p>
+<doc-anchor-target id="combining-hx-select-and-hx-select-oob-for-complex-ui-interactions">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#combining-hx-select-and-hx-select-oob-for-complex-ui-interactions">#</doc-anchor-trigger>
+        <span>Combining <code v-pre>hx-select</code> and <code v-pre>hx-select-oob</code> for Complex UI Interactions</span>
+    </h2>
+</doc-anchor-target>
+<p>As you build more interactive and refined web applications with Razor Pages and htmx, you&#x27;ll eventually need to update several parts of your UI from a single user action. It could be as simple as refreshing a portion of a form or as involved as coordinating updates between a form, a sidebar, and a notification area. Combining <code v-pre>hx-select</code> and <code v-pre>hx-select-oob</code> gives you the flexibility to structure complex interactions cleanly, all without layering in a bunch of JavaScript.</p>
+<p>A good rule of thumb is to keep your Razor Pages responses modular and self-contained. That means separating different UI components, like a cart summary, a product form, and a badge, into their own partial views. This makes it easier to return just the parts you need selectively and keeps your server logic easy to maintain. When using <code v-pre>hx-select</code>, you should structure your response to include a container for each section you might target. When adding out-of-band updates, remember that the returned elements must include the <code v-pre>hx-oob=&quot;true&quot;</code> attribute and an ID that matches something already rendered on the page.</p>
+<p>Let’s look at a practical example: updating a shopping cart summary when a user adds an item to their cart. The user interacts with a form that adds the product, but you want the cart summary in the sidebar to reflect the new item count and price totals. Here&#x27;s what the form might look like:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Cart?handler=AddItem&quot;
+      hx-target=&quot;#add-to-cart-form&quot;
+      hx-select=&quot;#add-to-cart-form&quot;&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;productId&quot; value=&quot;42&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Add to Cart&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>This setup uses <code v-pre>hx-select</code> to replace only the form markup returned from the server, allowing things like button states or inline validation messages to be updated while keeping the rest of the page intact. The server, however, also returns an out-of-band update for the cart summary:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;add-to-cart-form&quot;&gt;
+    &lt;button disabled&gt;Added!&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;cart-summary&quot; hx-oob=&quot;true&quot;&gt;
+    &lt;p&gt;Items: 3&lt;/p&gt;
+    &lt;p&gt;Total: $89.97&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The Razor Page handler might look like this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostAddItem(int productId)
+{
+    _cartService.AddItem(productId);
+    var cart = _cartService.GetSummary();
+
+    var formHtml = RenderPartialView(&quot;_AddToCartForm&quot;, productId);
+    var summaryHtml = RenderPartialView(&quot;_CartSummary&quot;, cart);
+
+    return Content($&quot;{formHtml}{summaryHtml}&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>If something goes wrong during development, say, the cart summary doesn’t update, it’s usually a mismatch between the Id of the returned <code v-pre>hx-oob</code> element and the existing element on the page. Double-check that both IDs are present and that the out-of-band element includes <code v-pre>hx-oob=&quot;true&quot;</code>. Also, ensure the content type returned by the server is text/html, not JSON or plain text, as htmx expects HTML fragments it can parse and inject.</p>
+<p>To debug more efficiently, use your browser’s developer tools to inspect the response body and see exactly what HTML was returned. htmx will log messages in the console when it&#x27;s in debug mode, and these messages can help you spot misconfigured targets or missing elements. You can enable debug mode globally by setting the <code v-pre>HX-DEBUG</code> header or adding <code v-pre>hx-debug=&quot;true&quot;</code> on any triggering element.</p>
+<p>By combining <code v-pre>hx-select</code> and <code v-pre>hx-select-oob</code>, you can manage sophisticated UI updates in a way that keeps your Razor Pages clean and your front end reactive. This approach encourages good separation of concerns: your server builds the HTML, your client inserts it where needed, and you never have to touch a JavaScript framework. This approach scales naturally as your app grows, giving you the confidence to tackle more interactive features without increasing front-end complexity.</p>
+<doc-anchor-target id="optimizing-scoped-updates-for-performance-and-usability">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#optimizing-scoped-updates-for-performance-and-usability">#</doc-anchor-trigger>
+        <span>Optimizing Scoped Updates for Performance and Usability</span>
+    </h2>
+</doc-anchor-target>
+<p>Scoped updates can breathe life into a static page, but without thoughtful implementation, they can also create unexpected side effects. While htmx makes dynamic updates remarkably easy, the best experiences come from using <code v-pre>hx-select</code> and <code v-pre>hx-select-oob</code> with performance and usability in mind. It’s not just about what you update, it’s about updating only what you need, and doing so in a way that keeps your app fast, accessible, and maintainable.</p>
+<p>Every DOM swap has a cost. When you return large HTML fragments and swap entire sections of the page, even if they haven’t really changed, browsers still have to parse and re-render that content. This can lead to flickers, layout jumps, or loss of scroll position. With scoped updates, you can fine-tune your responses so htmx only injects small, relevant parts. For example, instead of updating a whole div that contains both a form and a result list, consider splitting that into two separate containers and updating only what actually changes.</p>
+<p>Here’s a quick illustration. Suppose you have a search form that returns results and also updates a count badge. Instead of wrapping both the form and results in a single target, you might use this layout:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Search&quot;
+      hx-target=&quot;#search-results&quot;
+      hx-select=&quot;#search-results&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;query&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Search&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;search-results&quot;&gt;
+    &lt;!-- Results rendered here --&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;result-count&quot; aria-live=&quot;polite&quot;&gt;
+    &lt;!-- Count badge updated here --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The server returns the full markup for both <code v-pre>#search-results</code> and <code v-pre>#result-count</code>, with the latter marked as out-of-band. This way, the visible update is fast and scoped, while screen readers are notified of the change via aria-live, helping maintain accessibility.</p>
+<p>Speaking of accessibility, it’s easy to overlook how updates affect keyboard users and screen reader navigation. Swapping elements without preserving focus can disorient users or reset their progress. Always test how your updates behave when tabbing through inputs, using screen readers, or resizing the page. For dynamic forms, avoid resetting inputs unnecessarily, and consider preserving focus using a bit of server-side logic to track the active element and reapply it post-render. Razor Pages gives you enough control to render attributes conditionally, like autofocus, to help with this.</p>
+<p>Reusable components are key to managing scoped updates effectively. Define your partials with clear entry points, like wrapping lists, summaries, or notifications in distinct IDs. Avoid reusing the same ID for different purposes, and ensure each component handles its own rendering logic. By doing this, you make your server responses composable and predictable, which in turn simplifies your testing and debugging workflow.</p>
+<p>And when debugging, lean on the htmx dev tools. Enable debug mode to see what elements are being swapped, which <code v-pre>hx-select</code> or <code v-pre>hx-oob</code> selectors are being used, and whether any errors were thrown during the update. If an element doesn’t update, it’s usually a selector mismatch or a missing ID on the client side. Keep your developer tools open and inspect the actual response payload to ensure it contains the expected elements.</p>
+<p>As you continue refining your UI with htmx, the next natural step is to deepen how forms behave. You’ve already used <code v-pre>hx-post</code> and basic <code v-pre>hx-select</code> interactions, but htmx offers even more control through attributes like <code v-pre>hx-params</code>, <code v-pre>hx-vals</code>, and <code v-pre>hx-validate</code>. In the next chapter, we’ll explore how to use these features to add context, client-side validation, and dynamic parameter tweaking, turning your Razor Pages forms into powerful, responsive, and flexible components.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -325,6 +499,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 16 - Scoped Updates with hx-select and hx-select-oob", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 16 - Scoped Updates with hx-select and hx-select-oob", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
