@@ -4,7 +4,7 @@ icon: stack
 label: Chap 17 - Form Enhancements with hx-params, hx-vals, and hx-validate
 meta:
 title: "Form Enhancements with hx-params, hx-vals, and hx-validate"
-visibility: hidden
+visibility: protected
 ---
 
 # Form Enhancements with `hx-params`, `hx-vals`, and `hx-validate`
