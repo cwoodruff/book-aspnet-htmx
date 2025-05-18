@@ -1,0 +1,17 @@
+@model List<string>
+
+<div id="message-list">
+    @if (Model.Any())
+    {
+        <ul class="messages">
+            @foreach (var message in Model)
+            {
+                <li>@message</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No messages yet</p>
+    }
+</div>

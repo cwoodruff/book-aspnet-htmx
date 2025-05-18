@@ -1,17 +1,16 @@
 ---
 order: 15
 icon: stack
-label: Chap 16 - Scoped Updates with hx-select and hx-select-oob
+label: Chap 16 - Scoped Updates with htmx and Out-of-Band
 meta:
-title: "Scoped Updates with hx-select and hx-select-oob"
-visibility: protected
+title: "Scoped Updates with htmx and Out-of-Band"
 ---
-# Scoped Updates with `hx-select` and `hx-select-oob`
+# Scoped Updates with htmx and Out-of-Band
 
 
-By now, you've built a solid foundation with htmx, swapping content, managing triggers, and crafting dynamic forms that just work. But as your pages grow more interactive, you'll inevitably hit a point where updating a single target isn’t enough. Maybe you want to update a sidebar while changing the main content, or inject a modal without touching the rest of the page. That’s where scoped updates come in, and `hx-select` and `hx-select-oob` are your new best friends.
+By now, you've built a solid foundation with htmx, swapping content, managing triggers, and crafting dynamic forms that just work. But as your pages grow more interactive, you'll inevitably hit a point where updating a single target isn’t enough. Maybe you want to update a sidebar while changing the main content, or inject a modal without touching the rest of the page. That’s where scoped updates come in, and `hx-select` and `hx-swap-oob` are your new best friends.
 
-This chapter is all about refining how updates flow through your application. Instead of relying on a single target to receive server responses, `hx-select` lets you narrow down the specific part of the returned HTML to inject. It gives you surgical precision, which is ideal when your response contains more than one usable fragment. Meanwhile, `hx-select-oob` opens the door to out-of-band updates, letting you update multiple, unrelated areas of the DOM in one go, without tying them to a single interaction or target.
+This chapter is all about refining how updates flow through your application. Instead of relying on a single target to receive server responses, `hx-select` lets you narrow down the specific part of the returned HTML to inject. It gives you surgical precision, which is ideal when your response contains more than one usable fragment. Meanwhile, `hx-select-oob` and `hx-swap-oob` open the door to out-of-band updates, letting you update multiple, unrelated areas of the DOM in one go, without tying them to a single interaction or target.
 
 If you’ve ever wished you could keep your UI responsive without duplicating server logic or bloating your Razor Pages with conditionals, this is your chapter. We'll walk through how to structure responses for selective updates, coordinate multiple components, and keep your frontend logic minimal and clear. These techniques help you break free from rigid page structures and unlock more flexible interactions, without resorting to JavaScript frameworks.
 
@@ -31,6 +30,7 @@ Here’s how that might look. In your form, you define where the response should
 <form hx-post="/Post?handler=AddComment"
       hx-target="#comments"
       hx-select="#comments">
+    @Html.AntiForgeryToken()
     <textarea name="commentText"></textarea>
     <button type="submit">Add Comment</button>
 </form>
@@ -69,126 +69,88 @@ Even if the server ends up returning more than just the comment list, maybe due 
 
 By relying on standard CSS selectors, `hx-select` gives you a familiar and flexible way to grab nested elements. You can use IDs, classes, or even tag names to identify the part of the response you care about. This keeps your Razor Pages logic clean and your frontend interactions highly targeted, which is precisely the kind of control you need when building maintainable, server-driven applications.
 
-## Implementing Out-of-Band Updates with `hx-select-oob`
+## Implementing Out-of-Band Updates with `hx-swap-oob`
 
-Sometimes, one update just isn’t enough. You might need to update multiple parts of a page as the result of a single interaction like refreshing a list and adjusting a notification badge simultaneously. That’s where out-of-band (OOB) updates come into play. With `hx-select-oob`, htmx lets you reach beyond your designated `hx-target` and update other elements elsewhere in the DOM, all from the same server response.
+Sometimes, one update just isn’t enough. You may need to update multiple parts of a page as a result of a single interaction, such as refreshing a list and adjusting a notification badge simultaneously. That’s where out-of-band (OOB) updates come into play. With `hx-swap-oob`, htmx lets you reach beyond your designated `hx-target` and update other elements elsewhere in the DOM, all from the same server response.
 
-Out-of-band updates work by embedding special HTML fragments inside your response, marked with the `hx-oob` attribute. These elements are processed separately and matched to elements already on the page based on their ID. It’s like sending little update packets along with your main response, each one destined for a different part of the UI.
+Out-of-band updates work by embedding special HTML fragments inside your response, marked with the `hx-select-oob` or `hx-swap-oob` attributes. These elements are processed separately and matched to existing elements on the page based on their IDs. It’s like sending little update packets along with your main response, each one destined for a different part of the UI.
 
-Let’s walk through a practical example. Imagine you’re building a simple messaging interface. When a user submits a message, the message list is updated, but you also want to increment a badge in the navigation bar that shows the count of unread messages. The message list lives in one section of the page; the badge lives in another. Rather than firing off two separate requests or bundling extra JavaScript logic, you can handle both in a single htmx interaction using `hx-select-oob`.
+Let’s walk through a practical example. Imagine you’re building a simple messaging interface. When a user submits a message, the message list is updated, but you also want to increment a badge in the navigation bar that shows the count of unread messages. The message list lives in one section of the page; the badge lives in another. Rather than firing off two separate requests or bundling extra JavaScript logic, you can handle both in a single htmx interaction using `hx-swap-oob`.
 
 Here’s what the form might look like:
 
 ```html
-<form hx-post="/Messages?handler=Send"
-      hx-target="#message-list"
-      hx-swap="outerHTML"
-      hx-select="#message-list">
-    <input type="text" name="text" />
-    <button type="submit">Send</button>
-</form>
+<div class="message-form">
+    <form hx-post="/Index?handler=Send"
+          hx-target="#message-list"
+          hx-swap="innerHTML"
+          hx-select="#message-list, #unread-count">
+        @Html.AntiForgeryToken()
+        <input type="text" name="text" placeholder="Write a message..." required />
+        <button type="submit">Send</button>
+    </form>
+</div>
 ```
 
 This setup updates the `#message-list` div with the new list of messages. But in your server-side response, you can include an additional fragment targeting the badge, like this:
 
 ```html
 <div id="message-list">
-    <!-- Rendered list of messages -->
+    @await Html.PartialAsync("_MessageList", Model.Messages)
 </div>
 
-<div id="unread-count" hx-oob="true">
-    3
-</div>
+<div id='unread-count'>Messages: 0</div>
 ```
 
 The Razor Page handler could return this via a partial or even inline:
 
 ```csharp
-public IActionResult OnPostSend(string text)
+public async Task<IActionResult> OnPostSendAsync()
 {
-    _messageService.Send(text);
-    var messages = _messageService.GetAll();
-    var unreadCount = _messageService.GetUnreadCount();
+    if (!string.IsNullOrWhiteSpace(Text))
+    {
+        _messages.Insert(0, Text);  // Add new message at the beginning
+        _unreadCount++;
+    }
 
-    var html = $@"
-        {RenderPartialView("_MessageList", messages)}
-        <div id='unread-count' hx-oob='true'>{unreadCount}</div>
-    ";
+    // Set content type for the response
+    Response.ContentType = "text/html";
 
-    return Content(html, "text/html");
+    // Return both message list and unread count
+    var html = new StringWriter();
+
+    // Render the message list partial view
+    await html.WriteAsync(await RazorPartialToString.RenderPartialViewToString(
+        HttpContext, 
+        "_MessageList", 
+        Messages));
+
+    // Append the unread count div with hx-swap-oob attribute
+    await html.WriteAsync($"<div id=\"unread-count\" hx-swap-oob=\"true\">Messages: {UnreadCount}</div>");
+
+    return Content(html.ToString(), "text/html");
 }
 ```
 
-When the response comes back, htmx swaps the `#message-list` as usual. Then it finds the `hx-oob="true"` element, looks for an element on the page with a matching ID (`unread-count`), and swaps it using the default strategy (`innerHTML`). The best part is: you didn’t need any client-side code to handle it.
+When the response comes back, htmx swaps the `#message-list` as usual. Then it finds the `hx-swap-oob="true"` element, looks for an element on the page with a matching ID (`unread-count`), and swaps it using the default strategy (`innerHTML`). The best part is: you didn’t need any client-side code to handle it.
 
-If you need finer control over how the OOB content is inserted, you can combine `hx-select-oob` with `hx-swap`. For instance, if your badge is a container that wraps more than just a number, you can return:
+If you need finer control over how the OOB content is inserted, you can combine `hx-swap-oob` with `hx-swap`. For instance, if your badge is a container that wraps more than just a number, you can return:
 
 ```html
-<div id="unread-count" hx-oob="true" hx-swap="outerHTML">
+<div id="unread-count" hx-swap-oob="true" hx-swap="outerHTML">
     <span class="badge">3</span>
 </div>
 ```
 
-This ensures the entire badge element gets replaced rather than just its inner content.
+This ensures that the entire badge element is replaced, rather than just its inner content.
 
 Out-of-band updates shine when your server already knows what needs to change. Instead of orchestrating multiple client-initiated requests or tightly coupling components, you let the server dictate the update story in one go. It’s a powerful, clean way to keep your UI in sync, especially in more complex Razor Pages apps where form submissions often affect more than just one element on the screen.
 
-## Combining `hx-select` and `hx-select-oob` for Complex UI Interactions
-
-As you build more interactive and refined web applications with Razor Pages and htmx, you'll eventually need to update several parts of your UI from a single user action. It could be as simple as refreshing a portion of a form or as involved as coordinating updates between a form, a sidebar, and a notification area. Combining `hx-select` and `hx-select-oob` gives you the flexibility to structure complex interactions cleanly, all without layering in a bunch of JavaScript.
-
-A good rule of thumb is to keep your Razor Pages responses modular and self-contained. That means separating different UI components, like a cart summary, a product form, and a badge, into their own partial views. This makes it easier to return just the parts you need selectively and keeps your server logic easy to maintain. When using `hx-select`, you should structure your response to include a container for each section you might target. When adding out-of-band updates, remember that the returned elements must include the `hx-oob="true"` attribute and an ID that matches something already rendered on the page.
-
-Let’s look at a practical example: updating a shopping cart summary when a user adds an item to their cart. The user interacts with a form that adds the product, but you want the cart summary in the sidebar to reflect the new item count and price totals. Here's what the form might look like:
-
-```html
-<form hx-post="/Cart?handler=AddItem"
-      hx-target="#add-to-cart-form"
-      hx-select="#add-to-cart-form">
-    <input type="hidden" name="productId" value="42" />
-    <button type="submit">Add to Cart</button>
-</form>
-```
-
-This setup uses `hx-select` to replace only the form markup returned from the server, allowing things like button states or inline validation messages to be updated while keeping the rest of the page intact. The server, however, also returns an out-of-band update for the cart summary:
-
-```html
-<div id="add-to-cart-form">
-    <button disabled>Added!</button>
-</div>
-
-<div id="cart-summary" hx-oob="true">
-    <p>Items: 3</p>
-    <p>Total: $89.97</p>
-</div>
-```
-
-The Razor Page handler might look like this:
-
-```csharp
-public IActionResult OnPostAddItem(int productId)
-{
-    _cartService.AddItem(productId);
-    var cart = _cartService.GetSummary();
-
-    var formHtml = RenderPartialView("_AddToCartForm", productId);
-    var summaryHtml = RenderPartialView("_CartSummary", cart);
-
-    return Content($"{formHtml}{summaryHtml}", "text/html");
-}
-```
-
-If something goes wrong during development, say, the cart summary doesn’t update, it’s usually a mismatch between the Id of the returned `hx-oob` element and the existing element on the page. Double-check that both IDs are present and that the out-of-band element includes `hx-oob="true"`. Also, ensure the content type returned by the server is text/html, not JSON or plain text, as htmx expects HTML fragments it can parse and inject.
-
-To debug more efficiently, use your browser’s developer tools to inspect the response body and see exactly what HTML was returned. htmx will log messages in the console when it's in debug mode, and these messages can help you spot misconfigured targets or missing elements. You can enable debug mode globally by setting the `HX-DEBUG` header or adding `hx-debug="true"` on any triggering element.
-
-By combining `hx-select` and `hx-select-oob`, you can manage sophisticated UI updates in a way that keeps your Razor Pages clean and your front end reactive. This approach encourages good separation of concerns: your server builds the HTML, your client inserts it where needed, and you never have to touch a JavaScript framework. This approach scales naturally as your app grows, giving you the confidence to tackle more interactive features without increasing front-end complexity.
-
 ## Optimizing Scoped Updates for Performance and Usability
 
-Scoped updates can breathe life into a static page, but without thoughtful implementation, they can also create unexpected side effects. While htmx makes dynamic updates remarkably easy, the best experiences come from using `hx-select` and `hx-select-oob` with performance and usability in mind. It’s not just about what you update, it’s about updating only what you need, and doing so in a way that keeps your app fast, accessible, and maintainable.
+Scoped updates can breathe life into a static page, but without thoughtful implementation, they can also create unexpected side effects. While htmx makes dynamic updates remarkably easy, the best experiences come from using `hx-select` and `hx-select-oob` with performance and usability in mind. It’s not just about what you update; it’s about updating only what you need and doing so in a way that keeps your app fast, accessible, and maintainable.
 
-Every DOM swap has a cost. When you return large HTML fragments and swap entire sections of the page, even if they haven’t really changed, browsers still have to parse and re-render that content. This can lead to flickers, layout jumps, or loss of scroll position. With scoped updates, you can fine-tune your responses so htmx only injects small, relevant parts. For example, instead of updating a whole div that contains both a form and a result list, consider splitting that into two separate containers and updating only what actually changes.
+Every DOM swap has a cost. When you return large HTML fragments and swap entire sections of the page, even if they haven’t really changed, browsers still have to parse and re-render that content. This can result in flickering, layout jumps, or loss of scroll position. With scoped updates, you can fine-tune your responses so htmx only injects small, relevant parts. For example, instead of updating a whole div that contains both a form and a result list, consider splitting that into two separate containers and updating only what actually changes.
 
 Here’s a quick illustration. Suppose you have a search form that returns results and also updates a count badge. Instead of wrapping both the form and results in a single target, you might use this layout:
 
@@ -215,6 +177,6 @@ Speaking of accessibility, it’s easy to overlook how updates affect keyboard u
 
 Reusable components are key to managing scoped updates effectively. Define your partials with clear entry points, like wrapping lists, summaries, or notifications in distinct IDs. Avoid reusing the same ID for different purposes, and ensure each component handles its own rendering logic. By doing this, you make your server responses composable and predictable, which in turn simplifies your testing and debugging workflow.
 
-And when debugging, lean on the htmx dev tools. Enable debug mode to see what elements are being swapped, which `hx-select` or `hx-oob` selectors are being used, and whether any errors were thrown during the update. If an element doesn’t update, it’s usually a selector mismatch or a missing ID on the client side. Keep your developer tools open and inspect the actual response payload to ensure it contains the expected elements.
+And when debugging, lean on the htmx dev tools. Enable debug mode to see what elements are being swapped, which `hx-select` or `hx-swap-oob` selectors are being used, and whether any errors were thrown during the update. If an element doesn’t update, it’s usually a selector mismatch or a missing ID on the client side. Keep your developer tools open and inspect the actual response payload to ensure it contains the expected elements.
 
 As you continue refining your UI with htmx, the next natural step is to deepen how forms behave. You’ve already used `hx-post` and basic `hx-select` interactions, but htmx offers even more control through attributes like `hx-params`, `hx-vals`, and `hx-validate`. In the next chapter, we’ll explore how to use these features to add context, client-side validation, and dynamic parameter tweaking, turning your Razor Pages forms into powerful, responsive, and flexible components.

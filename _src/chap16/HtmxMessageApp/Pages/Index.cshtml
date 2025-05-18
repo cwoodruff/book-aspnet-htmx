@@ -1,0 +1,26 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Message Interface";
+}
+
+<div class="container">
+    <h1>Messaging Interface</h1>
+    
+    <div class="message-form">
+        <form hx-post="/Index?handler=Send"
+              hx-target="#message-list"
+              hx-swap="outerHTML"
+              hx-select="#message-list, #unread-count">
+            @Html.AntiForgeryToken()
+            <input type="text" name="text" placeholder="Write a message..." required />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    
+    <div id="message-list">
+        @await Html.PartialAsync("_MessageList", Model.Messages)
+    </div>
+    
+    <div id='unread-count'>Messages: 0</div>
+</div>
