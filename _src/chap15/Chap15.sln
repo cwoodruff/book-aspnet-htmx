@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmxSpinnerDemo", "HtmxSpinnerDemo\HtmxSpinnerDemo.csproj", "{7CDA6E05-C953-41A1-BD37-CA226819E9A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmxPreserveDemo", "HtmxPreserveDemo\HtmxPreserveDemo.csproj", "{714FB601-0688-4BCC-9101-4AF1FDA9AA5B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7CDA6E05-C953-41A1-BD37-CA226819E9A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CDA6E05-C953-41A1-BD37-CA226819E9A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CDA6E05-C953-41A1-BD37-CA226819E9A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CDA6E05-C953-41A1-BD37-CA226819E9A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{714FB601-0688-4BCC-9101-4AF1FDA9AA5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{714FB601-0688-4BCC-9101-4AF1FDA9AA5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{714FB601-0688-4BCC-9101-4AF1FDA9AA5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{714FB601-0688-4BCC-9101-4AF1FDA9AA5B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

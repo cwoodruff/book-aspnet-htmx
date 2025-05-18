@@ -1,0 +1,24 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h2>Search</h2>
+
+    <form asp-page-handler="Search" hx-post="/Index?handler=Search" hx-target="#results">
+        <input id="query" name="Query" type="text" placeholder="Search..." hx-preserve/>
+        <select id="filter" name="Filter" hx-preserve>
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="archived">Archived</option>
+        </select>
+        <button type="submit">Go</button>
+        @Html.AntiForgeryToken()
+    </form>
+
+    <div id="results">
+        <partial name="_Results" model="Model.Results" />
+    </div>
+</div>

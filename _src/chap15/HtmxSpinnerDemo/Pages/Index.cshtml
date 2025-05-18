@@ -1,0 +1,15 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <form hx-get="/Index?handler=Search" hx-target="#results" hx-indicator="#spinner" >
+        <input type="text" name="query" placeholder="Search users..." />
+        <button type="submit">Search</button>
+        <img id="spinner" class="htmx-indicator" src="/img/bars.svg"/>
+    </form>
+
+    <div id="results"></div>
+</div>

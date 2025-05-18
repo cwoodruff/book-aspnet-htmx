@@ -4,14 +4,13 @@ icon: stack
 label: Chap 15 - Visual Feedback with hx-indicator and hx-preserve
 meta:
 title: "Visual Feedback with hx-indicator and hx-preserve"
-visibility: protected
 ---
 
 # Visual Feedback with `hx-indicator` and `hx-preserve`
 
 In modern web applications, responsiveness is more than just speed, it’s about communication. Users want to know that something is happening the moment they click a button or submit a form. This chapter introduces two powerful tools in the htmx toolbox, `hx-indicator` and `hx-preserve`, that help your ASP.NET Core Razor Pages applications speak clearly to your users by providing smooth, purposeful visual feedback.
 
-So far, we’ve explored how htmx enhances interactions through `hx-get`, `hx-post`, and a rich collection of other attributes like `hx-target`, `hx-trigger`, and `hx-swap`. We’ve dynamically loaded content, managed modal dialogs, and even refined our UI components like tabs and tables. Now, we turn to the often overlooked, but absolutely essential, aspect of user experience: giving users immediate, visible clues that their actions are being processed.
+So far, we’ve explored how htmx enhances interactions through `hx-get`, `hx-post`, and a rich collection of other attributes like `hx-target`, `hx-trigger`, and `hx-swap`. We’ve dynamically loaded content, managed modal dialogs, and even refined our UI components like tabs and tables. Now, we turn to the often-overlooked yet absolutely essential aspect of user experience: providing users with immediate, visible clues that their actions are being processed.
 
 Whether it’s a loading spinner appearing during a long request or maintaining scroll position across updates, htmx gives us tools to craft applications that feel seamless and intuitive. `hx-indicator` lets us show activity during requests without manual JavaScript, while `hx-preserve` helps us keep parts of the page steady during dynamic changes. These features may not shout for attention, but they can quietly make or break how polished your app feels.
 
@@ -26,10 +25,10 @@ At its core, `hx-indicator` lets you define an HTML element that will automatica
 Here’s a basic example. Let’s say you have a search form that queries a database and updates a list of results without reloading the page. You’d like to show a loading spinner next to the search button while the query is running. Here’s how you’d do it:
 
 ```html
-<form hx-get="/Search" hx-target="#results" hx-indicator="#spinner">
+<form hx-get="/Index?handler=Search" hx-target="#results" hx-indicator="#spinner">
     <input type="text" name="query" placeholder="Search users..." />
     <button type="submit">Search</button>
-    <span id="spinner" class="spinner visually-hidden">🔄</span>
+    <img id="spinner" class="htmx-indicator" src="/img/bars.svg"/>
 </form>
 <div id="results"></div>
 ```
@@ -37,14 +36,15 @@ Here’s a basic example. Let’s say you have a search form that queries a data
 And with a little CSS:
 
 ```css
-.spinner {
-    margin-left: 8px;
-    opacity: 0;
-    transition: opacity 0.3s;
+.htmx-indicator{
+    opacity:0;
+    transition: opacity 500ms ease-in;
 }
-
-.htmx-request.spinner {
-    opacity: 1;
+.htmx-request .htmx-indicator{
+    opacity:1;
+}
+.htmx-request.htmx-indicator{
+    opacity:1;
 }
 ```
 
@@ -76,7 +76,7 @@ That’s where `hx-preserve` comes in. It tells htmx: "Hey, if you’re about to
 Here’s a practical scenario. Let’s say you have a multi-field search form that updates a results list when submitted. If the server returns a refreshed version of the form (maybe with a validation message or updated placeholder), you don't want it to clear out everything the user just typed. By adding `hx-preserve` to the form inputs, htmx will keep their current values intact during the update.
 
 ```html
-<form hx-post="/Search" hx-target="#results">
+<form asp-page-handler="Search" hx-post="/Index?handler=Search" hx-target="#results">
     <input id="query" name="query" type="text" placeholder="Search..." hx-preserve />
     <select id="filter" name="filter" hx-preserve>
         <option value="all">All</option>
