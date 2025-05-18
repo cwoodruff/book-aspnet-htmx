@@ -94,18 +94,18 @@ To find translations, please check out the [Translations](./Translations.md) pag
         <tr>
             <td rowspan=4>Section 4: Enhancing User Experience</td>
             <td>15</td>
-            <td>Visual Feedback with hx-indicator and hx-preserve</td>
-            <td></td>
+            <td><a href="https://aspnet-htmx.com/chapter15/">Visual Feedback with hx-indicator and hx-preserve</a></td>
+            <td>✔️</td>
         </tr>
         <tr>
             <td>16</td>
-            <td>Scoped Updates with hx-select and hx-select-oob</td>
-            <td></td>
+            <td><a href="https://aspnet-htmx.com/chapter16/">Scoped Updates with hx-select and hx-select-oob</a></td>
+            <td>✔️</td>
         </tr>
         <tr>
             <td>17</td>
-            <td>Form Enhancements with hx-params, hx-vals, and hx-validate</td>
-            <td></td>
+            <td><a href="https://aspnet-htmx.com/chapter17/">Form Enhancements with hx-params, hx-vals, and hx-validate</a></td>
+            <td>✔️</td>
         </tr>
         <tr>
             <td>18</td>
