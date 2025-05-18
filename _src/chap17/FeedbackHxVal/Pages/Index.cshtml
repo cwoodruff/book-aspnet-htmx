@@ -1,0 +1,18 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h2>Send Us Feedback</h2>
+
+<form hx-post="/Index?handler=Submit" hx-target="#result">
+    @Html.AntiForgeryToken()
+    <textarea name="Message" placeholder="Your feedback..." required></textarea>
+    <button type="submit"
+            hx-vals='{"SubmittedAt": "2025-05-17T00:00:00.000Z", "UserRole": "anonymous"}'>
+        Send Feedback (Static Metadata)
+    </button>
+</form>
+
+<div id="result" class="mt-3"></div>

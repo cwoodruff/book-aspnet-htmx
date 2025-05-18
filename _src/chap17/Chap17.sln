@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyAccountSetup", "MyAccountSetup\MyAccountSetup.csproj", "{1FF96BB8-49CA-4788-97BA-6E17070C5294}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedbackHxVal", "FeedbackHxVal\FeedbackHxVal.csproj", "{0BA758FD-17E8-43B7-B10B-883F0F3FA62C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmxValidation", "HtmxValidation\HtmxValidation.csproj", "{6600EB23-787A-4CB3-9424-2B63097B1A4B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FF96BB8-49CA-4788-97BA-6E17070C5294}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FF96BB8-49CA-4788-97BA-6E17070C5294}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FF96BB8-49CA-4788-97BA-6E17070C5294}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FF96BB8-49CA-4788-97BA-6E17070C5294}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BA758FD-17E8-43B7-B10B-883F0F3FA62C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BA758FD-17E8-43B7-B10B-883F0F3FA62C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BA758FD-17E8-43B7-B10B-883F0F3FA62C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BA758FD-17E8-43B7-B10B-883F0F3FA62C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6600EB23-787A-4CB3-9424-2B63097B1A4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6600EB23-787A-4CB3-9424-2B63097B1A4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6600EB23-787A-4CB3-9424-2B63097B1A4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6600EB23-787A-4CB3-9424-2B63097B1A4B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

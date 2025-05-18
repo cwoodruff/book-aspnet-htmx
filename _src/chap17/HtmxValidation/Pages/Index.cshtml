@@ -1,0 +1,19 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>Create an Account</h2>
+
+<form>
+    <input type="text"
+           name="username"
+           placeholder="Choose a username"
+           hx-get="/Index?handler=CheckUsername"
+           hx-trigger="keyup changed delay:500ms"
+           hx-target="#username-validation"
+           hx-swap="innerHTML"
+           hx-validate />
+    <div id="username-validation" class="validation-message"></div>
+</form>

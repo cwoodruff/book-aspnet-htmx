@@ -1,0 +1,8 @@
+<form id="step-form"
+      hx-post="/Index?handler=Complete"
+      hx-target="#step-container"
+      hx-swap="innerHTML">
+    @Html.AntiForgeryToken()
+    <p>You're all set! Click submit to finish.</p>
+    <button type="submit">Finish</button>
+</form>

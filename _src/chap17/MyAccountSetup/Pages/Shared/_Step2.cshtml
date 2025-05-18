@@ -1,0 +1,10 @@
+<form id="step-form"
+      hx-post="/Index?handler=Step2"
+      hx-target="#step-container"
+      hx-swap="innerHTML">
+    @Html.AntiForgeryToken()
+    <input type="text" name="PhoneNumber" placeholder="Phone Number"/>
+    <input type="text" name="Address" placeholder="Address"/>
+    <input type="hidden" name="Step" value="2"/>
+    <button type="submit" hx-params="not Step">Next</button>
+</form>

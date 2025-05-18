@@ -1,0 +1,11 @@
+<form id="step-form"
+      hx-post="/Index?handler=Step1"
+      hx-target="#step-container"
+      hx-swap="innerHTML">
+    @Html.AntiForgeryToken()
+    <input type="text" name="FirstName" placeholder="First Name"/>
+    <input type="text" name="LastName" placeholder="Last Name"/>
+    <input type="email" name="Email" placeholder="Email"/>
+    <input type="hidden" name="Step" value="1"/>
+    <button type="submit" hx-params="not Step Email">Next</button>
+</form>
