@@ -173,8 +173,8 @@ To find translations, please check out the [Translations](./Translations.md) pag
         </tr>
         <tr>
             <td>Bonus</td>
-            <td>Creating Interactive UIs with Drag and Drop</td>
             <td></td>
+            <td>Creating Interactive UIs with Drag and Drop</td>
         </tr>
     </tbody>
 </table>
