@@ -1,12 +1,12 @@
 ---
 order: 8
 icon: stack
-label: Chap 23 - Developing an E-Commerce Application
+label: Chap 23 - Creating a Chat Application
 meta:
-title: "Developing an E-Commerce Application"
+title: "Creating a Chat Application"
 visibility: protected
 ---
-# Developing an E-Commerce Application
+# Creating a Chat Application
 
 
 

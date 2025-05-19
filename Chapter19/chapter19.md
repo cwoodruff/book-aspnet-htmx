@@ -1,12 +1,12 @@
 ---
 order: 12
 icon: stack
-label: Chap 19 - Caching and History with hx-history and hx-history-elt
+label: Chap 19 - Optimizing Requests with hx-disable and hx-request
 meta:
-title: "Caching and History with hx-history and hx-history-elt"
+title: "Optimizing Requests with hx-disable and hx-request"
 visibility: protected
 ---
-# Caching and History with hx-history and hx-history-elt
+# Optimizing Requests with hx-disable and hx-request
 
 
 
