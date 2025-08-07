@@ -156,18 +156,23 @@ To find translations, please check out the [Translations](./Translations.md) pag
             <td></td>
         </tr>
         <tr>
-            <td rowspan=3>Appendices</td>
+            <td rowspan=4>Appendices</td>
             <td>A</td>
             <td>htmx Command Reference</td>
             <td></td>
         </tr>
         <tr>
             <td>B</td>
-            <td>Hyperscript Quick Guide</td>
+            <td>htmx Extensions</td>
             <td></td>
         </tr>
         <tr>
             <td>C</td>
+            <td>Hyperscript Quick Guide</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>D</td>
             <td>Valuable Tools and Resources for htmx and Razor Pages Development</td>
             <td></td>
         </tr>
