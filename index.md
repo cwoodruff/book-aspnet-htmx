@@ -176,10 +176,5 @@ To find translations, please check out the [Translations](./Translations.md) pag
             <td>Valuable Tools and Resources for htmx and Razor Pages Development</td>
             <td></td>
         </tr>
-        <tr>
-            <td>Bonus</td>
-            <td></td>
-            <td>Creating Interactive UIs with Drag and Drop</td>
-        </tr>
     </tbody>
 </table>
