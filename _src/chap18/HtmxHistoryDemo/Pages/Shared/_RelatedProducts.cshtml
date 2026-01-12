@@ -1,0 +1,24 @@
+@model List<HtmxHistoryDemo.Models.Product>
+
+<div id="related-products">
+    @if (Model.Any())
+    {
+        @foreach (var product in Model)
+        {
+            <div class="card mb-2">
+                <div class="card-body py-2">
+                    <h6 class="card-title mb-1">@product.Name</h6>
+                    <p class="card-text small text-muted mb-1">@product.Description.Substring(0, Math.Min(50, product.Description.Length))...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-primary small fw-bold">$@product.Price</span>
+                        <a href="/Product/@product.Id" class="btn btn-outline-primary btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-muted">No related products found.</p>
+    }
+</div>

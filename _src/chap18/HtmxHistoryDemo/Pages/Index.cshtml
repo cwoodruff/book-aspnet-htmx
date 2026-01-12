@@ -1,0 +1,83 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>htmx History and Caching Demo</h1>
+        <p class="lead">This demo showcases <code>hx-history</code> and <code>hx-history-elt</code> features from Chapter 18.</p>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">🔍 Product Search</h5>
+                        <p class="card-text">
+                            Demonstrates <code>hx-history="true"</code> for caching search results.
+                            Search, click a product, then use the back button to see instant restoration.
+                        </p>
+                        <a href="/Search" class="btn btn-primary">Try Product Search</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">📊 Dashboard</h5>
+                        <p class="card-text">
+                            Showcases <code>hx-history-elt</code> for preserving tab states, scroll positions,
+                            and form inputs across navigation.
+                        </p>
+                        <a href="/Dashboard" class="btn btn-primary">Try Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-5">
+            <h3>Key Features Demonstrated</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>🚀 <code>hx-history</code></h5>
+                    <ul>
+                        <li>Cache server responses</li>
+                        <li>Instant back/forward navigation</li>
+                        <li>No additional server calls</li>
+                        <li>Works with <code>hx-push-url</code></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>💾 <code>hx-history-elt</code></h5>
+                    <ul>
+                        <li>Preserve element state</li>
+                        <li>Remember scroll positions</li>
+                        <li>Retain form inputs</li>
+                        <li>Maintain active tabs</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>⚡ Performance Benefits</h5>
+                    <ul>
+                        <li>Reduced server load</li>
+                        <li>Faster perceived performance</li>
+                        <li>Better user experience</li>
+                        <li>Seamless navigation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-5">
+            <h3>How to Test</h3>
+            <ol>
+                <li><strong>Product Search:</strong> Search for products, click on a result, then use the browser back button</li>
+                <li><strong>Dashboard:</strong> Switch tabs, scroll content, fill forms, navigate away, then return</li>
+                <li><strong>Browser Dev Tools:</strong> Open Network tab to see reduced requests when using back/forward</li>
+                <li><strong>Multiple Pages:</strong> Navigate between search and dashboard to test cross-page caching</li>
+            </ol>
+        </div>
+    </div>
+</div>

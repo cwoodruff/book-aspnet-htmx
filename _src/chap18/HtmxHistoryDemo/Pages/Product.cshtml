@@ -1,0 +1,95 @@
+@page "/Product/{id:int}"
+@model ProductModel
+@{
+    ViewData["Title"] = Model.Product?.Name ?? "Product Not Found";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/Search">Search</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Product?.Name</li>
+            </ol>
+        </nav>
+
+        @if (Model.Product != null)
+        {
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>@Model.Product.Name</h2>
+                            <span class="badge bg-secondary">@Model.Product.Category</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="lead">@Model.Product.Description</p>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h4 class="text-primary">$@Model.Product.Price</h4>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    @* <button class="btn btn-success btn-lg" *@
+                                    @*         _="on click increment #cart-count's textContent by 1 then add .btn-outline-success to me then remove .btn-success from me then put 'Added to Cart!' in me then wait 2s then put 'Add to Cart' in me then add .btn-success to me then remove .btn-outline-success from me"> *@
+                                    @*     Add to Cart *@
+                                    @* </button> *@
+                                    
+                                    <button class="btn btn-success btn-lg" _="on click increment #cart-count's textContent by 1 then add .btn-outline-success to me then remove .btn-success from me then put 'Added to Cart!' into me then wait 2s then put 'Add to Cart' into me then add .btn-success to me then remove .btn-outline-success from me">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <h5>Product Details</h5>
+                                <ul class="list-unstyled">
+                                    <li><strong>ID:</strong> @Model.Product.Id</li>
+                                    <li><strong>Category:</strong> @Model.Product.Category</li>
+                                    <li><strong>Price:</strong> $@Model.Product.Price</li>
+                                </ul>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+                                    ← Back to Search Results
+                                </button>
+                                <a href="/Search" class="btn btn-outline-primary ms-2">New Search</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Related Products</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="related-products"
+                                 hx-get="/Product/@Model.Product.Id?handler=Related"
+                                 hx-trigger="load"
+                                 hx-select="#related-products">
+                                <div class="text-center">
+                                    <div class="spinner-border spinner-border-sm" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="small mt-2">Loading related products...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger">
+                <h4>Product Not Found</h4>
+                <p>The product you're looking for doesn't exist or has been removed.</p>
+                <a href="/Search" class="btn btn-primary">Back to Search</a>
+            </div>
+        }
+    </div>
+</div>
