@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E15T075SB3"></script>
+    <script data-cfasync="false">window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-E15T075SB3');</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="turbo-root" content="/book-aspnet-htmx">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 3.11.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Optimizing Requests with hx-disabled-elt, hx-request, and hx-sync</title>
+    <meta name="title" content="Optimizing Requests with hx-disabled-elt, hx-request, and hx-sync">
+    <meta name="description" content="Every click, every keystroke, every interaction in your application translates to a potential server request.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter19/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter19/">
+    <meta property="og:title" content="Optimizing Requests with hx-disabled-elt, hx-request, and hx-sync">
+    <meta property="og:description" content="Every click, every keystroke, every interaction in your application translates to a potential server request.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter19/">
+    <meta property="twitter:title" content="Optimizing Requests with hx-disabled-elt, hx-request, and hx-sync">
+    <meta property="twitter:description" content="Every click, every keystroke, every interaction in your application translates to a potential server request.">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link href="../images/favicon.png" rel="icon">
+    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+        <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+    
+        <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+            <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+                <!-- Mobile menu button skeleton -->
+                <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-none rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+                <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+        
+                <!-- Logo -->
+                <div class="flex items-center justify-between h-full py-2 md:w-75">
+                    <div class="flex items-center px-2 md:px-6">
+                        <a id="retype-branding-logo" href="../" class="flex items-center leading-snug text-xl">
+                            <span class="w-10 mr-2 grow-0 shrink-0 overflow-hidden">
+                                <img class="max-h-10 dark:hidden md:inline-block" src="../images/network200.png">
+                                <img class="max-h-10 hidden dark:inline-block" src="../images/network200.png">
+                            </span>
+                            <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">ASP.NET Core Reimagined with htmx</span>
+                        </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">v1</span>
+                    </div>
+        
+                    <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+                </div>
+        
+                <div class="flex justify-between md:grow">
+                    <!-- Top Nav -->
+                    <nav id="retype-header-nav" class="hidden md:flex">
+                        <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                            <li class="mr-6">
+                                <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="../">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                        <g fill="currentColor">
+                                            <path d="M11.03 2.59a1.501 1.501 0 0 1 1.94 0l7.5 6.363a1.5 1.5 0 0 1 .53 1.144V19.5a1.5 1.5 0 0 1-1.5 1.5h-5.75a.75.75 0 0 1-.75-.75V14h-2v6.25a.75.75 0 0 1-.75.75H4.5A1.5 1.5 0 0 1 3 19.5v-9.403c0-.44.194-.859.53-1.144ZM12 3.734l-7.5 6.363V19.5h5v-6.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v6.25h5v-9.403Z"/>
+                                        </g>
+                                    </svg>
+                                    <span>Home</span>
+                                </a>
+                            </li>
+                            <li class="mr-6">
+                                <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="https://github.com/cwoodruff/book-aspnet-htmx/issues" target="_blank">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                        <g fill="currentColor">
+                                            <path d="M1.75 1h12.5c.966 0 1.75.784 1.75 1.75v9.5A1.75 1.75 0 0 1 14.25 14H8.061l-2.574 2.573A1.458 1.458 0 0 1 3 15.543V14H1.75A1.75 1.75 0 0 1 0 12.25v-9.5C0 1.784.784 1 1.75 1ZM1.5 2.75v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25Z"/><path d="M22.5 8.75a.25.25 0 0 0-.25-.25h-3.5a.75.75 0 0 1 0-1.5h3.5c.966 0 1.75.784 1.75 1.75v9.5A1.75 1.75 0 0 1 22.25 20H21v1.543a1.457 1.457 0 0 1-2.487 1.03L15.939 20H10.75A1.75 1.75 0 0 1 9 18.25v-1.465a.75.75 0 0 1 1.5 0v1.465c0 .138.112.25.25.25h5.5a.75.75 0 0 1 .53.22l2.72 2.72v-2.19a.75.75 0 0 1 .75-.75h2a.25.25 0 0 0 .25-.25v-9.5Z"/>
+                                        </g>
+                                    </svg>
+                                    <span>Issues</span>
+                                </a>
+                            </li>
+                            <li class="mr-6">
+                                <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="https://bsky.app/profile/woodruff.dev" target="_blank">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                        <g fill="currentColor">
+                                            <path d="M18.231,3.618c-2.312,1.736-4.785,5.107-5.948,7.244c-0.123,0.226-0.444,0.226-0.567,0	c-1.163-2.137-3.636-5.508-5.948-7.244C3.949,2.252,1,1.195,1,4.559c0,0.672,0.385,5.643,0.611,6.451	c0.606,2.169,2.454,3.089,4.437,3.195c0.19,0.01,0.222,0.261,0.043,0.324c-2.988,1.048-3.518,3.196-1.424,5.344	c3.826,3.894,5.814,0.647,6.733-1.514c0.224-0.525,0.977-0.525,1.2,0c0.92,2.161,2.907,5.408,6.733,1.514	c2.093-2.148,1.564-4.296-1.424-5.344c-0.179-0.063-0.146-0.313,0.043-0.324c1.983-0.106,3.83-1.026,4.437-3.195	C22.615,10.203,23,5.231,23,4.559C23,1.195,20.051,2.252,18.231,3.618z"></path>
+                                        </g>
+                                    </svg>
+                                    <span>Bluesky</span>
+                                </a>
+                            </li>
+                            <li class="mr-6">
+                                <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="https://mastodon.social/@cwoodruff" target="_blank">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                        <g fill="currentColor">
+                                            <path d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a4 4 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522q0-1.288.66-2.046c.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764q.662.757.661 2.046z"/>
+                                        </g>
+                                    </svg>
+                                    <span>Mastodon</span>
+                                </a>
+                            </li>
+        
+                        </ul>
+                    </nav>
+        
+                    <!-- Header Right Skeleton -->
+                    <div v-cloak class="flex justify-end grow skeleton">
+        
+                        <!-- Search input mock -->
+                        <div class="relative hidden w-40 lg:block lg:max-w-sm lg:ml-auto">
+                            <div class="absolute flex items-center justify-center h-full pl-3 dark:text-dark-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-base" width="16" height="16" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 1px;"><g fill="currentColor" ><path d="M21.71 20.29l-3.68-3.68A8.963 8.963 0 0020 11c0-4.96-4.04-9-9-9s-9 4.04-9 9 4.04 9 9 9c2.12 0 4.07-.74 5.61-1.97l3.68 3.68c.2.19.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.03 0-1.42zM4 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 1.92-.78 3.66-2.04 4.93-.01.01-.02.01-.02.01-.01.01-.01.01-.01.02A6.98 6.98 0 0111 18c-3.86 0-7-3.14-7-7z" ></path></g></svg>
+                            </div>
+                            <input class="w-full h-10 placeholder-search-placeholder transition-colors duration-200 ease-in bg-search-bg border border-transparent rounded md:text-sm hover:border-search-border-hover focus:outline-none focus:border-search-border-focus" style="padding: 0.625rem 0.75rem 0.625rem 2rem" type="text" placeholder="Search">
+                        </div>
+        
+                        <!-- Mobile search button -->
+                        <div class="flex items-center justify-center w-10 h-10 lg:hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 icon-base" width="20" height="20" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor" ><path d="M21.71 20.29l-3.68-3.68A8.963 8.963 0 0020 11c0-4.96-4.04-9-9-9s-9 4.04-9 9 4.04 9 9 9c2.12 0 4.07-.74 5.61-1.97l3.68 3.68c.2.19.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.03 0-1.42zM4 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 1.92-.78 3.66-2.04 4.93-.01.01-.02.01-.02.01-.01.01-.01.01-.01.02A6.98 6.98 0 0111 18c-3.86 0-7-3.14-7-7z" ></path></g></svg>
+                        </div>
+        
+                        <!-- Dark mode switch placeholder -->
+                        <div class="w-10 h-10 lg:ml-2"></div>
+        
+                        <!-- History button -->
+                        <div class="flex items-center justify-center w-10 h-10" style="margin-right: -0.625rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 icon-base" width="22" height="22" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor" ><g ><path d="M12.01 6.01c-.55 0-1 .45-1 1V12a1 1 0 00.4.8l3 2.22a.985.985 0 001.39-.2.996.996 0 00-.21-1.4l-2.6-1.92V7.01c.02-.55-.43-1-.98-1z"></path><path d="M12.01 1.91c-5.33 0-9.69 4.16-10.05 9.4l-.29-.26a.997.997 0 10-1.34 1.48l1.97 1.79c.19.17.43.26.67.26s.48-.09.67-.26l1.97-1.79a.997.997 0 10-1.34-1.48l-.31.28c.34-4.14 3.82-7.41 8.05-7.41 4.46 0 8.08 3.63 8.08 8.09s-3.63 8.08-8.08 8.08c-2.18 0-4.22-.85-5.75-2.4a.996.996 0 10-1.42 1.4 10.02 10.02 0 007.17 2.99c5.56 0 10.08-4.52 10.08-10.08.01-5.56-4.52-10.09-10.08-10.09z"></path></g></g></svg>
+                        </div>
+                    </div>
+        
+                    <div v-cloak class="flex justify-end grow">
+                        <div id="retype-mobile-search-button"></div>
+                        <doc-search-desktop></doc-search-desktop>
+        
+                        <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                        <doc-history></doc-history>
+                    </div>
+                </div>
+            </div>
+        </header>
+    
+    
+        <div id="retype-container" class="container relative flex bg-white">
+            <!-- Sidebar Skeleton -->
+            <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+            
+                <div class="flex items-center h-16 px-6">
+                    <input class="w-full h-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded shadow-none text-sm focus:outline-none focus:border-filter-border-focus" type="text" placeholder="Filter">
+                </div>
+            
+                <div class="pl-6 mt-1 mb-4">
+                    <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                    <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                    <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                    <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                    <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                    <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                </div>
+            
+                <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Sidebar component -->
+            <doc-sidebar v-cloak>
+                <template #sidebar-footer>
+                    <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+            
+                        <div class="py-3 px-6 md:hidden border-b dark:border-base-border">
+                            <nav>
+                                <ul class="flex flex-wrap justify-center items-center">
+                                    <li class="mr-6">
+                                        <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="../">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                                <g fill="currentColor">
+                                                    <path d="M11.03 2.59a1.501 1.501 0 0 1 1.94 0l7.5 6.363a1.5 1.5 0 0 1 .53 1.144V19.5a1.5 1.5 0 0 1-1.5 1.5h-5.75a.75.75 0 0 1-.75-.75V14h-2v6.25a.75.75 0 0 1-.75.75H4.5A1.5 1.5 0 0 1 3 19.5v-9.403c0-.44.194-.859.53-1.144ZM12 3.734l-7.5 6.363V19.5h5v-6.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v6.25h5v-9.403Z"/>
+                                                </g>
+                                            </svg>
+                                            <span>Home</span>
+                                        </a>
+                                    </li>
+                                    <li class="mr-6">
+                                        <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="https://github.com/cwoodruff/book-aspnet-htmx/issues" target="_blank">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                                <g fill="currentColor">
+                                                    <path d="M1.75 1h12.5c.966 0 1.75.784 1.75 1.75v9.5A1.75 1.75 0 0 1 14.25 14H8.061l-2.574 2.573A1.458 1.458 0 0 1 3 15.543V14H1.75A1.75 1.75 0 0 1 0 12.25v-9.5C0 1.784.784 1 1.75 1ZM1.5 2.75v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25Z"/><path d="M22.5 8.75a.25.25 0 0 0-.25-.25h-3.5a.75.75 0 0 1 0-1.5h3.5c.966 0 1.75.784 1.75 1.75v9.5A1.75 1.75 0 0 1 22.25 20H21v1.543a1.457 1.457 0 0 1-2.487 1.03L15.939 20H10.75A1.75 1.75 0 0 1 9 18.25v-1.465a.75.75 0 0 1 1.5 0v1.465c0 .138.112.25.25.25h5.5a.75.75 0 0 1 .53.22l2.72 2.72v-2.19a.75.75 0 0 1 .75-.75h2a.25.25 0 0 0 .25-.25v-9.5Z"/>
+                                                </g>
+                                            </svg>
+                                            <span>Issues</span>
+                                        </a>
+                                    </li>
+                                    <li class="mr-6">
+                                        <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="https://bsky.app/profile/woodruff.dev" target="_blank">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                                <g fill="currentColor">
+                                                    <path d="M18.231,3.618c-2.312,1.736-4.785,5.107-5.948,7.244c-0.123,0.226-0.444,0.226-0.567,0	c-1.163-2.137-3.636-5.508-5.948-7.244C3.949,2.252,1,1.195,1,4.559c0,0.672,0.385,5.643,0.611,6.451	c0.606,2.169,2.454,3.089,4.437,3.195c0.19,0.01,0.222,0.261,0.043,0.324c-2.988,1.048-3.518,3.196-1.424,5.344	c3.826,3.894,5.814,0.647,6.733-1.514c0.224-0.525,0.977-0.525,1.2,0c0.92,2.161,2.907,5.408,6.733,1.514	c2.093-2.148,1.564-4.296-1.424-5.344c-0.179-0.063-0.146-0.313,0.043-0.324c1.983-0.106,3.83-1.026,4.437-3.195	C22.615,10.203,23,5.231,23,4.559C23,1.195,20.051,2.252,18.231,3.618z"></path>
+                                                </g>
+                                            </svg>
+                                            <span>Bluesky</span>
+                                        </a>
+                                    </li>
+                                    <li class="mr-6">
+                                        <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="https://mastodon.social/@cwoodruff" target="_blank">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                                <g fill="currentColor">
+                                                    <path d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a4 4 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522q0-1.288.66-2.046c.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764q.662.757.661 2.046z"/>
+                                                </g>
+                                            </svg>
+                                            <span>Mastodon</span>
+                                        </a>
+                                    </li>
+            
+                                </ul>
+                            </nav>
+                        </div>
+            
+                        <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                            <span class="text-xs whitespace-nowrap">Powered by</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                        </a>
+                    </div>
+                </template>
+            </doc-sidebar>
+    
+            <div class="grow min-w-0 bg-body-bg">
+                <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+                <div class="flex">
+                    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+                        <main class="relative pb-12 lg:pt-2">
+                            <div class="retype-markdown" id="retype-content">
+                                <!-- Rendered if sidebar right is enabled -->
+                                <div id="retype-sidebar-right-toggle"></div>
+                                <!-- Page content  -->
+<doc-anchor-target id="optimizing-requests-with-hx-disabled-elt-hx-request-and-hx-sync" class="break-words">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#optimizing-requests-with-hx-disabled-elt-hx-request-and-hx-sync">#</doc-anchor-trigger>
+        <span>Optimizing Requests with <code v-pre>hx-disabled-elt</code>, <code v-pre>hx-request</code>, and <code v-pre>hx-sync</code></span>
+    </h1>
+</doc-anchor-target>
+<p>Every click, every keystroke, every interaction in your application translates to a potential server request. Most of the time, that is exactly what you want. But what happens when users click a submit button five times because they are impatient? What happens when two requests race each other and the slower one overwrites fresher data? What happens when your API expects specific headers or timeout settings that htmx does not send by default?</p>
+<p>These problems will find you eventually. The question is: do you have the tools to handle them?</p>
+<p>This chapter shifts focus from visual interactivity to request behavior. You have already learned how to cache history, preserve state, and build responsive interfaces. Now you will learn how to control the requests themselves. Three htmx attributes give you that control: <code v-pre>hx-disabled-elt</code> prevents duplicate submissions by disabling elements during requests, <code v-pre>hx-request</code> configures timeout and credential settings, and <code v-pre>hx-sync</code> coordinates multiple requests to prevent race conditions.</p>
+<p>By the end of this chapter, you will know how to build forms that cannot be double-submitted, configure requests for cross-origin authentication, and synchronize competing interactions so they do not corrupt your data. These are the details that separate amateur implementations from production-ready applications.</p>
+<doc-anchor-target id="preventing-double-submissions-with-hx-disabled-elt">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preventing-double-submissions-with-hx-disabled-elt">#</doc-anchor-trigger>
+        <span>Preventing Double Submissions with <code v-pre>hx-disabled-elt</code></span>
+    </h2>
+</doc-anchor-target>
+<p>Users click buttons more than once. They do it when the network is slow. They do it when nothing appears to happen. They do it out of habit. Each extra click can trigger another request to your server, creating duplicate database entries, charging credit cards twice, or sending the same email multiple times.</p>
+<p>The <code v-pre>hx-disabled-elt</code> attribute solves this problem by disabling specified elements while a request is in flight. When the request completes, htmx automatically re-enables the elements. The user sees immediate feedback that their action registered, and your server handles exactly one request.</p>
+<p>Here is a feedback form that uses <code v-pre>hx-disabled-elt</code> to prevent duplicate submissions:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Feedback?handler=Submit&quot;
+      hx-target=&quot;#result&quot;
+      hx-disabled-elt=&quot;find button[type='submit']&quot;&gt;
+    &lt;textarea name=&quot;Message&quot; placeholder=&quot;Your feedback...&quot;&gt;&lt;/textarea&gt;
+    &lt;button type=&quot;submit&quot;&gt;Send Feedback&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>find button[type='submit']</code> expression tells htmx to locate the submit button within the form and disable it during the request. You can also use simpler selectors:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button type=&quot;submit&quot; hx-disabled-elt=&quot;this&quot;&gt;Send Feedback&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>Using <code v-pre>this</code> as the selector disables the element that triggered the request. This works when the button itself carries the htmx attributes.</p>
+<p>The server-side handler stays simple:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class FeedbackModel : PageModel
+{
+    public IActionResult OnPostSubmit([FromForm] string Message)
+    {
+        if (string.IsNullOrWhiteSpace(Message))
+        {
+            return Content(&quot;&lt;p class=\&quot;error\&quot;&gt;Please enter your feedback.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        // Save to database or queue for processing
+        _feedbackService.Save(Message);
+        
+        return Content(&quot;&lt;p class=\&quot;success\&quot;&gt;Thanks for your feedback!&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>Notice that the parameter name <code v-pre>Message</code> matches the form field name exactly. ASP.NET Core model binding is case-insensitive by default, but matching cases makes your code clearer.</p>
+<doc-anchor-target id="disabling-multiple-elements">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#disabling-multiple-elements">#</doc-anchor-trigger>
+        <span>Disabling Multiple Elements</span>
+    </h3>
+</doc-anchor-target>
+<p>Sometimes you need to disable more than just the submit button. A form might have multiple action buttons, or you might want to disable the entire input area to prevent edits during submission:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Order?handler=Place&quot;
+      hx-target=&quot;#order-result&quot;
+      hx-disabled-elt=&quot;#order-form-controls input, #order-form-controls button&quot;&gt;
+    &lt;div id=&quot;order-form-controls&quot;&gt;
+        &lt;input type=&quot;text&quot; name=&quot;PromoCode&quot; placeholder=&quot;Promo code (optional)&quot; /&gt;
+        &lt;button type=&quot;submit&quot; name=&quot;action&quot; value=&quot;place&quot;&gt;Place Order&lt;/button&gt;
+        &lt;button type=&quot;submit&quot; name=&quot;action&quot; value=&quot;save&quot;&gt;Save for Later&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;order-result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The comma-separated selector disables all inputs and buttons within the controls container. Users cannot modify the promo code or click either button while the order processes.</p>
+<doc-anchor-target id="combining-with-visual-feedback">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#combining-with-visual-feedback">#</doc-anchor-trigger>
+        <span>Combining with Visual Feedback</span>
+    </h3>
+</doc-anchor-target>
+<p>Disabling elements prevents duplicate submissions, but users also need visual confirmation that something is happening. Combine <code v-pre>hx-disabled-elt</code> with <code v-pre>hx-indicator</code> for a complete solution:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Payment?handler=Process&quot;
+      hx-target=&quot;#payment-result&quot;
+      hx-disabled-elt=&quot;this&quot;
+      hx-indicator=&quot;#payment-spinner&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;CardNumber&quot; placeholder=&quot;Card number&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;
+        Pay Now
+        &lt;span id=&quot;payment-spinner&quot; class=&quot;htmx-indicator&quot;&gt;Processing...&lt;/span&gt;
+    &lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;payment-result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>htmx-indicator</code> class hides the spinner by default. When a request starts, htmx adds the <code v-pre>htmx-request</code> class to the element, and your CSS can reveal the spinner:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}</code></pre>
+</doc-codeblock></div>
+<p>Now users see the button dim and display &quot;Processing...&quot; while the payment request completes. They cannot click again, and they know the system received their action.</p>
+<doc-anchor-target id="configuring-request-behavior-with-hx-request">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#configuring-request-behavior-with-hx-request">#</doc-anchor-trigger>
+        <span>Configuring Request Behavior with <code v-pre>hx-request</code></span>
+    </h2>
+</doc-anchor-target>
+<p>The <code v-pre>hx-request</code> attribute lets you configure how htmx sends requests. Unlike what you might assume, this attribute focuses on three specific settings: timeout duration, credential handling, and whether to include htmx-specific headers.</p>
+<doc-anchor-target id="setting-request-timeouts">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#setting-request-timeouts">#</doc-anchor-trigger>
+        <span>Setting Request Timeouts</span>
+    </h3>
+</doc-anchor-target>
+<p>By default, htmx does not enforce a timeout on requests. If your server hangs, the user waits indefinitely. The <code v-pre>timeout</code> option lets you set a maximum wait time in milliseconds:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Reports?handler=Generate&quot;
+        hx-target=&quot;#report-content&quot;
+        hx-request='{&quot;timeout&quot;: 30000}'&gt;
+    Generate Report
+&lt;/button&gt;
+
+&lt;div id=&quot;report-content&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>This request will abort after 30 seconds if the server has not responded. You can handle the timeout on the client with htmx events:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;report-container&quot;
+     hx-get=&quot;/Reports?handler=Generate&quot;
+     hx-target=&quot;#report-content&quot;
+     hx-request='{&quot;timeout&quot;: 30000}'
+     hx-trigger=&quot;click from:#generate-btn&quot;
+     _=&quot;on htmx:timeout put 'Request timed out. Please try again.' into #report-content&quot;&gt;
+    &lt;button id=&quot;generate-btn&quot;&gt;Generate Report&lt;/button&gt;
+    &lt;div id=&quot;report-content&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The Hyperscript listens for the <code v-pre>htmx:timeout</code> event and displays a friendly message when the request exceeds the time limit.</p>
+<doc-anchor-target id="handling-credentials-for-cross-origin-requests">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#handling-credentials-for-cross-origin-requests">#</doc-anchor-trigger>
+        <span>Handling Credentials for Cross-Origin Requests</span>
+    </h3>
+</doc-anchor-target>
+<p>When your Razor Pages application calls APIs on different domains, browsers apply strict rules about cookies and authentication headers. The <code v-pre>credentials</code> option controls whether htmx includes credentials with cross-origin requests:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;https://api.example.com/user/profile&quot;
+     hx-target=&quot;#profile-data&quot;
+     hx-request='{&quot;credentials&quot;: true}'&gt;
+    Loading profile...
+&lt;/div&gt;
+
+&lt;div id=&quot;profile-data&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Setting <code v-pre>credentials</code> to <code v-pre>true</code> is equivalent to setting <code v-pre>credentials: 'include'</code> on a fetch request. The browser will send cookies and HTTP authentication headers to the cross-origin server.</p>
+<p>Your server must be configured to accept credentialed requests. In ASP.NET Core, this means setting up CORS properly:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">builder.Services.AddCors(options =&gt;
+{
+    options.AddPolicy(&quot;AllowCredentials&quot;, policy =&gt;
+    {
+        policy.WithOrigins(&quot;https://yourapp.com&quot;)
+              .AllowCredentials()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});</code></pre>
+</doc-codeblock></div>
+<p>Without the <code v-pre>AllowCredentials()</code> call and a specific origin (not wildcard), the browser will block the credentialed request.</p>
+<doc-anchor-target id="suppressing-htmx-headers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#suppressing-htmx-headers">#</doc-anchor-trigger>
+        <span>Suppressing htmx Headers</span>
+    </h3>
+</doc-anchor-target>
+<p>Every htmx request includes several custom headers: <code v-pre>HX-Request</code>, <code v-pre>HX-Trigger</code>, <code v-pre>HX-Target</code>, and others. These headers help your server understand the request context. In some situations, you might want to suppress them:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/external-api/data&quot;
+        hx-target=&quot;#external-data&quot;
+        hx-request='{&quot;noHeaders&quot;: true}'&gt;
+    Fetch External Data
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>Setting <code v-pre>noHeaders</code> to <code v-pre>true</code> prevents htmx from adding its custom headers. This can be useful when calling third-party APIs that might reject requests with unfamiliar headers, or when you want requests to appear as standard browser requests rather than htmx-initiated ones.</p>
+<doc-anchor-target id="combining-options">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#combining-options">#</doc-anchor-trigger>
+        <span>Combining Options</span>
+    </h3>
+</doc-anchor-target>
+<p>You can combine multiple options in a single <code v-pre>hx-request</code> attribute:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;https://api.partner.com/inventory&quot;
+     hx-target=&quot;#inventory-list&quot;
+     hx-request='{&quot;timeout&quot;: 10000, &quot;credentials&quot;: true, &quot;noHeaders&quot;: true}'
+     hx-trigger=&quot;load&quot;&gt;
+    Loading inventory...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>This request will timeout after 10 seconds, include credentials, and omit htmx headers.</p>
+<doc-anchor-target id="adding-custom-headers-with-hx-headers">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#adding-custom-headers-with-hx-headers">#</doc-anchor-trigger>
+        <span>Adding Custom Headers with <code v-pre>hx-headers</code></span>
+    </h2>
+</doc-anchor-target>
+<p>When you need to send custom headers with your requests, use <code v-pre>hx-headers</code> rather than trying to configure them through <code v-pre>hx-request</code>. This attribute accepts a JSON object of header names and values:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/api/Admin?handler=Action&quot;
+        hx-target=&quot;#admin-result&quot;
+        hx-headers='{&quot;X-Admin-Token&quot;: &quot;secure-token-value&quot;}'&gt;
+    Execute Admin Action
+&lt;/button&gt;
+
+&lt;div id=&quot;admin-result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The server receives the custom header and can validate it:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class AdminModel : PageModel
+{
+    private readonly IConfiguration _configuration;
+
+    public AdminModel(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    public IActionResult OnPostAction()
+    {
+        var providedToken = Request.Headers[&quot;X-Admin-Token&quot;].ToString();
+        var expectedToken = _configuration[&quot;AdminToken&quot;];
+
+        if (string.IsNullOrEmpty(providedToken) || 
+            !CryptographicOperations.FixedTimeEquals(
+                Encoding.UTF8.GetBytes(providedToken),
+                Encoding.UTF8.GetBytes(expectedToken)))
+        {
+            return Unauthorized();
+        }
+
+        // Perform admin action
+        return Content(&quot;&lt;p&gt;Action completed successfully.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>CryptographicOperations.FixedTimeEquals</code> method prevents timing attacks by comparing strings in constant time. Never use simple string equality for security tokens.</p>
+<doc-anchor-target id="dynamic-headers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#dynamic-headers">#</doc-anchor-trigger>
+        <span>Dynamic Headers</span>
+    </h3>
+</doc-anchor-target>
+<p>For headers that change based on user state or page context, you can set them dynamically using JavaScript:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/api/Data?handler=Fetch&quot;
+        hx-target=&quot;#data-result&quot;
+        id=&quot;fetch-btn&quot;&gt;
+    Fetch Data
+&lt;/button&gt;
+
+&lt;script&gt;
+document.getElementById('fetch-btn').addEventListener('htmx:configRequest', function(event) {
+    event.detail.headers['X-Request-Time'] = new Date().toISOString();
+    event.detail.headers['X-User-Timezone'] = Intl.DateTimeFormat().resolvedOptions().timeZone;
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>htmx:configRequest</code> event fires before each request, allowing you to modify headers, parameters, or other request details.</p>
+<doc-anchor-target id="security-considerations">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#security-considerations">#</doc-anchor-trigger>
+        <span>Security Considerations</span>
+    </h3>
+</doc-anchor-target>
+<p>Placing tokens directly in HTML attributes means anyone can view them by inspecting the page source. For truly sensitive operations:</p>
+<ol>
+<li>Use server-side sessions and cookies rather than client-visible tokens</li>
+<li>Implement proper authentication middleware</li>
+<li>Consider using <code v-pre>hx-vals</code> to send data that gets validated server-side against the user&#x27;s session</li>
+</ol>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/SecureAction?handler=Execute&quot;
+      hx-target=&quot;#result&quot;
+      hx-headers='{&quot;X-CSRF-Token&quot;: &quot;@Html.AntiForgeryToken()&quot;}'&gt;
+    &lt;button type=&quot;submit&quot;&gt;Execute&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>This approach embeds the anti-forgery token in a header rather than a hidden field, which some security configurations require.</p>
+<doc-anchor-target id="coordinating-competing-requests-with-hx-sync">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#coordinating-competing-requests-with-hx-sync">#</doc-anchor-trigger>
+        <span>Coordinating Competing Requests with <code v-pre>hx-sync</code></span>
+    </h2>
+</doc-anchor-target>
+<p>Race conditions happen when multiple requests compete and the results arrive out of order. Picture a search box that sends a request on every keystroke. The user types &quot;cat&quot;, generating requests for &quot;c&quot;, &quot;ca&quot;, and &quot;cat&quot;. If the &quot;ca&quot; response arrives after the &quot;cat&quot; response, the user sees results for &quot;ca&quot; instead of their complete query.</p>
+<p>The <code v-pre>hx-sync</code> attribute prevents these problems by coordinating requests from related elements. It specifies a synchronization strategy that determines how competing requests should be handled.</p>
+<doc-anchor-target id="basic-synchronization-strategies">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-synchronization-strategies">#</doc-anchor-trigger>
+        <span>Basic Synchronization Strategies</span>
+    </h3>
+</doc-anchor-target>
+<p>The <code v-pre>hx-sync</code> attribute takes two parts: a CSS selector identifying the synchronization scope, and a strategy keyword.</p>
+<p><strong>Drop Strategy</strong> - Ignore new requests while one is in flight:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; 
+       name=&quot;query&quot;
+       hx-get=&quot;/Search?handler=Results&quot;
+       hx-target=&quot;#search-results&quot;
+       hx-trigger=&quot;keyup changed delay:300ms&quot;
+       hx-sync=&quot;this:drop&quot;&gt;
+
+&lt;div id=&quot;search-results&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>With <code v-pre>drop</code>, if a request is already running when a new one would start, the new request is simply ignored. This prevents request pileup but might miss the user&#x27;s final input.</p>
+<p><strong>Abort Strategy</strong> - Cancel the in-flight request and start the new one:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; 
+       name=&quot;query&quot;
+       hx-get=&quot;/Search?handler=Results&quot;
+       hx-target=&quot;#search-results&quot;
+       hx-trigger=&quot;keyup changed delay:300ms&quot;
+       hx-sync=&quot;this:abort&quot;&gt;
+
+&lt;div id=&quot;search-results&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>With <code v-pre>abort</code>, the previous request is cancelled when a new one starts. This ensures users always see results for their most recent input. For search boxes, this is usually the right choice.</p>
+<p><strong>Replace Strategy</strong> - Same as abort, the default behavior:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; 
+       name=&quot;query&quot;
+       hx-get=&quot;/Search?handler=Results&quot;
+       hx-target=&quot;#search-results&quot;
+       hx-trigger=&quot;keyup changed delay:300ms&quot;
+       hx-sync=&quot;this:replace&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>replace</code> strategy is the default and behaves identically to <code v-pre>abort</code>. Explicitly stating it can make your intent clearer.</p>
+<p><strong>Queue Strategies</strong> - Process requests in order:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Queue?handler=AddItem&quot;
+        hx-target=&quot;#queue-status&quot;
+        hx-sync=&quot;closest form:queue first&quot;&gt;
+    Add to Queue
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>Queue strategies process requests sequentially. Options include:</p>
+<ul>
+<li><code v-pre>queue first</code> - Queue the first request, drop subsequent ones</li>
+<li><code v-pre>queue last</code> - Queue only the most recent request</li>
+<li><code v-pre>queue all</code> - Queue every request (use with caution)</li>
+</ul>
+<doc-anchor-target id="synchronizing-multiple-elements">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#synchronizing-multiple-elements">#</doc-anchor-trigger>
+        <span>Synchronizing Multiple Elements</span>
+    </h3>
+</doc-anchor-target>
+<p>The CSS selector in <code v-pre>hx-sync</code> determines what scope to synchronize against. This lets you coordinate requests across related elements:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form id=&quot;product-filters&quot;&gt;
+    &lt;select name=&quot;category&quot;
+            hx-get=&quot;/Products?handler=Filter&quot;
+            hx-target=&quot;#product-list&quot;
+            hx-trigger=&quot;change&quot;
+            hx-sync=&quot;#product-filters:abort&quot;&gt;
+        &lt;option value=&quot;&quot;&gt;All Categories&lt;/option&gt;
+        &lt;option value=&quot;electronics&quot;&gt;Electronics&lt;/option&gt;
+        &lt;option value=&quot;clothing&quot;&gt;Clothing&lt;/option&gt;
+    &lt;/select&gt;
+
+    &lt;select name=&quot;sort&quot;
+            hx-get=&quot;/Products?handler=Filter&quot;
+            hx-target=&quot;#product-list&quot;
+            hx-trigger=&quot;change&quot;
+            hx-sync=&quot;#product-filters:abort&quot;&gt;
+        &lt;option value=&quot;name&quot;&gt;Name&lt;/option&gt;
+        &lt;option value=&quot;price&quot;&gt;Price&lt;/option&gt;
+        &lt;option value=&quot;rating&quot;&gt;Rating&lt;/option&gt;
+    &lt;/select&gt;
+
+    &lt;input type=&quot;text&quot;
+           name=&quot;search&quot;
+           placeholder=&quot;Search...&quot;
+           hx-get=&quot;/Products?handler=Filter&quot;
+           hx-target=&quot;#product-list&quot;
+           hx-trigger=&quot;keyup changed delay:300ms&quot;
+           hx-sync=&quot;#product-filters:abort&quot;&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;product-list&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>All three filter controls synchronize against the same form. If a user changes the category while a search request is running, the search request aborts and the category request proceeds. This ensures the product list always reflects the most recent filter state.</p>
+<doc-anchor-target id="server-side-handler-for-synchronized-requests">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#server-side-handler-for-synchronized-requests">#</doc-anchor-trigger>
+        <span>Server-Side Handler for Synchronized Requests</span>
+    </h3>
+</doc-anchor-target>
+<p>The handler receives all filter parameters and returns the filtered results:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ProductsModel : PageModel
+{
+    private readonly IProductRepository _products;
+
+    public ProductsModel(IProductRepository products)
+    {
+        _products = products;
+    }
+
+    public IActionResult OnGetFilter(string category, string sort, string search)
+    {
+        var query = _products.GetAll();
+
+        if (!string.IsNullOrEmpty(category))
+        {
+            query = query.Where(p =&gt; p.Category == category);
+        }
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            query = query.Where(p =&gt; p.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        query = sort switch
+        {
+            &quot;price&quot; =&gt; query.OrderBy(p =&gt; p.Price),
+            &quot;rating&quot; =&gt; query.OrderByDescending(p =&gt; p.Rating),
+            _ =&gt; query.OrderBy(p =&gt; p.Name)
+        };
+
+        return Partial(&quot;_ProductList&quot;, query.ToList());
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p>Because requests are synchronized on the client, you do not need to worry about race conditions corrupting the displayed data. The UI always reflects the most recent user selection.</p>
+<doc-anchor-target id="combining-attributes-for-production-ready-forms">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#combining-attributes-for-production-ready-forms">#</doc-anchor-trigger>
+        <span>Combining Attributes for Production-Ready Forms</span>
+    </h2>
+</doc-anchor-target>
+<p>Real forms often need multiple optimizations working together. Here is a complete example that combines <code v-pre>hx-disabled-elt</code>, <code v-pre>hx-sync</code>, <code v-pre>hx-indicator</code>, and proper validation:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form id=&quot;registration-form&quot;
+      hx-post=&quot;/Register?handler=Submit&quot;
+      hx-target=&quot;#registration-result&quot;
+      hx-disabled-elt=&quot;#registration-form input, #registration-form button&quot;
+      hx-sync=&quot;this:abort&quot;
+      hx-indicator=&quot;#registration-spinner&quot;&gt;
+    
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;email&quot;&gt;Email&lt;/label&gt;
+        &lt;input type=&quot;email&quot; id=&quot;email&quot; name=&quot;Email&quot; required /&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;password&quot;&gt;Password&lt;/label&gt;
+        &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;Password&quot; required minlength=&quot;8&quot; /&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;confirm&quot;&gt;Confirm Password&lt;/label&gt;
+        &lt;input type=&quot;password&quot; id=&quot;confirm&quot; name=&quot;ConfirmPassword&quot; required /&gt;
+    &lt;/div&gt;
+    
+    &lt;button type=&quot;submit&quot;&gt;
+        Create Account
+        &lt;span id=&quot;registration-spinner&quot; class=&quot;htmx-indicator&quot;&gt;Creating...&lt;/span&gt;
+    &lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;registration-result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>This form:</p>
+<ul>
+<li>Disables all inputs and the button during submission</li>
+<li>Aborts any in-flight request if the user somehow triggers another</li>
+<li>Shows a loading indicator in the button</li>
+<li>Uses HTML5 validation attributes for client-side checks</li>
+</ul>
+<p>The server handler:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class RegisterModel : PageModel
+{
+    private readonly IUserService _userService;
+
+    public RegisterModel(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    public async Task&lt;IActionResult&gt; OnPostSubmit([FromForm] RegistrationInput input)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = string.Join(&quot;&lt;br&gt;&quot;, 
+                ModelState.Values
+                    .SelectMany(v =&gt; v.Errors)
+                    .Select(e =&gt; e.ErrorMessage));
+            return Content($&quot;&lt;div class=\&quot;error\&quot;&gt;{errors}&lt;/div&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        if (input.Password != input.ConfirmPassword)
+        {
+            return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;Passwords do not match.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        var result = await _userService.CreateUserAsync(input.Email, input.Password);
+        
+        if (!result.Succeeded)
+        {
+            return Content($&quot;&lt;div class=\&quot;error\&quot;&gt;{result.ErrorMessage}&lt;/div&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        return Content(&quot;&lt;div class=\&quot;success\&quot;&gt;Account created! Check your email to verify.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+}
+
+public class RegistrationInput
+{
+    [Required, EmailAddress]
+    public string Email { get; set; }
+    
+    [Required, MinLength(8)]
+    public string Password { get; set; }
+    
+    [Required]
+    public string ConfirmPassword { get; set; }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="debugging-request-issues">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-request-issues">#</doc-anchor-trigger>
+        <span>Debugging Request Issues</span>
+    </h2>
+</doc-anchor-target>
+<p>When requests behave unexpectedly, htmx provides tools to understand what is happening.</p>
+<doc-anchor-target id="browser-developer-tools">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#browser-developer-tools">#</doc-anchor-trigger>
+        <span>Browser Developer Tools</span>
+    </h3>
+</doc-anchor-target>
+<p>Open the Network tab in your browser&#x27;s developer tools. Filter by XHR/Fetch to see only AJAX requests. For each request, examine:</p>
+<ul>
+<li><strong>Headers</strong>: Verify custom headers are present and correct</li>
+<li><strong>Payload</strong>: Confirm form data is being sent as expected</li>
+<li><strong>Timing</strong>: Identify slow requests that might need timeouts</li>
+<li><strong>Response</strong>: Check that the server returns valid HTML</li>
+</ul>
+<doc-anchor-target id="htmx-logging">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#htmx-logging">#</doc-anchor-trigger>
+        <span>htmx Logging</span>
+    </h3>
+</doc-anchor-target>
+<p>Enable htmx logging to see events in the console:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">htmx.logAll();</code></pre>
+</doc-codeblock></div>
+<p>This outputs every htmx event, which can be noisy but thorough. For targeted debugging, listen for specific events:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">document.body.addEventListener('htmx:beforeRequest', function(event) {
+    console.log('Request starting:', event.detail);
+});
+
+document.body.addEventListener('htmx:afterRequest', function(event) {
+    console.log('Request complete:', event.detail);
+});
+
+document.body.addEventListener('htmx:sendError', function(event) {
+    console.error('Request failed:', event.detail);
+});</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="common-issues-and-solutions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-issues-and-solutions">#</doc-anchor-trigger>
+        <span>Common Issues and Solutions</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Problem</strong>: Button does not re-enable after request completes.
+<strong>Solution</strong>: Verify the request actually completes. Check for JavaScript errors. Ensure <code v-pre>hx-disabled-elt</code> selector matches the element.</p>
+<p><strong>Problem</strong>: Requests still race despite <code v-pre>hx-sync</code>.
+<strong>Solution</strong>: Confirm all related elements use the same sync scope. The CSS selector must resolve to the same element for coordination to work.</p>
+<p><strong>Problem</strong>: Custom headers not appearing in requests.
+<strong>Solution</strong>: Check for typos in <code v-pre>hx-headers</code> JSON. Verify the JSON is valid. Some proxies strip non-standard headers.</p>
+<p><strong>Problem</strong>: Credentials not sent to cross-origin API.
+<strong>Solution</strong>: Ensure both <code v-pre>hx-request='{&quot;credentials&quot;: true}'</code> on the client and <code v-pre>AllowCredentials()</code> in server CORS configuration.</p>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>Request optimization separates functional applications from professional ones. Users expect buttons to work exactly once. They expect the most recent action to win. They expect the application to handle edge cases gracefully.</p>
+<p>The three attributes covered in this chapter give you that control:</p>
+<ul>
+<li><code v-pre>hx-disabled-elt</code> prevents duplicate submissions by disabling elements during requests</li>
+<li><code v-pre>hx-request</code> configures timeout, credentials, and header behavior</li>
+<li><code v-pre>hx-sync</code> coordinates competing requests to prevent race conditions</li>
+</ul>
+<p>Use <code v-pre>hx-headers</code> when you need custom headers. Combine these attributes with <code v-pre>hx-indicator</code> for visual feedback. Test thoroughly with browser developer tools.</p>
+<p>In the next chapter, we will explore advanced performance techniques including lazy loading, request batching, and strategies for minimizing latency in complex Razor Pages applications.</p>
+
+                                
+                                <!-- Required only on API pages -->
+                                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+                            </div>
+                            <footer id="retype-content-footer" class="clear-both">
+                                <div class="flex flex-wrap items-center justify-between mt-14">
+                                    <a id="retype-edit-this-page" class="my-2.5 inline-flex items-center text-sm whitespace-nowrap text-body-link font-body-link-weight hover:text-body-link-hover hover:underline" href="https://github.com/cwoodruff/book-aspnet-htmx/blob/main/Chapter19/chapter19.md" target="_blank" rel="noopener">
+                                        <svg class="mr-1.5" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M20 12c-.55 0-1 .45-1 1v7c0 .55-.45 1-1 1H4c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h7c.55 0 1-.45 1-1s-.45-1-1-1H4C2.35 3 1 4.35 1 6v14c0 1.65 1.35 3 3 3h14c1.65 0 3-1.35 3-3v-7c0-.55-.45-1-1-1z" /><path d="M22.21 1.79c-1.18-1.18-3.24-1.18-4.41 0l-9.5 9.5c-.13.13-.22.29-.26.46l-1 4c-.08.34.01.7.26.95.18.2.44.3.7.3.08 0 .16-.01.24-.03l4-1c.18-.04.34-.13.46-.26l9.5-9.5c1.22-1.22 1.22-3.2.01-4.42zm-1.42 3l-9.3 9.3-2.11.53.53-2.11 9.3-9.3c.42-.42 1.16-.42 1.59 0 .43.43.43 1.15-.01 1.58z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        <span>Edit this page</span>
+                                    </a>
+                                </div>
+                            
+                                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../chapter18/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                                <span class="block mt-1">Chap 18 - Caching and History with hx-​history and hx-​history-​elt</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../chapter20/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                                <span class="block mt-1">Chap 20 - htmx Performance Optimization</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
+                            </footer>
+                        </main>
+                
+                        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+                            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                                <div id="retype-footer-links" class="print:hidden">
+                                    <ul class="flex flex-wrap items-center text-sm">
+                                        <li>
+                                            <a class="inline-flex items-center mr-4 py-2 text-sm whitespace-nowrap transition-colors duration-200 ease-linear text-footer-link hover:text-footer-link-hover md:mb-0" href="../copyright/">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                                    <g fill="currentColor">
+                                                        <path d="M10.97 8.265a1.45 1.45 0 0 0-.487.57.75.75 0 0 1-1.341-.67c.2-.402.513-.826.997-1.148C10.627 6.69 11.244 6.5 12 6.5c.658 0 1.369.195 1.934.619a2.45 2.45 0 0 1 1.004 2.006c0 1.033-.513 1.72-1.027 2.215-.19.183-.399.358-.579.508l-.147.123a4.329 4.329 0 0 0-.435.409v1.37a.75.75 0 1 1-1.5 0v-1.473c0-.237.067-.504.247-.736.22-.28.486-.517.718-.714l.183-.153.001-.001c.172-.143.324-.27.47-.412.368-.355.569-.676.569-1.136a.953.953 0 0 0-.404-.806C12.766 8.118 12.384 8 12 8c-.494 0-.814.121-1.03.265ZM13 17a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/><path d="M12 1c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1ZM2.5 12a9.5 9.5 0 0 0 9.5 9.5 9.5 9.5 0 0 0 9.5-9.5A9.5 9.5 0 0 0 12 2.5 9.5 9.5 0 0 0 2.5 12Z"/>
+                                                    </g>
+                                                </svg>
+                                                <span>Copyright</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="inline-flex items-center mr-4 py-2 text-sm whitespace-nowrap transition-colors duration-200 ease-linear text-footer-link hover:text-footer-link-hover md:mb-0" href="../license/">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="mb-px mr-1" width="18" height="18" viewBox="0 0 24 24" role="presentation">
+                                                    <g fill="currentColor">
+                                                        <path d="M16.53 9.78a.75.75 0 0 0-1.06-1.06L11 13.19l-1.97-1.97a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 0 0 1.06 0l5-5Z"/><path d="m12.54.637 8.25 2.675A1.75 1.75 0 0 1 22 4.976V10c0 6.19-3.771 10.704-9.401 12.83a1.704 1.704 0 0 1-1.198 0C5.77 20.705 2 16.19 2 10V4.976c0-.758.489-1.43 1.21-1.664L11.46.637a1.748 1.748 0 0 1 1.08 0Zm-.617 1.426-8.25 2.676a.249.249 0 0 0-.173.237V10c0 5.46 3.28 9.483 8.43 11.426a.199.199 0 0 0 .14 0C17.22 19.483 20.5 15.461 20.5 10V4.976a.25.25 0 0 0-.173-.237l-8.25-2.676a.253.253 0 0 0-.154 0Z"/>
+                                                    </g>
+                                                </svg>
+                                                <span>License</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link-weight text-sm leading-relaxed"><p>© Copyright 2026. All rights reserved Chris Woodruff.</p></div>
+                            </footer>
+                        </div>
+                    </div>
+                
+                    <!-- Rendered if sidebar right is enabled -->
+                    <!-- Sidebar right skeleton-->
+                    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:transform-none sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+                        <div class="pl-5">
+                            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                        </div>
+                    </div>
+                
+                    <!-- User should be able to hide sidebar right -->
+                    <doc-sidebar-right v-cloak></doc-sidebar-right>
+                </div>
+
+            </div>
+        </div>
+    
+        <doc-search-mobile></doc-search-mobile>
+        <doc-back-to-top></doc-back-to-top>
+    </div>
+
+
+    <div id="retype-overlay-target"></div>
+
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Chap 19 - Optimizing Requests with hx-disabled-elt, hx-request, and hx-sync", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+</body>
+</html>
