@@ -1,0 +1,102 @@
+@model HtmxHistoryDemo.Models.ProductSearchResult
+
+<div id="product-list">
+    @if (Model.Products.Any())
+    {
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5>Search Results</h5>
+            <small class="text-muted">
+                Showing @((Model.Page - 1) * Model.PageSize + 1)-@Math.Min(Model.Page * Model.PageSize, Model.TotalCount)
+                of @Model.TotalCount products
+            </small>
+        </div>
+
+        <div class="row">
+            @foreach (var product in Model.Products)
+            {
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card product-card h-100">
+                        <div class="card-body">
+                            <h6 class="card-title">@product.Name</h6>
+                            <p class="card-text small">@product.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">$@product.Price</span>
+                                <span class="badge bg-secondary">@product.Category</span>
+                            </div>
+                            <div class="mt-2">
+                                <a href="/Product/@product.Id" class="btn btn-sm btn-outline-primary">View Details</a>
+                                <button class="btn btn-sm btn-success"
+                                        _="on click increment #cart-count's textContent by 1 
+                                            then add .btn-outline-success to me 
+                                            then remove .btn-success from me then put 'Added!' into me 
+                                            then wait 1s then put 'Add to Cart' into me 
+                                            then add .btn-success to me 
+                                            then remove .btn-outline-success from me">
+                                    Add to Cart
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Product pagination">
+                <ul class="pagination justify-content-center">
+                    @if (Model.Page > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link"
+                               hx-get="/Search?handler=Results&query=@Model.Query&@string.Join("&", Model.SelectedCategories.Select(c => $"category={c}"))&page=@(Model.Page - 1)"
+                               hx-target="#product-list"
+                               hx-select="#product-list"
+                               hx-push-url="true"
+                               hx-history="true">Previous</a>
+                        </li>
+                    }
+
+                    @for (int i = Math.Max(1, Model.Page - 2); i <= Math.Min(Model.TotalPages, Model.Page + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            @if (i == Model.Page)
+                            {
+                                <span class="page-link">@i</span>
+                            }
+                            else
+                            {
+                                <a class="page-link"
+                                   hx-get="/Search?handler=Results&query=@Model.Query&@string.Join("&", Model.SelectedCategories.Select(c => $"category={c}"))&page=@i"
+                                   hx-target="#product-list"
+                                   hx-select="#product-list"
+                                   hx-push-url="true"
+                                   hx-history="true">@i</a>
+                            }
+                        </li>
+                    }
+
+                    @if (Model.Page < Model.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link"
+                               hx-get="/Search?handler=Results&query=@Model.Query&@string.Join("&", Model.SelectedCategories.Select(c => $"category={c}"))&page=@(Model.Page + 1)"
+                               hx-target="#product-list"
+                               hx-select="#product-list"
+                               hx-push-url="true"
+                               hx-history="true">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h5>No products found</h5>
+            <p>Try adjusting your search criteria.</p>
+        </div>
+    }
+</div>
