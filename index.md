@@ -110,18 +110,18 @@ To find translations, please check out the [Translations](./Translations.md) pag
         <tr>
             <td rowspan=3>Section 5: Performance and Optimization</td>
             <td>18</td>
-            <td>Caching and History with hx-history and hx-history-elt</td>
-            <td></td>
+            <td><a href="https://aspnet-htmx.com/chapter18/">Caching and History with hx-history and hx-history-elt</a></td>
+            <td>✔️</td>
         </tr>
         <tr>
             <td>19</td>
-            <td>Optimizing Requests with hx-disable and hx-request</td>
-            <td></td>
+            <td><a href="https://aspnet-htmx.com/chapter19/">Optimizing Requests with hx-disable and hx-request</a></td>
+            <td>✔️</td>
         </tr>
         <tr>
             <td>20</td>
-            <td>htmx Performance Optimization</td>
-            <td></td>
+            <td><a href="https://aspnet-htmx.com/chapter20/">htmx Performance Optimization</a></td>
+            <td>✔️</td>
         </tr>
         <tr>
             <td rowspan=3>Section 6: Real-World Scenarios</td>

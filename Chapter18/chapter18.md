@@ -4,34 +4,49 @@ icon: stack
 label: Chap 18 - Caching and History with hx-history and hx-history-elt
 meta:
 title: "Caching and History with hx-history and hx-history-elt"
-visibility: protected
 ---
 
 # Caching and History with `hx-history` and `hx-history-elt`
 
-Sometimes the best performance boost isn’t just about loading less, it’s about not loading at all. If you’ve ever hit the back button on a web app and watched it completely reload a page you just visited, you know how jarring that experience can be. In this chapter, we’ll explore how `hx-history` and `hx-history-elt` let us eliminate that pain by caching prior responses in the browser’s history stack. With just a little planning, you can make your htmx-powered Razor Pages feel as snappy and intuitive as a single-page app without the JavaScript baggage.
+The fastest request is the one you never make. If you have ever hit the back button on a web app and watched it reload a page you visited seconds ago, you know the frustration. That reload breaks your flow, wastes your time, and makes the app feel sluggish. This chapter shows you how htmx eliminates that pain by caching responses in the browser's history stack. With minimal effort, your Razor Pages can feel as fluid as a single-page app without the JavaScript complexity.
 
-You’ve already seen how htmx simplifies form handling, dynamic interactions, and server-driven updates. Now it’s time to give your users a smoother journey through your application by preserving state across navigation. These tools don’t just enhance performance, they also improve usability by allowing users to move backward and forward without re-fetching data or losing their place. It’s a natural next step after mastering scoped updates, real-time interactions, and Hyperscript-based drag-and-drop.
+You have already seen how htmx handles form submissions, dynamic interactions, and server-driven updates. Now you can give users a smoother navigation experience by preserving state across page transitions. These features do more than improve performance. They let users move backward and forward through your app without losing their place or waiting for redundant server calls. This builds naturally on the scoped updates, real-time interactions, and Hyperscript techniques from earlier chapters.
 
-We’ll start by demystifying how browser history and caching work in an htmx context. From there, you’ll learn how to enable smart caching for specific elements, which helps reduce server calls and makes your app feel faster. Whether you're building a content-heavy dashboard or a multi-step form, understanding how to cache intelligently can dramatically enhance the user experience.
+We will start by examining how htmx manages browser history and caching. You will learn how to control caching behavior for specific elements, reducing server load while making your app feel more responsive. A content-heavy dashboard benefits from caching just as much as a multi-step workflow does. In both cases, intelligent caching dramatically improves the user experience.
 
-By the end of this chapter, you’ll have the tools to create rich, state-aware applications that feel fast and modern without giving up the simplicity of Razor Pages. Let’s see how htmx helps you make the most of the browser’s built-in navigation features, and how a little caching can go a long way.
+By the end of this chapter, you will have the tools to create state-aware applications that feel fast and modern while keeping the simplicity of Razor Pages. Let us see how htmx puts the browser's built-in navigation features to work for you.
+
+## Understanding htmx History Caching
+
+Before we look at specific attributes and code, you need to understand how htmx handles history. When you use `hx-push-url="true"` on a request, htmx automatically does two things: it updates the browser's URL, and it saves a snapshot of the current page content to a local cache. This cache lives in the browser's `localStorage` and holds the HTML content that was on the page before the navigation occurred.
+
+When a user clicks the back button, htmx intercepts that navigation. Instead of making a new server request, it pulls the cached HTML from `localStorage` and restores it to the page. This restoration happens almost instantly because no network round-trip is required.
+
+The key insight here is that htmx caches by default when you push URLs. The `hx-history` attribute exists primarily to opt out of this behavior, not to opt in. Setting `hx-history="false"` tells htmx to skip caching for that particular element or request. This becomes important when you have sensitive content like personal information, checkout flows, or admin panels that should not persist in the browser's cache.
+
+You can control how many pages htmx keeps in its history cache through configuration:
+
+```javascript
+htmx.config.historyCacheSize = 10; // Default is 10 pages
+```
+
+Setting this to zero disables history caching entirely. For most applications, the default works well, but you might increase it for apps where users frequently navigate back through many pages.
 
 ## Making Back Feel Fast Again: History Management with `hx-history`
 
-In traditional server-rendered apps, clicking the back button after an interaction typically means reloading the entire page, which can result in losing the user's state, such as a form input or a list of search results. That jarring behavior has become so common that users often avoid the back button altogether. With htmx, however, we can reclaim the back button and give it superpowers using `hx-history`.
+In traditional server-rendered apps, clicking the back button typically reloads the entire page. Users lose form inputs, search results disappear, and any scroll position resets. This behavior is so common that many users avoid the back button altogether. With htmx, you can reclaim the back button and make it work the way users expect.
 
-The `hx-history` attribute enables htmx to store and retrieve content from the browser’s history cache. When enabled, htmx saves the response from a request in the history stack. If the user navigates back or forward, htmx can reuse that response without needing to re-request it from the server. It’s one of those subtle features that makes your app feel lightning fast and incredibly user-friendly.
+When `hx-push-url="true"` is set on a request, htmx stores the current page content before swapping in the new response. If the user navigates back, htmx restores that stored content without hitting the server. The result feels instant.
 
-Imagine a user searches for products in your app. They click a result, read the details, and then hit the back button, expecting to return to their previous list. Without `hx-history`, the page reloads, and the search results disappear. But with `hx-history="true"` added to your request, htmx caches the result list. When the user navigates back, the list reappears instantly, just as they left it. No extra load time. No server call. No frustration.
+Consider a user searching for products in your app. They browse results, click into a product detail page, then hit the back button expecting to see their search results. Without htmx history caching, the page reloads and the results vanish. With `hx-push-url="true"`, the result list reappears immediately, exactly as they left it. No server call. No loading spinner. No frustration.
 
-Let’s look at a simple Razor Pages example that demonstrates this. First, we create a basic search form on the `Search.cshtml` page:
+Here is a search form on a `Search.cshtml` page that demonstrates this pattern:
 
 ```html
 <form hx-get="/Search?handler=Results"
       hx-target="#search-results"
       hx-push-url="true"
-      hx-history="true">
+      hx-swap="innerHTML">
     <input type="text" name="query" placeholder="Search products..." />
     <button type="submit">Search</button>
 </form>
@@ -39,247 +54,407 @@ Let’s look at a simple Razor Pages example that demonstrates this. First, we c
 <div id="search-results"></div>
 ```
 
-The important part here is `hx-history="true"`. This tells htmx to cache the server’s response. The `hx-push-url="true"` ensures that the browser's URL is updated with the search query, which plays nicely with navigation and bookmarking.
+The `hx-push-url="true"` attribute handles the caching work. It updates the browser URL with the search query and triggers htmx to cache the page state. When the user navigates away and returns, htmx restores the cached results.
 
-On the server side, we handle the search logic like this:
+On the server side, the handler returns a partial view:
 
-```C#
+```csharp
 public class SearchModel : PageModel
 {
+    private readonly IProductRepository _productRepository;
+
+    public SearchModel(IProductRepository productRepository)
+    {
+        _productRepository = productRepository;
+    }
+
     public IActionResult OnGetResults(string query)
     {
-        var products = ProductRepository.Search(query); // Assume we get results here
+        var products = _productRepository.Search(query);
         return Partial("_SearchResults", products);
     }
 }
 ```
 
-The _SearchResults.cshtml partial might return a simple product list:
+The `_SearchResults.cshtml` partial renders the product list:
 
 ```html
+@model IEnumerable<Product>
+
 <ul>
     @foreach (var product in Model)
     {
-    <li><a href="/Product/@product.Id" hx-get="/Product/@product.Id" hx-target="body" hx-push-url="true">@product.Name</a></li>
+        <li>
+            <a href="/Products/Details?id=@product.Id"
+               hx-get="/Products/Details?id=@product.Id"
+               hx-target="#main-content"
+               hx-push-url="true">
+                @product.Name
+            </a>
+        </li>
     }
 </ul>
 ```
 
-When the user performs a search, the results are dynamically inserted into #search-results. Now, if they click on a product and then hit the back button, htmx restores the cached result list immediately without refetching it. The UI appears just as smooth and snappy.
+Notice that the product links use `hx-target="#main-content"` rather than targeting the body. This scoped approach gives you more control over what gets replaced and avoids potential issues with scripts or styles in the document head.
 
-This technique significantly enhances perceived performance, particularly in applications with numerous drill-down or detail pages. Users feel like the app remembers their place, which is precisely the kind of UX that keeps people happy and engaged.
+When should you disable history caching? Use `hx-history="false"` in these situations:
 
-As we continue through this chapter, you’ll learn how to cache only the necessary parts of your UI using hx-history-elt and how to fine-tune the behavior when state needs to persist or reset. But for now, know this: the back button doesn’t have to be a problem anymore.
+- Checkout or payment pages where sensitive data should not persist
+- User profile or account settings pages
+- Admin panels with privileged information
+- Any content that becomes stale quickly and must be fresh on every view
+
+```html
+<div hx-get="/Checkout?handler=Summary"
+     hx-target="#checkout-content"
+     hx-push-url="true"
+     hx-history="false">
+    <!-- Checkout content should never be cached -->
+</div>
+```
+
+This pattern keeps secure content out of the browser's localStorage while still updating the URL for bookmarking purposes.
 
 ## Locking In the Experience: Retaining State with `hx-history-elt`
 
-So far, you've seen how `hx-history` provides your app with a memory for previous interactions, allowing users to navigate back without waiting for the server. But sometimes, preserving just the response isn’t enough. What if you need to remember which tab was selected, how far the user had scrolled, or which filter was checked? That’s where `hx-history-elt` comes in. It allows you to define specific elements whose state should be cached and restored across navigation.
+The `hx-history-elt` attribute solves a specific problem: which element's innerHTML should htmx snapshot when saving to the history cache? By default, htmx snapshots the body element. This works for simple pages, but complex layouts often need more precision.
 
-The idea behind `hx-history-elt` is simple but powerful. When a request is made and the response is cached in the browser’s history, htmx will also snapshot any element that includes this attribute. When the user navigates back or forward, htmx will rehydrate those elements exactly as they were. That includes scroll position, input values, and even which tab was active. It turns a good experience into a seamless one.
+Place `hx-history-elt` on the container element whose content represents the "main" state of your page. When htmx takes a history snapshot, it captures the innerHTML of this element. When the user navigates back, htmx restores that specific content.
 
-Let’s walk through a typical example. Suppose you have a dashboard with several tabs, and each tab displays dynamic content. Users might click into one of those tabs, scroll down, view some details, and then navigate to another part of the app. When they hit the back button, you want everything to be exactly as they left it. Without `hx-history-elt`, they’d be dumped back to the top of the default tab, losing context. With it, their state is fully preserved.
-
-Here’s what that might look like in Razor Pages. First, the tabs component:
+Consider a dashboard with a main content area and persistent navigation:
 
 ```html
-<div id="tabs" hx-history-elt>
-    <button class="tab-button active"
-            hx-get="/Dashboard?handler=Tab1"
-            hx-target="#tab-content"
-            _="on click add .active to me then remove .active from .tab-button then remove .active from me">
-        Tab 1
-    </button>
-    <button class="tab-button"
-            hx-get="/Dashboard?handler=Tab2"
-            hx-target="#tab-content"
-            _="on click add .active to me then remove .active from .tab-button then remove .active from me">
-        Tab 2
-    </button>
-    <div id="tab-content" hx-history-elt>
-        <div style="height: 600px; overflow-y: scroll;">
-            <p>Default content...</p>
-        </div>
+<body>
+    <nav id="sidebar">
+        <!-- Navigation stays constant -->
+    </nav>
+    
+    <main id="app-content" hx-history-elt>
+        <!-- This content gets cached and restored -->
+    </main>
+    
+    <aside id="notifications">
+        <!-- Live content that should not be cached -->
+    </aside>
+</body>
+```
+
+With `hx-history-elt` on `#app-content`, htmx only caches the main content area. The sidebar stays untouched, and the notifications panel can update independently without being overwritten by stale cached data.
+
+Here is a tabbed interface that uses this pattern:
+
+```html
+<div id="dashboard-content" hx-history-elt>
+    <div class="tab-buttons">
+        <button class="tab-button active"
+                hx-get="/Dashboard?handler=Tab1"
+                hx-target="#tab-content"
+                hx-push-url="true"
+                _="on click remove .active from .tab-button then add .active to me">
+            Tab 1
+        </button>
+        <button class="tab-button"
+                hx-get="/Dashboard?handler=Tab2"
+                hx-target="#tab-content"
+                hx-push-url="true"
+                _="on click remove .active from .tab-button then add .active to me">
+            Tab 2
+        </button>
+    </div>
+    
+    <div id="tab-content">
+        <p>Default content loads here...</p>
     </div>
 </div>
 ```
 
-We mark the entire tabs wrapper with `hx-history-elt`. This tells htmx to remember the state of this DOM element when the browser’s history snapshot is taken. That includes which tab had the .active class and any scroll position inside the content area. The next time the user navigates back to this page, htmx restores it as if they had never left.
+The Hyperscript on each button handles the active state: first it removes the `.active` class from all tab buttons, then adds it to the clicked button. This sequence ensures only one tab appears active at a time.
 
-To complement this, make sure the content updates for the tab don’t overwrite the entire page. You might dynamically load tab content using `hx-get` like this:
+When the user clicks Tab 2, views its content, navigates to another page, and then hits back, htmx restores the entire `#dashboard-content` element including the active tab state and the tab content. The experience feels continuous rather than reset.
 
-```html
-<button hx-get="/Dashboard?handler=Tab1" hx-target="#tab1-content" hx-push-url="true">Load Tab 1</button>
-<div id="tab1-content" hx-history-elt></div>
-```
-
-In this case, you’re not just caching the tab’s content but also preserving the user’s interaction within it. Even form input values typed into a text field inside this region will be retained.
-
-You can take this even further by placing `hx-history-elt` on form wrappers. That way, if the user fills out part of a form, navigates away, and returns, they won’t have to start over. It’s a minor feature that feels magical in practice.
-
-By combining `hx-history` for routing and `hx-history-elt` for state retention, you can make your Razor Pages apps feel effortless to navigate. Together, they create the kind of fluid, reliable experience users expect from high-quality applications.
-
-## Speed in the Stack: Supercharging UX with History-Based Caching
-
-Performance is not just about server response time. It is also about how quickly your app responds to user input. htmx gives us a unique way to optimize responsiveness through history-based caching. Instead of reloading content or hitting the server again when a user navigates back, `hx-history="true"` can serve the previous state instantly from memory. It is one of the fastest wins you can get without writing a line of backend logic.
-
-When a user browses paginated content like search results or data tables, each page is typically fetched through an `hx-get` request. Without caching, if they click into an item and then return to the list, the browser would make another request to reload the same page. With `hx-history` enabled, the previous list view is retrieved from the browser’s history stack instead. The perceived speed improvement is dramatic.
-
-To take control over what gets cached and reused, you can pair `hx-history="true"` with `hx-select`. This combination allows you to scope which parts of the server response are stored and later re-injected. For example, in a paginated table, you might want to cache only the results grid while allowing headers or sidebars to update dynamically.
-
-Here’s what that could look like in Razor Pages:
+You can also preserve form input values by placing the form inside your history element:
 
 ```html
-<div id="results" hx-get="/Products?handler=Page" hx-target="#results" hx-push-url="true" hx-history="true" hx-select="#page-content">
+<div id="search-section" hx-history-elt>
+    <form hx-get="/Products?handler=Filter"
+          hx-target="#product-list"
+          hx-push-url="true">
+        <input type="text" name="query" placeholder="Search..." value="@Model.Query" />
+        <label>
+            <input type="checkbox" name="category" value="books" checked="@Model.HasBooks" />
+            Books
+        </label>
+        <label>
+            <input type="checkbox" name="category" value="electronics" checked="@Model.HasElectronics" />
+            Electronics
+        </label>
+        <button type="submit">Apply</button>
+    </form>
+    
+    <div id="product-list">
+        <!-- Filtered results appear here -->
+    </div>
 </div>
 ```
 
-On the server, your handler might return a complete page structure, including the header, filters, and content. But because `hx-select="#page-content"` is specified, only the content inside the #page-content element is swapped into the DOM and cached.
+When users apply filters, navigate to a product, and return, their filter selections and search text remain intact. This small detail eliminates the frustration of re-entering search criteria.
+
+## Speed in the Stack: Supercharging UX with History-Based Caching
+
+Performance extends beyond server response time to include how quickly your app responds to user actions. History caching gives you a performance boost without touching backend code. Instead of reloading content when a user navigates back, htmx serves the previous state from memory. The page appears instantly.
+
+When users browse paginated content like search results or data tables, each page typically requires an `hx-get` request. Without caching, clicking into an item and returning to the list means another server request to reload the same data. With htmx history caching, the previous list view comes from the browser's cache instead. Users perceive a dramatic speed improvement.
+
+Combine `hx-push-url` with `hx-select` to control exactly which parts of the response get stored:
 
 ```html
+<div id="product-results"
+     hx-get="/Products?handler=Page"
+     hx-target="#product-results"
+     hx-push-url="true"
+     hx-select="#page-content"
+     hx-trigger="load">
+</div>
+```
+
+The `hx-trigger="load"` ensures the request fires when the element enters the DOM. The `hx-select="#page-content"` tells htmx to extract only the `#page-content` portion from the server response. This scoped approach prevents caching headers, footers, or other page elements that should remain dynamic.
+
+Your server handler returns a complete response, but htmx extracts only what you specified:
+
+```html
+<!-- Server response includes the full structure -->
 <div id="page-content">
     <table>
         @foreach (var item in Model.Products)
         {
-            <tr><td>@item.Name</td></tr>
+            <tr>
+                <td>
+                    <a href="/Products/Details?id=@item.Id"
+                       hx-get="/Products/Details?id=@item.Id"
+                       hx-target="#product-results"
+                       hx-push-url="true">
+                        @item.Name
+                    </a>
+                </td>
+            </tr>
         }
     </table>
     <div class="pagination">
-        <a href="/Products?handler=Page&page=1" hx-get hx-target="#results">1</a>
-        <a href="/Products?handler=Page&page=2" hx-get hx-target="#results">2</a>
+        <a href="/Products?handler=Page&amp;page=1"
+           hx-get="/Products?handler=Page&amp;page=1"
+           hx-target="#product-results"
+           hx-push-url="true">1</a>
+        <a href="/Products?handler=Page&amp;page=2"
+           hx-get="/Products?handler=Page&amp;page=2"
+           hx-target="#product-results"
+           hx-push-url="true">2</a>
     </div>
 </div>
 ```
 
-This scoped caching avoids bloating the history stack with parts of the page that do not need to be remembered. It also means that when the user hits the back button, the product list appears immediately, complete with pagination, and without a round-trip to the server.
+When users navigate through pages, each view gets cached. Hitting the back button cycles through those cached pages without server requests. The pagination feels as responsive as flipping through local content.
 
-As powerful as this feature is, it is also essential to test it. Use your browser’s developer tools to simulate navigation and inspect how cached content is restored. Toggle caching behaviors on and off to see their impact. You may also want to temporarily enable debugging in htmx using the `hx-debug="true"` attribute to get a clear picture of what is being cached, restored, or reloaded.
-
-When combined with smart UX patterns, such as maintaining the scroll position or utilizing active filters with `hx-history-elt`, this caching strategy can significantly enhance the user experience of your application. Pages stop feeling like isolated transactions and start behaving like a continuous, fluid experience. That is the kind of performance users notice and appreciate.
+Test your caching behavior using browser developer tools. Open the Application tab and inspect localStorage to see what htmx has cached. You can also add `htmx.logAll()` to your JavaScript console to watch htmx events in real time, including history save and restore operations.
 
 ## Designing for Memory: Best Practices with History and Performance
 
-Once you start using `hx-history` and `hx-history-elt` to retain state and reduce server load, you quickly see how much smoother your app can feel. But like any performance feature, it comes with some trade-offs. If you are not careful, you can accidentally cache stale or unwanted content, especially in dynamic applications where the data changes frequently or needs to reflect user-specific logic. Knowing when and where to apply history caching is just as important as knowing how to do so.
+History caching makes your app feel faster, but it requires thoughtful implementation. Cache the wrong content and users see stale data. Cache too much and you waste browser storage. Here are patterns that work well in production.
 
-One way to avoid these pitfalls is to scope your cached responses deliberately. If your page includes real-time elements, such as notifications, cart counts, or live updates, ensure that these are excluded from the cached region. You can use `hx-select` to isolate the dynamic content from the rest of the response, caching only what should remain the same when navigating back. When building partials for Razor Pages, keep those sections modular so you can selectively render or swap them.
+### Isolate Dynamic Content
 
-Accessibility also deserves attention when you are working with history-based caching. Preserving state across navigation is a huge win, but users navigating via keyboard or screen readers must also be considered. For example, make sure that dynamically reinserted content does not break focus or skip heading hierarchies. Using `aria-live` regions and managing focus programmatically after history restoration can ensure usability remains strong for everyone.
+Real-time elements like notification counts, shopping cart totals, or live status indicators should not live inside cached regions. Structure your layout to keep these elements outside the `hx-history-elt` container:
 
-Reusable components, like search forms or tab interfaces, should be built with state caching in mind from the start. Structure your Razor Partials so that each component includes the necessary context to restore its view. Wrap persistent UI elements in containers that use `hx-history-elt`, and test your components in different navigation scenarios. A well-designed search bar or tab section should return exactly to its last-known state without needing to reload or reset anything.
+```html
+<header>
+    <div id="cart-count" hx-get="/Cart?handler=Count" hx-trigger="load">
+        <!-- Always fresh -->
+    </div>
+</header>
 
-Let’s take a practical example. Suppose you have a filterable product list, a sidebar of checkboxes, and a search box. Structure the layout so the sidebar and search bar are wrapped in a component marked with `hx-history-elt`. The product results get loaded via `hx-get`, and only that portion uses `hx-history`. Now your filters and input remain intact, even when navigating forward and back between products and result pages. It's not just fast; it feels thoughtful.
+<main id="page-content" hx-history-elt>
+    <!-- Cached content lives here -->
+</main>
+```
 
-Make sure your Razor Pages and handlers return consistent markup for repeatable caching. If the returned HTML structure differs depending on the context or user state, you could end up with mismatched snapshots. Lean into server-side rendering with predictable patterns. Use partial views and tag helpers to keep your component layout uniform and easy to maintain across requests.
+The cart count loads fresh on every page view while the main content benefits from caching.
 
-Test often. History-related issues can be subtle and vary by browser. Use htmx’s debugging tools or simply open dev tools and walk through the navigation stack manually. You will catch inconsistencies early, like scroll jumps, missing data, or rehydration quirks that might frustrate users if left unchecked.
+### Use hx-select to Scope Cached Responses
 
-As you incorporate these patterns, think about history as more than just a browser feature. It is part of your UX strategy. When used correctly, it lets users explore confidently, knowing the app will remember their place and get out of their way. When misused, it can create confusing inconsistencies or expose outdated content.
-
-In the next chapter, we will go deeper into fine-tuning request behavior with `hx-disable` and `hx-request`. These tools let you control when requests are made, how they are sent, and what side effects they trigger. Together with the history features you now know, they provide a complete toolkit for building responsive, efficient applications with Razor Pages and htmx.
-
-## Designing for Memory: Best Practices with History and Performance
-
-Once you start using `hx-history` and `hx-history-elt` to retain state and reduce server load, your app begins to feel smoother and smarter. But without some guardrails, it's easy to cache too much, cache the wrong thing, or end up with inconsistent UI behavior. Like any optimization, it’s most effective when used deliberately and with structure.
-
-A common mistake is caching sections of the page that change frequently or depend heavily on user-specific data. For example, a real-time shopping cart count or notification badge should not be included in a cached region. You can avoid this by isolating those components outside your history-managed containers using `hx-select` to scope what gets swapped in and what stays fresh.
-
-Here’s an example where we scope the response to only replace the product list inside a larger layout:
+When your server returns a full page but you only want to cache part of it, use `hx-select`:
 
 ```html
 <div id="product-container"
      hx-get="/Products?handler=Page"
      hx-target="#product-list"
      hx-select="#product-list"
-     hx-history="true"
-     hx-push-url="true">
+     hx-push-url="true"
+     hx-trigger="revealed">
 </div>
 
 <div id="product-list">
-    <!-- Products will load here -->
+    <!-- Products load here -->
 </div>
 
 <div id="cart-summary">
-    <!-- This should not be cached -->
+    <!-- Never cached because it is outside the selected element -->
     <partial name="_CartSummary" />
 </div>
 ```
 
-The server returns the entire page, including both the product list and cart summary, but only the #product-list section is updated and cached. This avoids caching stale cart data while preserving the paginated product view.
+The server returns both the product list and cart summary, but only `#product-list` gets extracted and cached.
 
-You can also design your forms and filters as reusable components that persist state. For example, a sidebar with checkbox filters and a search box should retain input values when navigating back. Wrap them in an element marked with `hx-history-elt`:
+### Build Consistent Partials
+
+Razor Partials should return stable HTML structures regardless of request context. Avoid conditional wrappers that change the DOM structure:
 
 ```html
-<div id="filters" hx-history-elt>
-    <form hx-get="/Products?handler=Filter"
-          hx-target="#product-list"
-          hx-push-url="true"
-          hx-history="true">
-        <input type="text" name="query" placeholder="Search..." value="@Model.Query" />
-        <label>
-            <input type="checkbox" name="category" value="books" @(Model.HasBooks ? "checked" : "") />
-            Books
-        </label>
-        <label>
-            <input type="checkbox" name="category" value="electronics" @(Model.HasElectronics ? "checked" : "") />
-            Electronics
-        </label>
-        <button type="submit">Apply</button>
-    </form>
+<!-- Good: Consistent structure -->
+<div id="results-wrapper">
+    @if (Model.Products.Any())
+    {
+        <ul class="product-list">
+            @foreach (var product in Model.Products)
+            {
+                <li>@product.Name</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p class="no-results">No products found.</p>
+    }
+</div>
+
+<!-- Avoid: Inconsistent wrapper elements -->
+@if (Model.Products.Any())
+{
+    <ul>...</ul>
+}
+else
+{
+    <div>No products</div>
+}
+```
+
+Consistent structures ensure htmx can reliably cache and restore content without layout shifts or broken references.
+
+### Manage Focus for Accessibility
+
+When content restores from cache, users navigating via keyboard or screen reader need proper focus management. Use Hyperscript to restore focus after history restoration:
+
+```html
+<div id="search-results" hx-history-elt _="on htmx:historyRestore focus() on #search-input">
+    <input type="text" id="search-input" name="query" />
+    <!-- Results appear here -->
 </div>
 ```
 
-When users apply filters, htmx caches the results and also saves the state of this form. If they view a product and then return, all inputs and selections reappear exactly as before.
+The `htmx:historyRestore` event fires after htmx restores cached content. The Hyperscript moves focus to the search input, orienting the user within the restored interface.
 
-To ensure accessibility, manage focus properly when restoring from history. If your content uses dynamic tabbing or modals, you might use a small Hyperscript snippet to restore focus:
+For screen reader users, include `aria-live` regions to announce dynamic updates:
 
 ```html
-<div id="product-list" hx-history-elt _="on htmx:afterSettle set #query to focus">
-    <!-- Search results go here -->
-</div>
-
-<div id="cart-summary">
-    <!-- This should not be cached -->
-    <partial name="_CartSummary" />
+<div id="results-status" aria-live="polite" class="visually-hidden">
+    @Model.Products.Count() products found
 </div>
 ```
 
-This ensures the user is returned to the search field or result list, rather than being left disoriented. You can also include aria-live regions to clearly communicate updates to users of screen readers.
+### Handle Forms Carefully
 
-Consistency is key when building reusable, history-aware components. Razor Partials should return stable HTML structures regardless of request context. Avoid conditional wrappers or varying layouts. Here’s a good structure for a paginated product grid:
+Forms inside cached regions retain their values when restored, which is usually what users want. CSRF tokens and other security-sensitive hidden fields can become stale though. Consider refreshing these on restoration:
 
 ```html
-<div id="results"
-     hx-get="/Products?handler=Page"
-     hx-target="#results"
+<form id="product-form" hx-post="/Products?handler=Create" hx-target="#result">
+    @Html.AntiForgeryToken()
+    <input type="text" name="name" />
+    <button type="submit">Create</button>
+</form>
+
+<script>
+document.body.addEventListener('htmx:historyRestore', function() {
+    // Refresh anti-forgery token after history restore
+    htmx.ajax('GET', '/Products?handler=Token', {target: '#product-form input[name="__RequestVerificationToken"]', swap: 'outerHTML'});
+});
+</script>
+```
+
+This pattern ensures security tokens stay valid even when forms are restored from cache.
+
+### Test Navigation Thoroughly
+
+History-related bugs are subtle and vary by browser. Build a testing checklist:
+
+1. Navigate forward through several pages
+2. Use the back button to return through each page
+3. Use the forward button to advance again
+4. Verify scroll positions, form values, and active states at each step
+5. Test with browser developer tools open to watch for console errors
+6. Test on multiple browsers since history handling can differ
+
+Use htmx debugging to trace history operations:
+
+```javascript
+htmx.logger = function(elt, event, data) {
+    if (event.indexOf('history') > -1) {
+        console.log(event, data);
+    }
+};
+```
+
+This logs only history-related events, making it easier to trace caching behavior.
+
+## Common Pitfalls and Solutions
+
+### Stale Data After Server Changes
+
+If server data changes while a user has cached content, they might see outdated information when navigating back. For critical data, consider adding a freshness check:
+
+```html
+<div hx-get="/Products?handler=Page"
+     hx-target="#product-list"
      hx-push-url="true"
-     hx-history="true"
-     hx-select="#page-content">
-</div>
-
-<!-- Server response should include this structure -->
-<div id="page-content">
-    <table>
-        @foreach (var item in Model.Products)
-        {
-        <tr><td><a href="/Product/@item.Id">@item.Name</a></td></tr>
-        }
-    </table>
-    <div class="pagination">
-        <a href="/Products?handler=Page&page=1"
-           hx-get="/Products?handler=Page&page=1"
-           hx-target="#results"
-           hx-push-url="true"
-           hx-history="true">1</a>
-        <a href="/Products?handler=Page&page=2"
-           hx-get="/Products?handler=Page&page=2"
-           hx-target="#results"
-           hx-push-url="true"
-           hx-history="true">2</a>
-    </div>
+     hx-trigger="load, htmx:historyRestore from:body">
 </div>
 ```
 
-If every pagination response includes this exact structure, the browser will have no trouble restoring it cleanly from the history cache.
+The `htmx:historyRestore from:body` trigger causes a fresh request whenever content is restored from history, ensuring users always see current data. Use this selectively since it negates the performance benefits of caching.
 
-Finally, don’t forget to test your interactions. Use htmx’s debugging features and browser developer tools to simulate forward and back navigation. Look for edge cases, such as scroll jumps or missing UI states, and refine your layout accordingly.
+### Cache Size Limits
 
-In the next chapter, we’ll look at how `hx-disable` and `hx-request` give you low-level control over when requests are made and what gets sent. These tools help fine-tune performance and behavior, rounding out your understanding of how to keep Razor Pages responsive, efficient, and enjoyable to use.
+Browsers limit localStorage to around 5-10MB. If your pages are large or users navigate extensively, you might hit this limit. Monitor cache size and adjust `historyCacheSize` accordingly:
+
+```javascript
+htmx.config.historyCacheSize = 5; // Reduce for large page content
+```
+
+### URL Mismatch Issues
+
+Ensure your `hx-get` URLs match the pattern you want in the browser address bar. Inconsistent URLs can cause confusion when users bookmark or share links:
+
+```html
+<!-- Consistent URL pattern -->
+<a hx-get="/Products?handler=Details&amp;id=@product.Id"
+   hx-push-url="/Products/Details/@product.Id"
+   hx-target="#main-content">
+    @product.Name
+</a>
+```
+
+The `hx-push-url` can specify a different URL than `hx-get`, letting you maintain clean user-facing URLs while using Razor Pages handler routing internally.
+
+## Summary
+
+History caching transforms how users experience navigation in your Razor Pages application. Instead of reloading pages, htmx restores cached content instantly. Instead of losing form inputs and scroll positions, users return to exactly where they left off.
+
+The key concepts to remember:
+
+- `hx-push-url="true"` enables history caching automatically
+- `hx-history="false"` disables caching for sensitive content
+- `hx-history-elt` specifies which element to snapshot
+- `hx-select` scopes which parts of the response get cached
+- Consistent HTML structures make caching reliable
+- Focus management maintains accessibility
+- Testing across browsers catches subtle issues
+
+In the next chapter, we will explore `hx-disable` and `hx-request` for fine-grained control over when and how htmx makes requests. These tools complement history caching by letting you optimize request behavior and manage loading states.
