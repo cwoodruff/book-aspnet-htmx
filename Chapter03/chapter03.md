@@ -139,6 +139,8 @@ htmx makes form submissions seamless by eliminating full-page reloads.
     <input type="text" name="name" required />
     <button type="submit">Submit</button>
 </form>
+
+<div id="result"></div>
 ```
 
 ## Processing Form Data in the Razor Page Model
