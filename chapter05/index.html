@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Mastering hx-get and hx-post</title>
     <meta name="title" content="Mastering hx-get and hx-post">
-    <meta name="description" content="Interactivity is at the heart of every modern web application, and in this chapter, we'll explore two of the most essential tools in htmx: ">
+    <meta name="description" content="The previous chapters introduced htmx commands and showed you how to build basic interactions.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter05/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter05/">
     <meta property="og:title" content="Mastering hx-get and hx-post">
-    <meta property="og:description" content="Interactivity is at the heart of every modern web application, and in this chapter, we'll explore two of the most essential tools in htmx: ">
+    <meta property="og:description" content="The previous chapters introduced htmx commands and showed you how to build basic interactions.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter05/">
     <meta property="twitter:title" content="Mastering hx-get and hx-post">
-    <meta property="twitter:description" content="Interactivity is at the heart of every modern web application, and in this chapter, we'll explore two of the most essential tools in htmx: ">
+    <meta property="twitter:description" content="The previous chapters introduced htmx commands and showed you how to build basic interactions.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -247,504 +247,832 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="5" class="break-words">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#5">#</doc-anchor-trigger>
-        <span>5</span>
-    </h1>
-</doc-anchor-target>
-<doc-anchor-target id="mastering-hx-get-and-hx-post">
+<doc-anchor-target id="mastering-hx-get-and-hx-post" class="break-words">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#mastering-hx-get-and-hx-post">#</doc-anchor-trigger>
         <span>Mastering <code v-pre>hx-get</code> and <code v-pre>hx-post</code></span>
     </h1>
 </doc-anchor-target>
-<p>Interactivity is at the heart of every modern web application, and in this chapter, we&#x27;ll explore two of the most essential tools in htmx: <code v-pre>hx-get</code> and <code v-pre>hx-post</code>. These attributes allow your HTML elements to fetch and submit data dynamically, eliminating full-page reloads and making your Razor Pages feel fluid and responsive. Whether retrieving new content, handling form submissions, or updating elements on the fly, mastering these fundamental htmx commands is key to building a seamless user experience.</p>
-<p>Unlike traditional AJAX requests that require JavaScript, <code v-pre>hx-get</code> and <code v-pre>hx-post</code> integrate directly into your HTML, making server communication as easy as adding an attribute. With hx-get, you can fetch new content from your server with a simple button click, while <code v-pre>hx-post</code> lets you submit forms asynchronously without disrupting the page flow. These lightweight yet powerful capabilities enable you to enhance user interactions while keeping your Razor Pages project clean, maintainable, and free from unnecessary JavaScript complexity.</p>
-<p>By the end of this chapter, you&#x27;ll have a solid grasp of how to use <code v-pre>hx-get</code> and <code v-pre>hx-post</code> effectively within an ASP.NET Core Razor Pages application. You&#x27;ll learn how to work with Razor Pages endpoints, manage server responses, and even handle security considerations such as CSRF (Cross-Site Request Forgery) protection. Once you&#x27;ve mastered these core concepts, you&#x27;ll be well on your way to building dynamic, server-driven web applications with minimal effort.</p>
+<p>The previous chapters introduced htmx commands and showed you how to build basic interactions. Now it is time to master the two commands you will use most often: <code v-pre>hx-get</code> and <code v-pre>hx-post</code>. These attributes handle the majority of web application interactions, from loading dynamic content to submitting forms and processing user input.</p>
+<p>This chapter goes beyond the basics. You will learn how to construct dynamic URLs, include additional parameters with requests, handle file uploads, and manage server responses effectively. You will build real patterns: live search with debouncing, inline editing, bulk operations, and proper error handling. By the end, you will have the skills to build sophisticated server-driven interactions without writing JavaScript.</p>
 <doc-anchor-target id="fetching-dynamic-content-with-hx-get">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#fetching-dynamic-content-with-hx-get">#</doc-anchor-trigger>
-        <span>Fetching Dynamic Content with hx-get</span>
+        <span>Fetching Dynamic Content with <code v-pre>hx-get</code></span>
     </h2>
 </doc-anchor-target>
-<p>Interactivity is the foundation of any modern web application, and hx-get plays a crucial role in making server-side data retrieval seamless and efficient. Unlike traditional JavaScript-based AJAX requests, hx-get allows you to fetch content from your server using simple HTML attributes, making your Razor Pages more dynamic without the overhead of a JavaScript framework. Whether you&#x27;re updating sections of a page, retrieving user details, or handling bulk operations, <code v-pre>hx-get</code> provides a declarative way to make your UI more responsive.</p>
-<p>Using <code v-pre>hx-get</code>, you can dynamically load content from Razor Pages without requiring full-page reloads. Imagine a scenario where you have a user list, and clicking on a user should display their profile details without navigating away from the page. Instead of embedding all user details upfront, you can use <code v-pre>hx-get</code> to fetch the relevant data only when needed. Here&#x27;s a simple example where clicking a button loads user profile information into a designated section:</p>
+<p>The <code v-pre>hx-get</code> attribute sends HTTP GET requests to your server and updates the page with the response. GET requests are ideal for retrieving data because they are cacheable, bookmarkable, and do not modify server state.</p>
+<doc-anchor-target id="basic-content-loading">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-content-loading">#</doc-anchor-trigger>
+        <span>Basic Content Loading</span>
+    </h3>
+</doc-anchor-target>
+<p>The simplest use of <code v-pre>hx-get</code> loads content when a user clicks a button:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Users?handler=Profile&amp;id=1&quot; hx-target=&quot;#profile-details&quot; hx-swap=&quot;innerHTML&quot;&gt;View Profile&lt;/button&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Users?handler=Profile&amp;id=1&quot; 
+        hx-target=&quot;#profile-details&quot;&gt;
+    View Profile
+&lt;/button&gt;
 &lt;div id=&quot;profile-details&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>On the server side, you define the Razor Pages handler to fetch and return the profile data:</p>
+<p>The server handler returns HTML:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class UsersModel : PageModel
 {
+    private readonly UserService _userService;
+
+    public UsersModel(UserService userService)
+    {
+        _userService = userService;
+    }
+
     public IActionResult OnGetProfile(int id)
     {
-        var user = _context.Users.Find(id);
-        if (user == null) return NotFound();
-    
-        return Content($&quot;&lt;h3&gt;{user.Name}&lt;/h3&gt;&lt;p&gt;Email: {user.Email}&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        var user = _userService.GetById(id);
+        if (user == null)
+        {
+            return Content(&quot;&lt;p class=\&quot;error\&quot;&gt;User not found&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        return Partial(&quot;_UserProfile&quot;, user);
     }
 }</code></pre>
 </doc-codeblock></div>
-<p>In this setup, when the button is clicked, an <code v-pre>hx-get</code> request is made to the server, fetching the profile details and inserting them into the #profile-details div. The <code v-pre>hx-swap=&quot;innerHTML&quot;</code> ensures that only the selected element is updated with new content, preventing unnecessary re-renders of the entire page.</p>
-<p>Dynamic URL construction is another powerful feature of <code v-pre>hx-get</code>, allowing you to pass query parameters and modify requests based on user input. For example, if you have a search input that filters countries dynamically as the user types, <code v-pre>hx-get</code> can handle this efficiently:</p>
+<p>The partial view renders the user data:</p>
+<p><strong>Pages/Shared/_UserProfile.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; name=&quot;query&quot; hx-get=&quot;/Index?handler=Search&quot; hx-target=&quot;#search-results&quot; hx-trigger=&quot;keyup changed delay:300ms&quot; /&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model User
+
+&lt;div class=&quot;user-profile&quot;&gt;
+    &lt;h3&gt;@Model.Name&lt;/h3&gt;
+    &lt;p&gt;Email: @Model.Email&lt;/p&gt;
+    &lt;p&gt;Member since: @Model.CreatedAt.ToString(&quot;MMMM yyyy&quot;)&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="live-search-with-debouncing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#live-search-with-debouncing">#</doc-anchor-trigger>
+        <span>Live Search with Debouncing</span>
+    </h3>
+</doc-anchor-target>
+<p>Search boxes that update as users type need careful handling. Without debouncing, every keystroke triggers a server request. The <code v-pre>hx-trigger</code> attribute with a delay prevents this:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;search-container&quot;&gt;
+    &lt;input type=&quot;text&quot; 
+           name=&quot;query&quot;
+           placeholder=&quot;Search users...&quot;
+           hx-get=&quot;/Users?handler=Search&quot; 
+           hx-target=&quot;#search-results&quot; 
+           hx-trigger=&quot;keyup changed delay:300ms&quot;
+           hx-indicator=&quot;#search-spinner&quot; /&gt;
+    &lt;span id=&quot;search-spinner&quot; class=&quot;htmx-indicator&quot;&gt;Searching...&lt;/span&gt;
+&lt;/div&gt;
 &lt;div id=&quot;search-results&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>On the backend, the <code v-pre>OnGetSearch</code> handler processes the query parameter and returns the filtered results:</p>
+<p>The trigger expression breaks down as:</p>
+<ul>
+<li><code v-pre>keyup</code>: Fire on keyup events</li>
+<li><code v-pre>changed</code>: Only if the value actually changed</li>
+<li><code v-pre>delay:300ms</code>: Wait 300ms after the last keystroke</li>
+</ul>
+<p>The server handler filters and returns results:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetSearch(string query)
 {
-    var users = _context.Users
-        .Where(u =&gt; u.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
-        .Select(u =&gt; $&quot;&lt;p&gt;{u.Name} ({u.Email})&lt;/p&gt;&quot;)
-        .ToList();
+    if (string.IsNullOrWhiteSpace(query))
+    {
+        return Content(&quot;&quot;, &quot;text/html&quot;);
+    }
 
-    return Content(string.Join(&quot;&quot;, users), &quot;text/html&quot;);
+    var users = _userService.Search(query);
+    return Partial(&quot;_UserSearchResults&quot;, users);
 }</code></pre>
 </doc-codeblock></div>
-<p>This allows real-time updates without unnecessary full-page reloads. The <code v-pre>hx-trigger=&quot;keyup changed delay:300ms&quot;</code> ensures that requests are only sent after the user pauses typing for 300 milliseconds, reducing server load and improving efficiency.</p>
-<p>Beyond simple retrieval of content, <code v-pre>hx-get</code> can be used for bulk operations such as activating or deactivating multiple table entries at once. Consider an admin dashboard where users can select multiple accounts and activate or deactivate them with a single click. You can structure the table with checkboxes and a bulk action button:</p>
-<p><em>Index.cshtml</em></p>
+<p><strong>Pages/Shared/_UserSearchResults.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;content&quot;&gt;
-    &lt;!-- Begin Page Content --&gt;
-    &lt;div class=&quot;container-fluid&quot;&gt;
-        &lt;!-- Page Heading --&gt;
-        &lt;div class=&quot;card shadow mb-4&quot;&gt;
-            &lt;div class=&quot;card-header py-3&quot;&gt;
-                &lt;h4 class=&quot;m-0 font-weight-bold text-primary&quot;&gt;Bulk Update&lt;/h4&gt;
-            &lt;/div&gt;
-            &lt;div class=&quot;card-body&quot;&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model IEnumerable&lt;User&gt;
 
-                &lt;div hx-include=&quot;#checked-contacts&quot; hx-target=&quot;#tbody&quot;&gt;
-                    &lt;button class=&quot;btn btn-primary btn-icon-split&quot; hx-put=&quot;/BulkUpdate/Index?handler=activate&quot;&gt;Activate&lt;/button&gt;
-                    &lt;button class=&quot;btn btn-primary btn-icon-split&quot; hx-put=&quot;/BulkUpdate/Index?handler=deactivate&quot;&gt;Deactivate&lt;/button&gt;
-                &lt;/div&gt;
-
-                @if (Model.ContactTableRows != null &amp;&amp; Model.ContactTableRows.Count() &gt; 0)
-                {
-                    &lt;form id=&quot;checked-contacts&quot;&gt;
-                        @Html.AntiForgeryToken()
-                        &lt;table&gt;
-                            &lt;thead&gt;
-                            &lt;tr&gt;
-                                &lt;th&gt;&lt;/th&gt;
-                                &lt;th&gt;Name&lt;/th&gt;
-                                &lt;th&gt;Email&lt;/th&gt;
-                                &lt;th&gt;Status&lt;/th&gt;
-                            &lt;/tr&gt;
-                            &lt;/thead&gt;
-
-                            &lt;tbody id=&quot;tbody&quot;&gt;
-                            &lt;partial name=&quot;BulkUpdate/_tbody&quot; model=&quot;@Model.ContactTableRows&quot;/&gt;
-                            &lt;/tbody&gt;
-                        &lt;/table&gt;
-                    &lt;/form&gt;
-                }
-
-            &lt;/div&gt;
-        &lt;/div&gt;
-
-    &lt;/div&gt;
-    &lt;!-- /.container-fluid --&gt;
-&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>On the server side, the handler processes the selected user IDs and updates their status:</p>
-<p><em>Index.cshtml.cs</em></p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class Index : PageModel
+@if (!Model.Any())
 {
-    private readonly IContactService service;
-
-    public Index(IContactService service)
-    {
-        this.service = service;
-    }
-
-    public List&lt;Contact&gt;? ContactTableRows { get; set; }
-
-    public void OnGet()
-    {
-        ContactTableRows = service.Get().ToList();
-    }
-
-
-    public PartialViewResult OnPutActivate(int[] Ids)
-    {
-        foreach (var Id in Ids)
-            service.Update(Id, true);
-        var models = service.Get();
-        foreach (var m in models)
-            if (Ids.Contains(m.Id))
-                m.Updated = true;
-            else m.Updated = false;
-        return Partial(&quot;_tbody&quot;, models.ToList());
-    }
-
-    public PartialViewResult OnPutDeactivate(int[] Ids)
-    {
-        foreach (var Id in Ids)
-            service.Update(Id, false);
-        var models = service.Get();
-        foreach (var m in models)
-            if (Ids.Contains(m.Id))
-                m.Updated = true;
-            else m.Updated = false;
-
-        return Partial(&quot;_tbody&quot;, models.ToList());
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p><em>IContactService.cs</em></p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public interface IContactService
-{
-    IEnumerable&lt;Contact&gt; Get();
-    void Update(int Id, bool Status);
-}</code></pre>
-</doc-codeblock></div>
-<p><em>ContactService.cs</em></p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">{
-    private Dictionary&lt;int, Contact&gt; contacts;
-
-    public ContactService()
-    {
-        int key = 0;
-        // Initialize the static contact member.
-        contacts = new();
-        contacts.Add(++key, new(key, &quot;Bobby Jones&quot;, &quot;bobby@jones.org&quot;));
-        contacts.Add(++key, new(key, &quot;Sally Ride&quot;, &quot;sally@apace.org&quot;));
-        contacts.Add(++key, new(key, &quot;Brian Woodruff&quot;, &quot;dr.brian@doctor.org&quot;));
-        contacts.Add(++key, new(key, &quot;Spencer Woodruff&quot;, &quot;spencer@woodruff.org&quot;) { Status = false });
-    }
-
-    public IEnumerable&lt;Contact&gt; Get()
-    {
-        return contacts.Select(c =&gt; c.Value);
-    }
-
-    public void Update(int Id, bool status)
-    {
-        contacts[Id].Status = status;
-        contacts[Id].Updated = false;
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p><em>Program.cs</em></p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services
-    .AddSingleton&lt;htmx_examples.Pages.BulkUpdate.IContactService, htmx_examples.Pages.BulkUpdate.ContactService&gt;();
-builder.Services.AddRazorPages();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler(&quot;/Error&quot;);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    &lt;p class=&quot;no-results&quot;&gt;No users found&lt;/p&gt;
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapRazorPages();
-
-app.Run();</code></pre>
+else
+{
+    &lt;ul class=&quot;search-results&quot;&gt;
+        @foreach (var user in Model)
+        {
+            &lt;li&gt;
+                &lt;a hx-get=&quot;/Users?handler=Profile&amp;amp;id=@user.Id&quot;
+                   hx-target=&quot;#profile-details&quot;&gt;
+                    @user.Name
+                &lt;/a&gt;
+                &lt;span class=&quot;email&quot;&gt;@user.Email&lt;/span&gt;
+            &lt;/li&gt;
+        }
+    &lt;/ul&gt;
+}</code></pre>
 </doc-codeblock></div>
-<p>This approach allows admins to perform bulk updates efficiently without refreshing the page.</p>
-<p>With <code v-pre>hx-get</code>, you can build highly dynamic and interactive Razor Pages that fetch data only when needed, reducing unnecessary server load and improving performance. Whether you’re loading user profiles, implementing real-time search, or handling bulk updates, <code v-pre>hx-get</code> provides a powerful way to make your application more responsive while keeping your frontend code clean and maintainable.</p>
-<doc-anchor-target id="seamless-form-submissions-with-hx-post">
+<doc-anchor-target id="passing-parameters-with-hx-vals">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#passing-parameters-with-hx-vals">#</doc-anchor-trigger>
+        <span>Passing Parameters with <code v-pre>hx-vals</code></span>
+    </h3>
+</doc-anchor-target>
+<p>Sometimes you need to send additional data with a GET request beyond what is in the URL. The <code v-pre>hx-vals</code> attribute adds JSON-formatted values:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Products?handler=Filter&quot;
+        hx-target=&quot;#product-list&quot;
+        hx-vals='{&quot;category&quot;: &quot;electronics&quot;, &quot;inStock&quot;: true}'&gt;
+    Show Electronics
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>The handler receives these as parameters:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetFilter(string category, bool inStock)
+{
+    var products = _productService.Filter(category, inStock);
+    return Partial(&quot;_ProductList&quot;, products);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="including-form-fields-with-hx-include">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#including-form-fields-with-hx-include">#</doc-anchor-trigger>
+        <span>Including Form Fields with <code v-pre>hx-include</code></span>
+    </h3>
+</doc-anchor-target>
+<p>When you need to include values from form fields outside the triggering element, use <code v-pre>hx-include</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;filter-controls&quot;&gt;
+    &lt;select id=&quot;category-select&quot; name=&quot;category&quot;&gt;
+        &lt;option value=&quot;&quot;&gt;All Categories&lt;/option&gt;
+        &lt;option value=&quot;electronics&quot;&gt;Electronics&lt;/option&gt;
+        &lt;option value=&quot;clothing&quot;&gt;Clothing&lt;/option&gt;
+    &lt;/select&gt;
+    
+    &lt;input type=&quot;number&quot; id=&quot;max-price&quot; name=&quot;maxPrice&quot; placeholder=&quot;Max price&quot; /&gt;
+    
+    &lt;button hx-get=&quot;/Products?handler=Filter&quot;
+            hx-target=&quot;#product-list&quot;
+            hx-include=&quot;#category-select, #max-price&quot;&gt;
+        Apply Filters
+    &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;product-list&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>hx-include</code> selector can be:</p>
+<ul>
+<li>An ID: <code v-pre>#category-select</code></li>
+<li>Multiple selectors: <code v-pre>#category-select, #max-price</code></li>
+<li>A CSS selector: <code v-pre>.filter-input</code></li>
+<li><code v-pre>closest form</code>: Include all fields in the nearest ancestor form</li>
+<li><code v-pre>this</code>: Include the triggering element itself</li>
+</ul>
+<doc-anchor-target id="caching-get-responses">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#caching-get-responses">#</doc-anchor-trigger>
+        <span>Caching GET Responses</span>
+    </h3>
+</doc-anchor-target>
+<p>For data that does not change frequently, server-side caching reduces load:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetCategories()
+{
+    Response.Headers.Append(&quot;Cache-Control&quot;, &quot;public, max-age=300&quot;);
+    
+    var categories = _categoryService.GetAll();
+    return Partial(&quot;_CategoryList&quot;, categories);
+}</code></pre>
+</doc-codeblock></div>
+<p>The browser caches this response for 5 minutes, avoiding redundant server requests.</p>
+<doc-anchor-target id="submitting-data-with-hx-post">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#seamless-form-submissions-with-hx-post">#</doc-anchor-trigger>
-        <span>Seamless Form Submissions with <code v-pre>hx-post</code></span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#submitting-data-with-hx-post">#</doc-anchor-trigger>
+        <span>Submitting Data with <code v-pre>hx-post</code></span>
     </h2>
 </doc-anchor-target>
-<p>Handling form submissions is a fundamental aspect of any web application. The <code v-pre>hx-post</code> feature provides a clean and efficient way to submit data asynchronously without needing JavaScript. By integrating <code v-pre>hx-post</code> into your Razor Pages application, you can create forms that dynamically send data to the server, process responses, and update the user interface—all without requiring a full page reload. This approach keeps your frontend lightweight while delivering a modern and responsive user experience.</p>
-<p>Consider a basic form that collects a user&#x27;s name and email address. Instead of using traditional form submissions that reload the page, <code v-pre>hx-post</code> allows us to manage everything in the background. Here’s how you can implement it in Razor Pages:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Users?handler=Register&quot; hx-target=&quot;#response&quot; hx-indicator=&quot;#loading&quot;&gt;
-    &lt;label for=&quot;name&quot;&gt;Name:&lt;/label&gt;
-    &lt;input type=&quot;text&quot; id=&quot;name&quot; name=&quot;name&quot; required /&gt;
-
-    &lt;label for=&quot;email&quot;&gt;Email:&lt;/label&gt;
-    &lt;input type=&quot;email&quot; id=&quot;email&quot; name=&quot;email&quot; required /&gt;
-
-    &lt;button type=&quot;submit&quot;&gt;Register&lt;/button&gt;
-&lt;/form&gt;
-
-&lt;div id=&quot;loading&quot; style=&quot;display: none;&quot;&gt;Submitting...&lt;/div&gt;
-&lt;div id=&quot;response&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class UsersModel : PageModel
-{
-    [BindProperty] public string Name { get; set; }
-    [BindProperty] public string Email { get; set; }
-
-    public IActionResult OnPostRegister()
-    {
-        if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Email))
-            return BadRequest(&quot;Both fields are required.&quot;);
-
-        return Content($&quot;&lt;p&gt;Thank you, {Name}. Your email {Email} has been registered!&lt;/p&gt;&quot;, &quot;text/html&quot;);
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p>In this setup, when the user submits the form, the <code v-pre>hx-post</code> attribute sends the data to the <code v-pre>OnPostRegister</code> handler, which processes the input and returns a response. The <code v-pre>hx-target=&quot;#response&quot;</code> attribute ensures that only the relevant part of the page is updated, providing a smoother user experience. At the same time, the <code v-pre>hx-indicator=&quot;#loading&quot;</code> attribute offers feedback to the user while the request is in progress.</p>
-<p>For more advanced scenarios, you may want to send additional data or modify the behavior of the form dynamically. For example, if you&#x27;re implementing a commenting system where users submit comments and see them appear instantly, you can use the <code v-pre>hx-swap=&quot;beforeend&quot;</code> attribute to append new comments directly without reloading the page.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Comments?handler=Add&quot; hx-target=&quot;#comments&quot; hx-swap=&quot;beforeend&quot;&gt;
-    &lt;textarea name=&quot;comment&quot; required&gt;&lt;/textarea&gt;
-    &lt;button type=&quot;submit&quot;&gt;Post Comment&lt;/button&gt;
-&lt;/form&gt;
-
-&lt;div id=&quot;comments&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class CommentsModel : PageModel
-{
-    [BindProperty] public string Comment { get; set; }
-
-    public IActionResult OnPostAdd()
-    {
-        if (string.IsNullOrWhiteSpace(Comment))
-            return BadRequest(&quot;Comment cannot be empty.&quot;);
-
-        return Content($&quot;&lt;p&gt;{Comment}&lt;/p&gt;&quot;, &quot;text/html&quot;);
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p>Here, <code v-pre>hx-swap=&quot;beforeend&quot;</code> ensures that each new comment is added to the existing list instead of replacing it. This small addition makes a big difference in the user experience, allowing for seamless interaction without requiring JavaScript.</p>
-<p>Another powerful use case for <code v-pre>hx-post</code> is handling complex validation and dynamic error messages. Instead of performing client-side validation, you can let the server handle everything and return validation messages in real time. Here’s how you can modify the earlier registration form to display validation errors without reloading the page:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Users?handler=Register&quot; hx-target=&quot;#response&quot; hx-indicator=&quot;#loading&quot;&gt;
-    &lt;input type=&quot;text&quot; name=&quot;name&quot; placeholder=&quot;Name&quot; required /&gt;
-    &lt;input type=&quot;email&quot; name=&quot;email&quot; placeholder=&quot;Email&quot; required /&gt;
-    &lt;button type=&quot;submit&quot;&gt;Register&lt;/button&gt;
-&lt;/form&gt;
-
-&lt;div id=&quot;loading&quot; style=&quot;display: none;&quot;&gt;Submitting...&lt;/div&gt;
-&lt;div id=&quot;response&quot; class=&quot;error-message&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class UsersModel : PageModel
-{
-    [BindProperty] public string Name { get; set; }
-    [BindProperty] public string Email { get; set; }
-
-    public IActionResult OnPostRegister()
-    {
-        if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Email))
-            return BadRequest(&quot;&lt;p class='error'&gt;Both fields are required.&lt;/p&gt;&quot;);
-
-        if (!Email.Contains(&quot;@&quot;))
-            return BadRequest(&quot;&lt;p class='error'&gt;Please enter a valid email.&lt;/p&gt;&quot;);
-
-        return Content($&quot;&lt;p class='success'&gt;Thank you, {Name}. You are now registered.&lt;/p&gt;&quot;, &quot;text/html&quot;);
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p>This setup ensures that validation feedback is displayed dynamically without requiring JavaScript. If the server detects an issue, it returns an error message, which is inserted into <code v-pre>#response</code>. Users receive immediate feedback without the disruption of a full-page reload.</p>
-<p>For even greater flexibility, <code v-pre>hx-post</code> can be combined with hx-vals to send additional parameters programmatically. For instance, if you need to submit hidden values alongside user input, you can do it like this:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Orders?handler=Submit&quot; hx-target=&quot;#confirmation&quot; hx-vals='{&quot;productId&quot;: 1234, &quot;quantity&quot;: 2}'&gt;
-    &lt;button type=&quot;submit&quot;&gt;Place Order&lt;/button&gt;
-&lt;/form&gt;
-
-&lt;div id=&quot;confirmation&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class OrdersModel : PageModel
-{
-    public IActionResult OnPostSubmit(int productId, int quantity)
-    {
-        return Content($&quot;&lt;p&gt;Order placed: Product {productId}, Quantity {quantity}.&lt;/p&gt;&quot;, &quot;text/html&quot;);
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p>This approach simplifies the process of passing additional data without the need for hidden form fields or JavaScript event handlers.</p>
-<p>By using <code v-pre>hx-post</code>, you can create highly interactive, server-driven applications that effectively manage form submissions. Whether you are processing simple forms, dynamically adding content, or implementing real-time validation, <code v-pre>hx-post</code> enables you to accomplish all of this with minimal effort. Its seamless integration with Razor Pages ensures that your application remains clean, maintainable, and free from unnecessary JavaScript complexity.</p>
-<doc-anchor-target id="securing-hx-post-requests-with-anti-forgery-tokens">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#securing-hx-post-requests-with-anti-forgery-tokens">#</doc-anchor-trigger>
-        <span>Securing <code v-pre>hx-post</code> Requests with Anti-Forgery Tokens</span>
-    </h2>
+<p>The <code v-pre>hx-post</code> attribute sends HTTP POST requests, typically for creating resources or submitting forms. POST requests can modify server state and require anti-forgery protection in ASP.NET Core.</p>
+<doc-anchor-target id="setting-up-anti-forgery-token-handling">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#setting-up-anti-forgery-token-handling">#</doc-anchor-trigger>
+        <span>Setting Up Anti-Forgery Token Handling</span>
+    </h3>
 </doc-anchor-target>
-<p>Security is crucial for any web application, particularly when it comes to handling form submissions. In ASP.NET Core, CSRF attacks are prevented through the use of Anti-Forgery Tokens. This measure ensures that malicious websites cannot trick users into submitting unauthorized requests. While traditional Razor Pages forms automatically incorporate this protection, htmx-based requests need explicit handling to effectively integrate <code v-pre>hx-post</code> with ASP.NET Core’s CSRF defenses.</p>
-<p>ASP.NET Core applies anti-forgery validation to all POST, PUT, PATCH, and DELETE requests by default. When using <code v-pre>hx-post</code>, you must include the anti-forgery token to ensure successful validation. While this token is typically embedded in forms using the <code v-pre>@Html.AntiForgeryToken()</code> helper, htmx does not automatically send it. Therefore, you need to manually include the token with each <code v-pre>hx-post</code> request.</p>
-<p>Here is an example of a secure form using hx-post with CSRF protection:</p>
+<p>Before any POST examples will work, configure htmx to include anti-forgery tokens. Add this to your <code v-pre>_Layout.cshtml</code>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Users?handler=Register&quot; hx-target=&quot;#response&quot;&gt;
-    &lt;input type=&quot;hidden&quot; name=&quot;__RequestVerificationToken&quot; value=&quot;@Html.AntiForgeryToken()&quot; /&gt;
-
-    &lt;label for=&quot;name&quot;&gt;Name:&lt;/label&gt;
-    &lt;input type=&quot;text&quot; id=&quot;name&quot; name=&quot;name&quot; required /&gt;
-
-    &lt;label for=&quot;email&quot;&gt;Email:&lt;/label&gt;
-    &lt;input type=&quot;email&quot; id=&quot;email&quot; name=&quot;email&quot; required /&gt;
-
-    &lt;button type=&quot;submit&quot;&gt;Register&lt;/button&gt;
-&lt;/form&gt;
-
-&lt;div id=&quot;response&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>This form includes the anti-forgery token as a hidden input field, ensuring it is sent along with the request. However, this approach requires a manual update to every form. A more flexible solution is to dynamically inject the token into all htmx requests using JavaScript.</p>
-<p>To automatically append the CSRF token to every <code v-pre>hx-post</code> request, you can use the <code v-pre>htmx:configRequest</code> event in JavaScript:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script&gt;
-document.body.addEventListener('htmx:configRequest', (event) =&gt; {
-    const token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]').value;
-    event.detail.headers['RequestVerificationToken'] = token;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script src=&quot;https://unpkg.com/htmx.org@2.0.4&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
 });
 &lt;/script&gt;</code></pre>
 </doc-codeblock></div>
-<p>This script monitors all htmx requests and automatically adds the CSRF token to the request headers. As a result, all hx-post submissions will include the necessary token without requiring any changes to individual forms.</p>
-<p>On the server side, you must ensure that the request validation is enforced. ASP.NET Core provides the [ValidateAntiForgeryToken] attribute, which should be applied to the OnPost handler:</p>
+<doc-anchor-target id="basic-form-submission">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-form-submission">#</doc-anchor-trigger>
+        <span>Basic Form Submission</span>
+    </h3>
+</doc-anchor-target>
+<p>With token handling configured, forms submit without page reloads:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">[ValidateAntiForgeryToken]
-public class UsersModel : PageModel
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Contact?handler=Submit&quot; hx-target=&quot;#response&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;name&quot;&gt;Name&lt;/label&gt;
+        &lt;input type=&quot;text&quot; id=&quot;name&quot; name=&quot;Name&quot; required /&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;email&quot;&gt;Email&lt;/label&gt;
+        &lt;input type=&quot;email&quot; id=&quot;email&quot; name=&quot;Email&quot; required /&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;message&quot;&gt;Message&lt;/label&gt;
+        &lt;textarea id=&quot;message&quot; name=&quot;Message&quot; required&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+    &lt;button type=&quot;submit&quot;&gt;Send Message&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id=&quot;response&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The handler processes the submission:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ContactModel : PageModel
 {
-    [BindProperty] public string Name { get; set; }
-    [BindProperty] public string Email { get; set; }
+    private readonly IEmailService _emailService;
 
-    public IActionResult OnPostRegister()
+    public ContactModel(IEmailService emailService)
     {
-        if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Email))
-            return BadRequest(&quot;&lt;p class='error'&gt;Both fields are required.&lt;/p&gt;&quot;);
+        _emailService = emailService;
+    }
 
-        return Content($&quot;&lt;p class='success'&gt;Thank you, {Name}. You are now registered.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    public void OnGet()
+    {
+    }
+
+    public async Task&lt;IActionResult&gt; OnPostSubmit(ContactForm form)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = string.Join(&quot;&lt;br&gt;&quot;,
+                ModelState.Values
+                    .SelectMany(v =&gt; v.Errors)
+                    .Select(e =&gt; e.ErrorMessage));
+            return Content($&quot;&lt;div class=\&quot;error\&quot;&gt;{errors}&lt;/div&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        await _emailService.SendContactEmailAsync(form);
+        
+        return Content(&quot;&lt;div class=\&quot;success\&quot;&gt;Thank you for your message. We will respond shortly.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+}
+
+public class ContactForm
+{
+    [Required]
+    [StringLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(2000)]
+    public string Message { get; set; } = string.Empty;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="controlling-which-parameters-are-sent">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#controlling-which-parameters-are-sent">#</doc-anchor-trigger>
+        <span>Controlling Which Parameters Are Sent</span>
+    </h3>
+</doc-anchor-target>
+<p>The <code v-pre>hx-params</code> attribute controls which form fields are included in the request:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Include only specific fields --&gt;
+&lt;form hx-post=&quot;/Users?handler=UpdateEmail&quot; hx-params=&quot;email&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;text&quot; name=&quot;name&quot; /&gt;
+    &lt;input type=&quot;email&quot; name=&quot;email&quot; /&gt;
+    &lt;input type=&quot;text&quot; name=&quot;phone&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Update Email Only&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;!-- Include all fields (default for forms) --&gt;
+&lt;form hx-post=&quot;/Users?handler=UpdateAll&quot; hx-params=&quot;*&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;!-- fields --&gt;
+&lt;/form&gt;
+
+&lt;!-- Exclude specific fields --&gt;
+&lt;form hx-post=&quot;/Users?handler=UpdateProfile&quot; hx-params=&quot;not password,confirmPassword&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;!-- fields --&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="file-uploads">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#file-uploads">#</doc-anchor-trigger>
+        <span>File Uploads</span>
+    </h3>
+</doc-anchor-target>
+<p>File uploads require the <code v-pre>hx-encoding</code> attribute to set the correct content type:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Documents?handler=Upload&quot;
+      hx-encoding=&quot;multipart/form-data&quot;
+      hx-target=&quot;#upload-result&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;file&quot;&gt;Select File&lt;/label&gt;
+        &lt;input type=&quot;file&quot; id=&quot;file&quot; name=&quot;file&quot; required /&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;description&quot;&gt;Description&lt;/label&gt;
+        &lt;input type=&quot;text&quot; id=&quot;description&quot; name=&quot;description&quot; /&gt;
+    &lt;/div&gt;
+    &lt;button type=&quot;submit&quot;&gt;Upload&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id=&quot;upload-result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The handler receives the file:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public async Task&lt;IActionResult&gt; OnPostUpload(IFormFile file, string description)
+{
+    if (file == null || file.Length == 0)
+    {
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;Please select a file&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    var allowedExtensions = new[] { &quot;.pdf&quot;, &quot;.doc&quot;, &quot;.docx&quot;, &quot;.txt&quot; };
+    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+    
+    if (!allowedExtensions.Contains(extension))
+    {
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;Invalid file type&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    var fileName = $&quot;{Guid.NewGuid()}{extension}&quot;;
+    var filePath = Path.Combine(_environment.WebRootPath, &quot;uploads&quot;, fileName);
+
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+        await file.CopyToAsync(stream);
+    }
+
+    var document = new Document
+    {
+        FileName = fileName,
+        OriginalName = file.FileName,
+        Description = description,
+        UploadedAt = DateTime.UtcNow
+    };
+    
+    _documentService.Add(document);
+
+    return Content($&quot;&lt;div class=\&quot;success\&quot;&gt;Uploaded: {file.FileName}&lt;/div&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="buttons-outside-forms">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#buttons-outside-forms">#</doc-anchor-trigger>
+        <span>Buttons Outside Forms</span>
+    </h3>
+</doc-anchor-target>
+<p>Sometimes you need a button to POST data without being inside a form. Use <code v-pre>hx-vals</code> to send the data:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@Html.AntiForgeryToken()
+
+&lt;button hx-post=&quot;/Cart?handler=Add&quot;
+        hx-vals='{&quot;productId&quot;: @product.Id, &quot;quantity&quot;: 1}'
+        hx-target=&quot;#cart-count&quot;
+        hx-swap=&quot;innerHTML&quot;&gt;
+    Add to Cart
+&lt;/button&gt;
+
+&lt;span id=&quot;cart-count&quot;&gt;@Model.CartItemCount&lt;/span&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostAdd(int productId, int quantity)
+{
+    _cartService.AddItem(productId, quantity);
+    var count = _cartService.GetItemCount();
+    return Content(count.ToString(), &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="bulk-operations">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#bulk-operations">#</doc-anchor-trigger>
+        <span>Bulk Operations</span>
+    </h2>
+</doc-anchor-target>
+<p>Admin interfaces often need to operate on multiple items at once. This pattern uses checkboxes with <code v-pre>hx-include</code> to send selected IDs:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model BulkOperationsModel
+
+&lt;h1&gt;User Management&lt;/h1&gt;
+
+&lt;div class=&quot;bulk-actions&quot; hx-include=&quot;#user-table&quot; hx-target=&quot;#user-list&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;button hx-put=&quot;/Admin/Users?handler=Activate&quot; class=&quot;btn btn-success&quot;&gt;
+        Activate Selected
+    &lt;/button&gt;
+    &lt;button hx-put=&quot;/Admin/Users?handler=Deactivate&quot; class=&quot;btn btn-warning&quot;&gt;
+        Deactivate Selected
+    &lt;/button&gt;
+    &lt;button hx-delete=&quot;/Admin/Users?handler=Delete&quot; 
+            hx-confirm=&quot;Delete selected users?&quot;
+            class=&quot;btn btn-danger&quot;&gt;
+        Delete Selected
+    &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;form id=&quot;user-table&quot;&gt;
+    &lt;table class=&quot;table&quot;&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;&lt;input type=&quot;checkbox&quot; id=&quot;select-all&quot; /&gt;&lt;/th&gt;
+                &lt;th&gt;Name&lt;/th&gt;
+                &lt;th&gt;Email&lt;/th&gt;
+                &lt;th&gt;Status&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody id=&quot;user-list&quot;&gt;
+            @foreach (var user in Model.Users)
+            {
+                &lt;partial name=&quot;_UserRow&quot; model=&quot;user&quot; /&gt;
+            }
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+document.getElementById('select-all').addEventListener('change', function() {
+    var checkboxes = document.querySelectorAll('input[name=&quot;ids&quot;]');
+    checkboxes.forEach(cb =&gt; cb.checked = this.checked);
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_UserRow.cshtml</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model User
+
+&lt;tr id=&quot;user-@Model.Id&quot; class=&quot;@(Model.IsActive ? &quot;&quot; : &quot;inactive&quot;)&quot;&gt;
+    &lt;td&gt;&lt;input type=&quot;checkbox&quot; name=&quot;ids&quot; value=&quot;@Model.Id&quot; /&gt;&lt;/td&gt;
+    &lt;td&gt;@Model.Name&lt;/td&gt;
+    &lt;td&gt;@Model.Email&lt;/td&gt;
+    &lt;td&gt;
+        &lt;span class=&quot;badge @(Model.IsActive ? &quot;badge-success&quot; : &quot;badge-secondary&quot;)&quot;&gt;
+            @(Model.IsActive ? &quot;Active&quot; : &quot;Inactive&quot;)
+        &lt;/span&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+</doc-codeblock></div>
+<p>The handlers process the selected IDs:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class UsersModel : PageModel
+{
+    private readonly IUserService _userService;
+
+    public UsersModel(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    public List&lt;User&gt; Users { get; set; } = new();
+
+    public void OnGet()
+    {
+        Users = _userService.GetAll();
+    }
+
+    public IActionResult OnPutActivate(int[] ids)
+    {
+        if (ids == null || ids.Length == 0)
+        {
+            return Content(&quot;&lt;tr&gt;&lt;td colspan=\&quot;4\&quot;&gt;No users selected&lt;/td&gt;&lt;/tr&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        _userService.SetActiveStatus(ids, true);
+        var users = _userService.GetByIds(ids);
+        
+        return Partial(&quot;_UserRows&quot;, users);
+    }
+
+    public IActionResult OnPutDeactivate(int[] ids)
+    {
+        if (ids == null || ids.Length == 0)
+        {
+            return Content(&quot;&lt;tr&gt;&lt;td colspan=\&quot;4\&quot;&gt;No users selected&lt;/td&gt;&lt;/tr&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        _userService.SetActiveStatus(ids, false);
+        var users = _userService.GetByIds(ids);
+        
+        return Partial(&quot;_UserRows&quot;, users);
+    }
+
+    public IActionResult OnDeleteDelete(int[] ids)
+    {
+        if (ids == null || ids.Length == 0)
+        {
+            return Content(&quot;&lt;tr&gt;&lt;td colspan=\&quot;4\&quot;&gt;No users selected&lt;/td&gt;&lt;/tr&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        _userService.Delete(ids);
+        
+        // Return remaining users
+        var remainingUsers = _userService.GetAll();
+        return Partial(&quot;_UserRows&quot;, remainingUsers);
     }
 }</code></pre>
 </doc-codeblock></div>
-<p>When an hx-post request is sent without a valid anti-forgery token, the server responds with a <strong>400 Bad Request</strong> message. This mechanism ensures that only legitimate requests originating from your site are processed, effectively preventing CSRF attacks.</p>
-<p>While disabling CSRF protection is not recommended in production, there are cases where you might want to bypass it temporarily, such as during local development or API testing. ASP.NET Core allows you to override token validation by applying the [IgnoreAntiforgeryToken] attribute to your handler. This should only be done when security is not a concern, such as testing isolated features.</p>
+<p><strong>Pages/Shared/_UserRows.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">[IgnoreAntiforgeryToken]
-public IActionResult OnPostSubmit()
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model IEnumerable&lt;User&gt;
+
+@foreach (var user in Model)
 {
-    return Content(&quot;&lt;p class='success'&gt;CSRF protection is disabled for testing purposes.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    &lt;partial name=&quot;_UserRow&quot; model=&quot;user&quot; /&gt;
 }</code></pre>
 </doc-codeblock></div>
-<p>By correctly implementing anti-forgery tokens, you can ensure that your htmx-enhanced Razor Pages applications are secure while still benefiting from the simplicity of <code v-pre>hx-post</code>. You can protect user data from malicious attacks by employing hidden fields or by dynamically appending tokens through JavaScript, all without compromising the seamless user experience that htmx offers.</p>
-<doc-anchor-target id="laying-the-groundwork-for-complex-data-interactions">
+<doc-anchor-target id="inline-editing">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#laying-the-groundwork-for-complex-data-interactions">#</doc-anchor-trigger>
-        <span>Laying the Groundwork for Complex Data Interactions</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#inline-editing">#</doc-anchor-trigger>
+        <span>Inline Editing</span>
     </h2>
 </doc-anchor-target>
-<p>As you start working with more advanced data operations in your Razor Pages application, it&#x27;s essential to establish a solid foundation for managing dynamic updates, state management, and real-time changes. While using <code v-pre>hx-get</code> and <code v-pre>hx-post</code> addresses the basics of data retrieval and submission, more complex scenarios necessitate a structured approach to modifying existing records, handling partial updates, and ensuring smooth user interactions. By setting up a flexible data layer and efficiently organizing your htmx requests, you&#x27;ll find it much easier to implement future operations with <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code>.</p>
-<p>A well-designed API for advanced operations begins with a robust entity model. For example, if you’re managing a list of products in an inventory system, each product must support full updates (replacing all fields), partial updates (modifying only specific fields), and deletions. Here’s a simple model for managing products:</p>
+<p>Inline editing lets users modify data directly in a table without navigating to a separate page:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class Product
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public decimal Price { get; set; }
-    public int Stock { get; set; }
-}</code></pre>
-</doc-codeblock></div>
-<p>Instead of reloading the entire page when updating product information, htmx allows you to send targeted updates that modify only the necessary parts of the UI. A list of products can be rendered as follows:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;table&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;table class=&quot;table&quot;&gt;
     &lt;thead&gt;
-        &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Stock&lt;/th&gt;&lt;th&gt;Actions&lt;/th&gt;&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Product&lt;/th&gt;
+            &lt;th&gt;Price&lt;/th&gt;
+            &lt;th&gt;Stock&lt;/th&gt;
+            &lt;th&gt;Actions&lt;/th&gt;
+        &lt;/tr&gt;
     &lt;/thead&gt;
     &lt;tbody id=&quot;product-list&quot;&gt;
         @foreach (var product in Model.Products)
         {
-            &lt;tr id=&quot;product-@product.Id&quot;&gt;
-                &lt;td&gt;@product.Name&lt;/td&gt;
-                &lt;td&gt;@product.Price&lt;/td&gt;
-                &lt;td&gt;@product.Stock&lt;/td&gt;
-                &lt;td&gt;
-                    &lt;button hx-get=&quot;/Products?handler=Edit&amp;id=@product.Id&quot; hx-target=&quot;#product-@product.Id&quot;&gt;Edit&lt;/button&gt;
-                    &lt;button hx-delete=&quot;/Products?handler=Delete&amp;id=@product.Id&quot; hx-target=&quot;#product-@product.Id&quot; hx-swap=&quot;outerHTML&quot;&gt;Delete&lt;/button&gt;
-                &lt;/td&gt;
-            &lt;/tr&gt;
+            &lt;partial name=&quot;_ProductRow&quot; model=&quot;product&quot; /&gt;
         }
     &lt;/tbody&gt;
 &lt;/table&gt;</code></pre>
 </doc-codeblock></div>
-<p>This setup allows each product row to include buttons for dynamically editing or deleting an item. When the &quot;Edit&quot; button is clicked, an <code v-pre>hx-get</code> request loads an editable form directly into the same row, enabling inline editing. In contrast, the <code v-pre>hx-delete</code> request completely removes the row after a successful deletion. To handle updates efficiently on the server, it&#x27;s essential to define specific endpoints for retrieving and modifying product details.</p>
-<p>The handler for the &quot;Edit&quot; button retrieves the selected product and returns a partial HTML response that contains the update form.</p>
+<p><strong>Pages/Shared/_ProductRow.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetEdit(int id)
-{
-    var product = _context.Products.Find(id);
-    if (product == null) return NotFound();
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model Product
 
-    return Partial(&quot;_ProductEdit&quot;, product);
-}</code></pre>
-</doc-codeblock></div>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- _ProductEdit.cshtml --&gt;
 &lt;tr id=&quot;product-@Model.Id&quot;&gt;
-    &lt;td&gt;&lt;input type=&quot;text&quot; name=&quot;name&quot; value=&quot;@Model.Name&quot; /&gt;&lt;/td&gt;
-    &lt;td&gt;&lt;input type=&quot;number&quot; name=&quot;price&quot; value=&quot;@Model.Price&quot; step=&quot;0.01&quot; /&gt;&lt;/td&gt;
-    &lt;td&gt;&lt;input type=&quot;number&quot; name=&quot;stock&quot; value=&quot;@Model.Stock&quot; /&gt;&lt;/td&gt;
+    &lt;td&gt;@Model.Name&lt;/td&gt;
+    &lt;td&gt;@Model.Price.ToString(&quot;C&quot;)&lt;/td&gt;
+    &lt;td&gt;@Model.Stock&lt;/td&gt;
     &lt;td&gt;
-        &lt;button hx-put=&quot;/Products?handler=Update&amp;id=@Model.Id&quot; hx-target=&quot;#product-@Model.Id&quot; hx-include=&quot;closest tr&quot;&gt;Save&lt;/button&gt;
-        &lt;button hx-get=&quot;/Products?handler=Cancel&amp;id=@Model.Id&quot; hx-target=&quot;#product-@Model.Id&quot;&gt;Cancel&lt;/button&gt;
+        &lt;button hx-get=&quot;/Products?handler=Edit&amp;amp;id=@Model.Id&quot;
+                hx-target=&quot;#product-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                class=&quot;btn btn-sm btn-primary&quot;&gt;
+            Edit
+        &lt;/button&gt;
     &lt;/td&gt;
 &lt;/tr&gt;</code></pre>
 </doc-codeblock></div>
-<p>With <code v-pre>hx-include=&quot;closest tr&quot;</code>, the form fields are automatically included in the <code v-pre>hx-put</code> request. The server-side update handler then processes the request and returns the updated row:</p>
+<p><strong>Pages/Shared/_ProductEditRow.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPutUpdate(int id, string name, decimal price, int stock)
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model Product
+
+&lt;tr id=&quot;product-@Model.Id&quot; class=&quot;editing&quot;&gt;
+    &lt;td&gt;
+        &lt;input type=&quot;text&quot; name=&quot;name&quot; value=&quot;@Model.Name&quot; class=&quot;form-control&quot; /&gt;
+    &lt;/td&gt;
+    &lt;td&gt;
+        &lt;input type=&quot;number&quot; name=&quot;price&quot; value=&quot;@Model.Price&quot; step=&quot;0.01&quot; class=&quot;form-control&quot; /&gt;
+    &lt;/td&gt;
+    &lt;td&gt;
+        &lt;input type=&quot;number&quot; name=&quot;stock&quot; value=&quot;@Model.Stock&quot; class=&quot;form-control&quot; /&gt;
+    &lt;/td&gt;
+    &lt;td&gt;
+        &lt;button hx-put=&quot;/Products?handler=Update&amp;amp;id=@Model.Id&quot;
+                hx-target=&quot;#product-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                hx-include=&quot;closest tr&quot;
+                class=&quot;btn btn-sm btn-success&quot;&gt;
+            Save
+        &lt;/button&gt;
+        &lt;button hx-get=&quot;/Products?handler=Cancel&amp;amp;id=@Model.Id&quot;
+                hx-target=&quot;#product-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                class=&quot;btn btn-sm btn-secondary&quot;&gt;
+            Cancel
+        &lt;/button&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+</doc-codeblock></div>
+<p>The handlers switch between view and edit modes:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetEdit(int id)
 {
-    var product = _context.Products.Find(id);
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
+
+    return Partial(&quot;_ProductEditRow&quot;, product);
+}
+
+public IActionResult OnGetCancel(int id)
+{
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
+
+    return Partial(&quot;_ProductRow&quot;, product);
+}
+
+public IActionResult OnPutUpdate(int id, string name, decimal price, int stock)
+{
+    var product = _productService.GetById(id);
     if (product == null) return NotFound();
 
     product.Name = name;
     product.Price = price;
     product.Stock = stock;
-    _context.SaveChanges();
+    
+    _productService.Update(product);
 
     return Partial(&quot;_ProductRow&quot;, product);
 }</code></pre>
 </doc-codeblock></div>
-<p>This method ensures that only the modified row is updated on the user interface, which prevents unnecessary page refreshes. By organizing your Razor Pages and htmx requests in this manner, you create a scalable foundation for effectively managing RESTful updates.</p>
-<p>When working with <code v-pre>hx-post</code>, a successful operation typically results in an HTML snippet being returned to update the page. However, when an error occurs—such as missing form fields or a server issue—you need to provide meaningful feedback to the user. Consider a scenario where a user submits a form with required fields. If validation fails, the server should return an error message while keeping the form visible:</p>
+<p>The <code v-pre>hx-include=&quot;closest tr&quot;</code> on the Save button includes all input fields from the table row in the PUT request.</p>
+<doc-anchor-target id="error-handling">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#error-handling">#</doc-anchor-trigger>
+        <span>Error Handling</span>
+    </h2>
+</doc-anchor-target>
+<p>Users need clear feedback when something goes wrong. Return appropriate HTTP status codes and error messages:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostRegister(string name, string email)
 {
-    if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email))
-        return BadRequest(&quot;&lt;p class='error'&gt;All fields are required.&lt;/p&gt;&quot;);
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        Response.StatusCode = 400;
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;Name is required&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
 
-    return Content($&quot;&lt;p class='success'&gt;Thank you, {name}. Your registration is complete.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    if (string.IsNullOrWhiteSpace(email))
+    {
+        Response.StatusCode = 400;
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;Email is required&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    if (_userService.EmailExists(email))
+    {
+        Response.StatusCode = 409;
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;This email is already registered&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    try
+    {
+        _userService.Register(name, email);
+        return Content(&quot;&lt;div class=\&quot;success\&quot;&gt;Registration complete! Check your email.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, &quot;Registration failed for {Email}&quot;, email);
+        Response.StatusCode = 500;
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;An unexpected error occurred. Please try again.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
 }</code></pre>
 </doc-codeblock></div>
-<p>The BadRequest response ensures that the form remains on the screen while displaying the error message dynamically. On the client side, <code v-pre>hx-target</code> can be used to direct this response into a dedicated error container, ensuring the UI remains responsive:</p>
+<p>On the client side, you can handle errors with htmx events:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Users?handler=Register&quot; hx-target=&quot;#response&quot;&gt;
-    &lt;input type=&quot;text&quot; name=&quot;name&quot; placeholder=&quot;Name&quot; required /&gt;
-    &lt;input type=&quot;email&quot; name=&quot;email&quot; placeholder=&quot;Email&quot; required /&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Users?handler=Register&quot; 
+      hx-target=&quot;#response&quot;
+      hx-target-error=&quot;#error-container&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;text&quot; name=&quot;name&quot; required /&gt;
+    &lt;input type=&quot;email&quot; name=&quot;email&quot; required /&gt;
     &lt;button type=&quot;submit&quot;&gt;Register&lt;/button&gt;
 &lt;/form&gt;
 
-&lt;div id=&quot;response&quot;&gt;&lt;/div&gt;</code></pre>
+&lt;div id=&quot;response&quot;&gt;&lt;/div&gt;
+&lt;div id=&quot;error-container&quot;&gt;&lt;/div&gt;
+
+&lt;script&gt;
+document.body.addEventListener('htmx:responseError', function(event) {
+    console.error('Request failed:', event.detail.xhr.status);
+});
+&lt;/script&gt;</code></pre>
 </doc-codeblock></div>
-<p>Debugging network requests is an essential skill when working with htmx. Since requests are made asynchronously, errors may not always be immediately visible. Using browser developer tools, you can inspect network traffic, check request payloads, and view server responses. In Chrome or Edge, opening DevTools (F12) → Network tab allows you to filter requests by XHR and see the details of every hx-get or hx-post call. Common issues include missing anti-forgery tokens, incorrect content types, or unexpected 400/500 status codes from the server.</p>
-<p>Performance considerations become critical when making repeated requests. If a page element triggers frequent <code v-pre>hx-get</code> or <code v-pre>hx-post</code> calls—such as a live search feature or an auto-refreshing dashboard—it’s important to avoid overwhelming the server. Using <code v-pre>hx-trigger</code> with a debounce delay ensures that requests are sent only when necessary. A search bar that updates results as the user types should use a short delay to prevent excessive queries:</p>
+<doc-anchor-target id="loading-indicators">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#loading-indicators">#</doc-anchor-trigger>
+        <span>Loading Indicators</span>
+    </h2>
+</doc-anchor-target>
+<p>Users need visual feedback during requests. The <code v-pre>hx-indicator</code> attribute shows an element while the request is in progress:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; name=&quot;query&quot; hx-get=&quot;/Users?handler=Search&quot; hx-target=&quot;#results&quot; hx-trigger=&quot;keyup changed delay:300ms&quot; /&gt;
-&lt;div id=&quot;results&quot;&gt;&lt;/div&gt;</code></pre>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Reports?handler=Generate&quot;
+        hx-target=&quot;#report-content&quot;
+        hx-indicator=&quot;#report-spinner&quot;&gt;
+    Generate Report
+&lt;/button&gt;
+
+&lt;span id=&quot;report-spinner&quot; class=&quot;htmx-indicator&quot;&gt;
+    &lt;img src=&quot;/images/spinner.gif&quot; alt=&quot;Loading...&quot; /&gt;
+    Generating report...
+&lt;/span&gt;
+
+&lt;div id=&quot;report-content&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>For scenarios where the same data is fetched multiple times, caching responses at the server or leveraging hx-history can improve performance. If a dashboard refreshes frequently, returning a <code v-pre>304 Not Modified</code> response when data hasn&#x27;t changed can significantly reduce server load.</p>
-<p>In the next chapter, we will delve into <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code>, focusing on their roles in implementing full and partial updates within a RESTful architecture. These methods are essential for making your applications more dynamic, responsive, and in line with modern best practices.</p>
+<p>Add CSS to hide indicators by default:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="debugging-htmx-requests">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-htmx-requests">#</doc-anchor-trigger>
+        <span>Debugging htmx Requests</span>
+    </h2>
+</doc-anchor-target>
+<p>When requests do not work as expected, use these debugging techniques:</p>
+<doc-anchor-target id="browser-network-tab">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#browser-network-tab">#</doc-anchor-trigger>
+        <span>Browser Network Tab</span>
+    </h3>
+</doc-anchor-target>
+<p>Open Developer Tools (F12) and go to the Network tab. Filter by XHR/Fetch to see htmx requests. Check:</p>
+<ul>
+<li>Request URL and method</li>
+<li>Request headers (look for RequestVerificationToken)</li>
+<li>Request body (form data)</li>
+<li>Response status code</li>
+<li>Response body</li>
+</ul>
+<doc-anchor-target id="htmx-logging">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#htmx-logging">#</doc-anchor-trigger>
+        <span>htmx Logging</span>
+    </h3>
+</doc-anchor-target>
+<p>Enable verbose logging during development:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script&gt;
+htmx.logAll();
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="common-issues">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-issues">#</doc-anchor-trigger>
+        <span>Common Issues</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>400 Bad Request</strong></p>
+<p>Usually a missing anti-forgery token. Ensure <code v-pre>@Html.AntiForgeryToken()</code> is present and the token-forwarding script is in your layout.</p>
+<p><strong>404 Not Found</strong></p>
+<p>The handler name does not match your method. <code v-pre>handler=Submit</code> requires <code v-pre>OnPostSubmit()</code> for POST requests.</p>
+<p><strong>Empty Response</strong></p>
+<p>The handler might be returning <code v-pre>null</code> or the wrong content type. Verify the handler returns <code v-pre>Content(..., &quot;text/html&quot;)</code> or <code v-pre>Partial(...)</code>.</p>
+<p><strong>Response Not Updating Target</strong></p>
+<p>Check that the <code v-pre>hx-target</code> selector matches an element that exists. Verify the element has the correct <code v-pre>id</code>.</p>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>This chapter covered <code v-pre>hx-get</code> and <code v-pre>hx-post</code> in depth:</p>
+<ul>
+<li><code v-pre>hx-get</code> retrieves data with GET requests, ideal for search, filtering, and loading content</li>
+<li><code v-pre>hx-post</code> submits data with POST requests, requiring anti-forgery token handling</li>
+<li><code v-pre>hx-vals</code> adds JSON data to requests</li>
+<li><code v-pre>hx-include</code> includes form fields from outside the triggering element</li>
+<li><code v-pre>hx-params</code> controls which form fields are sent</li>
+<li><code v-pre>hx-encoding</code> enables file uploads with multipart form data</li>
+<li><code v-pre>hx-indicator</code> shows loading feedback during requests</li>
+</ul>
+<p>You built patterns for live search, bulk operations, inline editing, file uploads, and error handling. These patterns form the foundation for most web application interactions.</p>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>Chapter 6 explores <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code> for RESTful update and delete operations. You will learn when to use each method, how to handle partial updates, and patterns for optimistic UI updates that make your application feel responsive.</p>
 
                                 
                                 <!-- Required only on API pages -->

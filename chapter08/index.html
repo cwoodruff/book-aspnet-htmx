@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Handling Events with hx-trigger and hx-on</title>
     <meta name="title" content="Handling Events with hx-trigger and hx-on">
-    <meta name="description" content="Welcome to a deeper look at how htmx manages user interactions in Razor Pages. Until now, we’ve explored how attributes like ">
+    <meta name="description" content="Previous chapters focused on what happens when htmx requests complete: where content goes, how it gets inserted.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter08/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter08/">
     <meta property="og:title" content="Handling Events with hx-trigger and hx-on">
-    <meta property="og:description" content="Welcome to a deeper look at how htmx manages user interactions in Razor Pages. Until now, we’ve explored how attributes like ">
+    <meta property="og:description" content="Previous chapters focused on what happens when htmx requests complete: where content goes, how it gets inserted.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter08/">
     <meta property="twitter:title" content="Handling Events with hx-trigger and hx-on">
-    <meta property="twitter:description" content="Welcome to a deeper look at how htmx manages user interactions in Razor Pages. Until now, we’ve explored how attributes like ">
+    <meta property="twitter:description" content="Previous chapters focused on what happens when htmx requests complete: where content goes, how it gets inserted.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -247,110 +247,980 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="8" class="break-words">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#8">#</doc-anchor-trigger>
-        <span>8</span>
-    </h1>
-</doc-anchor-target>
-<doc-anchor-target id="handling-events-with-hx-trigger-and-hx-on">
+<doc-anchor-target id="handling-events-with-hx-trigger-and-hx-on" class="break-words">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#handling-events-with-hx-trigger-and-hx-on">#</doc-anchor-trigger>
         <span>Handling Events with <code v-pre>hx-trigger</code> and <code v-pre>hx-on</code></span>
     </h1>
 </doc-anchor-target>
-<p>Welcome to a deeper look at how htmx manages user interactions in Razor Pages. Until now, we’ve explored how attributes like <code v-pre>hx-get</code> and hx-post can handle requests on a basic click or form submission. In this chapter, we’ll focus on precisely controlling when those requests occur, as well as how to set up custom behaviors for more interactive scenarios. This is where <code v-pre>hx-trigger</code> and <code v-pre>hx-on</code> step into the spotlight—two powerful attributes that give you fine-grained control over user events and responses.</p>
-<p>We’ll explore how <code v-pre>hx-trigger</code> can turn practically any browser event into a chance for your server to provide dynamic content. Whether you want to react to a simple mouse hover, a keyboard press, or something more creative, <code v-pre>hx-trigger</code> allows you to specify exactly when your htmx-powered elements should call home. Beyond that, we’ll look at <code v-pre>hx-on</code>, a feature that lets you define your own event listeners, opening the door to custom logic and expanded interactivity.</p>
-<p>By the end of this chapter, you’ll see just how flexible your Razor Pages can become once you master these event-driven techniques. With <code v-pre>hx-trigger</code> and <code v-pre>hx-on</code>, your application will be equipped to respond to user actions in real time without piling on extra JavaScript, keeping the focus on clean, server-side code that feels both modern and refreshingly simple.</p>
-<doc-anchor-target id="mastering-hx-trigger-for-real-time-user-engagement">
+<p>Previous chapters focused on what happens when htmx requests complete: where content goes, how it gets inserted. This chapter focuses on when requests fire in the first place. The <code v-pre>hx-trigger</code> attribute gives you precise control over the events that initiate requests. The <code v-pre>hx-on</code> attribute lets you run JavaScript in response to htmx lifecycle events. Together, they let you build interactions that respond to user behavior in sophisticated ways.</p>
+<p>Default triggers work for most cases. Buttons fire on click. Forms fire on submit. Inputs fire on change. But real applications need more: debounced search that waits for users to stop typing, polling that checks for updates every few seconds, lazy loading that fetches content when elements scroll into view, keyboard shortcuts that respond to specific key combinations. This chapter covers all of these patterns and more.</p>
+<doc-anchor-target id="understanding-hx-trigger">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#mastering-hx-trigger-for-real-time-user-engagement">#</doc-anchor-trigger>
-        <span>Mastering <code v-pre>hx-trigger</code> for Real-Time User Engagement</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#understanding-hx-trigger">#</doc-anchor-trigger>
+        <span>Understanding <code v-pre>hx-trigger</code></span>
     </h2>
 </doc-anchor-target>
-<p><code v-pre>hx-trigger</code> is an htmx attribute that controls when server requests get fired, giving you precise control over how your pages interact with user actions. If you leave <code v-pre>hx-trigger</code> unspecified, htmx typically defaults to firing a request on the most logical event for that element, such as click for a button or submit for a form. By customizing <code v-pre>hx-trigger</code>, you can expand beyond these built-in defaults and tap into virtually any browser event, from the common click to more advanced possibilities like intersect or a timed interval.</p>
-<p>The difference between default events and custom triggers can significantly influence user experience. Default events keep your code simple and work perfectly for many scenarios. On the other hand, custom triggers let you tune performance and responsiveness, especially in situations where you want an action to occur only after a specific sequence of events or under certain conditions. By treating triggers as your application’s traffic lights, you ensure data moves between client and server at precisely the right moments.</p>
-<p>Standard triggers like click, change, and submit generally work out of the box. A button with <code v-pre>hx-get</code> will fire on click, an input with <code v-pre>hx-post</code> will fire on form submission, and a select element might default to change for updating on selection. These defaults reduce boilerplate code and make everyday interactions seamless for you and your users, while still allowing you to override or refine them when needed.</p>
-<p>Advanced triggers shine in more specialized scenarios. If you want repeated polling from the server, you can set <code v-pre>hx-trigger</code> to every 5s. If you need a request to happen when an element scrolls into view, <code v-pre>hx-trigger</code> can be assigned intersect. For real-time text monitoring, keyup changed ensures updates happen only if the user actually modifies the input. This allows you to avoid excessive requests and handle user actions more gracefully.</p>
-<p>A powerful illustration of <code v-pre>hx-trigger</code> in action is building a live search. Imagine a simple text input that hits your server with each keystroke, but only when the input has truly changed. In your Razor Page, you might have something like this:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; hx-get=&quot;/Search?handler=Live&quot; `hx-trigger`=&quot;keyup changed delay:300ms&quot; hx-target=&quot;#searchResults&quot; placeholder=&quot;Type to search...&quot; /&gt;
-&lt;div id=&quot;searchResults&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>The keyup changed delay:300ms tells htmx to wait 300 milliseconds after the most recent keyup event before sending a GET request, and only if the text has indeed changed. This helps reduce noisy interactions and keeps server load under control. On the server side, your Razor Page might include a handler like this:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetLive(string searchTerm)
-{
-    var results = _context.Products
-        .Where(p =&gt; p.Name.Contains(searchTerm))
-        .Select(p =&gt; p.Name)
-        .ToList();
-
-    var htmlSnippet = &quot;&lt;ul&gt;&quot;;
-    foreach (var item in results)
-    {
-        htmlSnippet += $&quot;&lt;li&gt;{item}&lt;/li&gt;&quot;;
-    }
-    htmlSnippet += &quot;&lt;/ul&gt;&quot;;
-
-    return Content(htmlSnippet, &quot;text/html&quot;);
-}</code></pre>
-</doc-codeblock></div>
-<p>The user begins typing in the search field, triggers are activated on keyup if the input changes, and the server responds with matching items. By mixing standard and advanced triggers, you can design interactions that feel modern and efficient without the overhead of a sprawling JavaScript setup.</p>
-<doc-anchor-target id="elevating-interactions-with-hx-on">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#elevating-interactions-with-hx-on">#</doc-anchor-trigger>
-        <span>Elevating Interactions with <code v-pre>hx-on</code></span>
-    </h2>
+<p>The <code v-pre>hx-trigger</code> attribute specifies which events cause htmx to send a request. Without it, htmx uses sensible defaults based on the element type.</p>
+<doc-anchor-target id="default-triggers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#default-triggers">#</doc-anchor-trigger>
+        <span>Default Triggers</span>
+    </h3>
 </doc-anchor-target>
-<p><code v-pre>hx-on</code> is an attribute that lets you tap into both built-in and custom JavaScript events in htmx, effectively broadening your control beyond the straightforward timing of requests that <code v-pre>hx-trigger</code> provides. While <code v-pre>hx-trigger</code> is all about specifying when a request should fire, <code v-pre>hx-on</code> is about telling htmx, “When you see this event, run that action.” You can think of <code v-pre>hx-trigger</code> as scheduling server requests, whereas <code v-pre>hx-on</code> is about hooking into an event-driven workflow where you can validate input, run animations, or even stop a request from ever leaving the browser.</p>
-<p>You might decide to use <code v-pre>hx-on</code> when you need to respond to something that’s not purely about firing a request. A custom JavaScript event is a perfect example. You could dispatch an event from your client code—say, <code v-pre>document.dispatchEvent(new CustomEvent(&quot;myCustomEvent&quot;, { detail: &quot;someData&quot; }))</code>—and <code v-pre>hx-on</code> can then listen for <code v-pre>myCustomEvent</code> on a specific HTML element. Once caught, you can do anything from updating the UI to prepping data before a request goes out, all within a clean, attribute-based syntax.</p>
-<p>Preventing a form submission is an essential use case for <code v-pre>hx-on</code>. Suppose you want to validate that a user’s input meets certain criteria before letting the request proceed. You can intercept the form submission event by using something like <code v-pre>hx-on=&quot;submit: if(!validateInputs()) event.preventDefault()&quot;</code>. This means if your <code v-pre>validateInputs()</code> function fails, you keep the submission local. The rest of your Razor Page remains blissfully unaware that the user tried to submit invalid data, which can significantly improve your user experience.</p>
-<p>Here’s a small example of preventing form submission with <code v-pre>hx-on</code>. The form tries to post data to the server, but we only let the request proceed if our validation logic passes:</p>
+<p>htmx assigns default triggers based on element type:</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Element</th>
+<th>Default Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>&lt;button&gt;</code></td>
+<td><code v-pre>click</code></td>
+</tr>
+<tr>
+<td><code v-pre>&lt;a&gt;</code></td>
+<td><code v-pre>click</code></td>
+</tr>
+<tr>
+<td><code v-pre>&lt;form&gt;</code></td>
+<td><code v-pre>submit</code></td>
+</tr>
+<tr>
+<td><code v-pre>&lt;input&gt;</code></td>
+<td><code v-pre>change</code></td>
+</tr>
+<tr>
+<td><code v-pre>&lt;select&gt;</code></td>
+<td><code v-pre>change</code></td>
+</tr>
+<tr>
+<td><code v-pre>&lt;textarea&gt;</code></td>
+<td><code v-pre>change</code></td>
+</tr>
+<tr>
+<td>Other elements</td>
+<td><code v-pre>click</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For many interactions, you never need to specify <code v-pre>hx-trigger</code> at all:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Contact?handler=Submit&quot; hx-target=&quot;#response&quot; `hx-on`=&quot;submit: if(!validateForm()) event.preventDefault()&quot;&gt;
-    &lt;input type=&quot;email&quot; name=&quot;email&quot; id=&quot;email&quot; placeholder=&quot;Enter your email&quot; /&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Fires on click (default for button) --&gt;
+&lt;button hx-get=&quot;/Products?handler=List&quot; hx-target=&quot;#product-list&quot;&gt;
+    Load Products
+&lt;/button&gt;
+
+&lt;!-- Fires on submit (default for form) --&gt;
+&lt;form hx-post=&quot;/Contact?handler=Submit&quot; hx-target=&quot;#result&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;text&quot; name=&quot;message&quot; required /&gt;
     &lt;button type=&quot;submit&quot;&gt;Send&lt;/button&gt;
 &lt;/form&gt;
-&lt;div id=&quot;response&quot;&gt;&lt;/div&gt;
-&lt;script&gt;
-    function validateForm() {
-        const email = document.getElementById('email').value;
-        return email.includes('@');
-    }
-&lt;/script&gt;</code></pre>
+&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>Another place <code v-pre>hx-on</code> shines is in orchestrating UI animations on request completion. Suppose you want a fade-in effect after the server returns new content. You can attach <code v-pre>hx-on</code> to watch for an htmx event like <code v-pre>htmx:afterSwap</code>, which fires once the response is placed into the DOM. If you have a fadeIn(element) helper, you can tie it in by writing <code v-pre>hx-on=&quot;htmx:afterSwap: fadeIn(document.getElementById('response'))&quot;</code>. This approach ensures the animation triggers only after the new HTML chunk is actually rendered.</p>
-<p>Debugging event-based issues sometimes requires pinpointing the exact moment your code runs. htmx includes a suite of lifecycle events like <code v-pre>htmx:configRequest</code>, <code v-pre>htmx:beforeRequest</code>, and <code v-pre>htmx:afterRequest</code> that can be valuable for logging. In your HTML, you might write <code v-pre>hx-on=&quot;htmx:beforeRequest: console.log('About to send request');&quot;</code> to see if the event is firing as expected. That way, you can confirm the request sequence and see where things might be going wrong.</p>
-<p><code v-pre>hx-on</code> tends to shine in tandem with <code v-pre>hx-trigger</code> since the two can coexist on the same element—one controls when requests happen, and the other manages event listeners. By combining them, you can create flows where user input triggers requests at exactly the right time, and custom scripts or UI effects run reliably afterward, keeping your ASP.NET Core application responsive and maintainable.</p>
-<doc-anchor-target id="custom-server-driven-events-for-seamless-ui-refresh">
+<doc-anchor-target id="standard-dom-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#standard-dom-events">#</doc-anchor-trigger>
+        <span>Standard DOM Events</span>
+    </h3>
+</doc-anchor-target>
+<p>Any DOM event can trigger a request:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Mouse events --&gt;
+&lt;div hx-get=&quot;/Preview&quot; hx-trigger=&quot;mouseenter&quot;&gt;
+    Hover for preview
+&lt;/div&gt;
+
+&lt;!-- Keyboard events --&gt;
+&lt;input hx-get=&quot;/Validate&quot; hx-trigger=&quot;keyup&quot; hx-target=&quot;#validation&quot; /&gt;
+
+&lt;!-- Focus events --&gt;
+&lt;input hx-get=&quot;/Suggestions&quot; hx-trigger=&quot;focus&quot; hx-target=&quot;#suggestions&quot; /&gt;
+
+&lt;!-- Form events --&gt;
+&lt;input hx-get=&quot;/Search&quot; hx-trigger=&quot;input&quot; hx-target=&quot;#results&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="multiple-triggers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#multiple-triggers">#</doc-anchor-trigger>
+        <span>Multiple Triggers</span>
+    </h3>
+</doc-anchor-target>
+<p>Combine multiple events with commas:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input hx-get=&quot;/Search?handler=Results&quot; 
+       hx-trigger=&quot;keyup, search&quot;
+       hx-target=&quot;#results&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<p>This fires on both keyup events and when the user clicks the search icon in a search-type input.</p>
+<doc-anchor-target id="trigger-modifiers">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#custom-server-driven-events-for-seamless-ui-refresh">#</doc-anchor-trigger>
-        <span>Custom Server-Driven Events for Seamless UI Refresh</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#trigger-modifiers">#</doc-anchor-trigger>
+        <span>Trigger Modifiers</span>
     </h2>
 </doc-anchor-target>
-<p>Custom events in htmx provide a way to trigger dynamic updates without exclusively relying on user actions or polling intervals. Instead of using out-of-band swaps, which instruct htmx to render HTML outside the normal page flow, you can dispatch a custom event from the server response that initiates a new AJAX request to refresh specific parts of the UI. This approach grants you a powerful mechanism to respond to server-side changes as they happen, while still writing minimal JavaScript in your Razor Pages application.</p>
-<p>One typical scenario is refreshing a notifications panel. Suppose your server finishes a background task that has just created new notifications for the user. Rather than waiting for another user click or a time-based poll, you can include a small script in the server’s response that dispatches a custom event. By pairing <code v-pre>hx-on</code> with that custom event, you can instruct htmx to fetch updated content for the notifications panel immediately, resulting in a near real-time experience.</p>
-<p>A simple Razor Page might look like this in your <code v-pre>Notifications.cshtml</code> file, which is in charge of fetching the latest notifications:</p>
+<p>Modifiers refine when and how triggers fire. Add them after the event name.</p>
+<doc-anchor-target id="changed-modifier">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#changed-modifier">#</doc-anchor-trigger>
+        <span><code v-pre>changed</code> Modifier</span>
+    </h3>
+</doc-anchor-target>
+<p>Only fires if the element&#x27;s value actually changed:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;notificationsPanel&quot; `hx-on`=&quot;notifications-updated: this.closest('[hx-get]').click()&quot;
-     hx-get=&quot;/Notifications?handler=List&quot; hx-target=&quot;#notificationsPanel&quot;&gt;
-    &lt;!-- existing notifications here --&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input hx-get=&quot;/Search?handler=Results&quot; 
+       hx-trigger=&quot;keyup changed&quot;
+       hx-target=&quot;#results&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<p>Without <code v-pre>changed</code>, every keyup fires a request, even arrow keys or shift. With <code v-pre>changed</code>, requests only fire when the input value differs from before.</p>
+<doc-anchor-target id="delay-modifier">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#delay-modifier">#</doc-anchor-trigger>
+        <span><code v-pre>delay:</code> Modifier</span>
+    </h3>
+</doc-anchor-target>
+<p>Waits a specified time after the event before firing. If another event occurs during the delay, the timer resets:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input hx-get=&quot;/Search?handler=Results&quot; 
+       hx-trigger=&quot;keyup changed delay:300ms&quot;
+       hx-target=&quot;#results&quot;
+       placeholder=&quot;Search...&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<p>The request fires 300ms after the user stops typing. This debouncing pattern prevents flooding your server with requests on every keystroke.</p>
+<doc-anchor-target id="throttle-modifier">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#throttle-modifier">#</doc-anchor-trigger>
+        <span><code v-pre>throttle:</code> Modifier</span>
+    </h3>
+</doc-anchor-target>
+<p>Limits how often requests can fire. Unlike <code v-pre>delay</code>, it fires immediately on the first event, then ignores subsequent events for the specified duration:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Position?handler=Update&quot; 
+     hx-trigger=&quot;mousemove throttle:100ms&quot;
+     hx-target=&quot;#coordinates&quot;&gt;
+    Move mouse here
 &lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>When the server completes a process that spawns new notifications, it can return a snippet of HTML containing a script like this:</p>
+<p>This fires at most once every 100ms, even if the mouse moves continuously.</p>
+<doc-anchor-target id="once-modifier">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#once-modifier">#</doc-anchor-trigger>
+        <span><code v-pre>once</code> Modifier</span>
+    </h3>
+</doc-anchor-target>
+<p>Fires only once, then stops listening:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostCreateNotification()
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Welcome?handler=Message&quot; 
+     hx-trigger=&quot;load once&quot;
+     hx-target=&quot;#welcome-area&quot;&gt;
+    Loading welcome message...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>After the first request completes, the element no longer responds to the trigger.</p>
+<doc-anchor-target id="from-modifier">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#from-modifier">#</doc-anchor-trigger>
+        <span><code v-pre>from:</code> Modifier</span>
+    </h3>
+</doc-anchor-target>
+<p>Listens for events from a different element:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Content?handler=Load&quot; 
+     hx-trigger=&quot;click from:#load-button&quot;
+     hx-target=&quot;this&quot;&gt;
+    Content loads when button is clicked
+&lt;/div&gt;
+
+&lt;button id=&quot;load-button&quot;&gt;Load Content&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>The div makes a request when the button is clicked. This decouples the trigger source from the target element.</p>
+<p>You can also listen for events from the document or window:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Status?handler=Check&quot; 
+     hx-trigger=&quot;visibilitychange from:document&quot;
+     hx-target=&quot;this&quot;&gt;
+    Status updates when tab becomes visible
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="target-modifier">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#target-modifier">#</doc-anchor-trigger>
+        <span><code v-pre>target:</code> Modifier</span>
+    </h3>
+</doc-anchor-target>
+<p>Filters events based on the event target:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;table hx-get=&quot;/Items?handler=Details&quot; 
+       hx-trigger=&quot;click target:td&quot;
+       hx-target=&quot;#details&quot;&gt;
+    &lt;tr&gt;&lt;td&gt;Item 1&lt;/td&gt;&lt;td&gt;Details 1&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;Item 2&lt;/td&gt;&lt;td&gt;Details 2&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+</doc-codeblock></div>
+<p>Only clicks on <code v-pre>&lt;td&gt;</code> elements trigger the request, not clicks on the table itself or other elements.</p>
+<doc-anchor-target id="consume-modifier">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#consume-modifier">#</doc-anchor-trigger>
+        <span><code v-pre>consume</code> Modifier</span>
+    </h3>
+</doc-anchor-target>
+<p>Prevents the event from propagating to parent elements:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Outer&quot; hx-trigger=&quot;click&quot;&gt;
+    &lt;button hx-get=&quot;/Inner&quot; hx-trigger=&quot;click consume&quot;&gt;
+        Click Me
+    &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Clicking the button only fires the inner request. Without <code v-pre>consume</code>, both requests would fire.</p>
+<doc-anchor-target id="queue-modifier">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#queue-modifier">#</doc-anchor-trigger>
+        <span><code v-pre>queue:</code> Modifier</span>
+    </h3>
+</doc-anchor-target>
+<p>Controls how events queue when a request is already in flight:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Queue all events (default) --&gt;
+&lt;button hx-post=&quot;/Action&quot; hx-trigger=&quot;click queue:all&quot;&gt;Submit&lt;/button&gt;
+
+&lt;!-- Queue only the first event --&gt;
+&lt;button hx-post=&quot;/Action&quot; hx-trigger=&quot;click queue:first&quot;&gt;Submit&lt;/button&gt;
+
+&lt;!-- Queue only the last event --&gt;
+&lt;button hx-post=&quot;/Action&quot; hx-trigger=&quot;click queue:last&quot;&gt;Submit&lt;/button&gt;
+
+&lt;!-- Drop all events while request is in flight --&gt;
+&lt;button hx-post=&quot;/Action&quot; hx-trigger=&quot;click queue:none&quot;&gt;Submit&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>For most cases, <code v-pre>queue:last</code> or <code v-pre>queue:none</code> prevents duplicate submissions.</p>
+<doc-anchor-target id="special-triggers">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#special-triggers">#</doc-anchor-trigger>
+        <span>Special Triggers</span>
+    </h2>
+</doc-anchor-target>
+<p>htmx provides special trigger values for common scenarios.</p>
+<doc-anchor-target id="load-trigger">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#load-trigger">#</doc-anchor-trigger>
+        <span><code v-pre>load</code> Trigger</span>
+    </h3>
+</doc-anchor-target>
+<p>Fires when the element is loaded into the DOM:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Dashboard?handler=Stats&quot; 
+     hx-trigger=&quot;load&quot;
+     hx-target=&quot;this&quot;&gt;
+    Loading dashboard stats...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>This makes the request immediately when the page loads, useful for lazy-loading initial content.</p>
+<doc-anchor-target id="revealed-trigger">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#revealed-trigger">#</doc-anchor-trigger>
+        <span><code v-pre>revealed</code> Trigger</span>
+    </h3>
+</doc-anchor-target>
+<p>Fires when the element scrolls into the viewport:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Products?handler=More&amp;amp;page=2&quot; 
+     hx-trigger=&quot;revealed&quot;
+     hx-target=&quot;#product-list&quot;
+     hx-swap=&quot;beforeend&quot;&gt;
+    &lt;span class=&quot;htmx-indicator&quot;&gt;Loading more products...&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>This is the foundation for infinite scroll and lazy loading. The request fires only when the user scrolls the element into view.</p>
+<doc-anchor-target id="intersect-trigger">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#intersect-trigger">#</doc-anchor-trigger>
+        <span><code v-pre>intersect</code> Trigger</span>
+    </h3>
+</doc-anchor-target>
+<p>Similar to <code v-pre>revealed</code> but offers more control through Intersection Observer options:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Fire when 50% of element is visible --&gt;
+&lt;div hx-get=&quot;/Content&quot; 
+     hx-trigger=&quot;intersect threshold:0.5&quot;&gt;
+    Loading...
+&lt;/div&gt;
+
+&lt;!-- Fire when element enters root margin --&gt;
+&lt;div hx-get=&quot;/Content&quot; 
+     hx-trigger=&quot;intersect root:.container rootMargin:100px&quot;&gt;
+    Loading...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="every-trigger">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#every-trigger">#</doc-anchor-trigger>
+        <span><code v-pre>every</code> Trigger</span>
+    </h3>
+</doc-anchor-target>
+<p>Creates polling intervals:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Notifications?handler=Count&quot; 
+     hx-trigger=&quot;every 30s&quot;
+     hx-target=&quot;this&quot;&gt;
+    0 notifications
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>This checks for new notifications every 30 seconds. Combine with other triggers:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/Status?handler=Check&quot; 
+     hx-trigger=&quot;load, every 10s&quot;
+     hx-target=&quot;this&quot;&gt;
+    Checking status...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The status loads immediately, then refreshes every 10 seconds.</p>
+<doc-anchor-target id="event-filters">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#event-filters">#</doc-anchor-trigger>
+        <span>Event Filters</span>
+    </h2>
+</doc-anchor-target>
+<p>Filter events based on conditions using bracket syntax:</p>
+<doc-anchor-target id="key-filters">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#key-filters">#</doc-anchor-trigger>
+        <span>Key Filters</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Only fire on Enter key --&gt;
+&lt;input hx-get=&quot;/Search?handler=Results&quot; 
+       hx-trigger=&quot;keyup[key=='Enter']&quot;
+       hx-target=&quot;#results&quot; /&gt;
+
+&lt;!-- Only fire on Escape key --&gt;
+&lt;div hx-get=&quot;/Modal?handler=Close&quot; 
+     hx-trigger=&quot;keyup[key=='Escape'] from:body&quot;&gt;
+    Modal content
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="modifier-key-filters">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#modifier-key-filters">#</doc-anchor-trigger>
+        <span>Modifier Key Filters</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Ctrl+Click --&gt;
+&lt;button hx-post=&quot;/Save?handler=Quick&quot; 
+        hx-trigger=&quot;click[ctrlKey]&quot;&gt;
+    Ctrl+Click to Quick Save
+&lt;/button&gt;
+
+&lt;!-- Shift+Enter --&gt;
+&lt;textarea hx-post=&quot;/Message?handler=Send&quot; 
+          hx-trigger=&quot;keyup[key=='Enter' &amp;&amp; shiftKey]&quot;&gt;
+&lt;/textarea&gt;
+
+&lt;!-- Any modifier key --&gt;
+&lt;button hx-post=&quot;/Action&quot; 
+        hx-trigger=&quot;click[!ctrlKey &amp;&amp; !shiftKey &amp;&amp; !altKey]&quot;&gt;
+    Click (no modifiers)
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="custom-conditions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#custom-conditions">#</doc-anchor-trigger>
+        <span>Custom Conditions</span>
+    </h3>
+</doc-anchor-target>
+<p>Any JavaScript expression that returns a boolean works:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Only when input has content --&gt;
+&lt;input id=&quot;search&quot; 
+       hx-get=&quot;/Search?handler=Results&quot; 
+       hx-trigger=&quot;keyup[this.value.length &gt; 2] changed delay:300ms&quot;
+       hx-target=&quot;#results&quot; /&gt;
+
+&lt;!-- Only for specific targets --&gt;
+&lt;ul hx-delete=&quot;/Items?handler=Remove&quot; 
+    hx-trigger=&quot;click[event.target.classList.contains('delete-btn')]&quot;
+    hx-target=&quot;closest li&quot;
+    hx-swap=&quot;outerHTML&quot;&gt;
+    &lt;li&gt;Item 1 &lt;button class=&quot;delete-btn&quot;&gt;X&lt;/button&gt;&lt;/li&gt;
+    &lt;li&gt;Item 2 &lt;button class=&quot;delete-btn&quot;&gt;X&lt;/button&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="understanding-hx-on">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#understanding-hx-on">#</doc-anchor-trigger>
+        <span>Understanding <code v-pre>hx-on</code></span>
+    </h2>
+</doc-anchor-target>
+<p>The <code v-pre>hx-on</code> attribute executes JavaScript in response to events. It uses the syntax <code v-pre>hx-on:event=&quot;javascript&quot;</code> for standard DOM events and <code v-pre>hx-on::event=&quot;javascript&quot;</code> (double colon) for htmx-specific events.</p>
+<doc-anchor-target id="standard-dom-events-1">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#standard-dom-events-1">#</doc-anchor-trigger>
+        <span>Standard DOM Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Single colon for DOM events --&gt;
+&lt;button hx-get=&quot;/Action&quot; 
+        hx-on:click=&quot;console.log('Button clicked')&quot;&gt;
+    Click Me
+&lt;/button&gt;
+
+&lt;input hx-on:focus=&quot;this.select()&quot; 
+       hx-on:blur=&quot;validateField(this)&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="htmx-lifecycle-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#htmx-lifecycle-events">#</doc-anchor-trigger>
+        <span>htmx Lifecycle Events</span>
+    </h3>
+</doc-anchor-target>
+<p>htmx fires events throughout the request lifecycle. Use double colon to listen for them:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Before request is sent --&gt;
+&lt;form hx-post=&quot;/Submit&quot; 
+      hx-on::before-request=&quot;showSpinner()&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;!-- fields --&gt;
+&lt;/form&gt;
+
+&lt;!-- After request completes --&gt;
+&lt;div hx-get=&quot;/Content&quot; 
+     hx-on::after-request=&quot;hideSpinner()&quot;&gt;
+    Loading...
+&lt;/div&gt;
+
+&lt;!-- After content is swapped into DOM --&gt;
+&lt;div hx-get=&quot;/Content&quot; 
+     hx-on::after-swap=&quot;initializeComponents(this)&quot;&gt;
+    Loading...
+&lt;/div&gt;
+
+&lt;!-- After settling (CSS transitions complete) --&gt;
+&lt;div hx-get=&quot;/Content&quot; 
+     hx-on::after-settle=&quot;this.classList.add('loaded')&quot;&gt;
+    Loading...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="key-htmx-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#key-htmx-events">#</doc-anchor-trigger>
+        <span>Key htmx Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Event</th>
+<th>When it Fires</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>htmx:configRequest</code></td>
+<td>Before request, can modify headers/parameters</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:beforeRequest</code></td>
+<td>Just before request is sent</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterRequest</code></td>
+<td>After request completes (success or failure)</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:beforeSwap</code></td>
+<td>Before content is swapped, can modify swap behavior</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSwap</code></td>
+<td>After content is swapped into DOM</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSettle</code></td>
+<td>After CSS transitions complete</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:responseError</code></td>
+<td>When server returns error status</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:sendError</code></td>
+<td>When request fails to send (network error)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="form-validation-with-hx-on">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#form-validation-with-hx-on">#</doc-anchor-trigger>
+        <span>Form Validation with <code v-pre>hx-on</code></span>
+    </h3>
+</doc-anchor-target>
+<p>Validate before sending the request:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Contact?handler=Submit&quot; 
+      hx-target=&quot;#result&quot;
+      hx-on::before-request=&quot;return validateForm(event)&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;email&quot; id=&quot;email&quot; name=&quot;email&quot; required /&gt;
+    &lt;textarea id=&quot;message&quot; name=&quot;message&quot; required&gt;&lt;/textarea&gt;
+    &lt;button type=&quot;submit&quot;&gt;Send&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;
+
+&lt;script&gt;
+function validateForm(event) {
+    var email = document.getElementById('email').value;
+    var message = document.getElementById('message').value;
+    
+    if (!email.includes('@')) {
+        alert('Please enter a valid email');
+        event.preventDefault();
+        return false;
+    }
+    
+    if (message.length &lt; 10) {
+        alert('Message must be at least 10 characters');
+        event.preventDefault();
+        return false;
+    }
+    
+    return true;
+}
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="animations-with-hx-on">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#animations-with-hx-on">#</doc-anchor-trigger>
+        <span>Animations with <code v-pre>hx-on</code></span>
+    </h3>
+</doc-anchor-target>
+<p>Trigger animations when content loads:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;style&gt;
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+&lt;/style&gt;
+
+&lt;div hx-get=&quot;/Content?handler=Load&quot; 
+     hx-trigger=&quot;click from:#load-btn&quot;
+     hx-on::after-swap=&quot;this.classList.add('fade-in')&quot;&gt;
+    Content will fade in when loaded
+&lt;/div&gt;
+
+&lt;button id=&quot;load-btn&quot;&gt;Load Content&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="server-triggered-events-with-hx-trigger-header">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#server-triggered-events-with-hx-trigger-header">#</doc-anchor-trigger>
+        <span>Server-Triggered Events with HX-Trigger Header</span>
+    </h2>
+</doc-anchor-target>
+<p>The <code v-pre>HX-Trigger</code> response header enables server-initiated events. When your server includes this header, htmx dispatches custom events on the client that other elements can listen for.</p>
+<doc-anchor-target id="basic-server-event">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-server-event">#</doc-anchor-trigger>
+        <span>Basic Server Event</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostCreate(string name)
 {
-    // ... logic that creates a new notification ...
-    var scriptToTriggerRefresh = &quot;&lt;script&gt;document.dispatchEvent(new CustomEvent('notifications-updated'));&lt;/script&gt;&quot;;
-    return Content(scriptToTriggerRefresh, &quot;text/html&quot;);
+    _itemService.Create(name);
+    
+    // Tell htmx to trigger an event on the client
+    Response.Headers.Append(&quot;HX-Trigger&quot;, &quot;itemCreated&quot;);
+    
+    return Content(&quot;&lt;div class=\&quot;success\&quot;&gt;Item created!&lt;/div&gt;&quot;, &quot;text/html&quot;);
 }</code></pre>
 </doc-codeblock></div>
-<p>As soon as this script runs in the browser, it dispatches the notifications-updated event. Because <code v-pre>hx-on</code> is listening for notifications-updated on the panel, it immediately invokes the existing hx-get request, pulling fresh notifications from the server and injecting them into the panel. This bypasses the need for out-of-band swaps, since your UI remains coherent under the direction of custom events, ensuring the data is always in sync without cluttering your markup with OOB directives.</p>
-<p>Dynamically updating a user’s status follows the same principle. Rather than forcing the client to poll for changes, you embed a small script whenever a status update occurs on the server. The newly dispatched event triggers an htmx request that retrieves the updated status. This means your UI can instantaneously reflect shifts from “online” to “away,” or from “busy” to “available,” with minimal overhead and minimal JavaScript.</p>
-<p>The real power here is in how little code you need to orchestrate a thoroughly responsive UI. By dispatching events only when meaningful changes occur on the server, you avoid unnecessary queries and maintain tight control over which components refresh. This helps reduce load on your server while also keeping the user experience fast and responsive.</p>
-<p>Next, we will explore &quot;Integrating Hyperscript for Complex Logic,&quot; where you will see how even more sophisticated client-side behaviors become possible. Rather than resorting to large JavaScript frameworks, you can solve a surprising array of interaction challenges with a few lines of Hyperscript, letting you blend dynamic server updates with advanced in-browser logic in an elegant, minimalistic way.</p>
+<p>Other elements can listen for this event:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- This refreshes when itemCreated event fires --&gt;
+&lt;div hx-get=&quot;/Items?handler=List&quot; 
+     hx-trigger=&quot;load, itemCreated from:body&quot;
+     hx-target=&quot;this&quot;&gt;
+    Loading items...
+&lt;/div&gt;
+
+&lt;!-- Form that triggers the event --&gt;
+&lt;form hx-post=&quot;/Items?handler=Create&quot; hx-target=&quot;#create-result&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;text&quot; name=&quot;name&quot; required /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Create Item&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id=&quot;create-result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>When the form submits and the server returns the <code v-pre>HX-Trigger: itemCreated</code> header, the items list automatically refreshes.</p>
+<doc-anchor-target id="multiple-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#multiple-events">#</doc-anchor-trigger>
+        <span>Multiple Events</span>
+    </h3>
+</doc-anchor-target>
+<p>Trigger multiple events:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Trigger&quot;, &quot;itemCreated, statsUpdated, notificationAdded&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="events-with-data">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#events-with-data">#</doc-anchor-trigger>
+        <span>Events with Data</span>
+    </h3>
+</doc-anchor-target>
+<p>Pass data with events using JSON:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">var triggerData = JsonSerializer.Serialize(new 
+{
+    itemCreated = new { id = item.Id, name = item.Name },
+    statsUpdated = new { total = _itemService.Count() }
+});
+
+Response.Headers.Append(&quot;HX-Trigger&quot;, triggerData);</code></pre>
+</doc-codeblock></div>
+<p>Access the data in JavaScript:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-on:itemCreated=&quot;console.log('Created:', event.detail.id)&quot;&gt;
+    &lt;!-- content --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="timing-variations">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#timing-variations">#</doc-anchor-trigger>
+        <span>Timing Variations</span>
+    </h3>
+</doc-anchor-target>
+<p>The <code v-pre>HX-Trigger</code> header has timing variants:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Fire immediately (default)
+Response.Headers.Append(&quot;HX-Trigger&quot;, &quot;myEvent&quot;);
+
+// Fire after swap
+Response.Headers.Append(&quot;HX-Trigger-After-Swap&quot;, &quot;myEvent&quot;);
+
+// Fire after settle (CSS transitions complete)
+Response.Headers.Append(&quot;HX-Trigger-After-Settle&quot;, &quot;myEvent&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="practical-examples">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#practical-examples">#</doc-anchor-trigger>
+        <span>Practical Examples</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="live-search-with-debouncing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#live-search-with-debouncing">#</doc-anchor-trigger>
+        <span>Live Search with Debouncing</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;search-container&quot;&gt;
+    &lt;input type=&quot;text&quot; 
+           name=&quot;query&quot;
+           placeholder=&quot;Search products...&quot;
+           hx-get=&quot;/Search?handler=Results&quot;
+           hx-trigger=&quot;keyup changed delay:300ms, search&quot;
+           hx-target=&quot;#search-results&quot;
+           hx-indicator=&quot;#search-spinner&quot; /&gt;
+    &lt;span id=&quot;search-spinner&quot; class=&quot;htmx-indicator&quot;&gt;Searching...&lt;/span&gt;
+&lt;/div&gt;
+&lt;div id=&quot;search-results&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetResults(string query)
+{
+    if (string.IsNullOrWhiteSpace(query) || query.Length &lt; 2)
+    {
+        return Content(&quot;&quot;, &quot;text/html&quot;);
+    }
+
+    var results = _productService.Search(query);
+    return Partial(&quot;_SearchResults&quot;, results);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="infinite-scroll">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#infinite-scroll">#</doc-anchor-trigger>
+        <span>Infinite Scroll</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;feed&quot;&gt;
+    @foreach (var post in Model.Posts)
+    {
+        &lt;partial name=&quot;_PostCard&quot; model=&quot;post&quot; /&gt;
+    }
+&lt;/div&gt;
+
+&lt;div hx-get=&quot;/Feed?handler=More&amp;amp;page=@(Model.CurrentPage + 1)&quot;
+     hx-trigger=&quot;revealed&quot;
+     hx-target=&quot;#feed&quot;
+     hx-swap=&quot;beforeend&quot;
+     hx-indicator=&quot;#loading&quot;&gt;
+    &lt;div id=&quot;loading&quot; class=&quot;htmx-indicator&quot;&gt;Loading more...&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetMore(int page)
+{
+    var posts = _postService.GetPage(page, pageSize: 10);
+    
+    if (!posts.Any())
+    {
+        return Content(&quot;&quot;, &quot;text/html&quot;);
+    }
+
+    return Partial(&quot;_PostBatch&quot;, new PostBatchViewModel 
+    { 
+        Posts = posts, 
+        NextPage = page + 1,
+        HasMore = _postService.HasMorePages(page)
+    });
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>_PostBatch.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model PostBatchViewModel
+
+@foreach (var post in Model.Posts)
+{
+    &lt;partial name=&quot;_PostCard&quot; model=&quot;post&quot; /&gt;
+}
+
+@if (Model.HasMore)
+{
+    &lt;div hx-get=&quot;/Feed?handler=More&amp;amp;page=@Model.NextPage&quot;
+         hx-trigger=&quot;revealed&quot;
+         hx-target=&quot;#feed&quot;
+         hx-swap=&quot;beforeend&quot;&gt;
+        &lt;span class=&quot;htmx-indicator&quot;&gt;Loading more...&lt;/span&gt;
+    &lt;/div&gt;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="auto-refreshing-dashboard">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#auto-refreshing-dashboard">#</doc-anchor-trigger>
+        <span>Auto-Refreshing Dashboard</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;dashboard&quot;&gt;
+    &lt;!-- Stats refresh every 30 seconds --&gt;
+    &lt;div id=&quot;stats-panel&quot;
+         hx-get=&quot;/Dashboard?handler=Stats&quot;
+         hx-trigger=&quot;load, every 30s&quot;
+         hx-target=&quot;this&quot;&gt;
+        Loading stats...
+    &lt;/div&gt;
+
+    &lt;!-- Notifications refresh every 10 seconds --&gt;
+    &lt;div id=&quot;notifications&quot;
+         hx-get=&quot;/Dashboard?handler=Notifications&quot;
+         hx-trigger=&quot;load, every 10s, notificationAdded from:body&quot;
+         hx-target=&quot;this&quot;&gt;
+        Loading notifications...
+    &lt;/div&gt;
+
+    &lt;!-- Activity feed refreshes on custom event --&gt;
+    &lt;div id=&quot;activity&quot;
+         hx-get=&quot;/Dashboard?handler=Activity&quot;
+         hx-trigger=&quot;load, activityUpdated from:body&quot;
+         hx-target=&quot;this&quot;&gt;
+        Loading activity...
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="keyboard-shortcuts">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#keyboard-shortcuts">#</doc-anchor-trigger>
+        <span>Keyboard Shortcuts</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Global keyboard shortcuts --&gt;
+&lt;body hx-on:keyup=&quot;handleGlobalShortcuts(event)&quot;&gt;
+    
+    &lt;!-- Ctrl+S to save --&gt;
+    &lt;form hx-post=&quot;/Document?handler=Save&quot;
+          hx-trigger=&quot;submit, keydown[ctrlKey &amp;&amp; key=='s'] from:body&quot;
+          hx-target=&quot;#save-status&quot;
+          hx-on:keydown=&quot;if(event.ctrlKey &amp;&amp; event.key=='s') event.preventDefault()&quot;&gt;
+        @Html.AntiForgeryToken()
+        &lt;textarea name=&quot;content&quot;&gt;&lt;/textarea&gt;
+        &lt;div id=&quot;save-status&quot;&gt;&lt;/div&gt;
+    &lt;/form&gt;
+
+&lt;/body&gt;
+
+&lt;script&gt;
+function handleGlobalShortcuts(event) {
+    // Escape closes modals
+    if (event.key === 'Escape') {
+        var modal = document.querySelector('.modal.open');
+        if (modal) htmx.trigger(modal, 'close');
+    }
+    
+    // / focuses search
+    if (event.key === '/' &amp;&amp; event.target.tagName !== 'INPUT') {
+        event.preventDefault();
+        document.getElementById('search-input').focus();
+    }
+}
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="cascading-dropdowns">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#cascading-dropdowns">#</doc-anchor-trigger>
+        <span>Cascading Dropdowns</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;form-group&quot;&gt;
+    &lt;label&gt;Country&lt;/label&gt;
+    &lt;select name=&quot;country&quot; 
+            hx-get=&quot;/Location?handler=States&quot;
+            hx-trigger=&quot;change&quot;
+            hx-target=&quot;#states-container&quot;&gt;
+        &lt;option value=&quot;&quot;&gt;Select country...&lt;/option&gt;
+        &lt;option value=&quot;US&quot;&gt;United States&lt;/option&gt;
+        &lt;option value=&quot;CA&quot;&gt;Canada&lt;/option&gt;
+    &lt;/select&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;states-container&quot;&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label&gt;State/Province&lt;/label&gt;
+        &lt;select name=&quot;state&quot; disabled&gt;
+            &lt;option&gt;Select country first...&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetStates(string country)
+{
+    if (string.IsNullOrEmpty(country))
+    {
+        return Content(@&quot;
+            &lt;div class=&quot;&quot;form-group&quot;&quot;&gt;
+                &lt;label&gt;State/Province&lt;/label&gt;
+                &lt;select name=&quot;&quot;state&quot;&quot; disabled&gt;
+                    &lt;option&gt;Select country first...&lt;/option&gt;
+                &lt;/select&gt;
+            &lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    var states = _locationService.GetStates(country);
+    return Partial(&quot;_StatesDropdown&quot;, states);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="debugging-triggers-and-events">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-triggers-and-events">#</doc-anchor-trigger>
+        <span>Debugging Triggers and Events</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="enable-htmx-logging">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#enable-htmx-logging">#</doc-anchor-trigger>
+        <span>Enable htmx Logging</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script&gt;
+htmx.logAll();
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p>This logs every event htmx processes, showing trigger evaluation and request lifecycle.</p>
+<doc-anchor-target id="monitor-specific-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#monitor-specific-events">#</doc-anchor-trigger>
+        <span>Monitor Specific Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script&gt;
+document.body.addEventListener('htmx:beforeRequest', function(event) {
+    console.log('Request starting:', event.detail.pathInfo.requestPath);
+});
+
+document.body.addEventListener('htmx:afterRequest', function(event) {
+    console.log('Request complete:', event.detail.xhr.status);
+});
+
+document.body.addEventListener('htmx:triggerError', function(event) {
+    console.error('Trigger error:', event.detail);
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="common-issues">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-issues">#</doc-anchor-trigger>
+        <span>Common Issues</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Trigger not firing</strong></p>
+<ul>
+<li>Check event name spelling</li>
+<li>Verify the element exists when htmx initializes</li>
+<li>For <code v-pre>from:</code> triggers, ensure the source element exists</li>
+</ul>
+<p><strong>Request fires too often</strong></p>
+<ul>
+<li>Add <code v-pre>changed</code> modifier for input events</li>
+<li>Add <code v-pre>delay:</code> for debouncing</li>
+<li>Add <code v-pre>throttle:</code> for rate limiting</li>
+</ul>
+<p><strong>Event filter not working</strong></p>
+<ul>
+<li>Check JavaScript syntax in brackets</li>
+<li>Verify property names (e.g., <code v-pre>key</code> not <code v-pre>keyCode</code>)</li>
+<li>Test the condition in browser console first</li>
+</ul>
+<p><strong>HX-Trigger header not working</strong></p>
+<ul>
+<li>Header name is case-sensitive</li>
+<li>JSON must be valid for events with data</li>
+<li>Check for events firing on <code v-pre>body</code> element</li>
+</ul>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>This chapter covered <code v-pre>hx-trigger</code> and <code v-pre>hx-on</code> for precise control over htmx interactions:</p>
+<ul>
+<li><strong>Default triggers</strong> work for common elements (click, submit, change)</li>
+<li><strong>Modifiers</strong> refine behavior: <code v-pre>changed</code>, <code v-pre>delay:</code>, <code v-pre>throttle:</code>, <code v-pre>once</code>, <code v-pre>from:</code>, <code v-pre>target:</code>, <code v-pre>consume</code>, <code v-pre>queue:</code></li>
+<li><strong>Special triggers</strong>: <code v-pre>load</code>, <code v-pre>revealed</code>, <code v-pre>intersect</code>, <code v-pre>every</code></li>
+<li><strong>Event filters</strong> use bracket syntax for conditions: <code v-pre>keyup[key=='Enter']</code>, <code v-pre>click[ctrlKey]</code></li>
+<li><strong><code v-pre>hx-on:</code></strong> executes JavaScript on DOM events (single colon)</li>
+<li><strong><code v-pre>hx-on::</code></strong> executes JavaScript on htmx events (double colon)</li>
+<li><strong>HX-Trigger header</strong> dispatches events from server responses</li>
+</ul>
+<p>These tools let you build responsive, event-driven interfaces without custom JavaScript frameworks.</p>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>Chapter 9 introduces Hyperscript, a companion language to htmx that adds client-side logic with a clean, readable syntax. You will learn how to handle complex interactions, manage state, and add behaviors that would otherwise require JavaScript, all using simple English-like commands embedded in your HTML.</p>
 
                                 
                                 <!-- Required only on API pages -->

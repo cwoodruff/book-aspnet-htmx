@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Building Blocks with HTML Components: Buttons and Action Links</title>
     <meta name="title" content="Building Blocks with HTML Components: Buttons and Action Links">
-    <meta name="description" content="Buttons and links may seem like the simplest elements in your HTML toolbox, but in an htmx-powered Razor Pages application, they unlock a whole world...">
+    <meta name="description" content="Buttons and links are how users take action in your application.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter14/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter14/">
     <meta property="og:title" content="Building Blocks with HTML Components: Buttons and Action Links">
-    <meta property="og:description" content="Buttons and links may seem like the simplest elements in your HTML toolbox, but in an htmx-powered Razor Pages application, they unlock a whole world...">
+    <meta property="og:description" content="Buttons and links are how users take action in your application.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter14/">
     <meta property="twitter:title" content="Building Blocks with HTML Components: Buttons and Action Links">
-    <meta property="twitter:description" content="Buttons and links may seem like the simplest elements in your HTML toolbox, but in an htmx-powered Razor Pages application, they unlock a whole world...">
+    <meta property="twitter:description" content="Buttons and links are how users take action in your application.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -253,32 +253,60 @@
         <span>Building Blocks with HTML Components: Buttons and Action Links</span>
     </h1>
 </doc-anchor-target>
-<p>Buttons and links may seem like the simplest elements in your HTML toolbox, but in an htmx-powered Razor Pages application, they unlock a whole world of interactivity. In this chapter, we’ll take a focused look at how these humble components can become powerful conduits for user-driven behavior, without requiring a single line of custom JavaScript. Whether it’s triggering actions, prompting confirmations, or dynamically swapping content, buttons and action links form the bridge between your users and your server.</p>
-<p>By now, you&#x27;ve built dynamic forms, interactive lists, and even modal popups using htmx. But as we step into this chapter, the spotlight is on how to make user interaction feel intuitive and immediate. Buttons and links are often the primary way users engage with your app, so it&#x27;s crucial they behave as expected, with just the right amount of feedback and control. We&#x27;ll explore how <code v-pre>hx-trigger</code> gives you granular control over when and how actions fire, and how prompts and confirmations can guide user intent without being intrusive.</p>
-<p>The beauty of htmx is that you can enrich these components without leaving HTML. Want a delete button that asks for confirmation before proceeding? Easy. Need a link that fetches and renders content inline? No sweat. With the right combination of attributes and server responses, your application starts to feel dynamic and responsive, all while keeping the logic server-side and your markup clean.</p>
-<p>By the end of this chapter, you’ll see that buttons and links aren’t just navigational or form-related—they’re versatile building blocks for almost any kind of interaction. You’ll be able to confidently build user flows that feel modern and fluid, all while staying true to the Razor Pages model. Let’s dig into the essential ways htmx can elevate even the most basic HTML components into smart, interactive experiences.</p>
-<doc-anchor-target id="smarter-clicks-using-hx-trigger-and-hx-prompt-for-responsive-interactions">
+<p>Buttons and links are how users take action in your application. Every click represents intent: create this record, delete that item, toggle this setting, submit this form. Traditional web applications handle these clicks with full page reloads or complex JavaScript event handlers. htmx lets you wire up responsive, immediate interactions using HTML attributes alone.</p>
+<p>This chapter focuses on button and link patterns that go beyond basic form submission: inline prompts that collect input without forms, confirmation dialogs that prevent accidents, toggle buttons that flip state instantly, batch actions that operate on multiple items, and buttons that disable themselves during requests to prevent double-submission. Each pattern includes complete server-side code and proper security handling.</p>
+<doc-anchor-target id="anti-forgery-token-configuration">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smarter-clicks-using-hx-trigger-and-hx-prompt-for-responsive-interactions">#</doc-anchor-trigger>
-        <span>Smarter Clicks: Using <code v-pre>hx-trigger</code> and <code v-pre>hx-prompt</code> for Responsive Interactions</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#anti-forgery-token-configuration">#</doc-anchor-trigger>
+        <span>Anti-Forgery Token Configuration</span>
     </h2>
 </doc-anchor-target>
-<p>Buttons and links might be the smallest parts of your UI, but when wired up correctly, they can drastically improve the usability of your application. In traditional web apps, these elements often trigger full page reloads or are wired up with bloated JavaScript just to perform a simple task. With htmx, however, you can make interactions feel smooth, fast, and responsive using a couple of attributes—most notably <code v-pre>hx-trigger</code> and <code v-pre>hx-prompt</code>.</p>
-<p>Let’s start with <code v-pre>hx-trigger</code>. By default, htmx will fire a request when the triggering element is clicked. But that’s just the beginning. With <code v-pre>hx-trigger</code>, you can precisely define when an interaction should happen—on click, hover, focus, or even custom JavaScript events. You can also delay requests or require multiple events. This gives you flexibility to fine-tune how your app responds to user behavior.</p>
-<p>Imagine a list of items with a “Rename” button next to each one. Instead of navigating to a new page or opening a modal, we can prompt the user for a new name right there in the list. This is where <code v-pre>hx-prompt</code> shines. With a single attribute, you can collect user input from a simple dialog and pass that data to the server without writing a single line of JavaScript.</p>
-<p>Here’s what the button might look like in Razor syntax:</p>
+<p>All POST, PUT, PATCH, and DELETE requests require anti-forgery tokens. Add this configuration to your layout once, and all htmx requests will include the token automatically:</p>
+<p><strong>Pages/Shared/_Layout.cshtml:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button
-    hx-post=&quot;/Items/Rename&quot;
-    hx-include=&quot;[data-id]&quot;
-    hx-prompt=&quot;Enter a new name:&quot;
-    hx-trigger=&quot;click&quot;
-    data-id=&quot;@item.Id&quot;&gt;
-    Rename
-&lt;/button&gt;</code></pre>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@Html.AntiForgeryToken()
+
+&lt;script&gt;
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+&lt;/script&gt;</code></pre>
 </doc-codeblock></div>
-<p>In this snippet, when the user clicks the button, htmx opens a browser prompt with the message “Enter a new name:”. The value the user enters is sent as the <code v-pre>prompt</code> parameter in the POST request to <code v-pre>/Items/Rename</code>. We’re also including the item ID using <code v-pre>hx-include</code> and a <code v-pre>data-id</code> attribute to help the server know which item is being renamed.</p>
-<p>On the server side, the Razor Page handler might look like this:</p>
+<doc-anchor-target id="inline-prompts-with-hx-prompt">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#inline-prompts-with-hx-prompt">#</doc-anchor-trigger>
+        <span>Inline Prompts with <code v-pre>hx-prompt</code></span>
+    </h2>
+</doc-anchor-target>
+<p>The <code v-pre>hx-prompt</code> attribute displays a browser prompt dialog and sends the user&#x27;s input to the server. This works well for quick edits that don&#x27;t warrant a full form.</p>
+<doc-anchor-target id="rename-button">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#rename-button">#</doc-anchor-trigger>
+        <span>Rename Button</span>
+    </h3>
+</doc-anchor-target>
+<p>A button that prompts for a new name and updates the item inline:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;tr id=&quot;item-@item.Id&quot;&gt;
+    &lt;td class=&quot;item-name&quot;&gt;@item.Name&lt;/td&gt;
+    &lt;td&gt;
+        &lt;button hx-post=&quot;/Items?handler=Rename&amp;amp;id=@item.Id&quot;
+                hx-prompt=&quot;Enter a new name:&quot;
+                hx-target=&quot;#item-@item.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                hx-indicator=&quot;#rename-spinner-@item.Id&quot;
+                class=&quot;btn btn-sm btn-outline-secondary&quot;&gt;
+            Rename
+            &lt;span id=&quot;rename-spinner-@item.Id&quot; class=&quot;htmx-indicator spinner-border spinner-border-sm&quot;&gt;&lt;/span&gt;
+        &lt;/button&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Important:</strong> The prompt value arrives in the <code v-pre>HX-Prompt</code> request header, not as a form parameter.</p>
+<p><strong>Pages/Items.cshtml.cs:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ItemsModel : PageModel
 {
@@ -289,132 +317,795 @@
         _itemService = itemService;
     }
 
-    public IActionResult OnPostRename(int id, string prompt)
+    public List&lt;Item&gt; Items { get; set; } = new();
+
+    public void OnGet()
     {
-        if (!string.IsNullOrWhiteSpace(prompt))
+        Items = _itemService.GetAll();
+    }
+
+    public IActionResult OnPostRename(int id)
+    {
+        // Get the prompt value from the HX-Prompt header
+        var newName = Request.Headers[&quot;HX-Prompt&quot;].ToString();
+
+        if (string.IsNullOrWhiteSpace(newName))
         {
-            _itemService.RenameItem(id, prompt);
+            Response.StatusCode = 400;
+            return Content(&quot;&lt;td colspan=\&quot;2\&quot; class=\&quot;text-danger\&quot;&gt;Name cannot be empty&lt;/td&gt;&quot;, &quot;text/html&quot;);
         }
 
-        var updatedItem = _itemService.GetItemById(id);
-        return Partial(&quot;_ItemRow&quot;, updatedItem);
+        var item = _itemService.GetById(id);
+        if (item == null) return NotFound();
+
+        item.Name = newName;
+        _itemService.Update(item);
+
+        return Partial(&quot;_ItemRow&quot;, item);
     }
 }</code></pre>
 </doc-codeblock></div>
-<p>This method receives both the item ID and the user’s input from the prompt. After updating the item, it returns a partial view of the updated row to replace the existing one on the page. This approach makes editing feel instant and keeps users focused on the task at hand.</p>
-<p>Here&#x27;s what the <code v-pre>_ItemRow.cshtml</code> partial might look like:</p>
+<p><strong>Pages/Shared/_ItemRow.cshtml:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;tr id=&quot;item-@Model.Id&quot;&gt;
-    &lt;td&gt;@Model.Name&lt;/td&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model Item
+
+&lt;tr id=&quot;item-@Model.Id&quot;&gt;
+    &lt;td class=&quot;item-name&quot;&gt;@Model.Name&lt;/td&gt;
     &lt;td&gt;
-        &lt;button 
-            hx-post=&quot;/Items/Rename&quot; 
-            hx-include=&quot;[data-id]&quot; 
-            hx-prompt=&quot;Enter a new name:&quot; 
-            hx-trigger=&quot;click&quot; 
-            data-id=&quot;@Model.Id&quot;&gt;
+        &lt;button hx-post=&quot;/Items?handler=Rename&amp;amp;id=@Model.Id&quot;
+                hx-prompt=&quot;Enter a new name:&quot;
+                hx-target=&quot;#item-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                class=&quot;btn btn-sm btn-outline-secondary&quot;&gt;
             Rename
+        &lt;/button&gt;
+        &lt;button hx-delete=&quot;/Items?handler=Delete&amp;amp;id=@Model.Id&quot;
+                hx-target=&quot;#item-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                hx-confirm=&quot;Delete '@Model.Name'?&quot;
+                class=&quot;btn btn-sm btn-outline-danger&quot;&gt;
+            Delete
         &lt;/button&gt;
     &lt;/td&gt;
 &lt;/tr&gt;</code></pre>
 </doc-codeblock></div>
-<p>When used thoughtfully, <code v-pre>hx-trigger</code> and <code v-pre>hx-prompt</code> allow you to build interactive features that feel elegant and efficient. They eliminate the need for custom JavaScript just to ask a question or handle a click. And because the server is still in charge of processing the input and returning updated HTML, you maintain a clean, testable, and maintainable backend.</p>
-<p>As you build more complex apps, you’ll start to appreciate how these simple attributes give you the tools to build highly usable interfaces. Buttons and links are no longer just passive UI controls—they become responsive, interactive features that improve the overall flow of your application.</p>
-<doc-anchor-target id="confirm-before-you-commit-handling-destructive-actions-with-confidence">
+<doc-anchor-target id="quick-add-with-prompt">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#quick-add-with-prompt">#</doc-anchor-trigger>
+        <span>Quick Add with Prompt</span>
+    </h3>
+</doc-anchor-target>
+<p>Add items without a form:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Items?handler=QuickAdd&quot;
+        hx-prompt=&quot;Enter item name:&quot;
+        hx-target=&quot;#items-list&quot;
+        hx-swap=&quot;beforeend&quot;
+        class=&quot;btn btn-primary&quot;&gt;
+    Quick Add Item
+&lt;/button&gt;
+
+&lt;table class=&quot;table&quot;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Name&lt;/th&gt;
+            &lt;th&gt;Actions&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody id=&quot;items-list&quot;&gt;
+        @foreach (var item in Model.Items)
+        {
+            &lt;partial name=&quot;_ItemRow&quot; model=&quot;item&quot; /&gt;
+        }
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostQuickAdd()
+{
+    var name = Request.Headers[&quot;HX-Prompt&quot;].ToString();
+
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        return Content(&quot;&quot;, &quot;text/html&quot;); // User cancelled or empty input
+    }
+
+    var item = new Item { Name = name };
+    _itemService.Add(item);
+
+    return Partial(&quot;_ItemRow&quot;, item);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="confirmation-dialogs">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#confirm-before-you-commit-handling-destructive-actions-with-confidence">#</doc-anchor-trigger>
-        <span>Confirm Before You Commit: Handling Destructive Actions with Confidence</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#confirmation-dialogs">#</doc-anchor-trigger>
+        <span>Confirmation Dialogs</span>
     </h2>
 </doc-anchor-target>
-<p>When you&#x27;re building any application that lets users create, update, or delete records, it&#x27;s your job to make sure nothing gets wiped out by accident. Destructive actions—like deleting a user, clearing a list, or resetting settings—should never happen without giving the user a chance to reconsider. That’s where confirmation dialogs come in. They act as a simple safety net, preventing irreversible changes caused by an accidental click.</p>
-<p>htmx makes it incredibly easy to add basic confirmations with the <code v-pre>hx-confirm</code> attribute. Just add it to your button or link, and htmx will show a browser-native dialog box before sending the request. If the user confirms, the request proceeds as usual; if not, it’s canceled. This is perfect for quick validations where you don’t need anything fancy.</p>
-<p>Here’s an example of a delete button with a built-in confirmation:</p>
+<p>Destructive actions need confirmation. htmx provides two approaches: the simple <code v-pre>hx-confirm</code> attribute and custom modal confirmations.</p>
+<doc-anchor-target id="simple-confirmation-with-hx-confirm">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#simple-confirmation-with-hx-confirm">#</doc-anchor-trigger>
+        <span>Simple Confirmation with <code v-pre>hx-confirm</code></span>
+    </h3>
+</doc-anchor-target>
+<p>The <code v-pre>hx-confirm</code> attribute shows a browser confirmation dialog before sending the request:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button
-    hx-delete=&quot;/Items/Delete/123&quot;
-    hx-target=&quot;#item-123&quot;
-    hx-swap=&quot;outerHTML swap:1s&quot;
-    hx-confirm=&quot;Are you sure you want to delete this item?&quot;&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-delete=&quot;/Tasks?handler=Delete&amp;amp;id=@task.Id&quot;
+        hx-target=&quot;#task-@task.Id&quot;
+        hx-swap=&quot;outerHTML&quot;
+        hx-confirm=&quot;Delete '@task.Name'? This cannot be undone.&quot;
+        class=&quot;btn btn-sm btn-danger&quot;&gt;
     Delete
 &lt;/button&gt;</code></pre>
 </doc-codeblock></div>
-<p>In this case, when the button is clicked, the user sees a simple browser prompt. If they confirm, the DELETE request is sent to <code v-pre>/Items/Delete/123</code>, and the matching row (<code v-pre>#item-123</code>) is removed from the page using <code v-pre>outerHTML</code>. The <code v-pre>swap:1s</code> adds a fade-out transition, just for a little visual polish.</p>
-<p>For more complex situations—like when you want a custom-styled confirmation dialog instead of the default browser alert—you can build your own modal using htmx and partials. Instead of executing the delete immediately, you first load a confirmation UI into a modal container.</p>
-<p>First, here’s the delete link that triggers the confirmation:</p>
+<p>If the user clicks &quot;OK,&quot; the request proceeds. If they click &quot;Cancel,&quot; nothing happens.</p>
+<p><strong>Server handler:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;a
-    hx-get=&quot;/Items/ConfirmDelete/123&quot;
-    hx-target=&quot;#modal&quot;
-    hx-trigger=&quot;click&quot;&gt;
-    Delete
-&lt;/a&gt;
-&lt;div id=&quot;modal&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>Then, your <code v-pre>/Items/ConfirmDelete</code> endpoint returns a partial view that contains a confirmation dialog:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;modal&quot;&gt;
-    &lt;p&gt;Are you sure you want to delete &lt;strong&gt;@Model.Name&lt;/strong&gt;?&lt;/p&gt;
-    &lt;button 
-        hx-delete=&quot;/Items/Delete/@Model.Id&quot; 
-        hx-target=&quot;#item-@Model.Id&quot; 
-        hx-swap=&quot;outerHTML swap:1s&quot; 
-        _=&quot;on click remove closest .modal then send this request&quot;&gt;
-        Confirm
-    &lt;/button&gt;
-    &lt;button _=&quot;on click remove closest .modal&quot;&gt;Cancel&lt;/button&gt;
-&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>This custom modal gives you full control over the content, styling, and behavior. The use of Hyperscript in the <code v-pre>_=</code> attributes lets you remove the modal from the DOM after either action, without any JavaScript files involved.</p>
-<p>On the backend, the <code v-pre>OnDelete</code> handler is straightforward:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDelete(int id)
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteDelete(int id)
 {
-    _itemService.Delete(id);
-    return new EmptyResult(); // Nothing to render, just remove the item from the page
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+
+    _taskService.Delete(id);
+
+    // Return empty content to remove the row
+    return Content(&quot;&quot;, &quot;text/html&quot;);
 }</code></pre>
 </doc-codeblock></div>
-<p>By offering both quick <code v-pre>hx-confirm</code> prompts and more nuanced modal confirmations, you give users a sense of control and reduce the risk of mistakes. These techniques are easy to implement but go a long way in building user trust. After all, nobody likes losing work because of a misclick. A second chance—whether via a browser alert or a custom modal—is always worth the extra line of code.</p>
-<doc-anchor-target id="responsive-and-reliable-streamlining-button-and-link-behavior">
+<doc-anchor-target id="custom-modal-confirmation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#custom-modal-confirmation">#</doc-anchor-trigger>
+        <span>Custom Modal Confirmation</span>
+    </h3>
+</doc-anchor-target>
+<p>For styled confirmations with more context, load a modal:</p>
+<p><strong>Trigger button:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Tasks?handler=ConfirmDelete&amp;amp;id=@task.Id&quot;
+        hx-target=&quot;#modal-content&quot;
+        hx-swap=&quot;innerHTML&quot;
+        _=&quot;on htmx:afterSwap add .open to #modal&quot;
+        class=&quot;btn btn-sm btn-danger&quot;&gt;
+    Delete
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Modal structure (in layout):</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;modal&quot; class=&quot;modal&quot; _=&quot;on click if event.target is #modal remove .open from #modal&quot;&gt;
+    &lt;div class=&quot;modal-backdrop&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;modal-dialog&quot;&gt;
+        &lt;div id=&quot;modal-content&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_ConfirmDeleteTask.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model TaskItem
+
+&lt;div class=&quot;modal-header&quot;&gt;
+    &lt;h5&gt;Delete Task&lt;/h5&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn-close&quot; _=&quot;on click remove .open from #modal&quot;&gt;&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class=&quot;modal-body&quot;&gt;
+    &lt;p&gt;Are you sure you want to delete &lt;strong&gt;@Model.Name&lt;/strong&gt;?&lt;/p&gt;
+    @if (Model.DueDate.HasValue)
+    {
+        &lt;p class=&quot;text-muted&quot;&gt;Due: @Model.DueDate.Value.ToString(&quot;MMM d, yyyy&quot;)&lt;/p&gt;
+    }
+    &lt;p class=&quot;text-danger&quot;&gt;This action cannot be undone.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;modal-footer&quot;&gt;
+    &lt;button type=&quot;button&quot; 
+            class=&quot;btn btn-secondary&quot;
+            _=&quot;on click remove .open from #modal&quot;&gt;
+        Cancel
+    &lt;/button&gt;
+    &lt;button hx-delete=&quot;/Tasks?handler=Delete&amp;amp;id=@Model.Id&quot;
+            hx-target=&quot;#task-@Model.Id&quot;
+            hx-swap=&quot;outerHTML&quot;
+            _=&quot;on htmx:afterRequest remove .open from #modal&quot;
+            class=&quot;btn btn-danger&quot;&gt;
+        Delete Task
+    &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Server handlers:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetConfirmDelete(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+    return Partial(&quot;_ConfirmDeleteTask&quot;, task);
+}
+
+public IActionResult OnDeleteDelete(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+
+    _taskService.Delete(id);
+    return Content(&quot;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Modal CSS:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+}
+
+.modal.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1rem;
+}
+
+.modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="toggle-buttons">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#responsive-and-reliable-streamlining-button-and-link-behavior">#</doc-anchor-trigger>
-        <span>Responsive and Reliable: Streamlining Button and Link Behavior</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#toggle-buttons">#</doc-anchor-trigger>
+        <span>Toggle Buttons</span>
     </h2>
 </doc-anchor-target>
-<p>We’ve all experienced the frustration of clicking a button and wondering if it worked—especially when there’s no immediate feedback. Even worse is when the action gets triggered multiple times because the user keeps clicking. These kinds of glitches erode trust in your application. The good news is that htmx gives you simple tools to eliminate these issues and optimize button and link interactions so they feel crisp, responsive, and reliable.</p>
-<p>One of the best tools in your toolbox is <code v-pre>hx-disable</code>. This attribute automatically disables the triggering element during the request, which prevents duplicate submissions. It’s especially useful for forms, delete buttons, or anything that hits the server. Once the request completes, the button is re-enabled automatically. You don’t need to write JavaScript to manage this state—it just works.</p>
-<p>Here’s an example using <code v-pre>hx-disable</code> in a Razor Page:</p>
+<p>Toggle buttons switch state and update their appearance immediately.</p>
+<doc-anchor-target id="completeincomplete-toggle">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#completeincomplete-toggle">#</doc-anchor-trigger>
+        <span>Complete/Incomplete Toggle</span>
+    </h3>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form 
-    hx-post=&quot;/Items/Create&quot; 
-    hx-target=&quot;#items-list&quot; 
-    hx-swap=&quot;beforeend&quot; 
-    hx-disable&gt;
-    &lt;input type=&quot;text&quot; name=&quot;name&quot; required /&gt;
-    &lt;button type=&quot;submit&quot;&gt;Add Item&lt;/button&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model TaskItem
+
+&lt;button hx-patch=&quot;/Tasks?handler=Toggle&amp;amp;id=@Model.Id&quot;
+        hx-target=&quot;this&quot;
+        hx-swap=&quot;outerHTML&quot;
+        class=&quot;btn btn-sm @(Model.IsComplete ? &quot;btn-success&quot; : &quot;btn-outline-secondary&quot;)&quot;&gt;
+    @if (Model.IsComplete)
+    {
+        &lt;span&gt;✓ Complete&lt;/span&gt;
+    }
+    else
+    {
+        &lt;span&gt;Mark Complete&lt;/span&gt;
+    }
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Server handler:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPatchToggle(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+
+    task.IsComplete = !task.IsComplete;
+    task.CompletedAt = task.IsComplete ? DateTime.UtcNow : null;
+    _taskService.Update(task);
+
+    return Partial(&quot;_ToggleButton&quot;, task);
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_ToggleButton.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model TaskItem
+
+&lt;button hx-patch=&quot;/Tasks?handler=Toggle&amp;amp;id=@Model.Id&quot;
+        hx-target=&quot;this&quot;
+        hx-swap=&quot;outerHTML&quot;
+        class=&quot;btn btn-sm @(Model.IsComplete ? &quot;btn-success&quot; : &quot;btn-outline-secondary&quot;)&quot;&gt;
+    @if (Model.IsComplete)
+    {
+        &lt;span&gt;✓ Complete&lt;/span&gt;
+    }
+    else
+    {
+        &lt;span&gt;Mark Complete&lt;/span&gt;
+    }
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="favoriteunfavorite-toggle">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#favoriteunfavorite-toggle">#</doc-anchor-trigger>
+        <span>Favorite/Unfavorite Toggle</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Products?handler=ToggleFavorite&amp;amp;id=@product.Id&quot;
+        hx-target=&quot;this&quot;
+        hx-swap=&quot;outerHTML&quot;
+        class=&quot;btn-favorite @(product.IsFavorite ? &quot;favorited&quot; : &quot;&quot;)&quot;
+        title=&quot;@(product.IsFavorite ? &quot;Remove from favorites&quot; : &quot;Add to favorites&quot;)&quot;&gt;
+    @(product.IsFavorite ? &quot;★&quot; : &quot;☆&quot;)
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.btn-favorite {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s;
+}
+
+.btn-favorite:hover {
+    color: #ffc107;
+}
+
+.btn-favorite.favorited {
+    color: #ffc107;
+}</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostToggleFavorite(int id)
+{
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
+
+    product.IsFavorite = !product.IsFavorite;
+    _productService.Update(product);
+
+    return Partial(&quot;_FavoriteButton&quot;, product);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="preventing-double-submission">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preventing-double-submission">#</doc-anchor-trigger>
+        <span>Preventing Double Submission</span>
+    </h2>
+</doc-anchor-target>
+<p>Users sometimes click buttons multiple times during slow requests. Prevent this with the <code v-pre>hx-disabled-elt</code> attribute or CSS.</p>
+<doc-anchor-target id="using-hx-disabled-elt">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#using-hx-disabled-elt">#</doc-anchor-trigger>
+        <span>Using <code v-pre>hx-disabled-elt</code></span>
+    </h3>
+</doc-anchor-target>
+<p>The <code v-pre>hx-disabled-elt</code> attribute specifies which element(s) to disable during the request:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Orders?handler=Submit&quot;
+        hx-target=&quot;#order-result&quot;
+        hx-disabled-elt=&quot;this&quot;
+        class=&quot;btn btn-primary&quot;&gt;
+    Place Order
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>During the request, htmx adds the <code v-pre>disabled</code> attribute to the button. When the request completes, it removes it.</p>
+<doc-anchor-target id="disabling-multiple-elements">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#disabling-multiple-elements">#</doc-anchor-trigger>
+        <span>Disabling Multiple Elements</span>
+    </h3>
+</doc-anchor-target>
+<p>Disable the entire form during submission:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Checkout?handler=Process&quot;
+      hx-target=&quot;#checkout-result&quot;
+      hx-disabled-elt=&quot;find button, find input&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;input type=&quot;text&quot; name=&quot;cardNumber&quot; placeholder=&quot;Card Number&quot; required /&gt;
+    &lt;input type=&quot;text&quot; name=&quot;expiry&quot; placeholder=&quot;MM/YY&quot; required /&gt;
+    &lt;input type=&quot;text&quot; name=&quot;cvv&quot; placeholder=&quot;CVV&quot; required /&gt;
+    
+    &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;
+        Pay Now
+    &lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;checkout-result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="css-based-disable-with-loading-state">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#css-based-disable-with-loading-state">#</doc-anchor-trigger>
+        <span>CSS-Based Disable with Loading State</span>
+    </h3>
+</doc-anchor-target>
+<p>For better visual feedback, combine <code v-pre>hx-disabled-elt</code> with loading indicators:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Reports?handler=Generate&quot;
+        hx-target=&quot;#report-content&quot;
+        hx-disabled-elt=&quot;this&quot;
+        hx-indicator=&quot;find .loading-state&quot;
+        class=&quot;btn btn-primary generate-btn&quot;&gt;
+    &lt;span class=&quot;default-state&quot;&gt;Generate Report&lt;/span&gt;
+    &lt;span class=&quot;loading-state htmx-indicator&quot;&gt;
+        &lt;span class=&quot;spinner-border spinner-border-sm&quot;&gt;&lt;/span&gt;
+        Generating...
+    &lt;/span&gt;
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.generate-btn .loading-state {
+    display: none;
+}
+
+.generate-btn.htmx-request .default-state {
+    display: none;
+}
+
+.generate-btn.htmx-request .loading-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="batch-actions">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#batch-actions">#</doc-anchor-trigger>
+        <span>Batch Actions</span>
+    </h2>
+</doc-anchor-target>
+<p>Select multiple items and apply an action to all of them.</p>
+<doc-anchor-target id="batch-delete">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#batch-delete">#</doc-anchor-trigger>
+        <span>Batch Delete</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form id=&quot;batch-form&quot;&gt;
+    &lt;div class=&quot;batch-toolbar mb-3&quot; style=&quot;display: none;&quot;
+         _=&quot;on change from .item-checkbox in #items-table
+            if (&lt;.item-checkbox:checked/&gt;.length &gt; 0)
+                show me
+            else
+                hide me
+            end
+            put (&lt;.item-checkbox:checked/&gt;.length) + ' selected' into #selection-count&quot;&gt;
+        &lt;span id=&quot;selection-count&quot;&gt;0 selected&lt;/span&gt;
+        &lt;button type=&quot;button&quot;
+                hx-delete=&quot;/Items?handler=BatchDelete&quot;
+                hx-target=&quot;#items-table tbody&quot;
+                hx-include=&quot;.item-checkbox:checked&quot;
+                hx-confirm=&quot;Delete selected items?&quot;
+                class=&quot;btn btn-sm btn-danger&quot;&gt;
+            Delete Selected
+        &lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;table class=&quot;table&quot; id=&quot;items-table&quot;&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;
+                    &lt;input type=&quot;checkbox&quot; 
+                           _=&quot;on change set .item-checkbox.checked to my.checked&quot; /&gt;
+                &lt;/th&gt;
+                &lt;th&gt;Name&lt;/th&gt;
+                &lt;th&gt;Actions&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            @foreach (var item in Model.Items)
+            {
+                &lt;tr id=&quot;item-@item.Id&quot;&gt;
+                    &lt;td&gt;
+                        &lt;input type=&quot;checkbox&quot; 
+                               name=&quot;ids&quot; 
+                               value=&quot;@item.Id&quot; 
+                               class=&quot;item-checkbox&quot; /&gt;
+                    &lt;/td&gt;
+                    &lt;td&gt;@item.Name&lt;/td&gt;
+                    &lt;td&gt;
+                        &lt;button hx-delete=&quot;/Items?handler=Delete&amp;amp;id=@item.Id&quot;
+                                hx-target=&quot;#item-@item.Id&quot;
+                                hx-swap=&quot;outerHTML&quot;
+                                hx-confirm=&quot;Delete '@item.Name'?&quot;
+                                class=&quot;btn btn-sm btn-outline-danger&quot;&gt;
+                            Delete
+                        &lt;/button&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            }
+        &lt;/tbody&gt;
+    &lt;/table&gt;
 &lt;/form&gt;</code></pre>
 </doc-codeblock></div>
-<p>In this form, when the user clicks “Add Item,” htmx disables the button until the request is complete. This prevents the form from being submitted multiple times and provides a smoother experience. You can also pair this with <code v-pre>hx-indicator</code> in the next chapter for visual loading cues, but even on its own, disabling the button during the async operation is a solid UX improvement.</p>
-<p>If you’re building interactive features repeatedly—like edit or delete buttons across rows in a table—it makes sense to turn those into reusable components. Razor partials are perfect for this. You can create a <code v-pre>_DeleteButton.cshtml</code> partial that accepts a model with the URL, display name, and ID, and centralize your behavior there. That way, changes to interaction logic, styles, or attributes can be made in one place, and reused wherever needed.</p>
-<p>Here’s a basic example of a reusable delete button component:</p>
+<p><strong>Server handler:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteBatchDelete([FromForm] int[] ids)
+{
+    if (ids == null || ids.Length == 0)
+    {
+        return Content(&quot;&quot;, &quot;text/html&quot;);
+    }
+
+    foreach (var id in ids)
+    {
+        _itemService.Delete(id);
+    }
+
+    // Return the updated table body
+    var remainingItems = _itemService.GetAll();
+    return Partial(&quot;_ItemsTableBody&quot;, remainingItems);
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_ItemsTableBody.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model List&lt;Item&gt;
+
+@if (Model.Any())
+{
+    @foreach (var item in Model)
+    {
+        &lt;tr id=&quot;item-@item.Id&quot;&gt;
+            &lt;td&gt;
+                &lt;input type=&quot;checkbox&quot; name=&quot;ids&quot; value=&quot;@item.Id&quot; class=&quot;item-checkbox&quot; /&gt;
+            &lt;/td&gt;
+            &lt;td&gt;@item.Name&lt;/td&gt;
+            &lt;td&gt;
+                &lt;button hx-delete=&quot;/Items?handler=Delete&amp;amp;id=@item.Id&quot;
+                        hx-target=&quot;#item-@item.Id&quot;
+                        hx-swap=&quot;outerHTML&quot;
+                        hx-confirm=&quot;Delete '@item.Name'?&quot;
+                        class=&quot;btn btn-sm btn-outline-danger&quot;&gt;
+                    Delete
+                &lt;/button&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    }
+}
+else
+{
+    &lt;tr&gt;
+        &lt;td colspan=&quot;3&quot; class=&quot;text-center text-muted py-4&quot;&gt;
+            No items found.
+        &lt;/td&gt;
+    &lt;/tr&gt;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="action-links">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#action-links">#</doc-anchor-trigger>
+        <span>Action Links</span>
+    </h2>
+</doc-anchor-target>
+<p>Links that trigger htmx actions instead of page navigation.</p>
+<doc-anchor-target id="load-content-link">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#load-content-link">#</doc-anchor-trigger>
+        <span>Load Content Link</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;a hx-get=&quot;/Help?handler=Topic&amp;amp;topic=getting-started&quot;
+   hx-target=&quot;#help-content&quot;
+   hx-push-url=&quot;/Help/getting-started&quot;
+   class=&quot;help-link&quot;&gt;
+    Getting Started Guide
+&lt;/a&gt;
+
+&lt;div id=&quot;help-content&quot;&gt;
+    Select a topic to view help content.
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="tab-style-links">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#tab-style-links">#</doc-anchor-trigger>
+        <span>Tab-Style Links</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;nav class=&quot;nav nav-tabs&quot;&gt;
+    &lt;a hx-get=&quot;/Dashboard?handler=Overview&quot;
+       hx-target=&quot;#dashboard-content&quot;
+       hx-push-url=&quot;/Dashboard?tab=overview&quot;
+       class=&quot;nav-link active&quot;
+       _=&quot;on click remove .active from .nav-link then add .active to me&quot;&gt;
+        Overview
+    &lt;/a&gt;
+    &lt;a hx-get=&quot;/Dashboard?handler=Analytics&quot;
+       hx-target=&quot;#dashboard-content&quot;
+       hx-push-url=&quot;/Dashboard?tab=analytics&quot;
+       class=&quot;nav-link&quot;
+       _=&quot;on click remove .active from .nav-link then add .active to me&quot;&gt;
+        Analytics
+    &lt;/a&gt;
+    &lt;a hx-get=&quot;/Dashboard?handler=Settings&quot;
+       hx-target=&quot;#dashboard-content&quot;
+       hx-push-url=&quot;/Dashboard?tab=settings&quot;
+       class=&quot;nav-link&quot;
+       _=&quot;on click remove .active from .nav-link then add .active to me&quot;&gt;
+        Settings
+    &lt;/a&gt;
+&lt;/nav&gt;
+
+&lt;div id=&quot;dashboard-content&quot; hx-history-elt&gt;
+    &lt;partial name=&quot;_DashboardOverview&quot; model=&quot;Model.OverviewData&quot; /&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="reusable-button-components">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#reusable-button-components">#</doc-anchor-trigger>
+        <span>Reusable Button Components</span>
+    </h2>
+</doc-anchor-target>
+<p>Create partial views for consistent button styling and behavior.</p>
+<doc-anchor-target id="delete-button-partial">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#delete-button-partial">#</doc-anchor-trigger>
+        <span>Delete Button Partial</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Shared/_DeleteButton.cshtml:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-markup"><code v-pre class="language-markup">@model DeleteButtonModel
 
-&lt;button
-    hx-delete=&quot;@Model.Url&quot;
-    hx-target=&quot;#item-@Model.Id&quot;
-    hx-swap=&quot;outerHTML swap:1s&quot;
-    hx-confirm=&quot;Delete @Model.Name?&quot;
-    hx-disable&gt;
-    Delete
+&lt;button hx-delete=&quot;@Model.Url&quot;
+        hx-target=&quot;@Model.Target&quot;
+        hx-swap=&quot;@(Model.Swap ?? &quot;outerHTML&quot;)&quot;
+        hx-confirm=&quot;@Model.ConfirmMessage&quot;
+        hx-disabled-elt=&quot;this&quot;
+        class=&quot;btn btn-sm @(Model.Outline ? &quot;btn-outline-danger&quot; : &quot;btn-danger&quot;)&quot;&gt;
+    @(Model.Text ?? &quot;Delete&quot;)
 &lt;/button&gt;</code></pre>
 </doc-codeblock></div>
-<p>When you use this in a table:</p>
+<p><strong>DeleteButtonModel.cs:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;partial name=&quot;_DeleteButton&quot; model=&quot;new DeleteButtonModel { Url = $&quot;/Items/Delete/{item.Id}&quot;, Id = item.Id, Name = item.Name }&quot; /&gt;</code></pre>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class DeleteButtonModel
+{
+    public string Url { get; set; } = string.Empty;
+    public string Target { get; set; } = string.Empty;
+    public string? Swap { get; set; }
+    public string ConfirmMessage { get; set; } = &quot;Are you sure?&quot;;
+    public string? Text { get; set; }
+    public bool Outline { get; set; } = true;
+}</code></pre>
 </doc-codeblock></div>
-<p>You keep your views clean and your logic consistent across the board. This pattern applies equally well to links, confirmation modals, or inline editing components. It makes your app easier to maintain and scale as features grow.</p>
-<p>Optimizing interactions isn’t just about performance—it’s about user confidence. Disabling buttons during operations and reusing consistent UI patterns helps users trust that what they clicked actually worked. And when paired with good feedback (which we’ll dive into next), you can elevate the overall feel of your application.</p>
-<p>In the next chapter, we’ll focus on giving users clear visual cues by integrating <code v-pre>hx-indicator</code> and <code v-pre>hx-preserve</code>. You’ll learn how to show spinners during requests, maintain UI state between swaps, and ensure users always know what’s happening behind the scenes. With the combination of interaction control and visual feedback, you’ll be building UI that feels fast, polished, and reliable.</p>
+<p><strong>Usage:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;partial name=&quot;_DeleteButton&quot; model=&quot;new DeleteButtonModel
+{
+    Url = $&quot;/Tasks?handler=Delete&amp;id={task.Id}&quot;,
+    Target = $&quot;#task-{task.Id}&quot;,
+    ConfirmMessage = $&quot;Delete '{task.Name}'?&quot;
+}&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="action-button-partial">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#action-button-partial">#</doc-anchor-trigger>
+        <span>Action Button Partial</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Shared/_ActionButton.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model ActionButtonModel
+
+&lt;button hx-@Model.Method.ToLower()=&quot;@Model.Url&quot;
+        hx-target=&quot;@Model.Target&quot;
+        hx-swap=&quot;@(Model.Swap ?? &quot;innerHTML&quot;)&quot;
+        @if (!string.IsNullOrEmpty(Model.Confirm)) { &lt;text&gt;hx-confirm=&quot;@Model.Confirm&quot;&lt;/text&gt; }
+        @if (!string.IsNullOrEmpty(Model.Prompt)) { &lt;text&gt;hx-prompt=&quot;@Model.Prompt&quot;&lt;/text&gt; }
+        hx-disabled-elt=&quot;this&quot;
+        hx-indicator=&quot;find .btn-spinner&quot;
+        class=&quot;btn @Model.CssClass&quot;&gt;
+    &lt;span class=&quot;btn-text&quot;&gt;@Model.Text&lt;/span&gt;
+    &lt;span class=&quot;btn-spinner htmx-indicator spinner-border spinner-border-sm&quot;&gt;&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="error-handling">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#error-handling">#</doc-anchor-trigger>
+        <span>Error Handling</span>
+    </h2>
+</doc-anchor-target>
+<p>Handle failed requests gracefully:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-on::response-error=&quot;handleButtonError(event, this)&quot;
+     hx-on::send-error=&quot;handleButtonError(event, this)&quot;&gt;
+    &lt;button hx-post=&quot;/Items?handler=Process&amp;amp;id=@item.Id&quot;
+            hx-target=&quot;#result-@item.Id&quot;
+            class=&quot;btn btn-primary&quot;&gt;
+        Process
+    &lt;/button&gt;
+    &lt;span id=&quot;result-@item.Id&quot;&gt;&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function handleButtonError(event, container) {
+    var resultSpan = container.querySelector('[id^=&quot;result-&quot;]');
+    if (resultSpan) {
+        resultSpan.innerHTML = '&lt;span class=&quot;text-danger&quot;&gt;Action failed. Please try again.&lt;/span&gt;';
+    }
+}
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p>Or handle errors server-side with appropriate status codes:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostProcess(int id)
+{
+    try
+    {
+        var item = _itemService.GetById(id);
+        if (item == null)
+        {
+            Response.StatusCode = 404;
+            return Content(&quot;&lt;span class=\&quot;text-warning\&quot;&gt;Item not found&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        _itemService.Process(item);
+        return Content(&quot;&lt;span class=\&quot;text-success\&quot;&gt;Processed successfully&lt;/span&gt;&quot;, &quot;text/html&quot;);
+    }
+    catch (Exception ex)
+    {
+        Response.StatusCode = 500;
+        return Content(&quot;&lt;span class=\&quot;text-danger\&quot;&gt;Processing failed&lt;/span&gt;&quot;, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>This chapter covered button and link patterns with htmx:</p>
+<ul>
+<li><strong><code v-pre>hx-prompt</code></strong> displays a browser prompt and sends input via the <code v-pre>HX-Prompt</code> header</li>
+<li><strong><code v-pre>hx-confirm</code></strong> shows a confirmation dialog before proceeding</li>
+<li><strong>Custom modal confirmations</strong> provide styled dialogs with more context</li>
+<li><strong>Toggle buttons</strong> switch state and update appearance immediately</li>
+<li><strong><code v-pre>hx-disabled-elt</code></strong> prevents double-submission by disabling elements during requests</li>
+<li><strong>Batch actions</strong> operate on multiple selected items</li>
+<li><strong>Action links</strong> trigger htmx requests instead of page navigation</li>
+<li><strong>Reusable partials</strong> create consistent button components</li>
+</ul>
+<p>These patterns make user interactions feel immediate and responsive while keeping all business logic on the server.</p>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>Chapter 15 covers loading indicators with <code v-pre>hx-indicator</code> and state preservation with <code v-pre>hx-preserve</code>. You will learn to show spinners during requests, maintain scroll position and form state across swaps, and create loading skeletons that make your application feel fast and polished.</p>
 
                                 
                                 <!-- Required only on API pages -->

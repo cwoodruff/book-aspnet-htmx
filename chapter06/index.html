@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Working with hx-put, hx-patch, and hx-delete</title>
     <meta name="title" content="Working with hx-put, hx-patch, and hx-delete">
-    <meta name="description" content="By incorporating hx-put, hx-patch, and hx-delete into your server interactions, you can significantly enhance your use of HTTP verbs.">
+    <meta name="description" content="Chapter 4 introduced all five HTTP methods with a basic CRUD example. Chapter 5 went deep on hx-get and ">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter06/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter06/">
     <meta property="og:title" content="Working with hx-put, hx-patch, and hx-delete">
-    <meta property="og:description" content="By incorporating hx-put, hx-patch, and hx-delete into your server interactions, you can significantly enhance your use of HTTP verbs.">
+    <meta property="og:description" content="Chapter 4 introduced all five HTTP methods with a basic CRUD example. Chapter 5 went deep on hx-get and ">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter06/">
     <meta property="twitter:title" content="Working with hx-put, hx-patch, and hx-delete">
-    <meta property="twitter:description" content="By incorporating hx-put, hx-patch, and hx-delete into your server interactions, you can significantly enhance your use of HTTP verbs.">
+    <meta property="twitter:description" content="Chapter 4 introduced all five HTTP methods with a basic CRUD example. Chapter 5 went deep on hx-get and ">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -247,134 +247,779 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="6" class="break-words">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#6">#</doc-anchor-trigger>
-        <span>6</span>
-    </h1>
-</doc-anchor-target>
-<doc-anchor-target id="working-with-hx-put-hx-patch-and-hx-delete">
+<doc-anchor-target id="working-with-hx-put-hx-patch-and-hx-delete" class="break-words">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#working-with-hx-put-hx-patch-and-hx-delete">#</doc-anchor-trigger>
-        <span>Working with hx-put, hx-patch, and hx-delete</span>
+        <span>Working with <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code></span>
     </h1>
 </doc-anchor-target>
-<p>By incorporating <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code> into your server interactions, you can significantly enhance your use of HTTP verbs. These commands, when combined with <code v-pre>hx-get</code> and <code v-pre>hx-post</code>, provide a comprehensive toolkit for robust, REST-like capabilities directly within your Razor Pages. This approach simplifies data updates and deletions, removing the need for complex JavaScript or extensive client-side frameworks.</p>
-<p>In this chapter, you will discover how these htmx attributes can effortlessly manage tasks such as modifying partial records, handling complex data updates, and removing unwanted elements—all while keeping your server-side logic centralized. You&#x27;ll see how using these verbs can streamline your workflow, maintain clean code, and enhance the user experience by providing near-instant feedback.</p>
-<p>Once you have explored <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code>, you will be equipped to perform real-world updates with minimal difficulty. These techniques will deepen your understanding of htmx and demonstrate how to leverage the full range of HTTP methods to keep your Razor Pages clean, efficient, and highly interactive.</p>
-<doc-anchor-target id="embracing-restful-updates-in-razor-pages">
+<p>Chapter 4 introduced all five HTTP methods with a basic CRUD example. Chapter 5 went deep on <code v-pre>hx-get</code> and <code v-pre>hx-post</code>. Now it is time to master the update and delete operations that make your applications feel truly interactive.</p>
+<p>This chapter goes beyond the basics. You will learn when to choose PUT over PATCH, how to handle deletion with proper user confirmation, and patterns for optimistic updates that make your UI feel instant. You will build undo functionality, handle conflicts when multiple users edit the same data, and implement soft delete for recoverable removals. These are the patterns that separate toy examples from production applications.</p>
+<doc-anchor-target id="understanding-put-vs-patch">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#embracing-restful-updates-in-razor-pages">#</doc-anchor-trigger>
-        <span>Embracing RESTful Updates in Razor Pages</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#understanding-put-vs-patch">#</doc-anchor-trigger>
+        <span>Understanding PUT vs PATCH</span>
     </h2>
 </doc-anchor-target>
-<p>RESTful principles emphasize the importance of using the correct HTTP methods to perform different actions, and htmx is an excellent fit for this approach. It provides easy-to-use HTML attributes for PUT, PATCH, and DELETE requests, aligning with RESTful conventions. Instead of relying solely on POST requests for every action, RESTful principles advocate using PUT for full updates, PATCH for partial modifications, and DELETE for removing data. This adherence to RESTful standards ensures that your code is both expressive and readable while following best practices, giving you confidence in your choice of technology.</p>
-<p>Transitioning from using <code v-pre>hx-post</code> to <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, or <code v-pre>hx-delete</code> is a straightforward process. You&#x27;re essentially instructing htmx to issue a different verb in the HTTP request, while the mechanics of fetching partial HTML and swapping it into your page remain unchanged. PUT is typically used to completely overwrite a resource, PATCH modifies it partially, and DELETE, as the name suggests, removes it entirely. The server code you write in your Razor Pages will handle these verbs by naming the handler methods appropriately, such as <code v-pre>OnPut()</code>, <code v-pre>OnPatch()</code>, and <code v-pre>OnDelete()</code>.</p>
-<p>To set up these handlers, define them in your Razor Page’s code-behind. For example, if you have a page called <code v-pre>EditUser.cshtml.cs</code>, you might include methods like:</p>
+<p>Both PUT and PATCH modify existing resources, but they serve different purposes.</p>
+<p><strong>PUT</strong> replaces a resource entirely. When you send a PUT request, you provide the complete new state of the resource. Any fields you omit are cleared or set to defaults. Use PUT when users are editing a complete form where all fields should be saved together.</p>
+<p><strong>PATCH</strong> modifies a resource partially. You send only the fields that changed. The server merges these changes with the existing data. Use PATCH for single-field updates, toggles, or when you want to minimize data transfer.</p>
+<p>Here is how this distinction plays out in practice:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPutEdit(int userId, string newName)
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// PUT: Replace the entire product
+public IActionResult OnPutUpdate(int id, ProductForm form)
 {
-    // Replace old data entirely
-    // Update the user’s name in your data store
-    return Content($&quot;&lt;div&gt;Updated user {userId} to {newName}&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
+
+    // All fields are replaced, even if form has empty values
+    product.Name = form.Name;
+    product.Description = form.Description;
+    product.Price = form.Price;
+    product.Stock = form.Stock;
+    product.Category = form.Category;
+    
+    _productService.Update(product);
+    return Partial(&quot;_ProductRow&quot;, product);
 }
 
-public IActionResult OnPatchEdit(int userId, string newName)
+// PATCH: Update only specific fields
+public IActionResult OnPatchStock(int id, int stock)
 {
-    // Partially update the user’s record, just changing the name
-    return Content($&quot;&lt;div&gt;Patched user {userId} to {newName}&lt;/div&gt;&quot;, &quot;text/html&quot;);
-}
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
 
-public IActionResult OnDeleteRemove(int userId)
-{
-    // Remove user from data store
-    return Content($&quot;&lt;div&gt;User {userId} has been removed&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    // Only stock is modified, other fields remain unchanged
+    product.Stock = stock;
+    
+    _productService.Update(product);
+    return Partial(&quot;_ProductRow&quot;, product);
 }</code></pre>
 </doc-codeblock></div>
-<p>Once the Razor Page logic is established, you can create the appropriate views that trigger these HTTP verbs using htmx attributes. For example, consider implementing inline content editing for a user&#x27;s name with the <code v-pre>hx-put</code> attribute. When the user clicks on their name, a text field appears, allowing them to enter a new value and save it. This text field acts as an input for the new username.</p>
+<p>The HTML reflects this distinction:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;span hx-get=&quot;/EditUser?handler=Edit&amp;userId=1&quot; hx-target=&quot;#editForm&quot; hx-swap=&quot;innerHTML&quot;&gt;
-    John Doe
-&lt;/span&gt;
-&lt;div id=&quot;editForm&quot;&gt;&lt;/div&gt;
-
-&lt;!-- In the partial that returns on hx-get --&gt;
-&lt;form hx-put=&quot;/EditUser?handler=Edit&amp;userId=1&quot; hx-target=&quot;#result&quot; hx-swap=&quot;innerHTML&quot;&gt;
-    &lt;input type=&quot;text&quot; name=&quot;newName&quot; value=&quot;John Doe&quot; /&gt;
-    &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- PUT: Full edit form --&gt;
+&lt;form hx-put=&quot;/Products?handler=Update&amp;amp;id=@product.Id&quot;
+      hx-target=&quot;#product-@product.Id&quot;
+      hx-swap=&quot;outerHTML&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;text&quot; name=&quot;Name&quot; value=&quot;@product.Name&quot; required /&gt;
+    &lt;input type=&quot;text&quot; name=&quot;Description&quot; value=&quot;@product.Description&quot; /&gt;
+    &lt;input type=&quot;number&quot; name=&quot;Price&quot; value=&quot;@product.Price&quot; step=&quot;0.01&quot; required /&gt;
+    &lt;input type=&quot;number&quot; name=&quot;Stock&quot; value=&quot;@product.Stock&quot; required /&gt;
+    &lt;select name=&quot;Category&quot;&gt;
+        @foreach (var cat in Model.Categories)
+        {
+            &lt;option value=&quot;@cat&quot; selected=&quot;@(cat == product.Category)&quot;&gt;@cat&lt;/option&gt;
+        }
+    &lt;/select&gt;
+    &lt;button type=&quot;submit&quot;&gt;Save All Changes&lt;/button&gt;
 &lt;/form&gt;
-&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
+
+&lt;!-- PATCH: Single field update --&gt;
+&lt;form hx-patch=&quot;/Products?handler=Stock&amp;amp;id=@product.Id&quot;
+      hx-target=&quot;#product-@product.Id&quot;
+      hx-swap=&quot;outerHTML&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;number&quot; name=&quot;stock&quot; value=&quot;@product.Stock&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Update Stock&lt;/button&gt;
+&lt;/form&gt;</code></pre>
 </doc-codeblock></div>
-<p>When you click on the name, a small form is loaded into the <code v-pre>editForm</code> container via an <code v-pre>hx-get</code> request. After entering a new name and submitting the form, htmx sends a PUT request to <code v-pre>/EditUser?handler=Edit&amp;userId=1</code>. The <code v-pre>OnPutEdit</code> method in your Razor Page handles the request, updates the data store, and returns a snippet of HTML that is swapped into the <code v-pre>#result</code> div, which is essential for updating the user interface.</p>
-<p>By adopting these methods, you create a more intuitive setup with a clearer separation of responsibilities. The server immediately understands the type of operation you want to perform, even before processing the code’s logic. This approach can lead to more consistent code across larger projects and prepares you to work with any tool or system that expects RESTful conventions by default.</p>
-<doc-anchor-target id="streamlining-removals-with-hx-delete">
+<doc-anchor-target id="anti-forgery-tokens-for-put-patch-and-delete">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#streamlining-removals-with-hx-delete">#</doc-anchor-trigger>
-        <span>Streamlining Removals with hx-delete</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#anti-forgery-tokens-for-put-patch-and-delete">#</doc-anchor-trigger>
+        <span>Anti-Forgery Tokens for PUT, PATCH, and DELETE</span>
     </h2>
 </doc-anchor-target>
-<p>Implementing data deletions with <code v-pre>hx-delete</code> not only allows you to seamlessly remove records but also provides users with immediate visual feedback, helping them understand the impact of your actions. By using the DELETE method instead of POST, your code becomes more expressive, clearly indicating the purpose of the request. When combined with Razor Pages’ <code v-pre>OnDelete()</code> handler, this method results in concise logic that communicates intent at a glance.</p>
-<p>For instance, if your application has a list of items to manage, you can provide a button or link that issues a DELETE request when clicked. In Razor Pages, you would name your handler method <code v-pre>OnDeleteSomething()</code>, allowing htmx to send a DELETE request to that endpoint. This is a common approach to effectively handling deletions.</p>
+<p>ASP.NET Core requires anti-forgery tokens for all state-changing requests. This protection applies to PUT, PATCH, and DELETE just as it does to POST.</p>
+<doc-anchor-target id="layout-configuration">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#layout-configuration">#</doc-anchor-trigger>
+        <span>Layout Configuration</span>
+    </h3>
+</doc-anchor-target>
+<p>Add this script to your <code v-pre>_Layout.cshtml</code> after the htmx script:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteUser(int userId)
-{
-    // Perform data store removal of user
-    bool success = DeleteUserFromDatabase(userId);
-    if (!success)
-        return BadRequest(&quot;Unable to delete user.&quot;);
-    return Content($&quot;&lt;div&gt;User {userId} was successfully deleted.&lt;/div&gt;&quot;, &quot;text/html&quot;);
-}</code></pre>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script src=&quot;https://unpkg.com/htmx.org@2.0.4&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+&lt;/script&gt;</code></pre>
 </doc-codeblock></div>
-<p>For the UI side, you can attach hx-delete to a link or button that targets your Razor Page handler. Each user row or entry in your HTML might include a removal link like this:</p>
+<doc-anchor-target id="token-placement">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#token-placement">#</doc-anchor-trigger>
+        <span>Token Placement</span>
+    </h3>
+</doc-anchor-target>
+<p>For forms, include the token inside the form:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;user-1&quot;&gt;
-    &lt;span&gt;Alice Smith&lt;/span&gt;
-    &lt;button hx-delete=&quot;/Users?handler=User&amp;userId=1&quot;
-            hx-target=&quot;#user-1&quot;
-            hx-swap=&quot;outerHTML&quot;&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-put=&quot;/Products?handler=Update&amp;amp;id=5&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;!-- form fields --&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>For buttons outside forms, include a token somewhere on the page:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@Html.AntiForgeryToken()
+
+&lt;button hx-delete=&quot;/Products?handler=Remove&amp;amp;id=5&quot;
+        hx-target=&quot;#product-5&quot;
+        hx-swap=&quot;outerHTML&quot;&gt;
+    Delete
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>The event listener in the layout will find the token and add it to all htmx requests automatically.</p>
+<doc-anchor-target id="implementing-delete-operations">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#implementing-delete-operations">#</doc-anchor-trigger>
+        <span>Implementing Delete Operations</span>
+    </h2>
+</doc-anchor-target>
+<p>Deletion requires careful handling. Users need confirmation before destructive actions, and the UI needs to reflect the removal immediately.</p>
+<doc-anchor-target id="basic-delete-with-confirmation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-delete-with-confirmation">#</doc-anchor-trigger>
+        <span>Basic Delete with Confirmation</span>
+    </h3>
+</doc-anchor-target>
+<p>The <code v-pre>hx-confirm</code> attribute shows a browser confirmation dialog before sending the request:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@Html.AntiForgeryToken()
+
+&lt;div id=&quot;item-@item.Id&quot; class=&quot;item-row&quot;&gt;
+    &lt;span&gt;@item.Name&lt;/span&gt;
+    &lt;button hx-delete=&quot;/Items?handler=Remove&amp;amp;id=@item.Id&quot;
+            hx-target=&quot;#item-@item.Id&quot;
+            hx-swap=&quot;outerHTML&quot;
+            hx-confirm=&quot;Delete '@item.Name'? This cannot be undone.&quot;
+            class=&quot;btn btn-danger&quot;&gt;
         Delete
     &lt;/button&gt;
 &lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>When clicked, this triggers a DELETE request, which the server processes in the <code v-pre>OnDeleteUser()</code> method. If the request is successful, it returns a snippet of HTML. In this case, we use <code v-pre>outerHTML</code> for the <code v-pre>hx-swap</code> attribute, allowing us to remove the user’s entire container from the DOM once the response is received. This creates a smooth effect where the user disappears from the list without requiring a page refresh.</p>
-<p>To provide users with additional feedback, you might choose to replace the deleted item’s row with a confirmation message. You can adjust the content returned in your <code v-pre>OnDelete</code> method or consider returning a partial view that confirms the user has been removed. Additionally, you could handle error conditions by returning an error message snippet, which htmx can then insert into the target area, informing users if something went wrong.</p>
-<p>Using <code v-pre>hx-delete</code> enhances clarity by allowing you to differentiate removal operations from other interactions. It also makes your code easier to understand and maintain. You naturally adhere to REST-like conventions within Razor Pages, resulting in an interface that feels immediate and responsive. This keeps your users engaged and connected without the complexities of managing multiple frontend frameworks.</p>
-<doc-anchor-target id="streamlined-restful-responses">
+<p>The handler removes the item and returns empty content:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteRemove(int id)
+{
+    var item = _itemService.GetById(id);
+    if (item == null)
+    {
+        return NotFound();
+    }
+
+    _itemService.Delete(id);
+    
+    // Return empty content to remove the element from the DOM
+    return Content(&quot;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>When htmx receives an empty response with <code v-pre>hx-swap=&quot;outerHTML&quot;</code>, it replaces the target element with nothing, effectively removing it from the page.</p>
+<doc-anchor-target id="why-nocontent-does-not-work-for-removal">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#why-nocontent-does-not-work-for-removal">#</doc-anchor-trigger>
+        <span>Why NoContent() Does Not Work for Removal</span>
+    </h3>
+</doc-anchor-target>
+<p>You might expect <code v-pre>return NoContent()</code> (HTTP 204) to work for deletions, but htmx handles 204 responses differently. When htmx receives a 204 No Content response, it does not perform any swap operation. The target element remains unchanged.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// This will NOT remove the element from the page
+public IActionResult OnDeleteRemove(int id)
+{
+    _itemService.Delete(id);
+    return NoContent(); // 204 status - htmx skips the swap
+}
+
+// This WILL remove the element
+public IActionResult OnDeleteRemove(int id)
+{
+    _itemService.Delete(id);
+    return Content(&quot;&quot;, &quot;text/html&quot;); // 200 status with empty body
+}</code></pre>
+</doc-codeblock></div>
+<p>Use <code v-pre>NoContent()</code> only when you do not want htmx to modify the DOM at all, such as for background operations or analytics tracking.</p>
+<doc-anchor-target id="delete-with-feedback-message">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#delete-with-feedback-message">#</doc-anchor-trigger>
+        <span>Delete with Feedback Message</span>
+    </h3>
+</doc-anchor-target>
+<p>Sometimes you want to show a confirmation message where the deleted item was:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteRemove(int id)
+{
+    var item = _itemService.GetById(id);
+    if (item == null)
+    {
+        return NotFound();
+    }
+
+    _itemService.Delete(id);
+    
+    return Content($&quot;&lt;div class=\&quot;deleted-message\&quot;&gt;'{item.Name}' has been deleted&lt;/div&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>Add CSS to fade out the message:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.deleted-message {
+    background: #d4edda;
+    padding: 10px;
+    animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; height: 0; padding: 0; margin: 0; }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="soft-delete-with-restore">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#streamlined-restful-responses">#</doc-anchor-trigger>
-        <span>Streamlined RESTful Responses</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#soft-delete-with-restore">#</doc-anchor-trigger>
+        <span>Soft Delete with Restore</span>
     </h2>
 </doc-anchor-target>
-<p>When using <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code>, it&#x27;s essential to customize your server responses to accurately indicate the success or failure of each request. For example, a <code v-pre>200 OK</code> status allows htmx to process an HTML snippet for updating your user interface. In contrast, a <code v-pre>204 No Content</code> status signals a successful update or deletion without needing to return any additional data. On the other hand, a <code v-pre>400 Bad Request</code> status indicates an error, and you can provide an error message to display on your page.</p>
-<p>Returning a 200 status code along with a small HTML partial to update a section of the page is a common scenario. This status code, which represents a complete success, can be implemented in your Razor Page as follows:</p>
+<p>Production applications often use soft delete, marking records as inactive rather than removing them permanently. This allows users to restore accidentally deleted items.</p>
+<doc-anchor-target id="the-model">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-model">#</doc-anchor-trigger>
+        <span>The Model</span>
+    </h3>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPutUpdate(int id, string value)
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class Document
 {
-    // Perform your update logic...
-    return Content($&quot;&lt;div&gt;Update successful for item {id}.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }</code></pre>
 </doc-codeblock></div>
-<p>If you don&#x27;t need to send back any new content, returning a 204 status code helps keep the process lightweight. This is especially useful when the user interface needs to remove the old element or make adjustments following a successful request. You can use the <code v-pre>NoContent()</code> method for this purpose.</p>
+<doc-anchor-target id="the-partial-views">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-partial-views">#</doc-anchor-trigger>
+        <span>The Partial Views</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Shared/_DocumentRow.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteItem(int id)
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model Document
+
+&lt;tr id=&quot;document-@Model.Id&quot; class=&quot;@(Model.IsDeleted ? &quot;deleted&quot; : &quot;&quot;)&quot;&gt;
+    &lt;td&gt;@Model.Title&lt;/td&gt;
+    &lt;td&gt;@Model.Content.Substring(0, Math.Min(50, Model.Content.Length))...&lt;/td&gt;
+    &lt;td&gt;
+        @if (Model.IsDeleted)
+        {
+            &lt;button hx-patch=&quot;/Documents?handler=Restore&amp;amp;id=@Model.Id&quot;
+                    hx-target=&quot;#document-@Model.Id&quot;
+                    hx-swap=&quot;outerHTML&quot;
+                    class=&quot;btn btn-sm btn-success&quot;&gt;
+                Restore
+            &lt;/button&gt;
+            &lt;button hx-delete=&quot;/Documents?handler=Permanent&amp;amp;id=@Model.Id&quot;
+                    hx-target=&quot;#document-@Model.Id&quot;
+                    hx-swap=&quot;outerHTML&quot;
+                    hx-confirm=&quot;Permanently delete this document? This cannot be undone.&quot;
+                    class=&quot;btn btn-sm btn-danger&quot;&gt;
+                Delete Forever
+            &lt;/button&gt;
+        }
+        else
+        {
+            &lt;button hx-get=&quot;/Documents?handler=Edit&amp;amp;id=@Model.Id&quot;
+                    hx-target=&quot;#document-@Model.Id&quot;
+                    hx-swap=&quot;outerHTML&quot;
+                    class=&quot;btn btn-sm btn-primary&quot;&gt;
+                Edit
+            &lt;/button&gt;
+            &lt;button hx-delete=&quot;/Documents?handler=Remove&amp;amp;id=@Model.Id&quot;
+                    hx-target=&quot;#document-@Model.Id&quot;
+                    hx-swap=&quot;outerHTML&quot;
+                    class=&quot;btn btn-sm btn-warning&quot;&gt;
+                Delete
+            &lt;/button&gt;
+        }
+    &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="the-handlers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-handlers">#</doc-anchor-trigger>
+        <span>The Handlers</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class DocumentsModel : PageModel
 {
-    // Perform delete logic...
-    return NoContent(); // Tells htmx there's nothing to replace, but it was successful
+    private readonly IDocumentService _documentService;
+
+    public DocumentsModel(IDocumentService documentService)
+    {
+        _documentService = documentService;
+    }
+
+    public List&lt;Document&gt; Documents { get; set; } = new();
+    public bool ShowDeleted { get; set; }
+
+    public void OnGet(bool showDeleted = false)
+    {
+        ShowDeleted = showDeleted;
+        Documents = showDeleted 
+            ? _documentService.GetAllIncludingDeleted()
+            : _documentService.GetActive();
+    }
+
+    // Soft delete - marks as deleted but preserves data
+    public IActionResult OnDeleteRemove(int id)
+    {
+        var document = _documentService.GetById(id);
+        if (document == null) return NotFound();
+
+        document.IsDeleted = true;
+        document.DeletedAt = DateTime.UtcNow;
+        _documentService.Update(document);
+
+        return Partial(&quot;_DocumentRow&quot;, document);
+    }
+
+    // Restore - brings back a soft-deleted document
+    public IActionResult OnPatchRestore(int id)
+    {
+        var document = _documentService.GetById(id);
+        if (document == null) return NotFound();
+
+        document.IsDeleted = false;
+        document.DeletedAt = null;
+        _documentService.Update(document);
+
+        return Partial(&quot;_DocumentRow&quot;, document);
+    }
+
+    // Permanent delete - removes from database entirely
+    public IActionResult OnDeletePermanent(int id)
+    {
+        var document = _documentService.GetById(id);
+        if (document == null) return NotFound();
+
+        _documentService.PermanentDelete(id);
+
+        return Content(&quot;&quot;, &quot;text/html&quot;);
+    }
 }</code></pre>
 </doc-codeblock></div>
-<p>When dealing with invalid input or failures, returning a 400 status code can help you clearly communicate errors. You can include a brief explanation of what went wrong in the response body:</p>
+<doc-anchor-target id="css-for-deleted-state">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#css-for-deleted-state">#</doc-anchor-trigger>
+        <span>CSS for Deleted State</span>
+    </h3>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPatchData(int id, string newValue)
-{
-    if (string.IsNullOrEmpty(newValue))
-        return BadRequest(&quot;Value cannot be empty.&quot;);
-    // Otherwise, perform your partial update...
-    return Content($&quot;&lt;p&gt;Item {id} successfully patched to '{newValue}'&lt;/p&gt;&quot;, &quot;text/html&quot;);
+<pre translate="no" class="language-css"><code v-pre class="language-css">tr.deleted {
+    opacity: 0.6;
+    background-color: #f8f9fa;
+}
+
+tr.deleted td:first-child::before {
+    content: &quot;[Deleted] &quot;;
+    font-style: italic;
+    color: #6c757d;
 }</code></pre>
 </doc-codeblock></div>
-<p>To ensure your user interface (UI) accurately reflects each response, consider the location where the snippet is being injected. For a 200 response that includes HTML, it&#x27;s advisable to target the parent container of the item so that htmx can visibly update the Document Object Model (DOM). If you return a 204 response, htmx won’t replace anything; therefore, make sure your client code accounts for the removal or refresh of relevant elements as necessary. In error cases, you can send back HTML that displays a message, targeting a specific container in the UI to ensure the message is clearly visible.</p>
-<p>Debugging these RESTful htmx operations is straightforward using your browser’s developer tools. Simply open the Network tab to view the headers and status codes of each request. A quick scan will show the issued verb, the data sent, and the server&#x27;s response. For real-time details, you can also attach event listeners for htmx hooks, such as htmx:beforeRequest or htmx:afterRequest, making the debugging process even easier.</p>
-<p>In the next chapter, we will explore how to gain precise control over where and how UI elements are updated once your server responds. By mastering <code v-pre>hx-target</code> and <code v-pre>hx-swap</code>, you will be able to fine-tune everything from small inline changes to entire page segments, all while maintaining a consistent UI and ensuring quick interactions.</p>
+<doc-anchor-target id="optimistic-updates">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#optimistic-updates">#</doc-anchor-trigger>
+        <span>Optimistic Updates</span>
+    </h2>
+</doc-anchor-target>
+<p>Standard htmx requests wait for the server response before updating the UI. For fast operations, this works fine. But for operations with noticeable latency, users appreciate immediate feedback.</p>
+<p>Optimistic updates show the expected result immediately, then correct if the server reports an error. This makes your application feel faster.</p>
+<doc-anchor-target id="toggle-with-optimistic-update">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#toggle-with-optimistic-update">#</doc-anchor-trigger>
+        <span>Toggle with Optimistic Update</span>
+    </h3>
+</doc-anchor-target>
+<p>Here is a task completion toggle that updates instantly:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;task-@task.Id&quot; class=&quot;task @(task.IsComplete ? &quot;complete&quot; : &quot;&quot;)&quot;&gt;
+    &lt;input type=&quot;checkbox&quot; 
+           @(task.IsComplete ? &quot;checked&quot; : &quot;&quot;)
+           hx-patch=&quot;/Tasks?handler=Toggle&amp;amp;id=@task.Id&quot;
+           hx-target=&quot;#task-@task.Id&quot;
+           hx-swap=&quot;outerHTML&quot;
+           hx-on:click=&quot;this.closest('.task').classList.toggle('complete')&quot; /&gt;
+    &lt;span class=&quot;task-title&quot;&gt;@task.Title&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>hx-on:click</code> attribute runs JavaScript immediately when clicked, toggling the visual state before the request completes. If the server returns successfully, the response replaces the element with the confirmed state. If the server returns an error, the response shows the original state.</p>
+<doc-anchor-target id="handling-optimistic-update-failures">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#handling-optimistic-update-failures">#</doc-anchor-trigger>
+        <span>Handling Optimistic Update Failures</span>
+    </h3>
+</doc-anchor-target>
+<p>For more control over failure handling, use htmx events:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;task-container&quot;&gt;
+    @foreach (var task in Model.Tasks)
+    {
+        &lt;partial name=&quot;_TaskItem&quot; model=&quot;task&quot; /&gt;
+    }
+&lt;/div&gt;
+
+&lt;script&gt;
+document.getElementById('task-container').addEventListener('htmx:beforeRequest', function(event) {
+    // Store original state before request
+    var target = event.detail.target;
+    target.dataset.originalHtml = target.outerHTML;
+});
+
+document.getElementById('task-container').addEventListener('htmx:responseError', function(event) {
+    // Restore original state on error
+    var target = event.detail.target;
+    if (target.dataset.originalHtml) {
+        target.outerHTML = target.dataset.originalHtml;
+    }
+    alert('Update failed. Please try again.');
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="handling-conflicts">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#handling-conflicts">#</doc-anchor-trigger>
+        <span>Handling Conflicts</span>
+    </h2>
+</doc-anchor-target>
+<p>When multiple users can edit the same data, conflicts arise. User A loads a record, User B modifies it, then User A tries to save their changes. Without conflict detection, User A would overwrite User B&#x27;s changes.</p>
+<doc-anchor-target id="optimistic-concurrency-with-row-version">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#optimistic-concurrency-with-row-version">#</doc-anchor-trigger>
+        <span>Optimistic Concurrency with Row Version</span>
+    </h3>
+</doc-anchor-target>
+<p>Add a version field to your model:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class Article
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public byte[] RowVersion { get; set; } = Array.Empty&lt;byte&gt;();
+}</code></pre>
+</doc-codeblock></div>
+<p>Include the version in your edit form:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-put=&quot;/Articles?handler=Update&amp;amp;id=@Model.Id&quot;
+      hx-target=&quot;#article-@Model.Id&quot;
+      hx-swap=&quot;outerHTML&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;hidden&quot; name=&quot;rowVersion&quot; value=&quot;@Convert.ToBase64String(Model.RowVersion)&quot; /&gt;
+    &lt;input type=&quot;text&quot; name=&quot;title&quot; value=&quot;@Model.Title&quot; required /&gt;
+    &lt;textarea name=&quot;content&quot; required&gt;@Model.Content&lt;/textarea&gt;
+    &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;conflict-message&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>The handler checks the version before saving:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPutUpdate(int id, string title, string content, string rowVersion)
+{
+    var article = _articleService.GetById(id);
+    if (article == null) return NotFound();
+
+    var clientVersion = Convert.FromBase64String(rowVersion);
+    
+    if (!article.RowVersion.SequenceEqual(clientVersion))
+    {
+        // Conflict detected - someone else modified this article
+        Response.StatusCode = 409;
+        return Content(@&quot;
+            &lt;div class=&quot;&quot;conflict-warning&quot;&quot;&gt;
+                &lt;p&gt;&lt;strong&gt;Conflict detected!&lt;/strong&gt;&lt;/p&gt;
+                &lt;p&gt;This article was modified by another user. Please refresh and try again.&lt;/p&gt;
+                &lt;button hx-get=&quot;&quot;/Articles?handler=View&amp;amp;id=&quot; + id + @&quot;&quot;&quot;
+                        hx-target=&quot;&quot;#article-&quot; + id + @&quot;&quot;&quot;
+                        hx-swap=&quot;&quot;outerHTML&quot;&quot;&gt;
+                    Refresh
+                &lt;/button&gt;
+            &lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    article.Title = title;
+    article.Content = content;
+    _articleService.Update(article);
+
+    return Partial(&quot;_ArticleRow&quot;, article);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="batch-operations">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#batch-operations">#</doc-anchor-trigger>
+        <span>Batch Operations</span>
+    </h2>
+</doc-anchor-target>
+<p>Sometimes you need to update or delete multiple items at once. Chapter 5 covered bulk operations with checkboxes. Here is the pattern applied to PUT and DELETE.</p>
+<doc-anchor-target id="batch-update">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#batch-update">#</doc-anchor-trigger>
+        <span>Batch Update</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@Html.AntiForgeryToken()
+
+&lt;div class=&quot;batch-controls&quot; hx-include=&quot;#inventory-form&quot;&gt;
+    &lt;label&gt;
+        Set all selected to category:
+        &lt;select name=&quot;newCategory&quot;&gt;
+            &lt;option value=&quot;electronics&quot;&gt;Electronics&lt;/option&gt;
+            &lt;option value=&quot;clothing&quot;&gt;Clothing&lt;/option&gt;
+            &lt;option value=&quot;food&quot;&gt;Food&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/label&gt;
+    &lt;button hx-patch=&quot;/Inventory?handler=BatchCategory&quot;
+            hx-target=&quot;#inventory-list&quot;&gt;
+        Apply to Selected
+    &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;form id=&quot;inventory-form&quot;&gt;
+    &lt;table&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;&lt;input type=&quot;checkbox&quot; id=&quot;select-all&quot; /&gt;&lt;/th&gt;
+                &lt;th&gt;Name&lt;/th&gt;
+                &lt;th&gt;Category&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody id=&quot;inventory-list&quot;&gt;
+            @foreach (var item in Model.Items)
+            {
+                &lt;partial name=&quot;_InventoryRow&quot; model=&quot;item&quot; /&gt;
+            }
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>The handler processes all selected items:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPatchBatchCategory(int[] ids, string newCategory)
+{
+    if (ids == null || ids.Length == 0)
+    {
+        return Content(&quot;&lt;tr&gt;&lt;td colspan=\&quot;3\&quot;&gt;No items selected&lt;/td&gt;&lt;/tr&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    var items = _inventoryService.GetByIds(ids);
+    
+    foreach (var item in items)
+    {
+        item.Category = newCategory;
+        _inventoryService.Update(item);
+    }
+
+    var allItems = _inventoryService.GetAll();
+    return Partial(&quot;_InventoryRows&quot;, allItems);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="batch-delete">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#batch-delete">#</doc-anchor-trigger>
+        <span>Batch Delete</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-delete=&quot;/Inventory?handler=BatchRemove&quot;
+        hx-target=&quot;#inventory-list&quot;
+        hx-confirm=&quot;Delete all selected items?&quot;
+        hx-include=&quot;#inventory-form&quot;&gt;
+    Delete Selected
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteBatchRemove(int[] ids)
+{
+    if (ids == null || ids.Length == 0)
+    {
+        return Content(&quot;&lt;tr&gt;&lt;td colspan=\&quot;3\&quot;&gt;No items selected&lt;/td&gt;&lt;/tr&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    _inventoryService.DeleteMany(ids);
+
+    var remainingItems = _inventoryService.GetAll();
+    return Partial(&quot;_InventoryRows&quot;, remainingItems);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="error-handling-for-update-operations">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#error-handling-for-update-operations">#</doc-anchor-trigger>
+        <span>Error Handling for Update Operations</span>
+    </h2>
+</doc-anchor-target>
+<p>Users need clear feedback when updates fail. Return appropriate HTTP status codes and error messages.</p>
+<doc-anchor-target id="validation-errors-400-bad-request">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#validation-errors-400-bad-request">#</doc-anchor-trigger>
+        <span>Validation Errors (400 Bad Request)</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPatchUpdatePrice(int id, decimal price)
+{
+    if (price &lt; 0)
+    {
+        Response.StatusCode = 400;
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;Price cannot be negative&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
+
+    product.Price = price;
+    _productService.Update(product);
+
+    return Partial(&quot;_ProductRow&quot;, product);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="not-found-404">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#not-found-404">#</doc-anchor-trigger>
+        <span>Not Found (404)</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDeleteRemove(int id)
+{
+    var item = _itemService.GetById(id);
+    if (item == null)
+    {
+        Response.StatusCode = 404;
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;Item not found. It may have been deleted.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    _itemService.Delete(id);
+    return Content(&quot;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="server-error-500">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#server-error-500">#</doc-anchor-trigger>
+        <span>Server Error (500)</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPutUpdate(int id, ProductForm form)
+{
+    try
+    {
+        var product = _productService.GetById(id);
+        if (product == null) return NotFound();
+
+        product.Name = form.Name;
+        product.Price = form.Price;
+        _productService.Update(product);
+
+        return Partial(&quot;_ProductRow&quot;, product);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, &quot;Failed to update product {Id}&quot;, id);
+        Response.StatusCode = 500;
+        return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;An error occurred. Please try again.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="client-side-error-handling">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#client-side-error-handling">#</doc-anchor-trigger>
+        <span>Client-Side Error Handling</span>
+    </h3>
+</doc-anchor-target>
+<p>Handle errors globally with htmx events:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script&gt;
+document.body.addEventListener('htmx:responseError', function(event) {
+    var status = event.detail.xhr.status;
+    
+    if (status === 401) {
+        window.location.href = '/Login';
+    } else if (status === 403) {
+        alert('You do not have permission to perform this action.');
+    } else if (status &gt;= 500) {
+        alert('Server error. Please try again later.');
+    }
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="debugging-put-patch-and-delete">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-put-patch-and-delete">#</doc-anchor-trigger>
+        <span>Debugging PUT, PATCH, and DELETE</span>
+    </h2>
+</doc-anchor-target>
+<p>When requests fail, use these debugging techniques.</p>
+<doc-anchor-target id="browser-network-tab">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#browser-network-tab">#</doc-anchor-trigger>
+        <span>Browser Network Tab</span>
+    </h3>
+</doc-anchor-target>
+<p>Open Developer Tools (F12), go to the Network tab, and filter by XHR/Fetch. Check:</p>
+<ul>
+<li><strong>Request Method</strong>: Is it PUT, PATCH, or DELETE as expected?</li>
+<li><strong>Request Headers</strong>: Is RequestVerificationToken present?</li>
+<li><strong>Request Body</strong>: Are form fields being sent correctly?</li>
+<li><strong>Response Status</strong>: 200, 204, 400, 404, 409, 500?</li>
+<li><strong>Response Body</strong>: What HTML is returned?</li>
+</ul>
+<doc-anchor-target id="common-issues">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-issues">#</doc-anchor-trigger>
+        <span>Common Issues</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>400 Bad Request</strong></p>
+<p>The anti-forgery token is missing. Ensure <code v-pre>@Html.AntiForgeryToken()</code> is on the page and the token-forwarding script is in your layout.</p>
+<p><strong>404 Not Found</strong></p>
+<p>The handler name does not match your method. <code v-pre>handler=Update</code> with PUT requires <code v-pre>OnPutUpdate()</code>.</p>
+<p><strong>405 Method Not Allowed</strong></p>
+<p>Your handler method is missing or named incorrectly. <code v-pre>OnPut*</code>, <code v-pre>OnPatch*</code>, and <code v-pre>OnDelete*</code> must be spelled exactly right and be public.</p>
+<p><strong>Element Not Removed After Delete</strong></p>
+<p>You may be returning <code v-pre>NoContent()</code> (204). Change to <code v-pre>return Content(&quot;&quot;, &quot;text/html&quot;)</code> to get a 200 response that htmx will process.</p>
+<p><strong>Update Does Not Appear</strong></p>
+<p>Check your <code v-pre>hx-target</code> selector. The element with that ID must exist on the page.</p>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>This chapter covered advanced patterns for <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, and <code v-pre>hx-delete</code>:</p>
+<ul>
+<li><strong>PUT vs PATCH</strong>: Use PUT for complete replacements, PATCH for partial updates</li>
+<li><strong>Anti-forgery tokens</strong>: Required for all state-changing requests</li>
+<li><strong>Element removal</strong>: Return empty content with 200 status, not NoContent()</li>
+<li><strong>hx-confirm</strong>: Require user confirmation before destructive operations</li>
+<li><strong>Soft delete</strong>: Mark records as deleted while preserving data for recovery</li>
+<li><strong>Optimistic updates</strong>: Update UI immediately, correct on error</li>
+<li><strong>Conflict handling</strong>: Use row versions to detect concurrent modifications</li>
+<li><strong>Batch operations</strong>: Update or delete multiple items with one request</li>
+<li><strong>Error handling</strong>: Return appropriate status codes and error messages</li>
+</ul>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>Chapter 7 explores <code v-pre>hx-target</code> and <code v-pre>hx-swap</code> in depth. You will learn advanced targeting with CSS selectors, multiple swap strategies, out-of-band updates for complex UI changes, and techniques for updating multiple page sections from a single response.</p>
 
                                 
                                 <!-- Required only on API pages -->

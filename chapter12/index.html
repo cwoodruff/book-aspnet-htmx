@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Building Blocks with HTML Components: Tabs and Accordions</title>
     <meta name="title" content="Building Blocks with HTML Components: Tabs and Accordions">
-    <meta name="description" content="If you've followed along so far, you've seen how htmx can inject interactivity into your ASP.">
+    <meta name="description" content="Tabs and accordions appear everywhere: dashboards, settings pages, FAQs, product details, documentation.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter12/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter12/">
     <meta property="og:title" content="Building Blocks with HTML Components: Tabs and Accordions">
-    <meta property="og:description" content="If you've followed along so far, you've seen how htmx can inject interactivity into your ASP.">
+    <meta property="og:description" content="Tabs and accordions appear everywhere: dashboards, settings pages, FAQs, product details, documentation.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter12/">
     <meta property="twitter:title" content="Building Blocks with HTML Components: Tabs and Accordions">
-    <meta property="twitter:description" content="If you've followed along so far, you've seen how htmx can inject interactivity into your ASP.">
+    <meta property="twitter:description" content="Tabs and accordions appear everywhere: dashboards, settings pages, FAQs, product details, documentation.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -253,243 +253,987 @@
         <span>Building Blocks with HTML Components: Tabs and Accordions</span>
     </h1>
 </doc-anchor-target>
-<p>If you&#x27;ve followed along so far, you&#x27;ve seen how htmx can inject interactivity into your ASP.NET Core Razor Pages apps with minimal effort—and even less JavaScript. We&#x27;ve tackled forms, modals, and lists, showing how htmx makes everyday UI patterns feel lighter and more dynamic. Now it&#x27;s time to bring that same approachability to a couple of common, yet surprisingly fiddly, UI elements: tabs and accordions.</p>
-<p>Tabs and accordions are everywhere—from dashboards and documentation pages to mobile menus and feature comparisons. But implementing them usually means reaching for JavaScript-heavy solutions, custom components, or client-side frameworks. Not here. In this chapter, we’ll show you how to build flexible, fully server-driven tabs and accordions using nothing more than HTML, Razor Pages, and htmx. No complex frontend logic, just smart, dynamic updates from your server.</p>
-<p>You’ll learn how to dynamically swap content, manage user-triggered state, and even enhance the experience further with a little Hyperscript magic—all while keeping your markup clean and your code easy to reason about. By the end, you’ll have practical, reusable components that fit right into your Razor Pages project, delivering a polished user experience without the usual overhead. Let&#x27;s get into it.</p>
-<doc-anchor-target id="building-tabbed-content-with-razor-pages-and-htmx">
+<p>Tabs and accordions appear everywhere: dashboards, settings pages, FAQs, product details, documentation. These components organize content into digestible sections that users reveal on demand. Traditional implementations require JavaScript to toggle visibility, manage state, and handle keyboard navigation. With htmx and Razor Pages, you can build these components with server-rendered content, lazy loading, and minimal client-side code.</p>
+<p>This chapter covers both patterns with complete implementations. You will build tabbed interfaces with active state management, URL integration for bookmarking, and proper accessibility. You will create accordions that expand and collapse smoothly, load content on demand, and support both single-open and multi-open behaviors. Every example includes the server-side code and CSS required to make it work.</p>
+<doc-anchor-target id="tabbed-interfaces">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#building-tabbed-content-with-razor-pages-and-htmx">#</doc-anchor-trigger>
-        <span>Building Tabbed Content with Razor Pages and htmx</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#tabbed-interfaces">#</doc-anchor-trigger>
+        <span>Tabbed Interfaces</span>
     </h2>
 </doc-anchor-target>
-<p>Tabbed interfaces are a staple of web applications. They let users quickly switch between different content panels without navigating away from the current page. Traditionally, tabs are powered by JavaScript: click handlers toggle classes, show and hide elements, and sometimes fetch data using fetch or jQuery’s AJAX. While this works, it often leads to bloated client-side logic and tight coupling between presentation and behavior. With htmx and Razor Pages, you can skip the JavaScript and let the server handle the logic—cleanly and declaratively.</p>
-<p>Let’s say you’re building a product details page in an e-commerce application. You want to show product information, specifications, and reviews as separate tabs. Instead of preloading everything or writing a JavaScript tab manager, you can load each section on demand using hx-get and target a shared container using hx-target.</p>
-<p>Start with your base Razor Page. Here&#x27;s the layout of the Product.cshtml page:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
-@model ProductModel
-
-&lt;h2&gt;@Model.ProductName&lt;/h2&gt;
-
-&lt;div class=&quot;tabs&quot;&gt;
-    &lt;button hx-get=&quot;/Product?handler=Info&amp;productId=@Model.ProductId&quot; hx-target=&quot;#tab-content&quot; hx-swap=&quot;innerHTML&quot;&gt;Info&lt;/button&gt;
-    &lt;button hx-get=&quot;/Product?handler=Specs&amp;productId=@Model.ProductId&quot; hx-target=&quot;#tab-content&quot; hx-swap=&quot;innerHTML&quot;&gt;Specifications&lt;/button&gt;
-    &lt;button hx-get=&quot;/Product?handler=Reviews&amp;productId=@Model.ProductId&quot; hx-target=&quot;#tab-content&quot; hx-swap=&quot;innerHTML&quot;&gt;Reviews&lt;/button&gt;
-&lt;/div&gt;
-
-&lt;div id=&quot;tab-content&quot; class=&quot;tab-content&quot;&gt;
-    &lt;p&gt;Select a tab to view details.&lt;/p&gt;
-&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>Each tab is a button that triggers an hx-get request. The target is the #tab-content div, which means the content returned by the server will be swapped into that element. We&#x27;re using hx-swap=&quot;innerHTML&quot; to ensure we’re only replacing the content inside the container, not the element itself—so any layout or CSS styles applied to #tab-content remain intact.</p>
-<p>Now let’s look at the Product.cshtml.cs page model. We’ll handle each tab request with a separate handler:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ProductModel : PageModel
-{
-    public string ProductName { get; set; } = &quot;Contoso Headphones&quot;;
-    public int ProductId { get; set; } = 42;
-
-    public IActionResult OnGetInfo(int productId)
-    {
-        var html = &quot;&lt;p&gt;This is a great pair of wireless headphones with noise cancellation and 20-hour battery life.&lt;/p&gt;&quot;;
-        return Content(html, &quot;text/html&quot;);
-    }
-
-    public IActionResult OnGetSpecs(int productId)
-    {
-        var html = &quot;&lt;ul&gt;&lt;li&gt;Bluetooth 5.2&lt;/li&gt;&lt;li&gt;Noise Cancellation&lt;/li&gt;&lt;li&gt;USB-C Charging&lt;/li&gt;&lt;/ul&gt;&quot;;
-        return Content(html, &quot;text/html&quot;);
-    }
-
-    public IActionResult OnGetReviews(int productId)
-    {
-        var html = &quot;&lt;p&gt;⭐️⭐️⭐️⭐️☆ - Sounds amazing and battery lasts all day.&lt;/p&gt;&quot;;
-        return Content(html, &quot;text/html&quot;);
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p>Each tab triggers a unique handler based on the ?handler= query string. Razor Pages routes the request appropriately, and each handler returns a snippet of HTML. Because htmx expects just a fragment, there’s no need to wrap this in a full layout or view—just return the markup you want injected into the tab container.</p>
-<p>This approach is refreshingly simple. You don’t preload any unnecessary content, you don’t maintain tab state on the client, and you don’t worry about client-side lifecycle events. The tabs remain clickable HTML buttons, and your Razor Pages backend handles the logic of what to render and when.</p>
-<p>You can make it even more elegant by moving the HTML fragments into partial views, but the core idea remains the same: using hx-get to fetch content, hx-target to decide where it goes, and hx-swap to control how it’s inserted. Combined, they give you a robust tab interface with almost no JavaScript and all the power of Razor Pages behind the scenes.</p>
-<doc-anchor-target id="crafting-lazy-loaded-faq-accordions-with-razor-pages-and-htmx">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#crafting-lazy-loaded-faq-accordions-with-razor-pages-and-htmx">#</doc-anchor-trigger>
-        <span>Crafting Lazy-Loaded FAQ Accordions with Razor Pages and htmx</span>
-    </h2>
+<p>Tabs let users switch between content panels without page navigation. Each tab represents a view, and clicking it reveals the associated content while hiding others.</p>
+<doc-anchor-target id="basic-tab-structure">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-tab-structure">#</doc-anchor-trigger>
+        <span>Basic Tab Structure</span>
+    </h3>
 </doc-anchor-target>
-<p>While tabs present side-by-side content views that users toggle between, accordions follow a more vertical, stacked pattern. They’re often used when you want to let users drill into specific content without overwhelming the page visually—think FAQs, documentation, or expandable panels in a dashboard. The challenge with traditional accordion implementations is that they either load all content up front (leading to bloated pages) or require JavaScript to manage show/hide logic. With htmx, we can ditch the JavaScript and avoid the preload penalty by lazily loading content as users expand each section.</p>
-<p>Let’s build an FAQ section where clicking a question expands the answer—but the answer isn’t fetched until the user wants to see it. This is where hx-get and hx-target really shine. You send a request when the accordion header is clicked and inject the response into a specific area under that question.</p>
-<p>Start with a Razor Page called Faq.cshtml. Here’s what the markup might look like:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
-@model FaqModel
-
-&lt;h2&gt;Frequently Asked Questions&lt;/h2&gt;
-
-&lt;div class=&quot;accordion&quot;&gt;
-    &lt;div class=&quot;question&quot;&gt;
-        &lt;h3&gt;
-            &lt;button hx-get=&quot;/Faq?handler=Answer&amp;id=1&quot; hx-target=&quot;#answer-1&quot; hx-swap=&quot;innerHTML&quot;&gt;
-                What is your return policy?
-            &lt;/button&gt;
-        &lt;/h3&gt;
-        &lt;div id=&quot;answer-1&quot; class=&quot;answer&quot;&gt;&lt;/div&gt;
-    &lt;/div&gt;
-
-    &lt;div class=&quot;question&quot;&gt;
-        &lt;h3&gt;
-            &lt;button hx-get=&quot;/Faq?handler=Answer&amp;id=2&quot; hx-target=&quot;#answer-2&quot; hx-swap=&quot;innerHTML&quot;&gt;
-                Do you ship internationally?
-            &lt;/button&gt;
-        &lt;/h3&gt;
-        &lt;div id=&quot;answer-2&quot; class=&quot;answer&quot;&gt;&lt;/div&gt;
-    &lt;/div&gt;
-
-    &lt;div class=&quot;question&quot;&gt;
-        &lt;h3&gt;
-            &lt;button hx-get=&quot;/Faq?handler=Answer&amp;id=3&quot; hx-target=&quot;#answer-3&quot; hx-swap=&quot;innerHTML&quot;&gt;
-                How do I request a refund?
-            &lt;/button&gt;
-        &lt;/h3&gt;
-        &lt;div id=&quot;answer-3&quot; class=&quot;answer&quot;&gt;&lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>Each question has a button that makes a lazy request to load the answer. When clicked, htmx sends an HTTP GET request to the appropriate handler and injects the returned answer into the div just beneath the question. The rest of the page remains untouched—no full reloads, no DOM juggling.</p>
-<p>The Faq.cshtml.cs page model handles the responses. Here&#x27;s how you could return answers based on an ID:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class FaqModel : PageModel
-{
-    private readonly Dictionary&lt;int, string&gt; _answers = new()
-    {
-        { 1, &quot;You can return any item within 30 days of delivery for a full refund.&quot; },
-        { 2, &quot;Yes, we ship to over 50 countries worldwide. Shipping costs vary by region.&quot; },
-        { 3, &quot;To request a refund, visit your order history and click 'Request Refund' next to the item.&quot; }
-    };
-
-    public IActionResult OnGetAnswer(int id)
-    {
-        if (_answers.TryGetValue(id, out var answer))
-        {
-            return Content($&quot;&lt;p&gt;{answer}&lt;/p&gt;&quot;, &quot;text/html&quot;);
-        }
-
-        return NotFound();
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p id="">This model keeps things simple. Each answer is returned as a raw HTML snippet, injected directly into the #answer- element targeted by the button. You avoid bloating the initial page load, and each section only loads when needed—making it perfect for mobile or bandwidth-sensitive users.</p>
-<p>This lazy loading pattern also scales well. You could pull FAQ content from a database or CMS and still only query what&#x27;s necessary. And since the interaction is server-driven, you don’t have to manage state in the browser. It’s all declarative and minimal.</p>
-<p>By leaning on htmx’s ability to surgically update the DOM, you create a snappy, interactive accordion interface that feels modern without leaning on a frontend framework. No JavaScript toggling, no preloading unnecessary data—just a clean, efficient FAQ that works out of the box.</p>
-<doc-anchor-target id="polishing-tab-interactions-with-hyperscript-and-razor-pages">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#polishing-tab-interactions-with-hyperscript-and-razor-pages">#</doc-anchor-trigger>
-        <span>Polishing Tab Interactions with Hyperscript and Razor Pages</span>
-    </h2>
-</doc-anchor-target>
-<p>htmx makes it easy to fetch and swap content for tab interfaces, but it doesn’t manage visual state—like highlighting which tab is active or animating content transitions. That’s where Hyperscript comes in. Hyperscript is a small scripting language that plays beautifully with htmx and HTML, allowing you to add behavior directly to elements without reaching for full JavaScript. In a tabbed interface, it helps tie the whole experience together with just a few readable attributes.</p>
-<p>Let’s take a simple tabbed dashboard and level it up. We’ll show active tab highlighting, apply a smooth fade-in animation when switching content, and even enable keyboard navigation for accessibility. Start with a basic layout for Dashboard.cshtml:</p>
+<p>Start with the HTML structure:</p>
+<p><strong>Pages/Dashboard.cshtml:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
 @model DashboardModel
 
-&lt;h2&gt;My Dashboard&lt;/h2&gt;
+&lt;h1&gt;Dashboard&lt;/h1&gt;
 
-&lt;div class=&quot;tabs&quot; _=&quot;on click(target) from button
-                     if target matches button
-                       remove .active from .tabs button
-                       add .active to target
-                       get target.getAttribute('hx-get') then put it into #panel with a fade transition&quot;&gt;
-    &lt;button class=&quot;active&quot; hx-get=&quot;/Index?handler=Overview&quot;&gt;Overview&lt;/button&gt;
-    &lt;button hx-get=&quot;/Index?handler=Reports&quot;&gt;Reports&lt;/button&gt;
-    &lt;button hx-get=&quot;/Index?handler=Settings&quot;&gt;Settings&lt;/button&gt;
-&lt;/div&gt;
+&lt;div class=&quot;tabs-container&quot;&gt;
+    &lt;div class=&quot;tab-list&quot; role=&quot;tablist&quot;&gt;
+        @foreach (var tab in Model.Tabs)
+        {
+            &lt;button role=&quot;tab&quot;
+                    id=&quot;tab-@tab.Id&quot;
+                    aria-selected=&quot;@(Model.ActiveTab == tab.Id ? &quot;true&quot; : &quot;false&quot;)&quot;
+                    aria-controls=&quot;tab-panel&quot;
+                    class=&quot;tab-button @(Model.ActiveTab == tab.Id ? &quot;active&quot; : &quot;&quot;)&quot;
+                    hx-get=&quot;/Dashboard?handler=@tab.Handler&quot;
+                    hx-target=&quot;#tab-panel&quot;
+                    hx-swap=&quot;innerHTML&quot;
+                    hx-indicator=&quot;#tab-spinner&quot;
+                    _=&quot;on click remove .active from .tab-button then add .active to me&quot;&gt;
+                @tab.Label
+            &lt;/button&gt;
+        }
+        &lt;span id=&quot;tab-spinner&quot; class=&quot;htmx-indicator&quot;&gt;Loading...&lt;/span&gt;
+    &lt;/div&gt;
 
-
-&lt;div id=&quot;panel&quot; class=&quot;tab-panel fade&quot;&gt;
-    &lt;p&gt;Select a tab to view content.&lt;/p&gt;
+    &lt;div id=&quot;tab-panel&quot; 
+         role=&quot;tabpanel&quot; 
+         aria-labelledby=&quot;tab-@Model.ActiveTab&quot;
+         class=&quot;tab-panel&quot;&gt;
+        @switch (Model.ActiveTab)
+        {
+            case &quot;overview&quot;:
+                &lt;partial name=&quot;_OverviewTab&quot; model=&quot;Model.OverviewData&quot; /&gt;
+                break;
+            case &quot;analytics&quot;:
+                &lt;partial name=&quot;_AnalyticsTab&quot; model=&quot;Model.AnalyticsData&quot; /&gt;
+                break;
+            case &quot;settings&quot;:
+                &lt;partial name=&quot;_SettingsTab&quot; model=&quot;Model.SettingsData&quot; /&gt;
+                break;
+            default:
+                &lt;partial name=&quot;_OverviewTab&quot; model=&quot;Model.OverviewData&quot; /&gt;
+                break;
+        }
+    &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>Notice the _= attribute. That’s Hyperscript. When a button is clicked, Hyperscript removes the .active class from all buttons, adds it to the clicked one, performs the fetch using the @hx-get attribute, and injects the result into the #panel element—with a fade effect for smoothness. You get both state management and animation in a single, declarative snippet.</p>
-<p>To make the transitions feel polished, we define the .fade class in your CSS:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-css"><code v-pre class="language-css">.tab-panel.fade {
-opacity: 0;
-transition: opacity 0.3s ease-in-out;
-}
-
-.tab-panel.fade.active {
-opacity: 1;
-}</code></pre>
-</doc-codeblock></div>
-<p>This subtle transition improves the user experience by gently fading in the new content. No jarring swaps, no sudden layout shifts—just a smoother feel that modern users expect.</p>
-<p>But let’s not forget accessibility. Tabs should be keyboard-navigable. Hyperscript can help here too. You can use the on keydown event to support left/right navigation between tab buttons:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button tabindex=&quot;0&quot;
-        _=&quot;on keydown[key is 'ArrowRight'] then
-            call nextElementSibling.click()
-            on keydown[key is 'ArrowLeft'] then
-            call previousElementSibling.click()&quot;
-        hx-get=&quot;/Dashboard?handler=Overview&quot;&gt;
-    Overview
-&lt;/button&gt;</code></pre>
-</doc-codeblock></div>
-<p>Each tab button listens for arrow key presses and programmatically triggers the next or previous button’s click event. With just a few more lines, all your tabs are now keyboard-friendly without needing a full ARIA role setup.</p>
-<p>Finally, here’s how the backend handles the content. In Dashboard.cshtml.cs:</p>
+<p><strong>Pages/Dashboard.cshtml.cs:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class DashboardModel : PageModel
 {
-public IActionResult OnGetOverview() =&gt;
-Content(&quot;&lt;p&gt;Welcome to your personalized overview.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    private readonly IDashboardService _dashboardService;
 
-    public IActionResult OnGetReports() =&gt;
-        Content(&quot;&lt;p&gt;Here are your latest reports and analytics.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    public DashboardModel(IDashboardService dashboardService)
+    {
+        _dashboardService = dashboardService;
+    }
 
-    public IActionResult OnGetSettings() =&gt;
-        Content(&quot;&lt;p&gt;Update your preferences and configurations here.&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    public string ActiveTab { get; set; } = &quot;overview&quot;;
+    public OverviewData? OverviewData { get; set; }
+    public AnalyticsData? AnalyticsData { get; set; }
+    public SettingsData? SettingsData { get; set; }
+
+    public List&lt;TabDefinition&gt; Tabs { get; } = new()
+    {
+        new TabDefinition { Id = &quot;overview&quot;, Label = &quot;Overview&quot;, Handler = &quot;Overview&quot; },
+        new TabDefinition { Id = &quot;analytics&quot;, Label = &quot;Analytics&quot;, Handler = &quot;Analytics&quot; },
+        new TabDefinition { Id = &quot;settings&quot;, Label = &quot;Settings&quot;, Handler = &quot;Settings&quot; }
+    };
+
+    public IActionResult OnGet(string tab = &quot;overview&quot;)
+    {
+        ActiveTab = tab;
+        LoadTabData(tab);
+
+        // htmx request returns partial only
+        if (Request.Headers.ContainsKey(&quot;HX-Request&quot;))
+        {
+            return GetPartialForTab(tab);
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnGetOverview()
+    {
+        OverviewData = _dashboardService.GetOverview();
+        return Partial(&quot;_OverviewTab&quot;, OverviewData);
+    }
+
+    public IActionResult OnGetAnalytics()
+    {
+        AnalyticsData = _dashboardService.GetAnalytics();
+        return Partial(&quot;_AnalyticsTab&quot;, AnalyticsData);
+    }
+
+    public IActionResult OnGetSettings()
+    {
+        SettingsData = _dashboardService.GetSettings();
+        return Partial(&quot;_SettingsTab&quot;, SettingsData);
+    }
+
+    private void LoadTabData(string tab)
+    {
+        switch (tab)
+        {
+            case &quot;analytics&quot;:
+                AnalyticsData = _dashboardService.GetAnalytics();
+                break;
+            case &quot;settings&quot;:
+                SettingsData = _dashboardService.GetSettings();
+                break;
+            default:
+                OverviewData = _dashboardService.GetOverview();
+                break;
+        }
+    }
+
+    private IActionResult GetPartialForTab(string tab)
+    {
+        return tab switch
+        {
+            &quot;analytics&quot; =&gt; Partial(&quot;_AnalyticsTab&quot;, _dashboardService.GetAnalytics()),
+            &quot;settings&quot; =&gt; Partial(&quot;_SettingsTab&quot;, _dashboardService.GetSettings()),
+            _ =&gt; Partial(&quot;_OverviewTab&quot;, _dashboardService.GetOverview())
+        };
+    }
+}
+
+public class TabDefinition
+{
+    public string Id { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
+    public string Handler { get; set; } = string.Empty;
 }</code></pre>
 </doc-codeblock></div>
-<p>Combining htmx, Razor Pages, and Hyperscript creates a powerful pattern: the server controls what content is shown, htmx controls how it&#x27;s fetched and inserted, and Hyperscript enhances the UX with visual polish and behavior—all without reaching for a heavyweight framework. The result is a dashboard that feels dynamic and professional, with minimal code and maximum clarity.</p>
-<doc-anchor-target id="refining-tab-and-accordion-ux-with-state-caching-and-reusability">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#refining-tab-and-accordion-ux-with-state-caching-and-reusability">#</doc-anchor-trigger>
-        <span>Refining Tab and Accordion UX with State, Caching, and Reusability</span>
-    </h2>
-</doc-anchor-target>
-<p>As you start introducing more interactivity into your Razor Pages app with tabs and accordions, user experience becomes more than just the visuals—it’s about performance, state awareness, and reusability. A polished UI doesn’t just look nice; it behaves intuitively. That’s what we’ll focus on in this final section: how to optimize your tab and accordion components for a smooth, stateful, and maintainable user experience.</p>
-<p>One of the most underrated improvements you can make to tabbed interfaces is handling browser history. With htmx, you can easily enable deep-linking into specific tabs by using hx-push-url. When a user clicks a tab, the URL updates with a query or fragment that reflects the active section. This allows bookmarking and sharing of specific views. For example:</p>
+<p><strong>Tab partial example - Pages/Shared/_OverviewTab.cshtml:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Product?handler=Specs&amp;productId=42&quot;
-        hx-target=&quot;#tab-content&quot;
-        hx-swap=&quot;innerHTML&quot;
-        hx-push-url=&quot;true&quot;&gt;
-    Specifications
-&lt;/button&gt;</code></pre>
-</doc-codeblock></div>
-<p>In your page model, you can detect the query string on initial load and preselect the right tab server-side. If someone shares a link to the Specs tab, it will load directly into that state, giving a seamless deep-link experience.</p>
-<p>Another important UX consideration is performance. If users frequently switch between tabs or accordion panels, hitting the server each time can feel sluggish and unnecessary. You can cache previously loaded content on the client using a little Hyperscript or htmx’s hx-boost and hx-history-elt to prevent re-fetching. An easy pattern is to store the loaded HTML in a local element’s dataset, and reuse it if it’s already there, like this:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
-            if my.dataset.loaded is not 'true'
-            get my @hx-get then put it into #tab-content
-            set my.dataset.loaded to 'true'
-        else
-            put my.nextElementSibling.innerHTML into #tab-content&quot;&gt;
-    Overview
-&lt;/button&gt;
-&lt;div hidden&gt;
-    &lt;div&gt;Cached content goes here after first load&lt;/div&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model OverviewData
+
+&lt;div class=&quot;overview-content&quot;&gt;
+    &lt;h2&gt;Welcome back!&lt;/h2&gt;
+    
+    &lt;div class=&quot;stats-grid&quot;&gt;
+        &lt;div class=&quot;stat-card&quot;&gt;
+            &lt;h3&gt;Total Users&lt;/h3&gt;
+            &lt;p class=&quot;stat-value&quot;&gt;@Model.TotalUsers.ToString(&quot;N0&quot;)&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;stat-card&quot;&gt;
+            &lt;h3&gt;Active Sessions&lt;/h3&gt;
+            &lt;p class=&quot;stat-value&quot;&gt;@Model.ActiveSessions.ToString(&quot;N0&quot;)&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;stat-card&quot;&gt;
+            &lt;h3&gt;Revenue&lt;/h3&gt;
+            &lt;p class=&quot;stat-value&quot;&gt;@Model.Revenue.ToString(&quot;C&quot;)&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;h3&gt;Recent Activity&lt;/h3&gt;
+    &lt;ul&gt;
+        @foreach (var activity in Model.RecentActivity)
+        {
+            &lt;li&gt;@activity.Description - @activity.Timestamp.ToString(&quot;g&quot;)&lt;/li&gt;
+        }
+    &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>By caching the response in a sibling element or data attribute, you can prevent repeat network calls while still delivering dynamic behavior. You can also make use of htmx’s hx-trigger=&quot;load once&quot; or hx-request=&quot;once&quot; attributes depending on your specific needs.</p>
-<p>To ensure maintainability as your app grows, it’s worth breaking out tabs and accordions into partials. Keep the layout shell in your main page and render the dynamic content from partial views using Razor. Not only does this reduce code duplication, but it also lets you reuse patterns across the app—especially helpful for admin dashboards or product views that share common UI structures.</p>
-<p>For example, a reusable tab section might look like this:</p>
+<doc-anchor-target id="tab-css">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#tab-css">#</doc-anchor-trigger>
+        <span>Tab CSS</span>
+    </h3>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">@await Html.PartialAsync(&quot;_ProductTabs&quot;, new ProductTabModel { ProductId = Model.ProductId })</code></pre>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.tabs-container {
+    margin: 1rem 0;
+}
+
+.tab-list {
+    display: flex;
+    gap: 0.25rem;
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 0;
+}
+
+.tab-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    font-size: 1rem;
+    color: #6c757d;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-button:hover {
+    color: #495057;
+}
+
+.tab-button.active {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+    font-weight: 500;
+}
+
+.tab-button:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: -2px;
+}
+
+.tab-panel {
+    padding: 1.5rem 0;
+}
+
+.htmx-indicator {
+    display: none;
+    margin-left: 0.5rem;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline-block;
+}
+
+.htmx-request .tab-button {
+    pointer-events: none;
+    opacity: 0.7;
+}</code></pre>
 </doc-codeblock></div>
-<p>And each tab’s content is fetched from dedicated partials returned by their respective page handlers. This structure scales well and keeps concerns separated.</p>
-<p>With these refinements—history awareness, lazy-loading with caching, and component reusability—you’re not just building interactive UI, you’re building thoughtful, production-ready experiences. Tabs and accordions should feel fast, remember user context, and integrate naturally into your Razor Pages application.</p>
-<p>In the next chapter, we’ll take this same mindset into dynamic lists and tables. You’ll learn how to build interfaces that support real-time updates, client-driven filtering, and pagination—all with the same htmx fundamentals we’ve covered here. Lists and tables are the backbone of many business apps, and now that you’ve got a solid foundation with tabs and accordions, you’ll be ready to level up the complexity.</p>
+<doc-anchor-target id="tabs-with-url-integration">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#tabs-with-url-integration">#</doc-anchor-trigger>
+        <span>Tabs with URL Integration</span>
+    </h3>
+</doc-anchor-target>
+<p>Add <code v-pre>hx-push-url</code> to make tabs bookmarkable and support browser back/forward:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button role=&quot;tab&quot;
+        class=&quot;tab-button @(Model.ActiveTab == &quot;overview&quot; ? &quot;active&quot; : &quot;&quot;)&quot;
+        hx-get=&quot;/Dashboard?handler=Overview&quot;
+        hx-target=&quot;#tab-panel&quot;
+        hx-push-url=&quot;/Dashboard?tab=overview&quot;
+        hx-indicator=&quot;#tab-spinner&quot;
+        _=&quot;on click remove .active from .tab-button then add .active to me&quot;&gt;
+    Overview
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>Add <code v-pre>hx-history-elt</code> to the tab panel for proper history restoration:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;tab-panel&quot; role=&quot;tabpanel&quot; hx-history-elt&gt;
+    &lt;!-- content --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Now users can:</p>
+<ul>
+<li>Bookmark specific tabs</li>
+<li>Share links to specific tabs</li>
+<li>Use back/forward buttons to navigate between tabs</li>
+<li>Refresh the page and stay on the current tab</li>
+</ul>
+<doc-anchor-target id="product-detail-tabs">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#product-detail-tabs">#</doc-anchor-trigger>
+        <span>Product Detail Tabs</span>
+    </h3>
+</doc-anchor-target>
+<p>A common pattern for e-commerce or content sites:</p>
+<p><strong>Pages/Product.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page &quot;{id:int}&quot;
+@model ProductModel
+
+&lt;div class=&quot;product-header&quot;&gt;
+    &lt;h1&gt;@Model.Product.Name&lt;/h1&gt;
+    &lt;p class=&quot;price&quot;&gt;@Model.Product.Price.ToString(&quot;C&quot;)&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;product-tabs&quot;&gt;
+    &lt;div class=&quot;tab-list&quot; role=&quot;tablist&quot;&gt;
+        &lt;button role=&quot;tab&quot;
+                class=&quot;tab-button active&quot;
+                hx-get=&quot;/Product/@Model.Product.Id?handler=Description&quot;
+                hx-target=&quot;#product-tab-content&quot;
+                hx-push-url=&quot;/Product/@Model.Product.Id?tab=description&quot;
+                _=&quot;on click remove .active from .tab-button then add .active to me&quot;&gt;
+            Description
+        &lt;/button&gt;
+        &lt;button role=&quot;tab&quot;
+                class=&quot;tab-button&quot;
+                hx-get=&quot;/Product/@Model.Product.Id?handler=Specifications&quot;
+                hx-target=&quot;#product-tab-content&quot;
+                hx-push-url=&quot;/Product/@Model.Product.Id?tab=specifications&quot;
+                _=&quot;on click remove .active from .tab-button then add .active to me&quot;&gt;
+            Specifications
+        &lt;/button&gt;
+        &lt;button role=&quot;tab&quot;
+                class=&quot;tab-button&quot;
+                hx-get=&quot;/Product/@Model.Product.Id?handler=Reviews&quot;
+                hx-target=&quot;#product-tab-content&quot;
+                hx-push-url=&quot;/Product/@Model.Product.Id?tab=reviews&quot;
+                _=&quot;on click remove .active from .tab-button then add .active to me&quot;&gt;
+            Reviews (@Model.Product.ReviewCount)
+        &lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;div id=&quot;product-tab-content&quot; role=&quot;tabpanel&quot; hx-history-elt&gt;
+        &lt;partial name=&quot;_ProductDescription&quot; model=&quot;Model.Product&quot; /&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Product.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ProductModel : PageModel
+{
+    private readonly IProductService _productService;
+    private readonly IReviewService _reviewService;
+
+    public ProductModel(IProductService productService, IReviewService reviewService)
+    {
+        _productService = productService;
+        _reviewService = reviewService;
+    }
+
+    public Product Product { get; set; } = null!;
+    public string ActiveTab { get; set; } = &quot;description&quot;;
+
+    public IActionResult OnGet(int id, string tab = &quot;description&quot;)
+    {
+        Product = _productService.GetById(id);
+        if (Product == null) return NotFound();
+
+        ActiveTab = tab;
+
+        if (Request.Headers.ContainsKey(&quot;HX-Request&quot;))
+        {
+            return tab switch
+            {
+                &quot;specifications&quot; =&gt; Partial(&quot;_ProductSpecifications&quot;, Product),
+                &quot;reviews&quot; =&gt; Partial(&quot;_ProductReviews&quot;, _reviewService.GetForProduct(id)),
+                _ =&gt; Partial(&quot;_ProductDescription&quot;, Product)
+            };
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnGetDescription(int id)
+    {
+        var product = _productService.GetById(id);
+        if (product == null) return NotFound();
+        return Partial(&quot;_ProductDescription&quot;, product);
+    }
+
+    public IActionResult OnGetSpecifications(int id)
+    {
+        var product = _productService.GetById(id);
+        if (product == null) return NotFound();
+        return Partial(&quot;_ProductSpecifications&quot;, product);
+    }
+
+    public IActionResult OnGetReviews(int id)
+    {
+        var reviews = _reviewService.GetForProduct(id);
+        return Partial(&quot;_ProductReviews&quot;, reviews);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_ProductSpecifications.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model Product
+
+&lt;table class=&quot;specs-table&quot;&gt;
+    &lt;tbody&gt;
+        @foreach (var spec in Model.Specifications)
+        {
+            &lt;tr&gt;
+                &lt;th&gt;@spec.Name&lt;/th&gt;
+                &lt;td&gt;@spec.Value&lt;/td&gt;
+            &lt;/tr&gt;
+        }
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_ProductReviews.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model List&lt;Review&gt;
+
+&lt;div class=&quot;reviews-list&quot;&gt;
+    @if (Model.Any())
+    {
+        @foreach (var review in Model)
+        {
+            &lt;div class=&quot;review-card&quot;&gt;
+                &lt;div class=&quot;review-header&quot;&gt;
+                    &lt;span class=&quot;reviewer&quot;&gt;@review.AuthorName&lt;/span&gt;
+                    &lt;span class=&quot;rating&quot;&gt;
+                        @for (int i = 0; i &lt; review.Rating; i++)
+                        {
+                            &lt;span class=&quot;star filled&quot;&gt;★&lt;/span&gt;
+                        }
+                        @for (int i = review.Rating; i &lt; 5; i++)
+                        {
+                            &lt;span class=&quot;star&quot;&gt;☆&lt;/span&gt;
+                        }
+                    &lt;/span&gt;
+                    &lt;span class=&quot;date&quot;&gt;@review.CreatedAt.ToString(&quot;MMM d, yyyy&quot;)&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;p class=&quot;review-text&quot;&gt;@review.Text&lt;/p&gt;
+            &lt;/div&gt;
+        }
+    }
+    else
+    {
+        &lt;p&gt;No reviews yet. Be the first to review this product!&lt;/p&gt;
+    }
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="accordion-components">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#accordion-components">#</doc-anchor-trigger>
+        <span>Accordion Components</span>
+    </h2>
+</doc-anchor-target>
+<p>Accordions stack content sections vertically, allowing users to expand and collapse individual sections. They work well for FAQs, settings panels, and any content where users need access to specific sections without seeing everything at once.</p>
+<doc-anchor-target id="basic-accordion">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-accordion">#</doc-anchor-trigger>
+        <span>Basic Accordion</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/FAQ.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model FAQModel
+
+&lt;h1&gt;Frequently Asked Questions&lt;/h1&gt;
+
+&lt;div class=&quot;accordion&quot;&gt;
+    @foreach (var item in Model.Questions)
+    {
+        &lt;div class=&quot;accordion-item&quot; id=&quot;faq-@item.Id&quot;&gt;
+            &lt;button class=&quot;accordion-header&quot;
+                    aria-expanded=&quot;false&quot;
+                    aria-controls=&quot;faq-content-@item.Id&quot;
+                    hx-get=&quot;/FAQ?handler=Answer&amp;amp;id=@item.Id&quot;
+                    hx-target=&quot;#faq-content-@item.Id&quot;
+                    hx-swap=&quot;innerHTML&quot;
+                    _=&quot;on click 
+                       if I match @aria-expanded='true'
+                           set @aria-expanded to 'false'
+                           remove .open from next .accordion-content
+                       else
+                           set @aria-expanded to 'true'
+                           add .open to next .accordion-content
+                       end&quot;&gt;
+                &lt;span class=&quot;accordion-title&quot;&gt;@item.Question&lt;/span&gt;
+                &lt;span class=&quot;accordion-icon&quot;&gt;▼&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;div id=&quot;faq-content-@item.Id&quot; 
+                 class=&quot;accordion-content&quot;
+                 role=&quot;region&quot;
+                 aria-labelledby=&quot;faq-@item.Id&quot;&gt;
+                &lt;!-- Answer loads here --&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    }
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/FAQ.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class FAQModel : PageModel
+{
+    private readonly IFAQService _faqService;
+
+    public FAQModel(IFAQService faqService)
+    {
+        _faqService = faqService;
+    }
+
+    public List&lt;FAQQuestion&gt; Questions { get; set; } = new();
+
+    public void OnGet()
+    {
+        Questions = _faqService.GetAllQuestions();
+    }
+
+    public IActionResult OnGetAnswer(int id)
+    {
+        var answer = _faqService.GetAnswer(id);
+        if (answer == null) return NotFound();
+        return Partial(&quot;_FAQAnswer&quot;, answer);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_FAQAnswer.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model FAQAnswer
+
+&lt;div class=&quot;answer-content&quot;&gt;
+    @Html.Raw(Model.HtmlContent)
+    
+    @if (Model.RelatedLinks.Any())
+    {
+        &lt;div class=&quot;related-links&quot;&gt;
+            &lt;h4&gt;Related Articles&lt;/h4&gt;
+            &lt;ul&gt;
+                @foreach (var link in Model.RelatedLinks)
+                {
+                    &lt;li&gt;&lt;a href=&quot;@link.Url&quot;&gt;@link.Title&lt;/a&gt;&lt;/li&gt;
+                }
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    }
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="accordion-css">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#accordion-css">#</doc-anchor-trigger>
+        <span>Accordion CSS</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.accordion {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accordion-header {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    transition: background-color 0.15s;
+}
+
+.accordion-header:hover {
+    background: #e9ecef;
+}
+
+.accordion-header:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: -2px;
+}
+
+.accordion-icon {
+    transition: transform 0.3s ease;
+    font-size: 0.75rem;
+}
+
+.accordion-header[aria-expanded=&quot;true&quot;] .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    background: white;
+}
+
+.accordion-content.open {
+    max-height: 1000px;
+    padding: 1rem 1.25rem;
+}
+
+.answer-content {
+    line-height: 1.6;
+}
+
+.answer-content p {
+    margin-bottom: 1rem;
+}
+
+.related-links {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.related-links h4 {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="single-open-accordion">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#single-open-accordion">#</doc-anchor-trigger>
+        <span>Single-Open Accordion</span>
+    </h3>
+</doc-anchor-target>
+<p>For accordions where only one section should be open at a time:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;accordion&quot; id=&quot;settings-accordion&quot;&gt;
+    @foreach (var section in Model.Sections)
+    {
+        &lt;div class=&quot;accordion-item&quot;&gt;
+            &lt;button class=&quot;accordion-header&quot;
+                    aria-expanded=&quot;false&quot;
+                    hx-get=&quot;/Settings?handler=Section&amp;amp;id=@section.Id&quot;
+                    hx-target=&quot;#section-content-@section.Id&quot;
+                    hx-swap=&quot;innerHTML&quot;
+                    _=&quot;on click
+                       -- Close all other sections first
+                       remove .open from .accordion-content in #settings-accordion
+                       set @aria-expanded to 'false' on .accordion-header in #settings-accordion
+                       -- Then open this one
+                       set @aria-expanded to 'true' on me
+                       add .open to next .accordion-content&quot;&gt;
+                @section.Title
+                &lt;span class=&quot;accordion-icon&quot;&gt;▼&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;div id=&quot;section-content-@section.Id&quot; class=&quot;accordion-content&quot;&gt;
+                &lt;!-- Content loads here --&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    }
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="accordion-with-preloaded-content">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#accordion-with-preloaded-content">#</doc-anchor-trigger>
+        <span>Accordion with Preloaded Content</span>
+    </h3>
+</doc-anchor-target>
+<p>If content is small and you want instant expansion without server requests:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@foreach (var item in Model.FAQItems)
+{
+    &lt;div class=&quot;accordion-item&quot;&gt;
+        &lt;button class=&quot;accordion-header&quot;
+                aria-expanded=&quot;false&quot;
+                _=&quot;on click
+                   if I match @aria-expanded='true'
+                       set @aria-expanded to 'false'
+                       remove .open from next .accordion-content
+                   else
+                       set @aria-expanded to 'true'
+                       add .open to next .accordion-content
+                   end&quot;&gt;
+            @item.Question
+            &lt;span class=&quot;accordion-icon&quot;&gt;▼&lt;/span&gt;
+        &lt;/button&gt;
+        &lt;div class=&quot;accordion-content&quot;&gt;
+            &lt;p&gt;@item.Answer&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+}</code></pre>
+</doc-codeblock></div>
+<p>No htmx needed here since content is already in the page. Hyperscript handles the expand/collapse.</p>
+<doc-anchor-target id="accordion-with-cached-content">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#accordion-with-cached-content">#</doc-anchor-trigger>
+        <span>Accordion with Cached Content</span>
+    </h3>
+</doc-anchor-target>
+<p>Load content once, then use cached version on subsequent opens:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button class=&quot;accordion-header&quot;
+        aria-expanded=&quot;false&quot;
+        hx-get=&quot;/FAQ?handler=Answer&amp;amp;id=@item.Id&quot;
+        hx-target=&quot;#faq-content-@item.Id&quot;
+        hx-swap=&quot;innerHTML&quot;
+        hx-trigger=&quot;click once&quot;
+        _=&quot;on click
+           if I match @aria-expanded='true'
+               set @aria-expanded to 'false'
+               remove .open from next .accordion-content
+           else
+               set @aria-expanded to 'true'
+               add .open to next .accordion-content
+           end&quot;&gt;
+    @item.Question
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>hx-trigger=&quot;click once&quot;</code> ensures htmx only fetches content on the first click. Subsequent clicks just toggle visibility using Hyperscript.</p>
+<doc-anchor-target id="accessibility">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#accessibility">#</doc-anchor-trigger>
+        <span>Accessibility</span>
+    </h2>
+</doc-anchor-target>
+<p>Tabs and accordions have specific accessibility requirements.</p>
+<doc-anchor-target id="tab-accessibility">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#tab-accessibility">#</doc-anchor-trigger>
+        <span>Tab Accessibility</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;tab-list&quot; role=&quot;tablist&quot; aria-label=&quot;Dashboard sections&quot;&gt;
+    &lt;button role=&quot;tab&quot;
+            id=&quot;tab-overview&quot;
+            aria-selected=&quot;true&quot;
+            aria-controls=&quot;panel-overview&quot;
+            tabindex=&quot;0&quot;
+            class=&quot;tab-button active&quot;&gt;
+        Overview
+    &lt;/button&gt;
+    &lt;button role=&quot;tab&quot;
+            id=&quot;tab-analytics&quot;
+            aria-selected=&quot;false&quot;
+            aria-controls=&quot;panel-analytics&quot;
+            tabindex=&quot;-1&quot;
+            class=&quot;tab-button&quot;&gt;
+        Analytics
+    &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div role=&quot;tabpanel&quot;
+     id=&quot;panel-overview&quot;
+     aria-labelledby=&quot;tab-overview&quot;
+     tabindex=&quot;0&quot;&gt;
+    &lt;!-- content --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Key requirements:</p>
+<ul>
+<li>Container has <code v-pre>role=&quot;tablist&quot;</code></li>
+<li>Tabs have <code v-pre>role=&quot;tab&quot;</code> and <code v-pre>aria-selected</code></li>
+<li>Active tab has <code v-pre>tabindex=&quot;0&quot;</code>, others have <code v-pre>tabindex=&quot;-1&quot;</code></li>
+<li>Panels have <code v-pre>role=&quot;tabpanel&quot;</code> and <code v-pre>aria-labelledby</code></li>
+</ul>
+<doc-anchor-target id="keyboard-navigation-for-tabs">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#keyboard-navigation-for-tabs">#</doc-anchor-trigger>
+        <span>Keyboard Navigation for Tabs</span>
+    </h3>
+</doc-anchor-target>
+<p>Add arrow key navigation:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;tab-list&quot; 
+     role=&quot;tablist&quot;
+     _=&quot;on keydown[key is 'ArrowRight'] from .tab-button
+            get the next .tab-button from event.target
+            if it exists trigger click on it then it.focus()
+        on keydown[key is 'ArrowLeft'] from .tab-button
+            get the previous .tab-button from event.target
+            if it exists trigger click on it then it.focus()
+        on keydown[key is 'Home'] from .tab-button
+            get the first .tab-button
+            trigger click on it then it.focus()
+        on keydown[key is 'End'] from .tab-button
+            get the last .tab-button
+            trigger click on it then it.focus()&quot;&gt;
+    &lt;!-- tabs --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="accordion-accessibility">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#accordion-accessibility">#</doc-anchor-trigger>
+        <span>Accordion Accessibility</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;accordion-item&quot;&gt;
+    &lt;h3&gt;
+        &lt;button class=&quot;accordion-header&quot;
+                id=&quot;accordion-header-1&quot;
+                aria-expanded=&quot;false&quot;
+                aria-controls=&quot;accordion-panel-1&quot;&gt;
+            Section Title
+        &lt;/button&gt;
+    &lt;/h3&gt;
+    &lt;div id=&quot;accordion-panel-1&quot;
+         role=&quot;region&quot;
+         aria-labelledby=&quot;accordion-header-1&quot;
+         class=&quot;accordion-content&quot;
+         hidden&gt;
+        &lt;!-- content --&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Use the <code v-pre>hidden</code> attribute alongside CSS for proper accessibility:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.accordion-content[hidden] {
+    display: block; /* Override hidden for CSS animation */
+    max-height: 0;
+    overflow: hidden;
+}
+
+.accordion-content:not([hidden]) {
+    max-height: 1000px;
+}</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+           if next .accordion-content matches [hidden]
+               remove @hidden from next .accordion-content
+               set @aria-expanded to 'true'
+           else
+               add @hidden to next .accordion-content
+               set @aria-expanded to 'false'
+           end&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="error-handling">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#error-handling">#</doc-anchor-trigger>
+        <span>Error Handling</span>
+    </h2>
+</doc-anchor-target>
+<p>Handle failed requests gracefully:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;tab-panel&quot;
+     hx-on::response-error=&quot;showTabError(event)&quot;
+     hx-on::send-error=&quot;showTabError(event)&quot;&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function showTabError(event) {
+    var panel = document.getElementById('tab-panel');
+    panel.innerHTML = `
+        &lt;div class=&quot;alert alert-danger&quot;&gt;
+            &lt;h4&gt;Failed to Load Content&lt;/h4&gt;
+            &lt;p&gt;There was a problem loading this section. Please try again.&lt;/p&gt;
+            &lt;button onclick=&quot;location.reload()&quot; class=&quot;btn btn-outline-danger&quot;&gt;
+                Reload Page
+            &lt;/button&gt;
+        &lt;/div&gt;
+    `;
+}
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="loading-states">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#loading-states">#</doc-anchor-trigger>
+        <span>Loading States</span>
+    </h2>
+</doc-anchor-target>
+<p>Show loading feedback during content fetch:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;tab-list&quot;&gt;
+    &lt;button hx-get=&quot;/Dashboard?handler=Analytics&quot;
+            hx-target=&quot;#tab-panel&quot;
+            hx-indicator=&quot;#tab-panel&quot;
+            class=&quot;tab-button&quot;&gt;
+        Analytics
+    &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;tab-panel&quot; class=&quot;tab-panel&quot;&gt;
+    &lt;!-- content --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">#tab-panel.htmx-request {
+    opacity: 0.5;
+    pointer-events: none;
+    position: relative;
+}
+
+#tab-panel.htmx-request::after {
+    content: &quot;Loading...&quot;;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="reusable-tab-component">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#reusable-tab-component">#</doc-anchor-trigger>
+        <span>Reusable Tab Component</span>
+    </h2>
+</doc-anchor-target>
+<p>Create a partial for consistent tab styling across your application:</p>
+<p><strong>Pages/Shared/_TabContainer.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model TabContainerModel
+
+&lt;div class=&quot;tabs-container&quot;&gt;
+    &lt;div class=&quot;tab-list&quot; role=&quot;tablist&quot; aria-label=&quot;@Model.AriaLabel&quot;&gt;
+        @foreach (var tab in Model.Tabs)
+        {
+            &lt;button role=&quot;tab&quot;
+                    id=&quot;tab-@tab.Id&quot;
+                    aria-selected=&quot;@(Model.ActiveTabId == tab.Id ? &quot;true&quot; : &quot;false&quot;)&quot;
+                    aria-controls=&quot;@Model.PanelId&quot;
+                    class=&quot;tab-button @(Model.ActiveTabId == tab.Id ? &quot;active&quot; : &quot;&quot;)&quot;
+                    hx-get=&quot;@tab.Url&quot;
+                    hx-target=&quot;#@Model.PanelId&quot;
+                    hx-swap=&quot;innerHTML&quot;
+                    hx-push-url=&quot;@(Model.EnableHistory ? tab.PushUrl : null)&quot;
+                    hx-indicator=&quot;#@(Model.PanelId)-spinner&quot;
+                    _=&quot;on click remove .active from .tab-button in closest .tabs-container then add .active to me&quot;&gt;
+                @tab.Label
+            &lt;/button&gt;
+        }
+        &lt;span id=&quot;@(Model.PanelId)-spinner&quot; class=&quot;htmx-indicator&quot;&gt;Loading...&lt;/span&gt;
+    &lt;/div&gt;
+
+    &lt;div id=&quot;@Model.PanelId&quot; 
+         role=&quot;tabpanel&quot;
+         class=&quot;tab-panel&quot;
+         @(Model.EnableHistory ? &quot;hx-history-elt&quot; : &quot;&quot;)&gt;
+        @Model.InitialContent
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Use it:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;partial name=&quot;_TabContainer&quot; model=&quot;new TabContainerModel
+{
+    AriaLabel = &quot;Product information&quot;,
+    PanelId = &quot;product-tabs&quot;,
+    ActiveTabId = Model.ActiveTab,
+    EnableHistory = true,
+    Tabs = new List&lt;TabModel&gt;
+    {
+        new() { Id = &quot;desc&quot;, Label = &quot;Description&quot;, Url = &quot;/Product/&quot; + Model.Id + &quot;?handler=Description&quot;, PushUrl = &quot;/Product/&quot; + Model.Id + &quot;?tab=desc&quot; },
+        new() { Id = &quot;specs&quot;, Label = &quot;Specifications&quot;, Url = &quot;/Product/&quot; + Model.Id + &quot;?handler=Specs&quot;, PushUrl = &quot;/Product/&quot; + Model.Id + &quot;?tab=specs&quot; },
+        new() { Id = &quot;reviews&quot;, Label = &quot;Reviews&quot;, Url = &quot;/Product/&quot; + Model.Id + &quot;?handler=Reviews&quot;, PushUrl = &quot;/Product/&quot; + Model.Id + &quot;?tab=reviews&quot; }
+    },
+    InitialContent = await Html.PartialAsync(&quot;_ProductDescription&quot;, Model.Product)
+}&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>This chapter covered tabs and accordions with htmx and Razor Pages:</p>
+<ul>
+<li><strong>Tabs</strong> switch between content panels with lazy loading via <code v-pre>hx-get</code></li>
+<li><strong>Active state</strong> managed with Hyperscript class toggling</li>
+<li><strong>URL integration</strong> uses <code v-pre>hx-push-url</code> and <code v-pre>hx-history-elt</code> for bookmarkable tabs</li>
+<li><strong>Accordions</strong> expand/collapse sections with <code v-pre>aria-expanded</code> and CSS transitions</li>
+<li><strong>Single-open accordions</strong> close other sections when opening a new one</li>
+<li><strong>Cached content</strong> uses <code v-pre>hx-trigger=&quot;click once&quot;</code> to load content only once</li>
+<li><strong>Accessibility</strong> requires proper ARIA roles, states, and keyboard navigation</li>
+<li><strong>Error handling</strong> shows user-friendly messages when requests fail</li>
+<li><strong>Loading states</strong> provide feedback during content fetch</li>
+</ul>
+<p>These patterns give you interactive, accessible navigation components without JavaScript frameworks.</p>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>Chapter 13 covers dynamic lists and tables. You will learn to build sortable, filterable tables with server-side data, pagination that works with htmx, inline row editing, and real-time updates for live data displays.</p>
 
                                 
                                 <!-- Required only on API pages -->

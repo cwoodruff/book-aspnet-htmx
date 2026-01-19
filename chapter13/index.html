@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Building Blocks with HTML Components: Lists and Tables</title>
     <meta name="title" content="Building Blocks with HTML Components: Lists and Tables">
-    <meta name="description" content="Now that you've seen how forms, modals, tabs, and accordions can come to life with just a dash of htmx magic, it’s time to explore two of the most...">
+    <meta name="description" content="Lists and tables display the data that drives business applications: product catalogs, user directories, transaction histories, order queues, audit...">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter13/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter13/">
     <meta property="og:title" content="Building Blocks with HTML Components: Lists and Tables">
-    <meta property="og:description" content="Now that you've seen how forms, modals, tabs, and accordions can come to life with just a dash of htmx magic, it’s time to explore two of the most...">
+    <meta property="og:description" content="Lists and tables display the data that drives business applications: product catalogs, user directories, transaction histories, order queues, audit...">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter13/">
     <meta property="twitter:title" content="Building Blocks with HTML Components: Lists and Tables">
-    <meta property="twitter:description" content="Now that you've seen how forms, modals, tabs, and accordions can come to life with just a dash of htmx magic, it’s time to explore two of the most...">
+    <meta property="twitter:description" content="Lists and tables display the data that drives business applications: product catalogs, user directories, transaction histories, order queues, audit...">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -253,258 +253,1242 @@
         <span>Building Blocks with HTML Components: Lists and Tables</span>
     </h1>
 </doc-anchor-target>
-<p>Now that you&#x27;ve seen how forms, modals, tabs, and accordions can come to life with just a dash of htmx magic, it’s time to explore two of the most foundational elements of any web application: lists and tables. Whether you’re presenting product catalogs, user directories, or transaction histories, these components are at the heart of turning raw data into something structured, visual, and usable.</p>
-<p>In the world of server-rendered applications, updating tables or filtering lists used to mean one thing—full page reloads. That’s no longer the case. With htmx integrated into Razor Pages, we can provide highly responsive, seamless list and table interactions without introducing heavy frontend frameworks or duplicating business logic on the client. The result? Less code, better performance, and happier developers.</p>
-<p>This chapter isn’t just about displaying data—it’s about making it dynamic. We&#x27;ll look at how to load tables on demand, paginate large datasets, and even sort or filter content—all while staying within the comfort of your existing Razor Page models and partials. htmx handles the interactions, your server handles the logic, and your users get a smooth, modern experience.</p>
-<p>You won’t need to re-learn everything from earlier chapters, but you will be building on concepts like hx-get, hx-trigger, and hx-target. If forms were your first taste of dynamic server interaction, lists and tables are where those techniques really start to shine. Let’s dive into how to make your data-driven components both powerful and elegant.</p>
-<doc-anchor-target id="making-tables-talk-dynamic-data-with-hx-get-and-hx-trigger">
+<p>Lists and tables display the data that drives business applications: product catalogs, user directories, transaction histories, order queues, audit logs. Traditional server-rendered tables require full page reloads to sort, filter, or paginate. That experience feels dated. Users expect to click a column header and see results instantly. They expect to scroll and load more items without navigating to a new page. They expect to delete a row and watch it disappear.</p>
+<p>htmx delivers these interactions with server-rendered HTML. Your Razor Pages return table rows and list items as partial views. htmx swaps them into the page. No JavaScript frameworks. No client-side data binding. No duplicated business logic. The server owns the data, the filtering, the sorting, the pagination. The client displays what the server sends.</p>
+<p>This chapter covers the patterns you need: dynamic table updates, sorting with clickable headers, pagination with page controls, infinite scroll for continuous loading, inline editing and deletion, and the combination of all these features into a cohesive data grid.</p>
+<doc-anchor-target id="anti-forgery-configuration">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#making-tables-talk-dynamic-data-with-hx-get-and-hx-trigger">#</doc-anchor-trigger>
-        <span>Making Tables Talk: Dynamic Data with <code v-pre>hx-get</code> and <code v-pre>hx-trigger</code></span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#anti-forgery-configuration">#</doc-anchor-trigger>
+        <span>Anti-Forgery Configuration</span>
     </h2>
 </doc-anchor-target>
-<p>When you’re working with large datasets—think product catalogs, order histories, or game leaderboards—the performance and user experience of your table views become critical. If every change in state requires a full page reload, you’re not just wasting bandwidth; you’re also breaking the user’s rhythm. That’s where htmx steps in. With just a couple of attributes—<code v-pre>hx-get</code> and <code v-pre>hx-trigger</code>—you can dynamically fetch and refresh table data on demand or even in real time, all while keeping your backend logic clean and server-driven.</p>
-<p>Server-driven updates are not only simpler to maintain but also more scalable. When the server owns the rendering logic, you&#x27;re free from the burden of duplicating state and behavior in JavaScript. It also means you can return precisely the markup you want, already formatted, sorted, and styled, without needing the client to piece things together. This pays off especially when you’re dealing with large amounts of data: paging, filtering, and updating become server responsibilities, reducing load on the client and giving you a more secure, maintainable architecture.</p>
-<p>Let’s see this in action with a leaderboard scenario. Imagine you’re building a competitive trivia game, and you want to show the top 10 players as they race for first place. You don’t want to refresh the entire page every few seconds, but you do want the table to stay current as new scores come in.</p>
-<p>First, let’s create the Razor Page endpoint that will serve the leaderboard data. This can be a partial view that returns just the table rows:</p>
+<p>Before building lists with delete and edit operations, configure anti-forgery token handling. Add this to your layout so all htmx requests include the token:</p>
+<p><strong>Pages/Shared/_Layout.cshtml (in the head or before closing body):</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Pages/Leaderboard.cshtml.cs
-public class LeaderboardModel : PageModel
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@Html.AntiForgeryToken()
+
+&lt;script&gt;
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p>This ensures DELETE, PUT, and POST requests from htmx include the anti-forgery token.</p>
+<doc-anchor-target id="dynamic-table-updates">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#dynamic-table-updates">#</doc-anchor-trigger>
+        <span>Dynamic Table Updates</span>
+    </h2>
+</doc-anchor-target>
+<p>Tables that refresh without page reloads create a responsive experience. Use <code v-pre>hx-get</code> to fetch updated rows and <code v-pre>hx-trigger</code> to control when updates happen.</p>
+<doc-anchor-target id="live-leaderboard">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#live-leaderboard">#</doc-anchor-trigger>
+        <span>Live Leaderboard</span>
+    </h3>
+</doc-anchor-target>
+<p>A leaderboard that updates every few seconds:</p>
+<p><strong>Pages/Leaderboard.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model LeaderboardModel
+
+&lt;h1&gt;Leaderboard&lt;/h1&gt;
+
+&lt;div class=&quot;leaderboard-container&quot;&gt;
+    &lt;div class=&quot;leaderboard-header&quot;&gt;
+        &lt;span id=&quot;last-update&quot;&gt;Last updated: @DateTime.Now.ToString(&quot;h:mm:ss tt&quot;)&lt;/span&gt;
+        &lt;button hx-get=&quot;/Leaderboard?handler=Rows&quot;
+                hx-target=&quot;#leaderboard-body&quot;
+                hx-swap=&quot;innerHTML&quot;
+                hx-indicator=&quot;#refresh-spinner&quot;
+                class=&quot;btn btn-outline-secondary btn-sm&quot;&gt;
+            Refresh Now
+            &lt;span id=&quot;refresh-spinner&quot; class=&quot;htmx-indicator spinner-border spinner-border-sm&quot;&gt;&lt;/span&gt;
+        &lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;table class=&quot;table&quot;&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Rank&lt;/th&gt;
+                &lt;th&gt;Player&lt;/th&gt;
+                &lt;th&gt;Score&lt;/th&gt;
+                &lt;th&gt;Games&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody id=&quot;leaderboard-body&quot;
+               hx-get=&quot;/Leaderboard?handler=Rows&quot;
+               hx-trigger=&quot;load, every 10s&quot;
+               hx-swap=&quot;innerHTML&quot;
+               hx-indicator=&quot;#table-loading&quot;&gt;
+            &lt;!-- Rows load here --&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+    &lt;div id=&quot;table-loading&quot; class=&quot;htmx-indicator text-center py-3&quot;&gt;
+        &lt;span class=&quot;spinner-border&quot;&gt;&lt;/span&gt; Updating...
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Leaderboard.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class LeaderboardModel : PageModel
 {
+    private readonly ILeaderboardService _leaderboardService;
+
+    public LeaderboardModel(ILeaderboardService leaderboardService)
+    {
+        _leaderboardService = leaderboardService;
+    }
+
     public List&lt;PlayerScore&gt; TopPlayers { get; set; } = new();
 
-    public PartialViewResult OnGetTopPlayers()
+    public void OnGet()
     {
-        TopPlayers = LeaderboardService.GetTopPlayers(10); // Fetch top 10 players from your service or DB
-        return Partial(&quot;_LeaderboardRows&quot;, TopPlayers);
+        TopPlayers = _leaderboardService.GetTopPlayers(10);
+    }
+
+    public IActionResult OnGetRows()
+    {
+        var players = _leaderboardService.GetTopPlayers(10);
+        return Partial(&quot;_LeaderboardRows&quot;, players);
     }
 }</code></pre>
 </doc-codeblock></div>
-<p>Now for the partial view that renders the rows:</p>
+<p><strong>Pages/Shared/_LeaderboardRows.cshtml:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-markup"><code v-pre class="language-markup">@model List&lt;PlayerScore&gt;
 
-@foreach (var player in Model)
+@if (Model.Any())
 {
-    &lt;tr&gt;
-        &lt;td&gt;@player.Rank&lt;/td&gt;
-        &lt;td&gt;@player.Name&lt;/td&gt;
-        &lt;td&gt;@player.Score&lt;/td&gt;
-    &lt;/tr&gt;
-}</code></pre>
-</doc-codeblock></div>
-<p>Next, let’s plug this into the main page. We’ll set up a table with a <code v-pre>tbody</code> element that will receive the updated rows. We&#x27;ll use <code v-pre>hx-get</code> to define the endpoint and <code v-pre>hx-trigger</code> to refresh it automatically every few seconds:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;table class=&quot;table&quot;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;Rank&lt;/th&gt;
-            &lt;th&gt;Name&lt;/th&gt;
-            &lt;th&gt;Score&lt;/th&gt;
+    var rank = 1;
+    @foreach (var player in Model)
+    {
+        &lt;tr class=&quot;@(rank &lt;= 3 ? &quot;table-warning&quot; : &quot;&quot;)&quot;&gt;
+            &lt;td&gt;
+                @if (rank == 1) { &lt;span class=&quot;badge bg-gold&quot;&gt;1st&lt;/span&gt; }
+                else if (rank == 2) { &lt;span class=&quot;badge bg-silver&quot;&gt;2nd&lt;/span&gt; }
+                else if (rank == 3) { &lt;span class=&quot;badge bg-bronze&quot;&gt;3rd&lt;/span&gt; }
+                else { @rank }
+            &lt;/td&gt;
+            &lt;td&gt;@player.Name&lt;/td&gt;
+            &lt;td&gt;@player.Score.ToString(&quot;N0&quot;)&lt;/td&gt;
+            &lt;td&gt;@player.GamesPlayed&lt;/td&gt;
         &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody
-        hx-get=&quot;/Leaderboard?handler=TopPlayers&quot;
-        hx-trigger=&quot;every 5s&quot;
-        hx-swap=&quot;outerHTML&quot;
-        id=&quot;leaderboard-body&quot;&gt;
-        @await Html.PartialAsync(&quot;_LeaderboardRows&quot;, Model.TopPlayers)
-    &lt;/tbody&gt;
-&lt;/table&gt;</code></pre>
-</doc-codeblock></div>
-<p>What’s happening here is pretty slick. Every five seconds, htmx sends a GET request to <code v-pre>/Leaderboard?handler=TopPlayers</code>, fetches the updated rows from the server, and swaps them into the <code v-pre>tbody</code>. The <code v-pre>hx-swap=&quot;outerHTML&quot;</code> makes sure the entire tbody gets replaced, which is a clean way to reset the table without breaking the structure.</p>
-<p>You can also set this up to update on demand—for example, when a user clicks a &quot;Refresh&quot; button. Just add a button with an <code v-pre>hx-get</code> pointing to the same handler, and set <code v-pre>hx-target=&quot;#leaderboard-body&quot;</code> to direct the response to the correct place.</p>
-<p>This approach gives you real-time-ish updates with almost no JavaScript and full control on the server. Whether you&#x27;re building leaderboards, admin dashboards, or dynamic reports, <code v-pre>hx-get</code> and <code v-pre>hx-trigger</code> help you stay responsive without overcomplicating your architecture.</p>
-<p>Up next, we’ll explore how to handle pagination and sorting, still powered by server-rendered content and minimal markup.</p>
-<doc-anchor-target id="scroll-on-lazy-loading-lists-with-infinite-htmx">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#scroll-on-lazy-loading-lists-with-infinite-htmx">#</doc-anchor-trigger>
-        <span>Scroll On: Lazy-Loading Lists with Infinite htmx</span>
-    </h2>
-</doc-anchor-target>
-<p>Infinite scrolling is one of those UX patterns that feels magical when done right. Instead of breaking content across clunky pagination links, you just scroll—and more content appears like it’s always been there. This kind of interaction is especially useful for things like product listings, activity feeds, or image galleries, where users expect to browse fluidly and uninterrupted. With htmx, implementing this kind of experience is easier than you might think, thanks to the <code v-pre>hx-get</code> and <code v-pre>hx-trigger=&quot;revealed&quot;</code> combo.</p>
-<p>While traditional pagination requires users to stop, find the next link, click it, and wait for the page to reload (or at least update), infinite scrolling keeps users in the flow. It&#x27;s a smoother experience and keeps people engaged longer. For e-commerce applications in particular, that can translate directly into better conversion rates. Of course, this needs to be balanced with performance—but htmx gives you a lightweight way to lazy-load new content without overloading the browser.</p>
-<p>Let’s walk through building a product catalog with infinite scrolling. The server will return batches of products, and the client will request the next batch when a hidden trigger element comes into view. First, we’ll need a Razor Page that can return a set of products based on a page number:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Pages/Products.cshtml.cs
-public class ProductsModel : PageModel
-{
-    public List&lt;Product&gt; Products { get; set; } = new();
-    [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
-    private const int PageSize = 20;
-
-    public PartialViewResult OnGetMore()
-    {
-        Products = ProductService.GetPage(Page, PageSize);
-        return Partial(&quot;_ProductCards&quot;, Products);
+        rank++;
     }
-}</code></pre>
-</doc-codeblock></div>
-<p>Now we create the partial view that renders a grid of product cards:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model List&lt;Product&gt;
-
-@foreach (var product in Model)
-{
-    &lt;div class=&quot;product-card&quot;&gt;
-        &lt;img src=&quot;@product.ImageUrl&quot; alt=&quot;@product.Name&quot; /&gt;
-        &lt;h3&gt;@product.Name&lt;/h3&gt;
-        &lt;p&gt;$@product.Price&lt;/p&gt;
-    &lt;/div&gt;
-}</code></pre>
-</doc-codeblock></div>
-<p>On the main page, we render the initial product list and add a special <code v-pre>div</code> at the bottom that will serve as our scroll-triggered loader. This div will contain an <code v-pre>hx-get</code> pointing to the next page of products and will activate when it’s revealed on screen:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;product-grid&quot;&gt;
-    @await Html.PartialAsync(&quot;_ProductCards&quot;, Model.Products)
-&lt;/div&gt;
-
-&lt;div 
-    hx-get=&quot;/Products?handler=More&amp;page=2&quot; 
-    hx-trigger=&quot;revealed&quot; 
-    hx-swap=&quot;beforeend&quot; 
-    hx-target=&quot;#product-grid&quot;
-    class=&quot;load-more-trigger&quot;&gt;
-&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>The trick here is that <code v-pre>hx-trigger=&quot;revealed&quot;</code> fires when the element becomes visible in the viewport. As the user scrolls, the trigger appears, htmx sends the request, and the response is inserted into the product grid using <code v-pre>hx-swap=&quot;beforeend&quot;</code>. This means new products are appended instead of replacing the whole grid. On the server, we only send a fixed number of items per request (20 in this case), so performance stays predictable and snappy.</p>
-<p>To keep the process going, the server’s response should include the next trigger element with an incremented page number, like so:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">@await Html.PartialAsync(&quot;_ProductCards&quot;, Model)
-
-&lt;div 
-    hx-get=&quot;/Products?handler=More&amp;page=@(Model.Page + 1)&quot; 
-    hx-trigger=&quot;revealed&quot; 
-    hx-swap=&quot;beforeend&quot; 
-    hx-target=&quot;#product-grid&quot;
-    class=&quot;load-more-trigger&quot;&gt;
-&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>This creates a chain of revealed triggers, each pulling the next page when needed. You don’t need timers, IntersectionObserver, or any JavaScript to wire it up. And since the content is streamed from the server, you maintain control over layout, data shaping, and rendering.</p>
-<p>Infinite scrolling with htmx offers the best of both worlds: a smooth, JavaScript-light frontend and full server-side control. Whether you&#x27;re listing sneakers, blog posts, or customer transactions, this pattern keeps users moving and your app responsive. Next, we’ll look at how to add filters and sorting on top of this without breaking the lazy-load experience.</p>
-<doc-anchor-target id="smarter-tables-paging-and-sorting-with-razor-pages-and-htmx">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smarter-tables-paging-and-sorting-with-razor-pages-and-htmx">#</doc-anchor-trigger>
-        <span>Smarter Tables: Paging and Sorting with Razor Pages and htmx</span>
-    </h2>
-</doc-anchor-target>
-<p>While infinite scrolling is great for certain interfaces, sometimes your users just want control. Tables full of data—like admin dashboards, reports, or transaction histories—benefit from familiar pagination and sortable columns. htmx makes these features possible with very little overhead. You can implement both server-side pagination and sorting without any client-side JavaScript libraries. And best of all, it feels snappy and modern, thanks to dynamic updates using <code v-pre>hx-get</code>, <code v-pre>hx-target</code>, and <code v-pre>hx-swap</code>.</p>
-<p>Let’s build out a common use case: a transaction history table. We’ll assume your data lives on the server, and you want to present it in pages of 10 or 20 items, sortable by columns like Date, Amount, and Description. The server is responsible for slicing and sorting the data, and htmx just fetches and injects the updated HTML when the user interacts with the UI.</p>
-<p>We’ll begin with a Razor Page that accepts query parameters for pagination and sorting. Here&#x27;s the model code:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Pages/Transactions.cshtml.cs
-public class TransactionsModel : PageModel
-{
-    public List&lt;Transaction&gt; Transactions { get; set; } = new();
-    [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
-    [BindProperty(SupportsGet = true)]
-    public string SortBy { get; set; } = &quot;Date&quot;;
-    [BindProperty(SupportsGet = true)]
-    public bool Desc { get; set; } = true;
-
-    public PartialViewResult OnGetPage()
-    {
-        Transactions = TransactionService.GetPage(Page, 10, SortBy, Desc);
-        return Partial(&quot;_TransactionRows&quot;, Transactions);
-    }
-}</code></pre>
-</doc-codeblock></div>
-<p>We’re binding query parameters like <code v-pre>page</code>, <code v-pre>sortBy</code>, and <code v-pre>desc</code>, which will control the data slice returned by the server. The <code v-pre>_TransactionRows</code> partial will render just the rows of the table. On the main page, the table might look like this:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;table class=&quot;table&quot;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a 
-                    hx-get=&quot;/Transactions?handler=Page&amp;sortBy=Date&amp;desc=false&quot; 
-                    hx-target=&quot;#transactions-body&quot; 
-                    hx-swap=&quot;outerHTML&quot;
-                    hx-trigger=&quot;click&quot;&gt;Date&lt;/a&gt;
-            &lt;/th&gt;
-            &lt;th&gt;
-                &lt;a 
-                    hx-get=&quot;/Transactions?handler=Page&amp;sortBy=Amount&amp;desc=true&quot; 
-                    hx-target=&quot;#transactions-body&quot; 
-                    hx-swap=&quot;outerHTML&quot;
-                    hx-trigger=&quot;click&quot;&gt;Amount&lt;/a&gt;
-            &lt;/th&gt;
-            &lt;th&gt;Description&lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody id=&quot;transactions-body&quot;&gt;
-        @await Html.PartialAsync(&quot;_TransactionRows&quot;, Model.Transactions)
-    &lt;/tbody&gt;
-&lt;/table&gt;</code></pre>
-</doc-codeblock></div>
-<p>Clicking a column header sends an <code v-pre>hx-get</code> to the page handler, specifying which field to sort by and whether it should be ascending or descending. The response is injected into the tbody, thanks to <code v-pre>hx-target=&quot;#transactions-body&quot;</code> and <code v-pre>hx-swap=&quot;outerHTML&quot;</code>. You can add logic in your handler to toggle the sort direction if you want that sort of UX.</p>
-<p>For pagination, you can generate a basic pager with links or buttons at the bottom of the table. Here’s a simple example of numbered links that fetch pages dynamically:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;pagination&quot;&gt;
-    @for (int i = 1; i &lt;= 5; i++)
-    {
-        &lt;a 
-            hx-get=&quot;/Transactions?handler=Page&amp;page=@i&amp;sortBy=@Model.SortBy&amp;desc=@Model.Desc&quot;
-            hx-target=&quot;#transactions-body&quot;
-            hx-swap=&quot;outerHTML&quot;
-            class=&quot;page-link&quot;&gt;@i&lt;/a&gt;
-    }
-&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>These links work just like the column headers. The only thing changing is the page parameter, and again, only the table body gets updated—no flickering, no full-page reloads.</p>
-<p>This kind of setup gives your users a familiar experience with just the right amount of interactivity. And because all the logic lives server-side, it’s secure and easy to maintain. You’re not rebuilding table sorting or pagination logic in JavaScript. You’re simply re-rendering Razor partials in response to lightweight htmx requests.</p>
-<p>Now that we’ve added paging and sorting, we’re ready to explore richer interactivity. In the next section, we’ll take a look at how to use buttons and links to drive inline actions—like approving transactions or deleting records—without leaving the page.</p>
-<doc-anchor-target id="fast-friendly-and-reusable-optimizing-lists-and-tables">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#fast-friendly-and-reusable-optimizing-lists-and-tables">#</doc-anchor-trigger>
-        <span>Fast, Friendly, and Reusable: Optimizing Lists and Tables</span>
-    </h2>
-</doc-anchor-target>
-<p>By now, we’ve covered dynamic updates, sorting, paging, and lazy loading—core features that make lists and tables truly interactive. But good performance and UX aren’t just about fancy updates; they’re also about minimizing what you don’t need to do. When it comes to high-traffic or data-heavy applications, optimizing your interactions with smart caching, graceful loading states, and reusable component structure can have a huge impact on how fast and friendly your app feels.</p>
-<p>One of the easiest wins is caching. Razor Pages with htmx can take advantage of HTTP caching headers or output caching to avoid regenerating the same markup repeatedly. For example, if your leaderboard or product listing doesn’t change every second, you can cache the result of your partial with [OutputCache] or even a custom memory cache. Here’s a simple way to add output caching to a Razor Page handler:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">[OutputCache(Duration = 10)]
-public PartialViewResult OnGetTopPlayers()
-{
-    var players = LeaderboardService.GetTopPlayers(10);
-    return Partial(&quot;_LeaderboardRows&quot;, players);`
-}</code></pre>
-</doc-codeblock></div>
-<p>This tells ASP.NET Core to cache the result of that partial for 10 seconds. Combined with htmx polling or on-demand updates, you can avoid redundant server calls and still keep things responsive. It’s especially useful for dashboards or public views where the data changes predictably.</p>
-<p>From a UX perspective, never leave your users guessing. When data is loading, show a visual cue—an animated spinner, a “loading…” message, or a placeholder row. You can use hx-indicator to automatically tie a loading indicator to your htmx request:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;loading-spinner&quot; class=&quot;spinner&quot; style=&quot;display:none;&quot;&gt;&lt;/div&gt;
-
-&lt;table hx-get=&quot;/Transactions?handler=Page&quot; 
-       hx-target=&quot;#transaction-rows&quot;
-       hx-indicator=&quot;#loading-spinner&quot;&gt;
-    &lt;!-- Table markup --&gt;
-&lt;/table&gt;</code></pre>
-</doc-codeblock></div>
-<p>htmx will automatically show the indicator when the request begins and hide it when the response comes back. And when there’s no data at all? That’s your cue to handle the empty state. Instead of a blank table, return a message that communicates clearly:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">@if (!Model.Transactions.Any())
-{
-    &lt;tr&gt;
-        &lt;td colspan=&quot;3&quot;&gt;No transactions found.&lt;/td&gt;
-    &lt;/tr&gt;
 }
 else
 {
-    foreach (var transaction in Model.Transactions)
+    &lt;tr&gt;
+        &lt;td colspan=&quot;4&quot; class=&quot;text-center text-muted py-4&quot;&gt;
+            No players yet. Be the first to play!
+        &lt;/td&gt;
+    &lt;/tr&gt;
+}</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>hx-trigger=&quot;load, every 10s&quot;</code> loads data immediately and refreshes every 10 seconds. The manual refresh button lets users update on demand.</p>
+<doc-anchor-target id="sorting">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#sorting">#</doc-anchor-trigger>
+        <span>Sorting</span>
+    </h2>
+</doc-anchor-target>
+<p>Clickable column headers that sort data require tracking the current sort state and toggling direction on repeated clicks.</p>
+<doc-anchor-target id="sortable-table">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#sortable-table">#</doc-anchor-trigger>
+        <span>Sortable Table</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Tasks.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model TasksModel
+
+&lt;h1&gt;Tasks&lt;/h1&gt;
+
+&lt;div id=&quot;task-table-container&quot;&gt;
+    &lt;table class=&quot;table table-hover&quot;&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;
+                    &lt;a hx-get=&quot;/Tasks?handler=List&amp;sortBy=name&amp;sortDir=@Model.NextSortDir(&quot;name&quot;)&quot;
+                       hx-target=&quot;#task-table-body&quot;
+                       hx-swap=&quot;innerHTML&quot;
+                       hx-push-url=&quot;true&quot;
+                       hx-indicator=&quot;#sort-spinner&quot;
+                       class=&quot;sort-header @(Model.SortBy == &quot;name&quot; ? &quot;active&quot; : &quot;&quot;)&quot;&gt;
+                        Name
+                        @if (Model.SortBy == &quot;name&quot;)
+                        {
+                            &lt;span class=&quot;sort-icon&quot;&gt;@(Model.SortDir == &quot;asc&quot; ? &quot;▲&quot; : &quot;▼&quot;)&lt;/span&gt;
+                        }
+                    &lt;/a&gt;
+                &lt;/th&gt;
+                &lt;th&gt;
+                    &lt;a hx-get=&quot;/Tasks?handler=List&amp;sortBy=dueDate&amp;sortDir=@Model.NextSortDir(&quot;dueDate&quot;)&quot;
+                       hx-target=&quot;#task-table-body&quot;
+                       hx-swap=&quot;innerHTML&quot;
+                       hx-push-url=&quot;true&quot;
+                       hx-indicator=&quot;#sort-spinner&quot;
+                       class=&quot;sort-header @(Model.SortBy == &quot;dueDate&quot; ? &quot;active&quot; : &quot;&quot;)&quot;&gt;
+                        Due Date
+                        @if (Model.SortBy == &quot;dueDate&quot;)
+                        {
+                            &lt;span class=&quot;sort-icon&quot;&gt;@(Model.SortDir == &quot;asc&quot; ? &quot;▲&quot; : &quot;▼&quot;)&lt;/span&gt;
+                        }
+                    &lt;/a&gt;
+                &lt;/th&gt;
+                &lt;th&gt;
+                    &lt;a hx-get=&quot;/Tasks?handler=List&amp;sortBy=status&amp;sortDir=@Model.NextSortDir(&quot;status&quot;)&quot;
+                       hx-target=&quot;#task-table-body&quot;
+                       hx-swap=&quot;innerHTML&quot;
+                       hx-push-url=&quot;true&quot;
+                       hx-indicator=&quot;#sort-spinner&quot;
+                       class=&quot;sort-header @(Model.SortBy == &quot;status&quot; ? &quot;active&quot; : &quot;&quot;)&quot;&gt;
+                        Status
+                        @if (Model.SortBy == &quot;status&quot;)
+                        {
+                            &lt;span class=&quot;sort-icon&quot;&gt;@(Model.SortDir == &quot;asc&quot; ? &quot;▲&quot; : &quot;▼&quot;)&lt;/span&gt;
+                        }
+                    &lt;/a&gt;
+                &lt;/th&gt;
+                &lt;th&gt;Actions&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody id=&quot;task-table-body&quot;&gt;
+            &lt;partial name=&quot;_TaskRows&quot; model=&quot;Model&quot; /&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+    &lt;span id=&quot;sort-spinner&quot; class=&quot;htmx-indicator&quot;&gt;Sorting...&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Tasks.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class TasksModel : PageModel
+{
+    private readonly ITaskService _taskService;
+
+    public TasksModel(ITaskService taskService)
     {
-        &lt;tr&gt;
-            &lt;td&gt;@transaction.Date&lt;/td&gt;
-            &lt;td&gt;@transaction.Amount&lt;/td&gt;
-            &lt;td&gt;@transaction.Description&lt;/td&gt;
-        &lt;/tr&gt;
+        _taskService = taskService;
+    }
+
+    public List&lt;TaskItem&gt; Tasks { get; set; } = new();
+    
+    [BindProperty(SupportsGet = true)]
+    public string SortBy { get; set; } = &quot;dueDate&quot;;
+    
+    [BindProperty(SupportsGet = true)]
+    public string SortDir { get; set; } = &quot;asc&quot;;
+
+    public IActionResult OnGet()
+    {
+        Tasks = GetSortedTasks();
+
+        if (Request.Headers.ContainsKey(&quot;HX-Request&quot;))
+        {
+            return Partial(&quot;_TaskRows&quot;, this);
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnGetList(string sortBy = &quot;dueDate&quot;, string sortDir = &quot;asc&quot;)
+    {
+        SortBy = sortBy;
+        SortDir = sortDir;
+        Tasks = GetSortedTasks();
+        return Partial(&quot;_TaskRows&quot;, this);
+    }
+
+    private List&lt;TaskItem&gt; GetSortedTasks()
+    {
+        var query = _taskService.GetAll().AsQueryable();
+
+        query = (SortBy, SortDir) switch
+        {
+            (&quot;name&quot;, &quot;asc&quot;) =&gt; query.OrderBy(t =&gt; t.Name),
+            (&quot;name&quot;, &quot;desc&quot;) =&gt; query.OrderByDescending(t =&gt; t.Name),
+            (&quot;dueDate&quot;, &quot;asc&quot;) =&gt; query.OrderBy(t =&gt; t.DueDate),
+            (&quot;dueDate&quot;, &quot;desc&quot;) =&gt; query.OrderByDescending(t =&gt; t.DueDate),
+            (&quot;status&quot;, &quot;asc&quot;) =&gt; query.OrderBy(t =&gt; t.Status),
+            (&quot;status&quot;, &quot;desc&quot;) =&gt; query.OrderByDescending(t =&gt; t.Status),
+            _ =&gt; query.OrderBy(t =&gt; t.DueDate)
+        };
+
+        return query.ToList();
+    }
+
+    public string NextSortDir(string column)
+    {
+        if (SortBy == column)
+        {
+            return SortDir == &quot;asc&quot; ? &quot;desc&quot; : &quot;asc&quot;;
+        }
+        return &quot;asc&quot;;
     }
 }</code></pre>
 </doc-codeblock></div>
-<p>Reusable components will also help keep your codebase clean and manageable. Use partial views for your table rows, extract shared filters or toolbars into dedicated Razor components, and follow consistent naming conventions. For example, if you have multiple list pages that all use a filter bar, extract that bar into a partial like _FilterToolbar.cshtml and pass any required parameters through the view model. This approach helps ensure that performance tweaks and UI changes stay DRY and centralized.</p>
-<p>When you combine smart caching, responsive feedback, and reusable structure, you not only get better performance—you get maintainable code and happier users. It’s the kind of polish that separates an app that just works from one that feels effortless.</p>
-<p>In the next chapter, we’ll take these interactive building blocks a step further by focusing on Buttons and Action Links. We&#x27;ll explore how to enhance user interactions with one-click actions, confirmations, and inline updates—all powered by htmx and Razor Pages, of course.</p>
+<p><strong>Pages/Shared/_TaskRows.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model TasksModel
+
+@if (Model.Tasks.Any())
+{
+    @foreach (var task in Model.Tasks)
+    {
+        &lt;tr id=&quot;task-@task.Id&quot;&gt;
+            &lt;td&gt;@task.Name&lt;/td&gt;
+            &lt;td&gt;
+                @if (task.DueDate.HasValue)
+                {
+                    &lt;span class=&quot;@(task.DueDate &lt; DateTime.Today ? &quot;text-danger&quot; : &quot;&quot;)&quot;&gt;
+                        @task.DueDate.Value.ToString(&quot;MMM d, yyyy&quot;)
+                    &lt;/span&gt;
+                }
+                else
+                {
+                    &lt;span class=&quot;text-muted&quot;&gt;No due date&lt;/span&gt;
+                }
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;span class=&quot;badge @GetStatusBadgeClass(task.Status)&quot;&gt;
+                    @task.Status
+                &lt;/span&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;button hx-get=&quot;/Tasks?handler=EditForm&amp;id=@task.Id&quot;
+                        hx-target=&quot;#task-@task.Id&quot;
+                        hx-swap=&quot;outerHTML&quot;
+                        class=&quot;btn btn-sm btn-outline-primary&quot;&gt;
+                    Edit
+                &lt;/button&gt;
+                &lt;button hx-delete=&quot;/Tasks?handler=Delete&amp;id=@task.Id&quot;
+                        hx-target=&quot;#task-@task.Id&quot;
+                        hx-swap=&quot;outerHTML&quot;
+                        hx-confirm=&quot;Delete '@task.Name'?&quot;
+                        class=&quot;btn btn-sm btn-outline-danger&quot;&gt;
+                    Delete
+                &lt;/button&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    }
+}
+else
+{
+    &lt;tr&gt;
+        &lt;td colspan=&quot;4&quot; class=&quot;text-center text-muted py-4&quot;&gt;
+            &lt;p&gt;No tasks found.&lt;/p&gt;
+            &lt;button hx-get=&quot;/Tasks?handler=CreateForm&quot; 
+                    hx-target=&quot;#modal-content&quot;
+                    class=&quot;btn btn-primary&quot;&gt;
+                Create your first task
+            &lt;/button&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+}
+
+@functions {
+    string GetStatusBadgeClass(string status) =&gt; status switch
+    {
+        &quot;Complete&quot; =&gt; &quot;bg-success&quot;,
+        &quot;In Progress&quot; =&gt; &quot;bg-primary&quot;,
+        &quot;Blocked&quot; =&gt; &quot;bg-danger&quot;,
+        _ =&gt; &quot;bg-secondary&quot;
+    };
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="sort-header-css">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#sort-header-css">#</doc-anchor-trigger>
+        <span>Sort Header CSS</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.sort-header {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.sort-header:hover {
+    color: #0d6efd;
+}
+
+.sort-header.active {
+    font-weight: 600;
+}
+
+.sort-icon {
+    font-size: 0.75rem;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="pagination">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#pagination">#</doc-anchor-trigger>
+        <span>Pagination</span>
+    </h2>
+</doc-anchor-target>
+<p>Server-side pagination returns a subset of data based on page number and page size.</p>
+<doc-anchor-target id="paginated-product-list">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#paginated-product-list">#</doc-anchor-trigger>
+        <span>Paginated Product List</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Products.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model ProductsModel
+
+&lt;h1&gt;Products&lt;/h1&gt;
+
+&lt;div id=&quot;products-container&quot;&gt;
+    &lt;div class=&quot;products-header&quot;&gt;
+        &lt;span&gt;Showing @Model.StartItem - @Model.EndItem of @Model.TotalItems products&lt;/span&gt;
+    &lt;/div&gt;
+
+    &lt;div id=&quot;product-list&quot;&gt;
+        &lt;partial name=&quot;_ProductList&quot; model=&quot;Model&quot; /&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Products.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ProductsModel : PageModel
+{
+    private readonly IProductService _productService;
+    private const int PageSize = 12;
+
+    public ProductsModel(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    public List&lt;Product&gt; Products { get; set; } = new();
+    
+    [BindProperty(SupportsGet = true)]
+    public int CurrentPage { get; set; } = 1;
+    
+    public int TotalItems { get; set; }
+    public int TotalPages { get; set; }
+    public int StartItem =&gt; (CurrentPage - 1) * PageSize + 1;
+    public int EndItem =&gt; Math.Min(CurrentPage * PageSize, TotalItems);
+
+    public IActionResult OnGet(int currentPage = 1)
+    {
+        CurrentPage = currentPage;
+        LoadProducts();
+
+        if (Request.Headers.ContainsKey(&quot;HX-Request&quot;))
+        {
+            return Partial(&quot;_ProductList&quot;, this);
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnGetPage(int page = 1)
+    {
+        CurrentPage = page;
+        LoadProducts();
+        return Partial(&quot;_ProductList&quot;, this);
+    }
+
+    private void LoadProducts()
+    {
+        var allProducts = _productService.GetAll();
+        TotalItems = allProducts.Count;
+        TotalPages = (int)Math.Ceiling(TotalItems / (double)PageSize);
+        
+        Products = allProducts
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_ProductList.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model ProductsModel
+
+&lt;div class=&quot;product-grid&quot;&gt;
+    @foreach (var product in Model.Products)
+    {
+        &lt;div class=&quot;product-card&quot;&gt;
+            &lt;img src=&quot;@product.ImageUrl&quot; alt=&quot;@product.Name&quot; class=&quot;product-image&quot; /&gt;
+            &lt;h3 class=&quot;product-name&quot;&gt;@product.Name&lt;/h3&gt;
+            &lt;p class=&quot;product-price&quot;&gt;@product.Price.ToString(&quot;C&quot;)&lt;/p&gt;
+            &lt;button class=&quot;btn btn-primary btn-sm&quot;&gt;Add to Cart&lt;/button&gt;
+        &lt;/div&gt;
+    }
+&lt;/div&gt;
+
+@if (Model.TotalPages &gt; 1)
+{
+    &lt;nav class=&quot;pagination-container&quot; aria-label=&quot;Product pagination&quot;&gt;
+        &lt;ul class=&quot;pagination&quot;&gt;
+            @* Previous button *@
+            &lt;li class=&quot;page-item @(Model.CurrentPage == 1 ? &quot;disabled&quot; : &quot;&quot;)&quot;&gt;
+                @if (Model.CurrentPage &gt; 1)
+                {
+                    &lt;a class=&quot;page-link&quot;
+                       hx-get=&quot;/Products?handler=Page&amp;page=@(Model.CurrentPage - 1)&quot;
+                       hx-target=&quot;#product-list&quot;
+                       hx-swap=&quot;innerHTML&quot;
+                       hx-push-url=&quot;/Products?currentPage=@(Model.CurrentPage - 1)&quot;
+                       hx-indicator=&quot;#page-spinner&quot;&gt;
+                        Previous
+                    &lt;/a&gt;
+                }
+                else
+                {
+                    &lt;span class=&quot;page-link&quot;&gt;Previous&lt;/span&gt;
+                }
+            &lt;/li&gt;
+
+            @* Page numbers *@
+            @for (int i = 1; i &lt;= Model.TotalPages; i++)
+            {
+                &lt;li class=&quot;page-item @(i == Model.CurrentPage ? &quot;active&quot; : &quot;&quot;)&quot;&gt;
+                    &lt;a class=&quot;page-link&quot;
+                       hx-get=&quot;/Products?handler=Page&amp;page=@i&quot;
+                       hx-target=&quot;#product-list&quot;
+                       hx-swap=&quot;innerHTML&quot;
+                       hx-push-url=&quot;/Products?currentPage=@i&quot;
+                       hx-indicator=&quot;#page-spinner&quot;
+                       @(i == Model.CurrentPage ? &quot;aria-current=page&quot; : &quot;&quot;)&gt;
+                        @i
+                    &lt;/a&gt;
+                &lt;/li&gt;
+            }
+
+            @* Next button *@
+            &lt;li class=&quot;page-item @(Model.CurrentPage == Model.TotalPages ? &quot;disabled&quot; : &quot;&quot;)&quot;&gt;
+                @if (Model.CurrentPage &lt; Model.TotalPages)
+                {
+                    &lt;a class=&quot;page-link&quot;
+                       hx-get=&quot;/Products?handler=Page&amp;page=@(Model.CurrentPage + 1)&quot;
+                       hx-target=&quot;#product-list&quot;
+                       hx-swap=&quot;innerHTML&quot;
+                       hx-push-url=&quot;/Products?currentPage=@(Model.CurrentPage + 1)&quot;
+                       hx-indicator=&quot;#page-spinner&quot;&gt;
+                        Next
+                    &lt;/a&gt;
+                }
+                else
+                {
+                    &lt;span class=&quot;page-link&quot;&gt;Next&lt;/span&gt;
+                }
+            &lt;/li&gt;
+        &lt;/ul&gt;
+        
+        &lt;span id=&quot;page-spinner&quot; class=&quot;htmx-indicator&quot;&gt;Loading...&lt;/span&gt;
+    &lt;/nav&gt;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="infinite-scroll">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#infinite-scroll">#</doc-anchor-trigger>
+        <span>Infinite Scroll</span>
+    </h2>
+</doc-anchor-target>
+<p>Infinite scroll loads more content as the user scrolls down, creating a continuous browsing experience.</p>
+<doc-anchor-target id="infinite-product-feed">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#infinite-product-feed">#</doc-anchor-trigger>
+        <span>Infinite Product Feed</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Feed.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model FeedModel
+
+&lt;h1&gt;Product Feed&lt;/h1&gt;
+
+&lt;div id=&quot;feed-container&quot;&gt;
+    &lt;partial name=&quot;_FeedItems&quot; model=&quot;Model&quot; /&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Feed.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class FeedModel : PageModel
+{
+    private readonly IProductService _productService;
+    private const int PageSize = 20;
+
+    public FeedModel(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    public List&lt;Product&gt; Products { get; set; } = new();
+    
+    [BindProperty(SupportsGet = true)]
+    public int CurrentPage { get; set; } = 1;
+    
+    public bool HasMore { get; set; }
+
+    public void OnGet()
+    {
+        LoadProducts();
+    }
+
+    public IActionResult OnGetMore(int page = 1)
+    {
+        CurrentPage = page;
+        LoadProducts();
+        return Partial(&quot;_FeedItems&quot;, this);
+    }
+
+    private void LoadProducts()
+    {
+        var totalCount = _productService.GetCount();
+        
+        Products = _productService.GetPage(CurrentPage, PageSize);
+        HasMore = CurrentPage * PageSize &lt; totalCount;
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_FeedItems.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model FeedModel
+
+@foreach (var product in Model.Products)
+{
+    &lt;div class=&quot;feed-item&quot;&gt;
+        &lt;img src=&quot;@product.ImageUrl&quot; alt=&quot;@product.Name&quot; /&gt;
+        &lt;div class=&quot;feed-item-content&quot;&gt;
+            &lt;h3&gt;@product.Name&lt;/h3&gt;
+            &lt;p&gt;@product.Description&lt;/p&gt;
+            &lt;span class=&quot;price&quot;&gt;@product.Price.ToString(&quot;C&quot;)&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+}
+
+@if (Model.HasMore)
+{
+    &lt;div hx-get=&quot;/Feed?handler=More&amp;page=@(Model.CurrentPage + 1)&quot;
+         hx-trigger=&quot;revealed&quot;
+         hx-swap=&quot;outerHTML&quot;
+         hx-indicator=&quot;#load-more-spinner&quot;
+         class=&quot;load-more-trigger&quot;&gt;
+        &lt;div id=&quot;load-more-spinner&quot; class=&quot;htmx-indicator text-center py-4&quot;&gt;
+            &lt;span class=&quot;spinner-border&quot;&gt;&lt;/span&gt;
+            &lt;p&gt;Loading more products...&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+}
+else if (Model.CurrentPage &gt; 1)
+{
+    &lt;div class=&quot;end-of-feed text-center py-4 text-muted&quot;&gt;
+        &lt;p&gt;You've reached the end!&lt;/p&gt;
+    &lt;/div&gt;
+}</code></pre>
+</doc-codeblock></div>
+<p>The trigger div at the bottom uses <code v-pre>hx-trigger=&quot;revealed&quot;</code> to fire when it scrolls into view. It replaces itself with the next batch of items plus a new trigger (if more items exist). When no more items exist, it shows an end message instead.</p>
+<doc-anchor-target id="infinite-scroll-css">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#infinite-scroll-css">#</doc-anchor-trigger>
+        <span>Infinite Scroll CSS</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.feed-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.feed-item img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.load-more-trigger {
+    min-height: 100px;
+}
+
+.end-of-feed {
+    color: #6c757d;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="filtering">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#filtering">#</doc-anchor-trigger>
+        <span>Filtering</span>
+    </h2>
+</doc-anchor-target>
+<p>Filters narrow down displayed data based on user criteria.</p>
+<doc-anchor-target id="filterable-task-list">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#filterable-task-list">#</doc-anchor-trigger>
+        <span>Filterable Task List</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Tasks.cshtml (updated with filters):</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model TasksModel
+
+&lt;h1&gt;Tasks&lt;/h1&gt;
+
+&lt;div class=&quot;filters-bar mb-3&quot;&gt;
+    &lt;div class=&quot;row g-2&quot;&gt;
+        &lt;div class=&quot;col-md-3&quot;&gt;
+            &lt;select name=&quot;status&quot; 
+                    class=&quot;form-select&quot;
+                    hx-get=&quot;/Tasks?handler=List&quot;
+                    hx-target=&quot;#task-table-body&quot;
+                    hx-include=&quot;.filters-bar&quot;
+                    hx-push-url=&quot;true&quot;&gt;
+                &lt;option value=&quot;&quot;&gt;All Statuses&lt;/option&gt;
+                &lt;option value=&quot;Pending&quot; selected=&quot;@(Model.StatusFilter == &quot;Pending&quot;)&quot;&gt;Pending&lt;/option&gt;
+                &lt;option value=&quot;In Progress&quot; selected=&quot;@(Model.StatusFilter == &quot;In Progress&quot;)&quot;&gt;In Progress&lt;/option&gt;
+                &lt;option value=&quot;Complete&quot; selected=&quot;@(Model.StatusFilter == &quot;Complete&quot;)&quot;&gt;Complete&lt;/option&gt;
+                &lt;option value=&quot;Blocked&quot; selected=&quot;@(Model.StatusFilter == &quot;Blocked&quot;)&quot;&gt;Blocked&lt;/option&gt;
+            &lt;/select&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;col-md-4&quot;&gt;
+            &lt;input type=&quot;search&quot; 
+                   name=&quot;search&quot;
+                   value=&quot;@Model.SearchTerm&quot;
+                   class=&quot;form-control&quot;
+                   placeholder=&quot;Search tasks...&quot;
+                   hx-get=&quot;/Tasks?handler=List&quot;
+                   hx-target=&quot;#task-table-body&quot;
+                   hx-include=&quot;.filters-bar&quot;
+                   hx-trigger=&quot;keyup changed delay:300ms, search&quot;
+                   hx-push-url=&quot;true&quot; /&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;col-md-2&quot;&gt;
+            &lt;button type=&quot;button&quot;
+                    class=&quot;btn btn-outline-secondary&quot;
+                    hx-get=&quot;/Tasks?handler=List&quot;
+                    hx-target=&quot;#task-table-body&quot;
+                    hx-push-url=&quot;/Tasks&quot;&gt;
+                Clear Filters
+            &lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    
+    @* Hidden inputs to preserve sort state *@
+    &lt;input type=&quot;hidden&quot; name=&quot;sortBy&quot; value=&quot;@Model.SortBy&quot; /&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;sortDir&quot; value=&quot;@Model.SortDir&quot; /&gt;
+&lt;/div&gt;
+
+&lt;table class=&quot;table&quot;&gt;
+    &lt;!-- thead with sortable headers --&gt;
+    &lt;tbody id=&quot;task-table-body&quot;&gt;
+        &lt;partial name=&quot;_TaskRows&quot; model=&quot;Model&quot; /&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Updated PageModel with filtering:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class TasksModel : PageModel
+{
+    private readonly ITaskService _taskService;
+
+    public TasksModel(ITaskService taskService)
+    {
+        _taskService = taskService;
+    }
+
+    public List&lt;TaskItem&gt; Tasks { get; set; } = new();
+    
+    [BindProperty(SupportsGet = true)]
+    public string SortBy { get; set; } = &quot;dueDate&quot;;
+    
+    [BindProperty(SupportsGet = true)]
+    public string SortDir { get; set; } = &quot;asc&quot;;
+    
+    [BindProperty(SupportsGet = true)]
+    public string? StatusFilter { get; set; }
+    
+    [BindProperty(SupportsGet = true)]
+    public string? SearchTerm { get; set; }
+
+    public IActionResult OnGet()
+    {
+        Tasks = GetFilteredAndSortedTasks();
+
+        if (Request.Headers.ContainsKey(&quot;HX-Request&quot;))
+        {
+            return Partial(&quot;_TaskRows&quot;, this);
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnGetList(
+        string? status = null, 
+        string? search = null,
+        string sortBy = &quot;dueDate&quot;, 
+        string sortDir = &quot;asc&quot;)
+    {
+        StatusFilter = status;
+        SearchTerm = search;
+        SortBy = sortBy;
+        SortDir = sortDir;
+        
+        Tasks = GetFilteredAndSortedTasks();
+        return Partial(&quot;_TaskRows&quot;, this);
+    }
+
+    private List&lt;TaskItem&gt; GetFilteredAndSortedTasks()
+    {
+        var query = _taskService.GetAll().AsQueryable();
+
+        // Apply filters
+        if (!string.IsNullOrEmpty(StatusFilter))
+        {
+            query = query.Where(t =&gt; t.Status == StatusFilter);
+        }
+
+        if (!string.IsNullOrEmpty(SearchTerm))
+        {
+            var term = SearchTerm.ToLower();
+            query = query.Where(t =&gt; 
+                t.Name.ToLower().Contains(term) || 
+                (t.Description != null &amp;&amp; t.Description.ToLower().Contains(term)));
+        }
+
+        // Apply sorting
+        query = (SortBy, SortDir) switch
+        {
+            (&quot;name&quot;, &quot;asc&quot;) =&gt; query.OrderBy(t =&gt; t.Name),
+            (&quot;name&quot;, &quot;desc&quot;) =&gt; query.OrderByDescending(t =&gt; t.Name),
+            (&quot;dueDate&quot;, &quot;asc&quot;) =&gt; query.OrderBy(t =&gt; t.DueDate),
+            (&quot;dueDate&quot;, &quot;desc&quot;) =&gt; query.OrderByDescending(t =&gt; t.DueDate),
+            (&quot;status&quot;, &quot;asc&quot;) =&gt; query.OrderBy(t =&gt; t.Status),
+            (&quot;status&quot;, &quot;desc&quot;) =&gt; query.OrderByDescending(t =&gt; t.Status),
+            _ =&gt; query.OrderBy(t =&gt; t.DueDate)
+        };
+
+        return query.ToList();
+    }
+
+    public string NextSortDir(string column) =&gt;
+        SortBy == column &amp;&amp; SortDir == &quot;asc&quot; ? &quot;desc&quot; : &quot;asc&quot;;
+}</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>hx-include=&quot;.filters-bar&quot;</code> ensures all filter values are sent with each request, preserving filter state when sorting or searching.</p>
+<doc-anchor-target id="inline-editing">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#inline-editing">#</doc-anchor-trigger>
+        <span>Inline Editing</span>
+    </h2>
+</doc-anchor-target>
+<p>Edit rows in place without opening a modal or navigating to a new page.</p>
+<doc-anchor-target id="inline-edit-row">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#inline-edit-row">#</doc-anchor-trigger>
+        <span>Inline Edit Row</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Shared/_TaskRow.cshtml (view mode):</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model TaskItem
+
+&lt;tr id=&quot;task-@Model.Id&quot;&gt;
+    &lt;td&gt;@Model.Name&lt;/td&gt;
+    &lt;td&gt;@Model.DueDate?.ToString(&quot;MMM d, yyyy&quot;)&lt;/td&gt;
+    &lt;td&gt;&lt;span class=&quot;badge @GetStatusClass()&quot;&gt;@Model.Status&lt;/span&gt;&lt;/td&gt;
+    &lt;td&gt;
+        &lt;button hx-get=&quot;/Tasks?handler=EditForm&amp;id=@Model.Id&quot;
+                hx-target=&quot;#task-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                class=&quot;btn btn-sm btn-outline-primary&quot;&gt;
+            Edit
+        &lt;/button&gt;
+        &lt;button hx-delete=&quot;/Tasks?handler=Delete&amp;id=@Model.Id&quot;
+                hx-target=&quot;#task-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                hx-confirm=&quot;Delete '@Model.Name'?&quot;
+                class=&quot;btn btn-sm btn-outline-danger&quot;&gt;
+            Delete
+        &lt;/button&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;
+
+@functions {
+    string GetStatusClass() =&gt; Model.Status switch
+    {
+        &quot;Complete&quot; =&gt; &quot;bg-success&quot;,
+        &quot;In Progress&quot; =&gt; &quot;bg-primary&quot;,
+        &quot;Blocked&quot; =&gt; &quot;bg-danger&quot;,
+        _ =&gt; &quot;bg-secondary&quot;
+    };
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_TaskEditRow.cshtml (edit mode):</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model TaskItem
+
+&lt;tr id=&quot;task-@Model.Id&quot; class=&quot;table-active&quot;&gt;
+    &lt;td&gt;
+        &lt;input type=&quot;text&quot; 
+               name=&quot;name&quot; 
+               value=&quot;@Model.Name&quot; 
+               class=&quot;form-control form-control-sm&quot; 
+               required /&gt;
+    &lt;/td&gt;
+    &lt;td&gt;
+        &lt;input type=&quot;date&quot; 
+               name=&quot;dueDate&quot; 
+               value=&quot;@Model.DueDate?.ToString(&quot;yyyy-MM-dd&quot;)&quot; 
+               class=&quot;form-control form-control-sm&quot; /&gt;
+    &lt;/td&gt;
+    &lt;td&gt;
+        &lt;select name=&quot;status&quot; class=&quot;form-select form-select-sm&quot;&gt;
+            &lt;option value=&quot;Pending&quot; selected=&quot;@(Model.Status == &quot;Pending&quot;)&quot;&gt;Pending&lt;/option&gt;
+            &lt;option value=&quot;In Progress&quot; selected=&quot;@(Model.Status == &quot;In Progress&quot;)&quot;&gt;In Progress&lt;/option&gt;
+            &lt;option value=&quot;Complete&quot; selected=&quot;@(Model.Status == &quot;Complete&quot;)&quot;&gt;Complete&lt;/option&gt;
+            &lt;option value=&quot;Blocked&quot; selected=&quot;@(Model.Status == &quot;Blocked&quot;)&quot;&gt;Blocked&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/td&gt;
+    &lt;td&gt;
+        &lt;button hx-put=&quot;/Tasks?handler=Update&amp;id=@Model.Id&quot;
+                hx-target=&quot;#task-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                hx-include=&quot;closest tr&quot;
+                class=&quot;btn btn-sm btn-success&quot;&gt;
+            Save
+        &lt;/button&gt;
+        &lt;button hx-get=&quot;/Tasks?handler=CancelEdit&amp;id=@Model.Id&quot;
+                hx-target=&quot;#task-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                class=&quot;btn btn-sm btn-secondary&quot;&gt;
+            Cancel
+        &lt;/button&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Task handlers:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetEditForm(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+    return Partial(&quot;_TaskEditRow&quot;, task);
+}
+
+public IActionResult OnGetCancelEdit(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+    return Partial(&quot;_TaskRow&quot;, task);
+}
+
+public IActionResult OnPutUpdate(int id, string name, DateTime? dueDate, string status)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        Response.StatusCode = 400;
+        return Partial(&quot;_TaskEditRow&quot;, task);
+    }
+
+    task.Name = name;
+    task.DueDate = dueDate;
+    task.Status = status;
+    _taskService.Update(task);
+
+    return Partial(&quot;_TaskRow&quot;, task);
+}
+
+public IActionResult OnDeleteDelete(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null)
+    {
+        Response.StatusCode = 404;
+        return Content(&quot;&quot;, &quot;text/html&quot;);
+    }
+
+    _taskService.Delete(id);
+    return Content(&quot;&quot;, &quot;text/html&quot;); // Empty response removes the row
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="complete-data-grid">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#complete-data-grid">#</doc-anchor-trigger>
+        <span>Complete Data Grid</span>
+    </h2>
+</doc-anchor-target>
+<p>Combine sorting, filtering, pagination, and CRUD operations into a complete data grid:</p>
+<p><strong>Pages/Orders.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model OrdersModel
+
+&lt;h1&gt;Orders&lt;/h1&gt;
+
+&lt;div class=&quot;data-grid&quot;&gt;
+    &lt;!-- Filters --&gt;
+    &lt;div class=&quot;grid-toolbar mb-3&quot;&gt;
+        &lt;div class=&quot;row g-2 align-items-end&quot;&gt;
+            &lt;div class=&quot;col-md-2&quot;&gt;
+                &lt;label class=&quot;form-label&quot;&gt;Status&lt;/label&gt;
+                &lt;select name=&quot;status&quot; class=&quot;form-select&quot;
+                        hx-get=&quot;/Orders?handler=List&quot;
+                        hx-target=&quot;#orders-grid&quot;
+                        hx-include=&quot;.grid-toolbar&quot;&gt;
+                    &lt;option value=&quot;&quot;&gt;All&lt;/option&gt;
+                    @foreach (var status in Model.AvailableStatuses)
+                    {
+                        &lt;option value=&quot;@status&quot; selected=&quot;@(Model.StatusFilter == status)&quot;&gt;@status&lt;/option&gt;
+                    }
+                &lt;/select&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;col-md-2&quot;&gt;
+                &lt;label class=&quot;form-label&quot;&gt;From&lt;/label&gt;
+                &lt;input type=&quot;date&quot; name=&quot;fromDate&quot; value=&quot;@Model.FromDate?.ToString(&quot;yyyy-MM-dd&quot;)&quot;
+                       class=&quot;form-control&quot;
+                       hx-get=&quot;/Orders?handler=List&quot;
+                       hx-target=&quot;#orders-grid&quot;
+                       hx-include=&quot;.grid-toolbar&quot;
+                       hx-trigger=&quot;change&quot; /&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;col-md-2&quot;&gt;
+                &lt;label class=&quot;form-label&quot;&gt;To&lt;/label&gt;
+                &lt;input type=&quot;date&quot; name=&quot;toDate&quot; value=&quot;@Model.ToDate?.ToString(&quot;yyyy-MM-dd&quot;)&quot;
+                       class=&quot;form-control&quot;
+                       hx-get=&quot;/Orders?handler=List&quot;
+                       hx-target=&quot;#orders-grid&quot;
+                       hx-include=&quot;.grid-toolbar&quot;
+                       hx-trigger=&quot;change&quot; /&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;col-md-3&quot;&gt;
+                &lt;label class=&quot;form-label&quot;&gt;Search&lt;/label&gt;
+                &lt;input type=&quot;search&quot; name=&quot;search&quot; value=&quot;@Model.SearchTerm&quot;
+                       class=&quot;form-control&quot; placeholder=&quot;Order # or customer...&quot;
+                       hx-get=&quot;/Orders?handler=List&quot;
+                       hx-target=&quot;#orders-grid&quot;
+                       hx-include=&quot;.grid-toolbar&quot;
+                       hx-trigger=&quot;keyup changed delay:300ms&quot; /&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;col-md-2&quot;&gt;
+                &lt;button class=&quot;btn btn-outline-secondary w-100&quot;
+                        hx-get=&quot;/Orders?handler=List&quot;
+                        hx-target=&quot;#orders-grid&quot;&gt;
+                    Clear Filters
+                &lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;sortBy&quot; value=&quot;@Model.SortBy&quot; /&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;sortDir&quot; value=&quot;@Model.SortDir&quot; /&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;page&quot; value=&quot;1&quot; /&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Grid content --&gt;
+    &lt;div id=&quot;orders-grid&quot; hx-history-elt&gt;
+        &lt;partial name=&quot;_OrdersGrid&quot; model=&quot;Model&quot; /&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_OrdersGrid.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model OrdersModel
+
+&lt;div class=&quot;table-responsive&quot;&gt;
+    &lt;table class=&quot;table table-hover&quot;&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;
+                    &lt;a hx-get=&quot;/Orders?handler=List&amp;sortBy=orderNumber&amp;sortDir=@Model.NextSortDir(&quot;orderNumber&quot;)&quot;
+                       hx-target=&quot;#orders-grid&quot;
+                       hx-include=&quot;.grid-toolbar&quot;
+                       class=&quot;sort-header @(Model.SortBy == &quot;orderNumber&quot; ? &quot;active&quot; : &quot;&quot;)&quot;&gt;
+                        Order #
+                        @if (Model.SortBy == &quot;orderNumber&quot;)
+                        {
+                            &lt;span&gt;@(Model.SortDir == &quot;asc&quot; ? &quot;▲&quot; : &quot;▼&quot;)&lt;/span&gt;
+                        }
+                    &lt;/a&gt;
+                &lt;/th&gt;
+                &lt;th&gt;
+                    &lt;a hx-get=&quot;/Orders?handler=List&amp;sortBy=date&amp;sortDir=@Model.NextSortDir(&quot;date&quot;)&quot;
+                       hx-target=&quot;#orders-grid&quot;
+                       hx-include=&quot;.grid-toolbar&quot;
+                       class=&quot;sort-header @(Model.SortBy == &quot;date&quot; ? &quot;active&quot; : &quot;&quot;)&quot;&gt;
+                        Date
+                        @if (Model.SortBy == &quot;date&quot;)
+                        {
+                            &lt;span&gt;@(Model.SortDir == &quot;asc&quot; ? &quot;▲&quot; : &quot;▼&quot;)&lt;/span&gt;
+                        }
+                    &lt;/a&gt;
+                &lt;/th&gt;
+                &lt;th&gt;Customer&lt;/th&gt;
+                &lt;th&gt;
+                    &lt;a hx-get=&quot;/Orders?handler=List&amp;sortBy=total&amp;sortDir=@Model.NextSortDir(&quot;total&quot;)&quot;
+                       hx-target=&quot;#orders-grid&quot;
+                       hx-include=&quot;.grid-toolbar&quot;
+                       class=&quot;sort-header @(Model.SortBy == &quot;total&quot; ? &quot;active&quot; : &quot;&quot;)&quot;&gt;
+                        Total
+                        @if (Model.SortBy == &quot;total&quot;)
+                        {
+                            &lt;span&gt;@(Model.SortDir == &quot;asc&quot; ? &quot;▲&quot; : &quot;▼&quot;)&lt;/span&gt;
+                        }
+                    &lt;/a&gt;
+                &lt;/th&gt;
+                &lt;th&gt;Status&lt;/th&gt;
+                &lt;th&gt;Actions&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            @if (Model.Orders.Any())
+            {
+                @foreach (var order in Model.Orders)
+                {
+                    &lt;tr id=&quot;order-@order.Id&quot;&gt;
+                        &lt;td&gt;&lt;a href=&quot;/Orders/@order.Id&quot;&gt;@order.OrderNumber&lt;/a&gt;&lt;/td&gt;
+                        &lt;td&gt;@order.OrderDate.ToString(&quot;MMM d, yyyy&quot;)&lt;/td&gt;
+                        &lt;td&gt;@order.CustomerName&lt;/td&gt;
+                        &lt;td&gt;@order.Total.ToString(&quot;C&quot;)&lt;/td&gt;
+                        &lt;td&gt;&lt;span class=&quot;badge @GetStatusClass(order.Status)&quot;&gt;@order.Status&lt;/span&gt;&lt;/td&gt;
+                        &lt;td&gt;
+                            &lt;a href=&quot;/Orders/@order.Id&quot; class=&quot;btn btn-sm btn-outline-primary&quot;&gt;View&lt;/a&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                }
+            }
+            else
+            {
+                &lt;tr&gt;
+                    &lt;td colspan=&quot;6&quot; class=&quot;text-center py-4 text-muted&quot;&gt;
+                        No orders found matching your criteria.
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            }
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/div&gt;
+
+@if (Model.TotalPages &gt; 1)
+{
+    &lt;nav class=&quot;d-flex justify-content-between align-items-center&quot;&gt;
+        &lt;span class=&quot;text-muted&quot;&gt;
+            Showing @Model.StartItem - @Model.EndItem of @Model.TotalItems orders
+        &lt;/span&gt;
+        &lt;ul class=&quot;pagination mb-0&quot;&gt;
+            &lt;li class=&quot;page-item @(Model.CurrentPage == 1 ? &quot;disabled&quot; : &quot;&quot;)&quot;&gt;
+                &lt;a class=&quot;page-link&quot;
+                   hx-get=&quot;/Orders?handler=List&amp;page=@(Model.CurrentPage - 1)&quot;
+                   hx-target=&quot;#orders-grid&quot;
+                   hx-include=&quot;.grid-toolbar&quot;&gt;
+                    Previous
+                &lt;/a&gt;
+            &lt;/li&gt;
+            @for (int i = 1; i &lt;= Model.TotalPages; i++)
+            {
+                &lt;li class=&quot;page-item @(i == Model.CurrentPage ? &quot;active&quot; : &quot;&quot;)&quot;&gt;
+                    &lt;a class=&quot;page-link&quot;
+                       hx-get=&quot;/Orders?handler=List&amp;page=@i&quot;
+                       hx-target=&quot;#orders-grid&quot;
+                       hx-include=&quot;.grid-toolbar&quot;&gt;
+                        @i
+                    &lt;/a&gt;
+                &lt;/li&gt;
+            }
+            &lt;li class=&quot;page-item @(Model.CurrentPage == Model.TotalPages ? &quot;disabled&quot; : &quot;&quot;)&quot;&gt;
+                &lt;a class=&quot;page-link&quot;
+                   hx-get=&quot;/Orders?handler=List&amp;page=@(Model.CurrentPage + 1)&quot;
+                   hx-target=&quot;#orders-grid&quot;
+                   hx-include=&quot;.grid-toolbar&quot;&gt;
+                    Next
+                &lt;/a&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+}
+
+@functions {
+    string GetStatusClass(string status) =&gt; status switch
+    {
+        &quot;Delivered&quot; =&gt; &quot;bg-success&quot;,
+        &quot;Shipped&quot; =&gt; &quot;bg-info&quot;,
+        &quot;Processing&quot; =&gt; &quot;bg-primary&quot;,
+        &quot;Cancelled&quot; =&gt; &quot;bg-danger&quot;,
+        _ =&gt; &quot;bg-secondary&quot;
+    };
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="error-handling">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#error-handling">#</doc-anchor-trigger>
+        <span>Error Handling</span>
+    </h2>
+</doc-anchor-target>
+<p>Handle failed requests gracefully:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;tbody id=&quot;task-table-body&quot;
+       hx-on::response-error=&quot;handleTableError(event)&quot;
+       hx-on::send-error=&quot;handleTableError(event)&quot;&gt;
+&lt;/tbody&gt;
+
+&lt;script&gt;
+function handleTableError(event) {
+    var target = event.detail.target || document.getElementById('task-table-body');
+    target.innerHTML = `
+        &lt;tr&gt;
+            &lt;td colspan=&quot;4&quot; class=&quot;text-center py-4&quot;&gt;
+                &lt;div class=&quot;alert alert-danger mb-0&quot;&gt;
+                    &lt;p&gt;Failed to load data. Please try again.&lt;/p&gt;
+                    &lt;button onclick=&quot;location.reload()&quot; class=&quot;btn btn-outline-danger btn-sm&quot;&gt;
+                        Reload Page
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    `;
+}
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>This chapter covered dynamic lists and tables with htmx:</p>
+<ul>
+<li><strong>Anti-forgery tokens</strong> configured globally for all htmx requests</li>
+<li><strong>Live updates</strong> with <code v-pre>hx-trigger=&quot;every Xs&quot;</code> for real-time data</li>
+<li><strong>Sorting</strong> with clickable headers and toggle direction</li>
+<li><strong>Pagination</strong> with complete page controls and URL integration</li>
+<li><strong>Infinite scroll</strong> using <code v-pre>hx-trigger=&quot;revealed&quot;</code> with dynamic page tracking</li>
+<li><strong>Filtering</strong> with combined filters using <code v-pre>hx-include</code></li>
+<li><strong>Inline editing</strong> with view/edit row states</li>
+<li><strong>Delete operations</strong> with confirmation and proper token handling</li>
+<li><strong>Empty states</strong> and error handling for better UX</li>
+<li><strong>Complete data grid</strong> combining all features</li>
+</ul>
+<p>These patterns form the foundation for any data-driven application, from admin dashboards to e-commerce catalogs.</p>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>Chapter 14 covers buttons and action links. You will learn to build one-click actions that update UI instantly, confirmation workflows for dangerous operations, batch actions for multiple items, and status toggles that feel immediate and responsive.</p>
 
                                 
                                 <!-- Required only on API pages -->

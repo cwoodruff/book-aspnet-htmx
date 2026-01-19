@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Integrating Hyperscript for Complex Logic</title>
     <meta name="title" content="Integrating Hyperscript for Complex Logic">
-    <meta name="description" content="Up to this point, we have explored how htmx brings delightful simplicity to ASP.">
+    <meta name="description" content="htmx handles most interactions beautifully. Click a button, fetch content, swap it into the page.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter09/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter09/">
     <meta property="og:title" content="Integrating Hyperscript for Complex Logic">
-    <meta property="og:description" content="Up to this point, we have explored how htmx brings delightful simplicity to ASP.">
+    <meta property="og:description" content="htmx handles most interactions beautifully. Click a button, fetch content, swap it into the page.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter09/">
     <meta property="twitter:title" content="Integrating Hyperscript for Complex Logic">
-    <meta property="twitter:description" content="Up to this point, we have explored how htmx brings delightful simplicity to ASP.">
+    <meta property="twitter:description" content="htmx handles most interactions beautifully. Click a button, fetch content, swap it into the page.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -253,124 +253,864 @@
         <span>Integrating Hyperscript for Complex Logic</span>
     </h1>
 </doc-anchor-target>
-<p>Up to this point, we have explored how htmx brings delightful simplicity to ASP.NET Core Razor Pages by handling requests, updating UI fragments, and interacting with the server with minimal JavaScript. However, there are moments when this declarative approach may not suffice. We may require conditional logic, event chaining, or dynamic decision-making that doesn’t fit neatly into the hx-* attributes. This is where Hyperscript comes into play.</p>
-<p>Think of Hyperscript as the missing piece of the htmx puzzle. It is a lightweight scripting language designed specifically for browsers, allowing you to express complex behaviors while maintaining an HTML-native feel. Unlike JavaScript, which often requires switching mental contexts, Hyperscript resides directly within your markup, keeping your logic closely tied to your HTML and easy to follow. It is declarative, readable, and surprisingly powerful for tasks typically handled by JavaScript.</p>
-<p>In this chapter, we will explore how Hyperscript complements htmx by enabling more advanced client-side logic without disrupting the clean, server-first development model we have established. You will learn how to trigger custom sequences of events, incorporate decision-making logic into your UI, and enhance interactivity without relying on a full JavaScript framework. Let’s dive in and elevate your Razor Pages with the elegance of Hyperscript.</p>
-<doc-anchor-target id="getting-reactive-hyperscript-in-the-flow-of-htmx">
+<p>htmx handles most interactions beautifully. Click a button, fetch content, swap it into the page. But some interactions need client-side logic that htmx alone cannot provide: toggling classes based on conditions, waiting for animations to complete, orchestrating multi-step sequences, or managing temporary UI state. You have two choices: write JavaScript or use Hyperscript.</p>
+<p>Hyperscript is a scripting language built for HTML. It lives in your markup using the <code v-pre>_</code> attribute, reads like English, and integrates tightly with htmx events. For many interactions, it provides a cleaner alternative to JavaScript event listeners and DOM manipulation.</p>
+<p>This chapter teaches you when Hyperscript makes sense, when htmx alone suffices, and how to combine both for sophisticated interactions. You will learn the syntax, see complete working examples with Razor Pages, and understand the trade-offs involved.</p>
+<doc-anchor-target id="installing-hyperscript">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#getting-reactive-hyperscript-in-the-flow-of-htmx">#</doc-anchor-trigger>
-        <span>Getting Reactive: Hyperscript in the Flow of htmx</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#installing-hyperscript">#</doc-anchor-trigger>
+        <span>Installing Hyperscript</span>
     </h2>
 </doc-anchor-target>
-<p>htmx is a powerful tool for adding dynamic behavior to Razor Pages without needing a full frontend framework. However, sometimes you might require a bit more client-side logic. This is where Hyperscript comes in. It’s a lightweight scripting language designed to work seamlessly with htmx and HTML. You can think of it as a more concise and focused version of JavaScript—specifically created to enhance user interactions without the need for an entire script file or complicating your code with imperative logic.</p>
-<p>Hyperscript allows you to define behavior in a natural, readable format directly within HTML attributes. Rather than using JavaScript event listeners, conditionals, and DOM manipulation APIs, you can declaratively express your logic right alongside your HTML elements. This approach keeps your Razor Pages organized and ensures that the behavior is contextual, complementing htmx&#x27;s philosophy of placing behavior close to the markup.</p>
-<p>For instance, if you want to execute a sequence of actions when a user clicks a button—like hiding a message, updating a class, and making an htmx request—doing this in JavaScript would typically involve setting up an event listener, executing multiple DOM calls, and utilizing a fetch or <code v-pre>htmx.trigger()</code> method. With Hyperscript, however, you can express the entire process inline using plain language. The outcome is simpler, more maintainable templates.</p>
-<p>Hyperscript is especially useful when you want to chain actions together, respond to user inputs based on conditions, or reflect changes in client-side state within your UI. For example, if you want to show a tooltip only when certain conditions are met or to animate a modal opening only if it’s not already visible, you can easily express this logic directly in your markup without referring to a JavaScript file or a global state manager.</p>
-<p>Here’s a practical example—let’s create a lightweight tooltip system without using any JavaScript. You’ll define a tooltip component and utilize Hyperscript to control its visibility on hover.</p>
+<p>Add Hyperscript to your <code v-pre>_Layout.cshtml</code> after htmx:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;span _=&quot;on mouseenter
-         add .visible to #tooltip
-         then wait 100ms
-         then remove .hidden from #tooltip
-       on mouseleave
-         add .hidden to #tooltip
-         then wait 100ms
-         then remove .visible from #tooltip&quot;&gt;
-  Hover over me
-&lt;/span&gt;
-
-&lt;div id=&quot;tooltip&quot; class=&quot;tooltip hidden&quot;&gt;This is your tooltip&lt;/div&gt;</code></pre>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script src=&quot;https://unpkg.com/htmx.org@2.0.4&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/hyperscript.org@0.9.12&quot;&gt;&lt;/script&gt;</code></pre>
 </doc-codeblock></div>
-<p>And your CSS:</p>
+<p>Or install locally:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">npm install hyperscript.org</code></pre>
+</doc-codeblock></div>
+<p>Then reference from your wwwroot:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script src=&quot;~/lib/hyperscript.org/dist/_hyperscript.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p>Hyperscript uses the <code v-pre>_</code> attribute (underscore) for its code. This keeps it visually distinct from htmx&#x27;s <code v-pre>hx-</code> attributes.</p>
+<doc-anchor-target id="hyperscript-syntax-basics">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hyperscript-syntax-basics">#</doc-anchor-trigger>
+        <span>Hyperscript Syntax Basics</span>
+    </h2>
+</doc-anchor-target>
+<p>Hyperscript reads like English. Here are the fundamental patterns:</p>
+<doc-anchor-target id="event-handling">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#event-handling">#</doc-anchor-trigger>
+        <span>Event Handling</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Single event --&gt;
+&lt;button _=&quot;on click add .active to me&quot;&gt;
+    Click Me
+&lt;/button&gt;
+
+&lt;!-- Multiple events --&gt;
+&lt;div _=&quot;on mouseenter add .hover to me
+        on mouseleave remove .hover from me&quot;&gt;
+    Hover Area
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="class-manipulation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#class-manipulation">#</doc-anchor-trigger>
+        <span>Class Manipulation</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Add class --&gt;
+&lt;button _=&quot;on click add .loading to me&quot;&gt;Start&lt;/button&gt;
+
+&lt;!-- Remove class --&gt;
+&lt;button _=&quot;on click remove .hidden from #panel&quot;&gt;Show&lt;/button&gt;
+
+&lt;!-- Toggle class --&gt;
+&lt;button _=&quot;on click toggle .open on #menu&quot;&gt;Toggle Menu&lt;/button&gt;
+
+&lt;!-- Add to another element --&gt;
+&lt;button _=&quot;on click add .highlight to #target&quot;&gt;Highlight Target&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="waiting-and-timing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#waiting-and-timing">#</doc-anchor-trigger>
+        <span>Waiting and Timing</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Wait a duration --&gt;
+&lt;button _=&quot;on click 
+           add .processing to me
+           wait 2s
+           remove .processing from me&quot;&gt;
+    Process
+&lt;/button&gt;
+
+&lt;!-- Wait for an event --&gt;
+&lt;button _=&quot;on click 
+           trigger loadContent on #content
+           wait for htmx:afterSwap from #content
+           add .loaded to #content&quot;&gt;
+    Load
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="conditionals">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#conditionals">#</doc-anchor-trigger>
+        <span>Conditionals</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- If statement --&gt;
+&lt;button _=&quot;on click
+           if I match .active
+               remove .active from me
+           else
+               add .active to me
+           end&quot;&gt;
+    Toggle State
+&lt;/button&gt;
+
+&lt;!-- Confirm dialog --&gt;
+&lt;button _=&quot;on click
+           if confirm('Are you sure?')
+               trigger delete on #form
+           end&quot;&gt;
+    Delete
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="targeting-elements">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#targeting-elements">#</doc-anchor-trigger>
+        <span>Targeting Elements</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- me/I refers to current element --&gt;
+&lt;button _=&quot;on click add .clicked to me&quot;&gt;Click&lt;/button&gt;
+
+&lt;!-- CSS selectors --&gt;
+&lt;button _=&quot;on click add .open to #modal&quot;&gt;Open Modal&lt;/button&gt;
+
+&lt;!-- Relative selectors --&gt;
+&lt;button _=&quot;on click remove .error from closest .form-group&quot;&gt;Clear Error&lt;/button&gt;
+
+&lt;!-- Multiple targets --&gt;
+&lt;button _=&quot;on click add .hidden to .notification&quot;&gt;Hide All&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="triggering-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#triggering-events">#</doc-anchor-trigger>
+        <span>Triggering Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Trigger on another element --&gt;
+&lt;button _=&quot;on click trigger submit on #myForm&quot;&gt;Submit Form&lt;/button&gt;
+
+&lt;!-- Send custom event --&gt;
+&lt;button _=&quot;on click send refreshData to #dashboard&quot;&gt;Refresh&lt;/button&gt;
+
+&lt;!-- Trigger htmx request --&gt;
+&lt;button _=&quot;on click trigger click on #hidden-htmx-button&quot;&gt;Load via htmx&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="when-to-use-hyperscript-vs-htmx-alone">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#when-to-use-hyperscript-vs-htmx-alone">#</doc-anchor-trigger>
+        <span>When to Use Hyperscript vs htmx Alone</span>
+    </h2>
+</doc-anchor-target>
+<p>Before reaching for Hyperscript, check if htmx already provides what you need.</p>
+<doc-anchor-target id="use-htmx-alone-for">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#use-htmx-alone-for">#</doc-anchor-trigger>
+        <span>Use htmx Alone For:</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Confirmation dialogs</strong> - htmx has <code v-pre>hx-confirm</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Don't need Hyperscript for this --&gt;
+&lt;button hx-delete=&quot;/Items?handler=Remove&amp;amp;id=5&quot;
+        hx-target=&quot;closest .item&quot;
+        hx-swap=&quot;outerHTML&quot;
+        hx-confirm=&quot;Delete this item?&quot;&gt;
+    Delete
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Triggering requests from other elements</strong> - Use <code v-pre>hx-trigger</code> with <code v-pre>from:</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Don't need Hyperscript for this --&gt;
+&lt;div hx-get=&quot;/Content?handler=Load&quot;
+     hx-trigger=&quot;load, customEvent from:body&quot;
+     hx-target=&quot;this&quot;&gt;
+    Content loads on page load and when customEvent fires
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Refreshing elements after actions</strong> - Use <code v-pre>HX-Trigger</code> response header:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostCreate()
+{
+    _service.Create();
+    Response.Headers.Append(&quot;HX-Trigger&quot;, &quot;itemCreated&quot;);
+    return Content(&quot;&lt;div&gt;Created!&lt;/div&gt;&quot;, &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- List auto-refreshes when itemCreated event fires --&gt;
+&lt;div hx-get=&quot;/Items?handler=List&quot;
+     hx-trigger=&quot;load, itemCreated from:body&quot;
+     hx-target=&quot;this&quot;&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="use-hyperscript-for">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#use-hyperscript-for">#</doc-anchor-trigger>
+        <span>Use Hyperscript For:</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Class toggling with conditions:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+           if I match .active
+               remove .active from me
+               put 'Enable' into me
+           else
+               add .active to me
+               put 'Disable' into me
+           end&quot;&gt;
+    Enable
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Sequenced animations:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+           add .fade-out to #old-content
+           wait 300ms
+           trigger loadNew on #content-area
+           wait for htmx:afterSwap from #content-area
+           add .fade-in to #content-area&quot;&gt;
+    Transition Content
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Temporary UI state:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+           add .copied to me
+           writeText('Copied!') into navigator.clipboard
+           wait 2s
+           remove .copied from me&quot;&gt;
+    Copy to Clipboard
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Multi-step user flows:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+           if #email.value is ''
+               add .error to #email
+               exit
+           end
+           add .loading to me
+           trigger submit on #form&quot;&gt;
+    Submit
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="integrating-hyperscript-with-htmx-events">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#integrating-hyperscript-with-htmx-events">#</doc-anchor-trigger>
+        <span>Integrating Hyperscript with htmx Events</span>
+    </h2>
+</doc-anchor-target>
+<p>htmx fires events throughout the request lifecycle. Hyperscript can listen for these events and respond accordingly.</p>
+<doc-anchor-target id="key-htmx-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#key-htmx-events">#</doc-anchor-trigger>
+        <span>Key htmx Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Event</th>
+<th>When It Fires</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>htmx:beforeRequest</code></td>
+<td>Before request is sent</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterRequest</code></td>
+<td>After request completes</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:beforeSwap</code></td>
+<td>Before content is swapped</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSwap</code></td>
+<td>After content is swapped</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSettle</code></td>
+<td>After CSS transitions complete</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:responseError</code></td>
+<td>When server returns error</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="responding-to-htmx-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#responding-to-htmx-events">#</doc-anchor-trigger>
+        <span>Responding to htmx Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Contact?handler=Submit&quot; 
+      hx-target=&quot;#result&quot;
+      _=&quot;on htmx:beforeRequest add .submitting to me
+         on htmx:afterRequest remove .submitting from me&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;text&quot; name=&quot;message&quot; required /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Send&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="triggering-htmx-from-hyperscript">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#triggering-htmx-from-hyperscript">#</doc-anchor-trigger>
+        <span>Triggering htmx from Hyperscript</span>
+    </h3>
+</doc-anchor-target>
+<p>Sometimes you need Hyperscript to initiate an htmx request. The cleanest approach triggers a click on an htmx-enabled element:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Hyperscript triggers the htmx request --&gt;
+&lt;button _=&quot;on click
+           if confirm('Load fresh data?')
+               trigger click on #refresh-btn
+           end&quot;&gt;
+    Confirm and Refresh
+&lt;/button&gt;
+
+&lt;!-- htmx handles the actual request --&gt;
+&lt;button id=&quot;refresh-btn&quot; 
+        hx-get=&quot;/Dashboard?handler=Refresh&quot;
+        hx-target=&quot;#dashboard&quot;
+        style=&quot;display: none&quot;&gt;
+&lt;/button&gt;
+
+&lt;div id=&quot;dashboard&quot;&gt;Dashboard content&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="chaining-actions-after-htmx-completes">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#chaining-actions-after-htmx-completes">#</doc-anchor-trigger>
+        <span>Chaining Actions After htmx Completes</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Notifications?handler=List&quot;
+        hx-target=&quot;#notifications&quot;
+        hx-swap=&quot;innerHTML&quot;
+        _=&quot;on htmx:afterSwap 
+           wait 100ms
+           add .loaded to #notifications
+           send notificationsLoaded to body&quot;&gt;
+    Load Notifications
+&lt;/button&gt;
+
+&lt;div id=&quot;notifications&quot;&gt;&lt;/div&gt;
+
+&lt;!-- Another element responds to the custom event --&gt;
+&lt;div _=&quot;on notificationsLoaded from body
+        put 'Updated just now' into me&quot;&gt;
+    Last updated: Never
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="practical-examples">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#practical-examples">#</doc-anchor-trigger>
+        <span>Practical Examples</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="tooltip-system">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#tooltip-system">#</doc-anchor-trigger>
+        <span>Tooltip System</span>
+    </h3>
+</doc-anchor-target>
+<p>A tooltip that appears on hover with smooth transitions:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;span class=&quot;has-tooltip&quot;
+      _=&quot;on mouseenter
+           add .visible to next .tooltip
+         on mouseleave
+           remove .visible from next .tooltip&quot;&gt;
+    Hover over me
+    &lt;span class=&quot;tooltip&quot;&gt;This is the tooltip content&lt;/span&gt;
+&lt;/span&gt;</code></pre>
+</doc-codeblock></div>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-css"><code v-pre class="language-css">.tooltip {
     position: absolute;
     background: #333;
     color: white;
-    padding: 0.5rem;
-    border-radius: 5px;
-    transition: opacity 0.2s ease;
-}
-.hidden {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     opacity: 0;
+    transition: opacity 0.2s ease;
     pointer-events: none;
 }
-.visible {
+
+.tooltip.visible {
     opacity: 1;
 }</code></pre>
 </doc-codeblock></div>
-<p>That <code v-pre>_=</code> attribute is Hyperscript in action. It listens for mouse events, modifies classes, and adds delays for smooth transitions—all inline and all readable. There’s no JavaScript file, no document.querySelector, and no external dependencies. This approach keeps your code clean, maintainable, and easy to debug, especially within Razor Pages where tight coupling between markup and behavior is a plus.</p>
-<p>When paired with htmx, Hyperscript is the perfect tool for those “just a bit of logic” moments that would otherwise balloon into unnecessary complexity. It&#x27;s not here to replace JavaScript for heavy lifting, but for 80% of UI interactivity use cases—especially when working with server-rendered apps—Hyperscript hits the sweet spot.</p>
-<doc-anchor-target id="leveling-up-events-hyperscript--htmx-in-harmony">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#leveling-up-events-hyperscript--htmx-in-harmony">#</doc-anchor-trigger>
-        <span>Leveling Up Events: Hyperscript + htmx in Harmony</span>
-    </h2>
+<doc-anchor-target id="modal-dialog">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#modal-dialog">#</doc-anchor-trigger>
+        <span>Modal Dialog</span>
+    </h3>
 </doc-anchor-target>
-<p>htmx gives you a fantastic way to wire up interactions using attributes like <code v-pre>hx-get</code>, <code v-pre>hx-post</code>, and <code v-pre>hx-trigger</code>. But sometimes, the built-in triggers aren’t quite enough—you need to wait, sequence actions, or respond to one event by firing another. That’s where Hyperscript becomes your secret weapon. You can use it to dynamically extend or respond to htmx-driven behavior, enabling smoother and smarter interactions in your Razor Pages without writing JavaScript.</p>
-<p>Let’s say you have a dashboard widget that refreshes itself after a background update. htmx can fetch new content from the server, but how do you wait until the update is complete before triggering the refresh? With Hyperscript, you can hook into htmx events like <code v-pre>htmx:afterRequest</code> or <code v-pre>htmx:afterSwap</code> and trigger additional actions from there. These custom sequences keep the user interface responsive and tightly orchestrated.</p>
-<p>Here’s how you might implement this. Suppose you have a component that updates via an hx-post request—like a status toggle. You want to refresh a summary section once the update completes:</p>
+<p>A modal that opens, loads content via htmx, and closes on completion:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Status/Toggle&quot; hx-target=&quot;#status-section&quot; hx-swap=&quot;outerHTML&quot; _=&quot;
-    on htmx:afterRequest 
-        wait 250ms 
-        then send refresh to #summary&quot;&gt;
-    &lt;button type=&quot;submit&quot;&gt;Toggle Status&lt;/button&gt;
-&lt;/form&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model ModalDemoModel
 
-&lt;div id=&quot;summary&quot; hx-get=&quot;/Status/Summary&quot; hx-trigger=&quot;refresh from:body&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>In this example, Hyperscript listens for the <code v-pre>htmx:afterRequest</code> event on the form. Once it fires, Hyperscript waits a short moment, then triggers a synthetic <code v-pre>refresh</code> event that causes htmx to re-fetch the updated summary. This kind of choreography would usually require JavaScript and DOM listeners, but here it’s self-contained and crystal clear in the markup.</p>
-<p>When debugging Hyperscript behaviors in Razor Pages, your best friend is the browser console. Hyperscript provides helpful runtime error messages, and you can enable verbose output with a query string like <code v-pre>?hyperscript-debug=true</code> or by setting <code v-pre>window._hyperscript.debug = true</code> in a small inline script. If you’re not seeing the behavior you expect, check that your Hyperscript is correctly bound (the <code v-pre>_=</code> attribute must be on the right element), and that events are properly scoped.</p>
-<p>The real power of Hyperscript in Razor Pages apps is how seamlessly it fits into the htmx flow. Instead of bouncing between HTML and JavaScript files, you stay in the same mental space—markup, behavior, and logic all in one place. As your interactivity needs grow, Hyperscript helps you grow with them—without ever dragging you into the deep waters of full SPA complexity.</p>
-<doc-anchor-target id="from-clicks-to-conversations-building-interaction-flows-with-hyperscript">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#from-clicks-to-conversations-building-interaction-flows-with-hyperscript">#</doc-anchor-trigger>
-        <span>From Clicks to Conversations: Building Interaction Flows with Hyperscript</span>
-    </h2>
-</doc-anchor-target>
-<p>One of the hardest parts of client-side development is managing the branching logic that comes with real-world user interactions. Should something happen only under a certain condition? Should a sequence wait on a user action, or pause before progressing? JavaScript gives you full control, but that control often comes with boilerplate, complexity, and separation from your markup. Hyperscript flips the script, letting you express those same ideas right in your HTML in a clean, declarative way.</p>
-<p>Imagine a scenario where you want to confirm a user’s intent before executing a destructive action—say, deleting a record. With Hyperscript, you can handle the prompt and the conditional follow-up without ever leaving your Razor Page.</p>
-<p>Here’s an example:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
-        if confirm('Are you sure you want to delete this?')
-        then add .loading to me
-        then send deleteRequest to #deleteForm&quot;&gt;
-    Delete
+&lt;!-- Open button --&gt;
+&lt;button _=&quot;on click add .open to #modal&quot;&gt;
+    View Product Details
 &lt;/button&gt;
 
-&lt;form id=&quot;deleteForm&quot; hx-delete=&quot;/Item/Delete&quot; hx-target=&quot;#item-list&quot; hx-swap=&quot;outerHTML&quot;&gt;&lt;/form&gt;</code></pre>
-</doc-codeblock></div>
-<p>This one snippet introduces conditional logic, a state change (adding a class), and an htmx-triggered request—all from inside a Hyperscript attribute. There’s no JavaScript file, no click event handler, and no global state. It’s expressive, readable, and maintains the tight markup-behavior cohesion that makes Razor Pages so productive.</p>
-<p>You can also use Hyperscript to build complex, multi-step interactions that evolve in response to user input. One common pattern is a modal dialog that appears, fetches content asynchronously, then allows for form submission inside it. Normally, this involves multiple scripts and nested callbacks. But with Hyperscript and htmx, it’s much more approachable.</p>
-<p>Let’s walk through a fully dynamic modal flow:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
-        add .open to #modal
-        then put 'Loading...' into #modal-body
-        then get '/Product/Details?id=42'
-        then put the result into #modal-body&quot;&gt;
-    View Details
-&lt;/button&gt;
-
+&lt;!-- Modal structure --&gt;
 &lt;div id=&quot;modal&quot; class=&quot;modal&quot;&gt;
-  &lt;div id=&quot;modal-body&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;modal-backdrop&quot; _=&quot;on click remove .open from #modal&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+        &lt;button class=&quot;modal-close&quot; _=&quot;on click remove .open from #modal&quot;&gt;X&lt;/button&gt;
+        &lt;div id=&quot;modal-body&quot;
+             hx-get=&quot;/ModalDemo?handler=ProductDetails&amp;amp;id=42&quot;
+             hx-trigger=&quot;load&quot;
+             hx-target=&quot;this&quot;&gt;
+            Loading...
+        &lt;/div&gt;
+    &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>This snippet adds a class to show the modal, displays a loading message, and then asynchronously loads the content into the modal’s body. All this happens in a single readable sequence, and because htmx handles the get request and Hyperscript binds the actions, you don’t write a line of JavaScript.</p>
-<p>You can even hook into form submissions inside the modal using htmx as usual. If you wanted to post a form and close the modal on success, you might have something like this:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Product/Update&quot; hx-target=&quot;#modal-body&quot; hx-swap=&quot;innerHTML&quot; 
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ModalDemoModel : PageModel
+{
+    private readonly IProductService _productService;
+
+    public ModalDemoModel(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    public void OnGet() { }
+
+    public IActionResult OnGetProductDetails(int id)
+    {
+        var product = _productService.GetById(id);
+        if (product == null) return NotFound();
+        return Partial(&quot;_ProductDetails&quot;, product);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_ProductDetails.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model Product
+
+&lt;h2&gt;@Model.Name&lt;/h2&gt;
+&lt;p&gt;@Model.Description&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Price:&lt;/strong&gt; @Model.Price.ToString(&quot;C&quot;)&lt;/p&gt;
+
+&lt;form hx-post=&quot;/ModalDemo?handler=AddToCart&quot;
+      hx-target=&quot;#cart-count&quot;
       _=&quot;on htmx:afterRequest remove .open from #modal&quot;&gt;
-  @Html.AntiForgeryToken()
-  &lt;!-- form fields here --&gt;
-  &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;hidden&quot; name=&quot;productId&quot; value=&quot;@Model.Id&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Add to Cart&lt;/button&gt;
 &lt;/form&gt;</code></pre>
 </doc-codeblock></div>
-<p>The modal closes itself when the form is successfully submitted, providing an elegant interaction loop with just Hyperscript and htmx.</p>
-<p>These kinds of flows—simple but nuanced—are where Hyperscript truly shines. You can orchestrate interactions that feel thoughtful and responsive, all without leaving the Razor Pages model or introducing additional libraries. Hyperscript bridges the last mile of user experience in server-rendered apps, letting you finesse the client side without surrendering to complexity.</p>
-<p>In the next chapter, we’ll shift from handling dynamic content to managing browser behavior. We’ll look at how hx-push-url and hx-replace-url let you take control of navigation in a single-page style—without a full page reload or needing a JavaScript router. You’ll learn how to keep URLs in sync with the UI, enable back-button support, and build deep-linkable components that feel seamless and fast.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.modal.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="accordion-component">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#accordion-component">#</doc-anchor-trigger>
+        <span>Accordion Component</span>
+    </h3>
+</doc-anchor-target>
+<p>An accordion that allows only one section open at a time:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;accordion&quot;&gt;
+    &lt;div class=&quot;accordion-item&quot;&gt;
+        &lt;button class=&quot;accordion-header&quot;
+                _=&quot;on click
+                   if next .accordion-body matches .open
+                       remove .open from next .accordion-body
+                   else
+                       remove .open from .accordion-body in closest .accordion
+                       add .open to next .accordion-body
+                   end&quot;&gt;
+            Section 1
+        &lt;/button&gt;
+        &lt;div class=&quot;accordion-body&quot;&gt;
+            &lt;p&gt;Content for section 1&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;accordion-item&quot;&gt;
+        &lt;button class=&quot;accordion-header&quot;
+                _=&quot;on click
+                   if next .accordion-body matches .open
+                       remove .open from next .accordion-body
+                   else
+                       remove .open from .accordion-body in closest .accordion
+                       add .open to next .accordion-body
+                   end&quot;&gt;
+            Section 2
+        &lt;/button&gt;
+        &lt;div class=&quot;accordion-body&quot;&gt;
+            &lt;p&gt;Content for section 2&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.accordion-body.open {
+    max-height: 500px;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="form-with-client-side-validation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#form-with-client-side-validation">#</doc-anchor-trigger>
+        <span>Form with Client-Side Validation</span>
+    </h3>
+</doc-anchor-target>
+<p>Validate before submitting, show loading state, handle errors:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model ContactModel
+
+&lt;form id=&quot;contact-form&quot;
+      hx-post=&quot;/Contact?handler=Submit&quot;
+      hx-target=&quot;#form-result&quot;
+      _=&quot;on submit
+           if #email.value is ''
+               halt the event
+               add .error to #email
+               put 'Email is required' into #email-error
+               exit
+           end
+           if not #email.value contains '@'
+               halt the event
+               add .error to #email
+               put 'Enter a valid email' into #email-error
+               exit
+           end
+           remove .error from #email
+           put '' into #email-error
+         on htmx:beforeRequest
+           add .submitting to me
+         on htmx:afterRequest
+           remove .submitting from me&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;email&quot;&gt;Email&lt;/label&gt;
+        &lt;input type=&quot;email&quot; id=&quot;email&quot; name=&quot;email&quot; 
+               _=&quot;on input remove .error from me&quot; /&gt;
+        &lt;span id=&quot;email-error&quot; class=&quot;error-message&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;message&quot;&gt;Message&lt;/label&gt;
+        &lt;textarea id=&quot;message&quot; name=&quot;message&quot; required&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+    
+    &lt;button type=&quot;submit&quot;&gt;
+        &lt;span class=&quot;normal-text&quot;&gt;Send Message&lt;/span&gt;
+        &lt;span class=&quot;loading-text&quot;&gt;Sending...&lt;/span&gt;
+    &lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id=&quot;form-result&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.form-group input.error {
+    border-color: red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.875rem;
+}
+
+form.submitting button .normal-text {
+    display: none;
+}
+
+form.submitting button .loading-text {
+    display: inline;
+}
+
+button .loading-text {
+    display: none;
+}</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ContactModel : PageModel
+{
+    private readonly IEmailService _emailService;
+
+    public ContactModel(IEmailService emailService)
+    {
+        _emailService = emailService;
+    }
+
+    public void OnGet() { }
+
+    public async Task&lt;IActionResult&gt; OnPostSubmit(string email, string message)
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(message))
+        {
+            Response.StatusCode = 400;
+            return Content(&quot;&lt;div class=\&quot;error\&quot;&gt;All fields are required&lt;/div&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        await _emailService.SendAsync(email, message);
+        return Content(&quot;&lt;div class=\&quot;success\&quot;&gt;Message sent! We will respond shortly.&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="dashboard-with-refresh-controls">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#dashboard-with-refresh-controls">#</doc-anchor-trigger>
+        <span>Dashboard with Refresh Controls</span>
+    </h3>
+</doc-anchor-target>
+<p>A dashboard with manual refresh and auto-refresh toggle:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model DashboardModel
+
+&lt;div class=&quot;dashboard-controls&quot;&gt;
+    &lt;button hx-get=&quot;/Dashboard?handler=Stats&quot;
+            hx-target=&quot;#stats&quot;
+            hx-indicator=&quot;#refresh-indicator&quot;&gt;
+        Refresh Now
+    &lt;/button&gt;
+    
+    &lt;label&gt;
+        &lt;input type=&quot;checkbox&quot; id=&quot;auto-refresh&quot;
+               _=&quot;on change
+                  if I am checked
+                      set @hx-trigger of #stats to 'load, every 30s'
+                      call htmx.process(#stats)
+                  else
+                      set @hx-trigger of #stats to 'load'
+                      call htmx.process(#stats)
+                  end&quot; /&gt;
+        Auto-refresh every 30s
+    &lt;/label&gt;
+    
+    &lt;span id=&quot;refresh-indicator&quot; class=&quot;htmx-indicator&quot;&gt;Refreshing...&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;stats&quot;
+     hx-get=&quot;/Dashboard?handler=Stats&quot;
+     hx-trigger=&quot;load&quot;
+     hx-target=&quot;this&quot;&gt;
+    Loading stats...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class DashboardModel : PageModel
+{
+    private readonly IStatsService _statsService;
+
+    public DashboardModel(IStatsService statsService)
+    {
+        _statsService = statsService;
+    }
+
+    public void OnGet() { }
+
+    public IActionResult OnGetStats()
+    {
+        var stats = _statsService.GetCurrent();
+        return Partial(&quot;_DashboardStats&quot;, stats);
+    }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="copy-to-clipboard">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#copy-to-clipboard">#</doc-anchor-trigger>
+        <span>Copy to Clipboard</span>
+    </h3>
+</doc-anchor-target>
+<p>A button that copies text and shows feedback:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;code-block&quot;&gt;
+    &lt;pre id=&quot;code-content&quot;&gt;npm install htmx.org&lt;/pre&gt;
+    &lt;button class=&quot;copy-btn&quot;
+            _=&quot;on click
+               writeText(#code-content.innerText) on navigator.clipboard
+               add .copied to me
+               wait 2s
+               remove .copied from me&quot;&gt;
+        &lt;span class=&quot;copy-text&quot;&gt;Copy&lt;/span&gt;
+        &lt;span class=&quot;copied-text&quot;&gt;Copied!&lt;/span&gt;
+    &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.copy-btn .copied-text {
+    display: none;
+}
+
+.copy-btn.copied .copy-text {
+    display: none;
+}
+
+.copy-btn.copied .copied-text {
+    display: inline;
+}
+
+.copy-btn.copied {
+    background-color: #28a745;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="debugging-hyperscript">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-hyperscript">#</doc-anchor-trigger>
+        <span>Debugging Hyperscript</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="enable-debug-mode">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#enable-debug-mode">#</doc-anchor-trigger>
+        <span>Enable Debug Mode</span>
+    </h3>
+</doc-anchor-target>
+<p>Add this script to see verbose output in the console:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script&gt;
+_hyperscript.config.debug = true;
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="common-issues">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-issues">#</doc-anchor-trigger>
+        <span>Common Issues</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Script not running</strong></p>
+<ul>
+<li>Verify Hyperscript is loaded after htmx</li>
+<li>Check that the <code v-pre>_</code> attribute is on the correct element</li>
+<li>Look for syntax errors in the browser console</li>
+</ul>
+<p><strong>Event not firing</strong></p>
+<ul>
+<li>Confirm the event name is correct (htmx events use colons: <code v-pre>htmx:afterSwap</code>)</li>
+<li>Check that the source element exists when the event fires</li>
+<li>Use <code v-pre>from:</code> to listen for events bubbling from child elements</li>
+</ul>
+<p><strong>Element not found</strong></p>
+<ul>
+<li>Verify the selector is correct</li>
+<li>Ensure the target element exists in the DOM</li>
+<li>Use browser dev tools to test the selector</li>
+</ul>
+<p><strong>Action not completing</strong></p>
+<ul>
+<li>Check for <code v-pre>exit</code> statements that might be stopping execution</li>
+<li>Verify conditionals are properly closed with <code v-pre>end</code></li>
+<li>Add <code v-pre>log</code> statements to trace execution: <code v-pre>_=&quot;on click log 'clicked' then ...&quot;</code></li>
+</ul>
+<doc-anchor-target id="debugging-with-log">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-with-log">#</doc-anchor-trigger>
+        <span>Debugging with Log</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click
+           log 'Button clicked'
+           log me
+           add .active to me
+           log 'Class added'&quot;&gt;
+    Debug Me
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>log</code> command outputs to the browser console.</p>
+<doc-anchor-target id="performance-considerations">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#performance-considerations">#</doc-anchor-trigger>
+        <span>Performance Considerations</span>
+    </h2>
+</doc-anchor-target>
+<p>Hyperscript is lightweight (about 15KB minified), but keep these points in mind:</p>
+<p><strong>Avoid heavy computation</strong> - Hyperscript is interpreted at runtime. Complex logic should live in JavaScript or on the server.</p>
+<p><strong>Minimize DOM queries</strong> - Cache references when performing multiple operations on the same element.</p>
+<p><strong>Use htmx for network requests</strong> - Hyperscript can make HTTP requests, but htmx handles them better with swapping, indicators, and error handling.</p>
+<p><strong>Keep scripts focused</strong> - If a Hyperscript block exceeds 10-15 lines, consider moving the logic to JavaScript.</p>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>Hyperscript provides a readable, English-like syntax for client-side interactions that live directly in your markup:</p>
+<ul>
+<li><strong>Installation</strong>: Add the script after htmx in your layout</li>
+<li><strong>Syntax</strong>: Uses <code v-pre>_</code> attribute with English-like commands</li>
+<li><strong>Class manipulation</strong>: <code v-pre>add</code>, <code v-pre>remove</code>, <code v-pre>toggle</code> classes on elements</li>
+<li><strong>Event handling</strong>: <code v-pre>on click</code>, <code v-pre>on mouseenter</code>, <code v-pre>on htmx:afterSwap</code></li>
+<li><strong>Timing</strong>: <code v-pre>wait 500ms</code>, <code v-pre>wait for eventName</code></li>
+<li><strong>Conditionals</strong>: <code v-pre>if ... else ... end</code></li>
+<li><strong>htmx integration</strong>: Listen for htmx events, trigger htmx requests</li>
+</ul>
+<p>Use Hyperscript for UI state and sequencing. Use htmx alone when its built-in features (<code v-pre>hx-confirm</code>, <code v-pre>hx-trigger</code>, <code v-pre>HX-Trigger</code> header) suffice. The combination gives you sophisticated interactions without JavaScript frameworks.</p>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>Chapter 10 covers URL management with <code v-pre>hx-push-url</code> and <code v-pre>hx-replace-url</code>. You will learn how to update the browser&#x27;s address bar during htmx navigation, enable back-button support, and create deep-linkable components that maintain state across page loads.</p>
 
                                 
                                 <!-- Required only on API pages -->

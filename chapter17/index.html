@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Form Enhancements with hx-params, hx-vals, and hx-validate</title>
     <meta name="title" content="Form Enhancements with hx-params, hx-vals, and hx-validate">
-    <meta name="description" content="By now, you’ve built dynamic forms, submitted data without page reloads, and even added some validation magic using ">
+    <meta name="description" content="Forms collect data. htmx submits that data without page reloads. But real-world forms need more control.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter17/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter17/">
     <meta property="og:title" content="Form Enhancements with hx-params, hx-vals, and hx-validate">
-    <meta property="og:description" content="By now, you’ve built dynamic forms, submitted data without page reloads, and even added some validation magic using ">
+    <meta property="og:description" content="Forms collect data. htmx submits that data without page reloads. But real-world forms need more control.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter17/">
     <meta property="twitter:title" content="Form Enhancements with hx-params, hx-vals, and hx-validate">
-    <meta property="twitter:description" content="By now, you’ve built dynamic forms, submitted data without page reloads, and even added some validation magic using ">
+    <meta property="twitter:description" content="Forms collect data. htmx submits that data without page reloads. But real-world forms need more control.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -253,161 +253,977 @@
         <span>Form Enhancements with <code v-pre>hx-params</code>, <code v-pre>hx-vals</code>, and <code v-pre>hx-validate</code></span>
     </h1>
 </doc-anchor-target>
-<p>By now, you’ve built dynamic forms, submitted data without page reloads, and even added some validation magic using <code v-pre>hx-validate</code>. You’ve seen how htmx makes basic form handling elegant and server-friendly. But real-world forms are rarely basic. Sometimes, you need to customize what gets sent. Sometimes, you want to pass extra values that aren&#x27;t part of the form. And sometimes, you need to validate in more nuanced ways, without turning to JavaScript.</p>
-<p>That’s where this chapter comes in. We’ll explore the finer controls htmx gives you when dealing with form submissions. <code v-pre>hx-params</code> lets you choose exactly which fields get sent. <code v-pre>hx-vals</code> helps you inject values that don’t even exist in the form. And <code v-pre>hx-validate</code>? It goes beyond browser-level constraints, allowing you to create more interactive and user-friendly validation flows while keeping your JavaScript footprint nearly invisible.</p>
-<p>This isn’t a rehash of the basics. You’ve already mastered how to submit a form with <code v-pre>hx-post</code>. Here, we’ll fine-tune the experience and make your forms work smarter. You’ll learn how to craft forms that respond to the user’s context, minimize unnecessary data transfer, and provide immediate feedback, all while adhering to the server-driven, Razor Pages-first design.</p>
-<p>Once you&#x27;re comfortable with these advanced form strategies, you&#x27;ll be well-positioned to tackle the next challenge: optimizing performance. In the following chapter, we’ll explore caching and browser history tricks that make your htmx-powered apps feel lightning-fast.</p>
-<doc-anchor-target id="customizing-form-submission-with-hx-params">
+<p>Forms collect data. htmx submits that data without page reloads. But real-world forms need more control. You need to exclude fields from submission, inject values that aren&#x27;t visible in the form, and validate input before it reaches the server. This chapter covers three htmx attributes that give you that control: <code v-pre>hx-params</code> filters which fields get sent, <code v-pre>hx-vals</code> injects additional data into requests, and <code v-pre>hx-validate</code> triggers HTML5 validation before submission.</p>
+<p>These attributes work together with the form patterns from Chapter 11. Combined with server-side validation, they create forms that guide users through correct input while keeping your validation logic where it belongs: on the server.</p>
+<doc-anchor-target id="anti-forgery-token-setup">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#customizing-form-submission-with-hx-params">#</doc-anchor-trigger>
-        <span>Customizing Form Submission with <code v-pre>hx-params</code></span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#anti-forgery-token-setup">#</doc-anchor-trigger>
+        <span>Anti-Forgery Token Setup</span>
     </h2>
 </doc-anchor-target>
-<p>Forms can quickly get messy, especially when they’re long, dynamic, or reused across multiple steps. Sometimes, you don’t want to send every single field to the server on every submission. Maybe you’ve got a multi-step form and only want to process one section at a time. Or perhaps you&#x27;re using hidden fields to manage layout or state and don’t want them to interfere with your model binding. That’s where <code v-pre>hx-params</code> comes in.</p>
-<p>The hx-params attribute gives you control over which fields get included in the request triggered by htmx. By default, htmx submits all fields inside a form when an interaction happens. But you can override this by applying <code v-pre>hx-params</code> to any element that triggers a request, whether it&#x27;s the <form> itself or an individual button inside it.</p>
-<p>Let’s walk through the three most common uses of <code v-pre>hx-params: *</code>, not fieldName, and none.</p>
-<p>Setting <code v-pre>hx-params=&quot;*&quot;</code> means “send all the parameters,” which is actually the default behavior. It’s useful when you&#x27;re overriding a narrower setting higher up and want to re-enable full submission on a specific button or input.</p>
-<p>On the other hand, <code v-pre>hx-params=&quot;not fieldName&quot;</code> tells htmx to submit every field except the one you name. You can also exclude multiple fields by separating them with spaces. This is incredibly handy when you&#x27;ve data you don’t want to send back just yet, such as fields from a different step in a wizard-style form or a large textarea that the user hasn’t completed.</p>
-<p>Then there’s <code v-pre>hx-params=&quot;none&quot;</code>, which does exactly what it sounds like: no form fields are included in the request. This can be useful when you&#x27;re triggering a refresh or some background action that doesn’t rely on the form data at all.</p>
-<p>Here’s a quick example. Let’s say you’re building a three-step account setup form using Razor Pages. Each step is a partial that gets loaded and submitted independently. You want to make sure that only the fields from the current step are submitted when the user clicks &quot;Next&quot;.</p>
-<p>In your Razor Page:</p>
+<p>All POST form examples in this chapter require anti-forgery tokens. Configure htmx to include them automatically:</p>
+<p><strong>Pages/Shared/_Layout.cshtml:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form id=&quot;step-form&quot;
-      hx-post=&quot;/AccountSetup?handler=Step1&quot;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@Html.AntiForgeryToken()
+
+&lt;script&gt;
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="filtering-parameters-with-hx-params">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#filtering-parameters-with-hx-params">#</doc-anchor-trigger>
+        <span>Filtering Parameters with <code v-pre>hx-params</code></span>
+    </h2>
+</doc-anchor-target>
+<p>The <code v-pre>hx-params</code> attribute controls which form fields are included in a request. By default, htmx sends all fields. With <code v-pre>hx-params</code>, you can include all, exclude specific fields, or send none.</p>
+<doc-anchor-target id="hx-params-values">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-params-values">#</doc-anchor-trigger>
+        <span><code v-pre>hx-params</code> Values</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Value</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>*</code></td>
+<td>Send all parameters (default)</td>
+</tr>
+<tr>
+<td><code v-pre>none</code></td>
+<td>Send no parameters</td>
+</tr>
+<tr>
+<td><code v-pre>not fieldName</code></td>
+<td>Send all except the named field</td>
+</tr>
+<tr>
+<td><code v-pre>fieldName</code></td>
+<td>Send only the named field</td>
+</tr>
+<tr>
+<td><code v-pre>field1, field2</code></td>
+<td>Send only these fields</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="multi-step-form-example">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#multi-step-form-example">#</doc-anchor-trigger>
+        <span>Multi-Step Form Example</span>
+    </h3>
+</doc-anchor-target>
+<p>A wizard-style form where each step submits only its own fields:</p>
+<p><strong>Pages/Signup.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model SignupModel
+
+&lt;h1&gt;Create Account&lt;/h1&gt;
+
+&lt;div id=&quot;step-container&quot;&gt;
+    &lt;partial name=&quot;_SignupStep1&quot; /&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_SignupStep1.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Signup?handler=Step1&quot;
       hx-target=&quot;#step-container&quot;
-      hx-swap=&quot;innerHTML&quot;&gt;
+      hx-swap=&quot;innerHTML&quot;
+      hx-disabled-elt=&quot;find button&quot;&gt;
     @Html.AntiForgeryToken()
-    &lt;input type=&quot;text&quot; name=&quot;FirstName&quot; placeholder=&quot;First Name&quot;/&gt;
-    &lt;input type=&quot;text&quot; name=&quot;LastName&quot; placeholder=&quot;Last Name&quot;/&gt;
-    &lt;input type=&quot;email&quot; name=&quot;Email&quot; placeholder=&quot;Email&quot;/&gt;
-    &lt;input type=&quot;hidden&quot; name=&quot;Step&quot; value=&quot;1&quot;/&gt;
-    &lt;button type=&quot;submit&quot; hx-params=&quot;not Step Email&quot;&gt;Next&lt;/button&gt;
+    
+    &lt;h2&gt;Step 1: Personal Information&lt;/h2&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;firstName&quot;&gt;First Name&lt;/label&gt;
+        &lt;input type=&quot;text&quot; id=&quot;firstName&quot; name=&quot;FirstName&quot; class=&quot;form-control&quot; required /&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;lastName&quot;&gt;Last Name&lt;/label&gt;
+        &lt;input type=&quot;text&quot; id=&quot;lastName&quot; name=&quot;LastName&quot; class=&quot;form-control&quot; required /&gt;
+    &lt;/div&gt;
+    
+    &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;
+        Next Step
+    &lt;/button&gt;
 &lt;/form&gt;</code></pre>
 </doc-codeblock></div>
-<p>In this case, when the user clicks &quot;Next&quot;, only the FirstName and LastName fields are submitted; the Email and hidden Step fields are excluded. This keeps the payload clean, allowing your server to focus on validating only the current step. Your handler might look like this:</p>
+<p><strong>Pages/Shared/_SignupStep2.cshtml:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostStep1(string FirstName, string LastName)
-{
-    // Store progress or validate names
-    return Partial(&quot;_Step2&quot;);
-}</code></pre>
-</doc-codeblock></div>
-<p>You could also flip it around and have a button that triggers a backend validation or refresh that doesn’t require any form data. Simply add <code v-pre>hx-params=&quot;none&quot;</code> to that button, and htmx will send the request without any fields included.</p>
-<p>The best part? You don’t have to restructure your form to make this work. <code v-pre>hx-params</code> is flexible, composable, and doesn’t interfere with your Razor Page model binding. Hence, you get clean, predictable behavior with minimal effort.</p>
-<p>This level of precision becomes critical as your forms become increasingly complex. Whether you’re building a checkout process, onboarding flow, or admin panel, <code v-pre>hx-params</code> helps you send only what matters, when it matters. It’s one of those features you don’t realize you need until you do.</p>
-<doc-anchor-target id="dynamically-modifying-request-data-with-hx-vals">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#dynamically-modifying-request-data-with-hx-vals">#</doc-anchor-trigger>
-        <span>Dynamically Modifying Request Data with <code v-pre>hx-vals</code></span>
-    </h2>
-</doc-anchor-target>
-<p>Sometimes, the data you need to send with a form submission or button click isn’t in the form at all. Perhaps you need to pass metadata, such as a timestamp, a role identifier, or a contextual flag, based on the user&#x27;s actions. Instead of cluttering your form with hidden fields or patching things together with JavaScript, <code v-pre>hx-vals</code> gives you a clean, declarative way to inject additional data into your htmx requests.</p>
-<p>The <code v-pre>hx-vals</code> attribute allows you to add extra name-value pairs to the request payload. It works like an invisible, dynamic field set that’s sent along with your form data or triggered request. This is incredibly useful when your server-side handler expects more than just the visible inputs, like flags for conditional logic, environment details, or user-supplied metadata.</p>
-<p>You define <code v-pre>hx-vals</code> using a JavaScript object (as a JSON string) right in your markup. htmx parses that string and merges the values into the outgoing request. These values are included in the same way as form fields, so your Razor Page handler can access them just like any other bound parameter.</p>
-<p>Imagine you have a form that allows users to submit feedback, and you want to include the current timestamp and a user role to help categorize the submissions. You don’t need those fields in the UI, but you want them on the server. Here’s how you can do it:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Feedback?handler=Submit&quot; hx-target=&quot;#result&quot;&gt;
-    &lt;textarea name=&quot;Message&quot; placeholder=&quot;Your feedback...&quot;&gt;&lt;/textarea&gt;
-    &lt;button type=&quot;submit&quot;
-            hx-vals='{&quot;SubmittedAt&quot;: &quot;' + new Date().toISOString() + '&quot;, &quot;UserRole&quot;: &quot;anonymous&quot;}'&gt;
-        Send Feedback
-    &lt;/button&gt;
-&lt;/form&gt;
-&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>If you’re using this directly in Razor, you&#x27;ll want to handle the date formatting with a bit more care.</p>
-<p>This is easy to handle on the server. Here’s what your Razor Page handler might look like:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostSubmit(string Message, DateTime SubmittedAt, string UserRole)
-{
-    // Log the metadata, store the feedback, or trigger different flows
-    // based on the user role
-    return Content($&quot;&lt;p&gt;Thanks for your feedback! Received at {SubmittedAt} from a {UserRole} user.&lt;/p&gt;&quot;, &quot;text/html&quot;);
-}</code></pre>
-</doc-codeblock></div>
-<p>With <code v-pre>hx-vals</code>, you don’t need to reshape your forms or maintain hidden inputs to sneak in that extra bit of data. You get a clean, declarative tool that respects the boundary between UI and intent, keeping your forms lightweight and your request payloads purposeful.</p>
-<p>This becomes even more powerful when paired with other htmx features, such as <code v-pre>hx-trigger</code> and <code v-pre>hx-target</code>, allowing you to build nuanced, data-rich interactions without a heavy JavaScript framework. You&#x27;re not just submitting forms anymore, you’re shaping intent-driven messages to your backend.</p>
-<doc-anchor-target id="implementing-real-time-validation-with-hx-validate">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#implementing-real-time-validation-with-hx-validate">#</doc-anchor-trigger>
-        <span>Implementing Real-Time Validation with <code v-pre>hx-validate</code></span>
-    </h2>
-</doc-anchor-target>
-<p>Forms are at their best when they respond like a helpful guide, not a strict gatekeeper. One of the most considerable improvements you can make to the user experience is to provide real-time validation, letting users know when something is wrong while they’re filling out the form, not after they hit submit. This kind of instant feedback reduces frustration and helps users complete forms more quickly and confidently. With htmx, this pattern is easily implemented using <code v-pre>hx-validate</code> alongside <code v-pre>hx-trigger</code> and server-side checks.</p>
-<p>The <code v-pre>hx-validate</code> attribute tells htmx to use native browser validation before making a request. It works well for basic checks, such as verifying whether a required field is filled out or an email address is formatted correctly. However, if you want to check something more dynamic, such as whether a username is already taken, you’ll need to go a step further and involve the server. This is where htmx really shines, making lightweight, targeted requests for validation while users interact with the form.</p>
-<p>Let’s build a real-time username availability checker. You want the server to validate input as the user types and provide immediate feedback if the username is already taken. You’ll use <code v-pre>hx-get</code> with <code v-pre>hx-trigger=&quot;keyup changed delay:500ms&quot;</code> to avoid spamming the server, and return a validation message if needed.</p>
-<p>Here’s the Razor Page form:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form&gt;
-    &lt;input type=&quot;text&quot;
-           name=&quot;username&quot;
-           placeholder=&quot;Choose a username&quot;
-           hx-get=&quot;/Register?handler=CheckUsername&quot;
-           hx-trigger=&quot;keyup changed delay:500ms&quot;
-           hx-target=&quot;#username-validation&quot;
-           hx-swap=&quot;innerHTML&quot;
-           hx-validate /&gt;
-    &lt;div id=&quot;username-validation&quot; class=&quot;validation-message&quot;&gt;&lt;/div&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model SignupStep2Model
+
+&lt;form hx-post=&quot;/Signup?handler=Step2&quot;
+      hx-target=&quot;#step-container&quot;
+      hx-swap=&quot;innerHTML&quot;
+      hx-disabled-elt=&quot;find button&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;h2&gt;Step 2: Account Details&lt;/h2&gt;
+    
+    &lt;!-- Hidden fields preserve previous step data --&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;FirstName&quot; value=&quot;@Model.FirstName&quot; /&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;LastName&quot; value=&quot;@Model.LastName&quot; /&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;email&quot;&gt;Email&lt;/label&gt;
+        &lt;input type=&quot;email&quot; id=&quot;email&quot; name=&quot;Email&quot; class=&quot;form-control&quot; required /&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;password&quot;&gt;Password&lt;/label&gt;
+        &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;Password&quot; class=&quot;form-control&quot; required minlength=&quot;8&quot; /&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;d-flex gap-2&quot;&gt;
+        &lt;button type=&quot;button&quot; 
+                hx-get=&quot;/Signup?handler=BackToStep1&amp;firstName=@Model.FirstName&amp;lastName=@Model.LastName&quot;
+                hx-target=&quot;#step-container&quot;
+                class=&quot;btn btn-secondary&quot;&gt;
+            Back
+        &lt;/button&gt;
+        &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;
+            Create Account
+        &lt;/button&gt;
+    &lt;/div&gt;
 &lt;/form&gt;</code></pre>
 </doc-codeblock></div>
-<p>When the user types in the input, htmx waits for 500ms of inactivity, then fires a <code v-pre>GET</code> request to the <code v-pre>CheckUsername</code> handler. The response replaces the content of <code v-pre>#username-validation</code>, giving feedback directly beneath the input.</p>
-<p>On the server side, you can handle it like this:</p>
+<p><strong>Pages/Signup.cshtml.cs:</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetCheckUsername(string username)
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class SignupModel : PageModel
 {
-    var takenUsernames = new[] { &quot;admin&quot;, &quot;user1&quot;, &quot;guest&quot; };
-    if (string.IsNullOrWhiteSpace(username))
+    private readonly IUserService _userService;
+
+    public SignupModel(IUserService userService)
     {
-        return Content(&quot;&lt;span style='color: red;'&gt;Username is required.&lt;/span&gt;&quot;, &quot;text/html&quot;);
-    }
-    if (takenUsernames.Contains(username, StringComparer.OrdinalIgnoreCase))
-    {
-        return Content(&quot;&lt;span style='color: red;'&gt;That username is already taken.&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        _userService = userService;
     }
 
-    return Content(&quot;&lt;span style='color: green;'&gt;Username is available!&lt;/span&gt;&quot;, &quot;text/html&quot;);
+    public void OnGet() { }
+
+    public IActionResult OnPostStep1(string firstName, string lastName)
+    {
+        if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+        {
+            ModelState.AddModelError(&quot;&quot;, &quot;First and last name are required&quot;);
+            return Partial(&quot;_SignupStep1&quot;);
+        }
+
+        return Partial(&quot;_SignupStep2&quot;, new SignupStep2Model
+        {
+            FirstName = firstName,
+            LastName = lastName
+        });
+    }
+
+    public IActionResult OnGetBackToStep1(string firstName, string lastName)
+    {
+        return Partial(&quot;_SignupStep1WithValues&quot;, new SignupStep1Model
+        {
+            FirstName = firstName,
+            LastName = lastName
+        });
+    }
+
+    public IActionResult OnPostStep2(SignupInput input)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Partial(&quot;_SignupStep2&quot;, new SignupStep2Model
+            {
+                FirstName = input.FirstName,
+                LastName = input.LastName
+            });
+        }
+
+        _userService.CreateAccount(input);
+        return Partial(&quot;_SignupSuccess&quot;, input);
+    }
+}
+
+public class SignupStep2Model
+{
+    public string FirstName { get; set; } = &quot;&quot;;
+    public string LastName { get; set; } = &quot;&quot;;
+}
+
+public class SignupInput
+{
+    public string FirstName { get; set; } = &quot;&quot;;
+    public string LastName { get; set; } = &quot;&quot;;
+    public string Email { get; set; } = &quot;&quot;;
+    public string Password { get; set; } = &quot;&quot;;
 }</code></pre>
 </doc-codeblock></div>
-<p>This approach has a few advantages. First, you keep all validation logic on the server, where you can perform database checks or enforce business rules. Second, the user sees changes instantly, enabling them to correct mistakes early. Third, you keep your Razor Pages and HTML in sync, eliminating the need for client-side duplication and complex JavaScript state management.</p>
-<p>One best practice is to ensure that your validation responses return clean, targeted HTML. Avoid dumping large templates or full layouts into your swap targets. You want the feedback to feel snappy and unobtrusive. You can also style the response based on success or error states, or apply CSS classes dynamically with server-rendered markup.</p>
-<p>Real-time validation like this is a slight touch that makes a big difference. When your forms guide users through their tasks instead of punishing them after submission, you build a better experience, and htmx makes that easier than ever.</p>
-<doc-anchor-target id="optimizing-form-behavior-for-better-ux">
+<doc-anchor-target id="excluding-specific-fields">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#excluding-specific-fields">#</doc-anchor-trigger>
+        <span>Excluding Specific Fields</span>
+    </h3>
+</doc-anchor-target>
+<p>Use <code v-pre>hx-params=&quot;not fieldName&quot;</code> to exclude fields:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Search?handler=Execute&quot; hx-target=&quot;#results&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;input type=&quot;text&quot; name=&quot;Query&quot; /&gt;
+    &lt;input type=&quot;text&quot; name=&quot;InternalTrackingId&quot; value=&quot;abc123&quot; /&gt;
+    
+    &lt;!-- Don't send the tracking ID with this button --&gt;
+    &lt;button type=&quot;submit&quot; hx-params=&quot;not InternalTrackingId&quot;&gt;
+        Search
+    &lt;/button&gt;
+    
+    &lt;!-- Send everything with this button --&gt;
+    &lt;button type=&quot;submit&quot; hx-params=&quot;*&quot; name=&quot;action&quot; value=&quot;search-and-track&quot;&gt;
+        Search with Tracking
+    &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="sending-no-parameters">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#sending-no-parameters">#</doc-anchor-trigger>
+        <span>Sending No Parameters</span>
+    </h3>
+</doc-anchor-target>
+<p>Use <code v-pre>hx-params=&quot;none&quot;</code> for actions that don&#x27;t need form data:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Editor?handler=Save&quot; hx-target=&quot;#save-status&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;textarea name=&quot;Content&quot; rows=&quot;10&quot;&gt;&lt;/textarea&gt;
+    
+    &lt;button type=&quot;submit&quot;&gt;Save Draft&lt;/button&gt;
+    
+    &lt;!-- Reset button doesn't need to send form data --&gt;
+    &lt;button type=&quot;button&quot;
+            hx-post=&quot;/Editor?handler=Reset&quot;
+            hx-target=&quot;#editor-container&quot;
+            hx-params=&quot;none&quot;
+            hx-confirm=&quot;Discard all changes?&quot;&gt;
+        Reset
+    &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="injecting-values-with-hx-vals">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#optimizing-form-behavior-for-better-ux">#</doc-anchor-trigger>
-        <span>Optimizing Form Behavior for Better UX</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#injecting-values-with-hx-vals">#</doc-anchor-trigger>
+        <span>Injecting Values with <code v-pre>hx-vals</code></span>
     </h2>
 </doc-anchor-target>
-<p>By now, you&#x27;ve seen how <code v-pre>hx-params</code>, <code v-pre>hx-vals</code>, and <code v-pre>hx-validate</code> each bring a unique advantage to your forms. But where these features really shine is when you use them together. Modern forms often need to be flexible, innovative, and user-friendly, all without relying on a mountain of client-side JavaScript. With htmx and Razor Pages, you can craft interactive forms that behave exactly the way users expect, and do it with clean, server-driven logic.</p>
-<p>Consider a scenario where you&#x27;re building a reusable profile form for both admins and regular users. You might want to exclude certain fields for regular users, include a hidden role value, and perform real-time validation on the username field. This is a perfect case for combining all three htmx enhancements.</p>
-<p>Here’s a snippet from such a form:</p>
+<p>The <code v-pre>hx-vals</code> attribute adds extra name-value pairs to requests. These values don&#x27;t appear in the form but get sent to the server alongside form fields.</p>
+<doc-anchor-target id="static-values">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#static-values">#</doc-anchor-trigger>
+        <span>Static Values</span>
+    </h3>
+</doc-anchor-target>
+<p>For fixed values, use JSON syntax:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Profile?handler=Save&quot; hx-target=&quot;#form-messages&quot; hx-swap=&quot;innerHTML&quot;&gt;
-    &lt;input type=&quot;text&quot; name=&quot;Username&quot;
-           placeholder=&quot;Username&quot;
-           hx-get=&quot;/Profile?handler=CheckUsername&quot;
-           hx-trigger=&quot;keyup changed delay:500ms&quot;
-           hx-target=&quot;#username-check&quot;
-           hx-swap=&quot;innerHTML&quot;
-           hx-validate /&gt;
-    &lt;div id=&quot;username-check&quot;&gt;&lt;/div&gt;
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Feedback?handler=Submit&quot;
+        hx-target=&quot;#result&quot;
+        hx-vals='{&quot;source&quot;: &quot;homepage&quot;, &quot;category&quot;: &quot;general&quot;}'&gt;
+    Submit Feedback
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>The server receives <code v-pre>source=homepage</code> and <code v-pre>category=general</code> as if they were form fields.</p>
+<doc-anchor-target id="values-from-razor">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#values-from-razor">#</doc-anchor-trigger>
+        <span>Values from Razor</span>
+    </h3>
+</doc-anchor-target>
+<p>Inject server-side values:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Order?handler=Reorder&quot;
+        hx-target=&quot;#order-status&quot;
+        hx-vals='{&quot;orderId&quot;: &quot;@Model.Order.Id&quot;, &quot;userId&quot;: &quot;@Model.UserId&quot;}'&gt;
+    Reorder
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Rendered HTML:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Order?handler=Reorder&quot;
+        hx-target=&quot;#order-status&quot;
+        hx-vals='{&quot;orderId&quot;: &quot;12345&quot;, &quot;userId&quot;: &quot;user-abc&quot;}'&gt;
+    Reorder
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="dynamic-javascript-values">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#dynamic-javascript-values">#</doc-anchor-trigger>
+        <span>Dynamic JavaScript Values</span>
+    </h3>
+</doc-anchor-target>
+<p>For values computed at request time, use the <code v-pre>js:</code> prefix:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/Analytics?handler=Track&quot;
+        hx-vals='js:{&quot;timestamp&quot;: new Date().toISOString(), &quot;screenWidth&quot;: window.innerWidth, &quot;timezone&quot;: Intl.DateTimeFormat().resolvedOptions().timeZone}'&gt;
+    Track Event
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>js:</code> prefix tells htmx to evaluate the object as JavaScript when the request fires.</p>
+<doc-anchor-target id="complete-feedback-form-example">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#complete-feedback-form-example">#</doc-anchor-trigger>
+        <span>Complete Feedback Form Example</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Feedback.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model FeedbackModel
 
-    &lt;input type=&quot;email&quot; name=&quot;Email&quot; placeholder=&quot;Email&quot; /&gt;
-    &lt;input type=&quot;hidden&quot; name=&quot;UserId&quot; value=&quot;@Model.UserId&quot; /&gt;
+&lt;h1&gt;Send Feedback&lt;/h1&gt;
 
+&lt;form hx-post=&quot;/Feedback?handler=Submit&quot;
+      hx-target=&quot;#feedback-result&quot;
+      hx-swap=&quot;outerHTML&quot;
+      hx-disabled-elt=&quot;find button&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;message&quot;&gt;Your Feedback&lt;/label&gt;
+        &lt;textarea id=&quot;message&quot; name=&quot;Message&quot; class=&quot;form-control&quot; rows=&quot;5&quot; required&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;rating&quot;&gt;Rating&lt;/label&gt;
+        &lt;select id=&quot;rating&quot; name=&quot;Rating&quot; class=&quot;form-select&quot;&gt;
+            &lt;option value=&quot;5&quot;&gt;Excellent&lt;/option&gt;
+            &lt;option value=&quot;4&quot;&gt;Good&lt;/option&gt;
+            &lt;option value=&quot;3&quot;&gt;Average&lt;/option&gt;
+            &lt;option value=&quot;2&quot;&gt;Poor&lt;/option&gt;
+            &lt;option value=&quot;1&quot;&gt;Terrible&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+    
     &lt;button type=&quot;submit&quot;
-            hx-vals='{&quot;Role&quot;: &quot;@Model.UserRole&quot;}'
-            hx-params=&quot;not UserId&quot;&gt;
-        Save
+            hx-vals='js:{&quot;submittedAt&quot;: new Date().toISOString(), &quot;pageUrl&quot;: window.location.href, &quot;userAgent&quot;: navigator.userAgent}'
+            class=&quot;btn btn-primary&quot;&gt;
+        &lt;span class=&quot;btn-text&quot;&gt;Send Feedback&lt;/span&gt;
+        &lt;span class=&quot;htmx-indicator&quot;&gt;Sending...&lt;/span&gt;
     &lt;/button&gt;
 &lt;/form&gt;
 
-&lt;div id=&quot;form-messages&quot;&gt;&lt;/div&gt;</code></pre>
+&lt;div id=&quot;feedback-result&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>In this example, <code v-pre>hx-validate</code> ensures the username is checked on the fly. The <code v-pre>hx-params=&quot;not UserId&quot;</code> keeps sensitive identifiers out of the POST body while still retaining context in the view model. Meanwhile, <code v-pre>hx-vals</code> discreetly injects the user’s role into the submission, which helps control server-side logic without bloating your markup. The form feels lightweight, responsive, and intelligent, and yet it’s all done with declarative attributes.</p>
-<p>To make this approach scalable, it’s smart to encapsulate your forms into partials and organize them into components. Create small, focused partial Razor files for each form piece: inputs, validation feedback, and action buttons. This promotes reuse and maintains consistency in your UI across the app. When you need to update behavior, tweak validation logic, or add a new field, you can do it in one place without having to search through multiple pages.</p>
-<p>On the server, validation feedback and success messages should be treated with the same care. Return partial HTML updates that clearly indicate success or failure, and target a dedicated message area using <code v-pre>hx-target</code>. Avoid redirecting on success unless absolutely necessary. Let users stay where they are, see the result, and move forward naturally.</p>
-<p>These optimizations aren&#x27;t about flashy effects or animations but about getting the UX fundamentals right. They reduce friction, improve clarity, and build trust with your users. With Razor Pages and htmx working together, you&#x27;re building an interface that feels responsive without the complexity of SPAs or client-heavy codebases.</p>
-<p>With forms now operating more intelligently, responding in real time, and submitting only the necessary data, you can handle more complex user interface interactions, such as drag-and-drop functionality. In the next chapter, we will explore how to incorporate intuitive, dynamic movement into your web applications using htmx in conjunction with Hyperscript. This combination will enable users to rearrange elements, trigger actions, and engage with content naturally and fluidly, all without relying on heavy frontend libraries.</p>
+<p><strong>Pages/Feedback.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class FeedbackModel : PageModel
+{
+    private readonly IFeedbackService _feedbackService;
+
+    public FeedbackModel(IFeedbackService feedbackService)
+    {
+        _feedbackService = feedbackService;
+    }
+
+    public void OnGet() { }
+
+    public IActionResult OnPostSubmit(FeedbackInput input)
+    {
+        if (string.IsNullOrWhiteSpace(input.Message))
+        {
+            return Content(&quot;&lt;div class=\&quot;alert alert-danger\&quot;&gt;Message is required&lt;/div&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        _feedbackService.Save(new Feedback
+        {
+            Message = input.Message,
+            Rating = input.Rating,
+            SubmittedAt = input.SubmittedAt,
+            PageUrl = input.PageUrl,
+            UserAgent = input.UserAgent
+        });
+
+        return Content(&quot;&lt;div class=\&quot;alert alert-success\&quot;&gt;Thank you for your feedback!&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+}
+
+public class FeedbackInput
+{
+    public string Message { get; set; } = &quot;&quot;;
+    public int Rating { get; set; }
+    public DateTime SubmittedAt { get; set; }
+    public string PageUrl { get; set; } = &quot;&quot;;
+    public string UserAgent { get; set; } = &quot;&quot;;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="combining-hx-vals-with-form-data">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#combining-hx-vals-with-form-data">#</doc-anchor-trigger>
+        <span>Combining <code v-pre>hx-vals</code> with Form Data</span>
+    </h3>
+</doc-anchor-target>
+<p>Values from <code v-pre>hx-vals</code> merge with form fields:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Products?handler=AddToCart&quot; hx-target=&quot;#cart-feedback&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;input type=&quot;number&quot; name=&quot;Quantity&quot; value=&quot;1&quot; min=&quot;1&quot; /&gt;
+    
+    &lt;!-- Button adds productId and source to the form data --&gt;
+    &lt;button type=&quot;submit&quot;
+            hx-vals='{&quot;productId&quot;: &quot;@product.Id&quot;, &quot;source&quot;: &quot;product-page&quot;}'&gt;
+        Add to Cart
+    &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>The server receives: <code v-pre>Quantity</code> (from form) + <code v-pre>productId</code> + <code v-pre>source</code> (from hx-vals).</p>
+<doc-anchor-target id="html5-validation-with-hx-validate">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#html5-validation-with-hx-validate">#</doc-anchor-trigger>
+        <span>HTML5 Validation with <code v-pre>hx-validate</code></span>
+    </h2>
+</doc-anchor-target>
+<p>The <code v-pre>hx-validate</code> attribute triggers HTML5 form validation before htmx sends a request. If validation fails, the request is cancelled and the browser shows validation messages.</p>
+<doc-anchor-target id="basic-usage">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-usage">#</doc-anchor-trigger>
+        <span>Basic Usage</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Contact?handler=Submit&quot;
+      hx-target=&quot;#contact-result&quot;
+      hx-validate&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;input type=&quot;text&quot; name=&quot;Name&quot; required /&gt;
+    &lt;input type=&quot;email&quot; name=&quot;Email&quot; required /&gt;
+    &lt;textarea name=&quot;Message&quot; required minlength=&quot;10&quot;&gt;&lt;/textarea&gt;
+    
+    &lt;button type=&quot;submit&quot;&gt;Send&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p>Without <code v-pre>hx-validate</code>, htmx would send the request even if fields are empty. With <code v-pre>hx-validate</code>, the browser prevents submission and shows &quot;Please fill out this field&quot; messages.</p>
+<doc-anchor-target id="validation-attributes">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#validation-attributes">#</doc-anchor-trigger>
+        <span>Validation Attributes</span>
+    </h3>
+</doc-anchor-target>
+<p>Common HTML5 validation attributes work with <code v-pre>hx-validate</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot; name=&quot;Username&quot; 
+       required 
+       minlength=&quot;3&quot; 
+       maxlength=&quot;20&quot; 
+       pattern=&quot;[a-zA-Z0-9_]+&quot; 
+       title=&quot;Username must be 3-20 characters, letters, numbers, and underscores only&quot; /&gt;
+
+&lt;input type=&quot;email&quot; name=&quot;Email&quot; required /&gt;
+
+&lt;input type=&quot;url&quot; name=&quot;Website&quot; /&gt;
+
+&lt;input type=&quot;number&quot; name=&quot;Age&quot; min=&quot;18&quot; max=&quot;120&quot; /&gt;
+
+&lt;input type=&quot;tel&quot; name=&quot;Phone&quot; pattern=&quot;[0-9]{3}-[0-9]{3}-[0-9]{4}&quot; title=&quot;Format: 123-456-7890&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="when-to-use-hx-validate">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#when-to-use-hx-validate">#</doc-anchor-trigger>
+        <span>When to Use <code v-pre>hx-validate</code></span>
+    </h3>
+</doc-anchor-target>
+<p>Use <code v-pre>hx-validate</code> on form submissions to catch obvious errors before hitting the server:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Register?handler=Submit&quot;
+      hx-target=&quot;#form-container&quot;
+      hx-swap=&quot;outerHTML&quot;
+      hx-validate&gt;</code></pre>
+</doc-codeblock></div>
+<p>Don&#x27;t use <code v-pre>hx-validate</code> on real-time validation triggers (like <code v-pre>keyup</code>). It would prevent the request from firing at all if the field is incomplete:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- DON'T do this - hx-validate blocks the request --&gt;
+&lt;input hx-get=&quot;/Register?handler=CheckUsername&quot;
+       hx-trigger=&quot;keyup changed delay:500ms&quot;
+       hx-validate /&gt;  &lt;!-- Remove this --&gt;
+
+&lt;!-- DO this instead --&gt;
+&lt;input hx-get=&quot;/Register?handler=CheckUsername&quot;
+       hx-trigger=&quot;keyup changed delay:500ms&quot;
+       hx-target=&quot;#username-feedback&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="real-time-server-validation">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#real-time-server-validation">#</doc-anchor-trigger>
+        <span>Real-Time Server Validation</span>
+    </h2>
+</doc-anchor-target>
+<p>For validation that requires server checks (username availability, email uniqueness), use <code v-pre>hx-get</code> with debounced triggers.</p>
+<doc-anchor-target id="username-availability-check">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#username-availability-check">#</doc-anchor-trigger>
+        <span>Username Availability Check</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Register.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model RegisterModel
+
+&lt;h1&gt;Register&lt;/h1&gt;
+
+&lt;form id=&quot;register-form&quot;
+      hx-post=&quot;/Register?handler=Submit&quot;
+      hx-target=&quot;#form-messages&quot;
+      hx-swap=&quot;innerHTML&quot;
+      hx-validate
+      hx-disabled-elt=&quot;find button[type='submit']&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;username&quot;&gt;Username&lt;/label&gt;
+        &lt;div class=&quot;input-with-feedback&quot;&gt;
+            &lt;input type=&quot;text&quot; 
+                   id=&quot;username&quot; 
+                   name=&quot;Username&quot; 
+                   class=&quot;form-control&quot;
+                   required
+                   minlength=&quot;3&quot;
+                   maxlength=&quot;20&quot;
+                   pattern=&quot;[a-zA-Z0-9_]+&quot;
+                   hx-get=&quot;/Register?handler=CheckUsername&quot;
+                   hx-trigger=&quot;keyup changed delay:500ms&quot;
+                   hx-target=&quot;#username-feedback&quot;
+                   hx-swap=&quot;innerHTML&quot;
+                   hx-sync=&quot;this:replace&quot;
+                   hx-indicator=&quot;#username-spinner&quot; /&gt;
+            &lt;span id=&quot;username-spinner&quot; class=&quot;htmx-indicator&quot;&gt;
+                &lt;span class=&quot;spinner-border spinner-border-sm&quot;&gt;&lt;/span&gt;
+            &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div id=&quot;username-feedback&quot; class=&quot;form-feedback&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;email&quot;&gt;Email&lt;/label&gt;
+        &lt;div class=&quot;input-with-feedback&quot;&gt;
+            &lt;input type=&quot;email&quot; 
+                   id=&quot;email&quot; 
+                   name=&quot;Email&quot; 
+                   class=&quot;form-control&quot;
+                   required
+                   hx-get=&quot;/Register?handler=CheckEmail&quot;
+                   hx-trigger=&quot;keyup changed delay:500ms&quot;
+                   hx-target=&quot;#email-feedback&quot;
+                   hx-swap=&quot;innerHTML&quot;
+                   hx-sync=&quot;this:replace&quot;
+                   hx-indicator=&quot;#email-spinner&quot; /&gt;
+            &lt;span id=&quot;email-spinner&quot; class=&quot;htmx-indicator&quot;&gt;
+                &lt;span class=&quot;spinner-border spinner-border-sm&quot;&gt;&lt;/span&gt;
+            &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div id=&quot;email-feedback&quot; class=&quot;form-feedback&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;password&quot;&gt;Password&lt;/label&gt;
+        &lt;input type=&quot;password&quot; 
+               id=&quot;password&quot; 
+               name=&quot;Password&quot; 
+               class=&quot;form-control&quot;
+               required
+               minlength=&quot;8&quot; /&gt;
+        &lt;small class=&quot;form-text text-muted&quot;&gt;At least 8 characters&lt;/small&gt;
+    &lt;/div&gt;
+    
+    &lt;div id=&quot;form-messages&quot;&gt;&lt;/div&gt;
+    
+    &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;
+        &lt;span class=&quot;btn-text&quot;&gt;Create Account&lt;/span&gt;
+        &lt;span class=&quot;htmx-indicator&quot;&gt;Creating...&lt;/span&gt;
+    &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Register.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class RegisterModel : PageModel
+{
+    private readonly IUserService _userService;
+
+    public RegisterModel(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    public void OnGet() { }
+
+    public IActionResult OnGetCheckUsername(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Content(&quot;&quot;, &quot;text/html&quot;);
+        }
+
+        if (username.Length &lt; 3)
+        {
+            return Content(&quot;&lt;span class=\&quot;text-warning\&quot;&gt;Username must be at least 3 characters&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(username, @&quot;^[a-zA-Z0-9_]+$&quot;))
+        {
+            return Content(&quot;&lt;span class=\&quot;text-danger\&quot;&gt;Only letters, numbers, and underscores allowed&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        if (_userService.UsernameExists(username))
+        {
+            return Content(&quot;&lt;span class=\&quot;text-danger\&quot;&gt;Username is already taken&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        return Content(&quot;&lt;span class=\&quot;text-success\&quot;&gt;Username is available&lt;/span&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    public IActionResult OnGetCheckEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return Content(&quot;&quot;, &quot;text/html&quot;);
+        }
+
+        if (!IsValidEmail(email))
+        {
+            return Content(&quot;&lt;span class=\&quot;text-danger\&quot;&gt;Please enter a valid email address&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        if (_userService.EmailExists(email))
+        {
+            return Content(&quot;&lt;span class=\&quot;text-danger\&quot;&gt;An account with this email already exists&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        return Content(&quot;&lt;span class=\&quot;text-success\&quot;&gt;Email is available&lt;/span&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    public IActionResult OnPostSubmit(RegisterInput input)
+    {
+        // Server-side validation (always validate again on submit)
+        var errors = new List&lt;string&gt;();
+
+        if (_userService.UsernameExists(input.Username))
+        {
+            errors.Add(&quot;Username is already taken&quot;);
+        }
+
+        if (_userService.EmailExists(input.Email))
+        {
+            errors.Add(&quot;Email is already registered&quot;);
+        }
+
+        if (input.Password.Length &lt; 8)
+        {
+            errors.Add(&quot;Password must be at least 8 characters&quot;);
+        }
+
+        if (errors.Any())
+        {
+            return Partial(&quot;_RegisterErrors&quot;, errors);
+        }
+
+        _userService.Register(input);
+        
+        Response.Headers.Append(&quot;HX-Redirect&quot;, &quot;/Register/Success&quot;);
+        return Content(&quot;&quot;, &quot;text/html&quot;);
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == email;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}
+
+public class RegisterInput
+{
+    public string Username { get; set; } = &quot;&quot;;
+    public string Email { get; set; } = &quot;&quot;;
+    public string Password { get; set; } = &quot;&quot;;
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Shared/_RegisterErrors.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model List&lt;string&gt;
+
+&lt;div class=&quot;alert alert-danger&quot;&gt;
+    &lt;ul class=&quot;mb-0&quot;&gt;
+        @foreach (var error in Model)
+        {
+            &lt;li&gt;@error&lt;/li&gt;
+        }
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="key-patterns-for-real-time-validation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#key-patterns-for-real-time-validation">#</doc-anchor-trigger>
+        <span>Key Patterns for Real-Time Validation</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>1. Debounce with delay:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">hx-trigger=&quot;keyup changed delay:500ms&quot;</code></pre>
+</doc-codeblock></div>
+<p>Waits 500ms after typing stops before sending the request.</p>
+<p><strong>2. Cancel in-flight requests:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">hx-sync=&quot;this:replace&quot;</code></pre>
+</doc-codeblock></div>
+<p>If the user keeps typing, cancel the previous request and send a new one.</p>
+<p><strong>3. Show loading state:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">hx-indicator=&quot;#username-spinner&quot;</code></pre>
+</doc-codeblock></div>
+<p>Display a spinner while checking.</p>
+<p><strong>4. Target feedback area:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">hx-target=&quot;#username-feedback&quot;</code></pre>
+</doc-codeblock></div>
+<p>Put validation messages in a dedicated container.</p>
+<doc-anchor-target id="validation-css">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#validation-css">#</doc-anchor-trigger>
+        <span>Validation CSS</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.input-with-feedback {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-feedback input {
+    flex: 1;
+}
+
+.input-with-feedback .htmx-indicator {
+    position: absolute;
+    right: 10px;
+    display: none;
+}
+
+.input-with-feedback .htmx-request ~ .htmx-indicator {
+    display: inline-block;
+}
+
+.form-feedback {
+    min-height: 1.5rem;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-feedback .text-success {
+    color: #198754;
+}
+
+.form-feedback .text-danger {
+    color: #dc3545;
+}
+
+.form-feedback .text-warning {
+    color: #ffc107;
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="combining-all-three-attributes">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#combining-all-three-attributes">#</doc-anchor-trigger>
+        <span>Combining All Three Attributes</span>
+    </h2>
+</doc-anchor-target>
+<p>A profile editor that uses all three attributes:</p>
+<p><strong>Pages/Profile.cshtml:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model ProfileModel
+
+&lt;h1&gt;Edit Profile&lt;/h1&gt;
+
+&lt;form hx-post=&quot;/Profile?handler=Save&quot;
+      hx-target=&quot;#profile-messages&quot;
+      hx-swap=&quot;innerHTML&quot;
+      hx-validate
+      hx-disabled-elt=&quot;find button[type='submit']&quot;&gt;
+    @Html.AntiForgeryToken()
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;displayName&quot;&gt;Display Name&lt;/label&gt;
+        &lt;input type=&quot;text&quot; 
+               id=&quot;displayName&quot;
+               name=&quot;DisplayName&quot; 
+               value=&quot;@Model.Profile.DisplayName&quot;
+               class=&quot;form-control&quot;
+               required
+               maxlength=&quot;50&quot;
+               hx-get=&quot;/Profile?handler=CheckDisplayName&quot;
+               hx-trigger=&quot;keyup changed delay:500ms&quot;
+               hx-target=&quot;#displayname-feedback&quot;
+               hx-sync=&quot;this:replace&quot; /&gt;
+        &lt;div id=&quot;displayname-feedback&quot; class=&quot;form-feedback&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;bio&quot;&gt;Bio&lt;/label&gt;
+        &lt;textarea id=&quot;bio&quot;
+                  name=&quot;Bio&quot;
+                  class=&quot;form-control&quot;
+                  rows=&quot;4&quot;
+                  maxlength=&quot;500&quot;&gt;@Model.Profile.Bio&lt;/textarea&gt;
+        &lt;small class=&quot;form-text text-muted&quot;&gt;
+            &lt;span id=&quot;bio-count&quot;&gt;@Model.Profile.Bio?.Length ?? 0&lt;/span&gt;/500 characters
+        &lt;/small&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;form-group mb-3&quot;&gt;
+        &lt;label for=&quot;website&quot;&gt;Website&lt;/label&gt;
+        &lt;input type=&quot;url&quot; 
+               id=&quot;website&quot;
+               name=&quot;Website&quot; 
+               value=&quot;@Model.Profile.Website&quot;
+               class=&quot;form-control&quot;
+               placeholder=&quot;https://example.com&quot; /&gt;
+    &lt;/div&gt;
+    
+    &lt;div id=&quot;profile-messages&quot;&gt;&lt;/div&gt;
+    
+    &lt;!-- hx-vals injects metadata, hx-params excludes debug field --&gt;
+    &lt;button type=&quot;submit&quot;
+            hx-vals='js:{&quot;updatedAt&quot;: new Date().toISOString()}'
+            hx-params=&quot;not _debugInfo&quot;
+            class=&quot;btn btn-primary&quot;&gt;
+        &lt;span class=&quot;btn-text&quot;&gt;Save Profile&lt;/span&gt;
+        &lt;span class=&quot;htmx-indicator&quot;&gt;Saving...&lt;/span&gt;
+    &lt;/button&gt;
+    
+    &lt;input type=&quot;hidden&quot; name=&quot;_debugInfo&quot; value=&quot;client-debug-data&quot; /&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+// Character counter for bio
+document.getElementById('bio').addEventListener('input', function() {
+    document.getElementById('bio-count').textContent = this.value.length;
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Profile.cshtml.cs:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class ProfileModel : PageModel
+{
+    private readonly IProfileService _profileService;
+
+    public ProfileModel(IProfileService profileService)
+    {
+        _profileService = profileService;
+    }
+
+    public UserProfile Profile { get; set; } = null!;
+
+    public void OnGet()
+    {
+        Profile = _profileService.GetCurrentUserProfile();
+    }
+
+    public IActionResult OnGetCheckDisplayName(string displayName)
+    {
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            return Content(&quot;&quot;, &quot;text/html&quot;);
+        }
+
+        var currentProfile = _profileService.GetCurrentUserProfile();
+        
+        // Allow keeping current name
+        if (displayName.Equals(currentProfile.DisplayName, StringComparison.OrdinalIgnoreCase))
+        {
+            return Content(&quot;&lt;span class=\&quot;text-success\&quot;&gt;Current name&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        if (_profileService.DisplayNameExists(displayName))
+        {
+            return Content(&quot;&lt;span class=\&quot;text-danger\&quot;&gt;This display name is taken&lt;/span&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        return Content(&quot;&lt;span class=\&quot;text-success\&quot;&gt;Available&lt;/span&gt;&quot;, &quot;text/html&quot;);
+    }
+
+    public IActionResult OnPostSave(ProfileInput input)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Content(&quot;&lt;div class=\&quot;alert alert-danger\&quot;&gt;Please correct the errors above&lt;/div&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        var currentProfile = _profileService.GetCurrentUserProfile();
+
+        // Check display name uniqueness (skip if unchanged)
+        if (!input.DisplayName.Equals(currentProfile.DisplayName, StringComparison.OrdinalIgnoreCase)
+            &amp;&amp; _profileService.DisplayNameExists(input.DisplayName))
+        {
+            return Content(&quot;&lt;div class=\&quot;alert alert-danger\&quot;&gt;Display name is already taken&lt;/div&gt;&quot;, &quot;text/html&quot;);
+        }
+
+        currentProfile.DisplayName = input.DisplayName;
+        currentProfile.Bio = input.Bio;
+        currentProfile.Website = input.Website;
+        currentProfile.UpdatedAt = input.UpdatedAt;
+
+        _profileService.Save(currentProfile);
+
+        return Content(&quot;&lt;div class=\&quot;alert alert-success\&quot;&gt;Profile saved!&lt;/div&gt;&quot;, &quot;text/html&quot;);
+    }
+}
+
+public class ProfileInput
+{
+    public string DisplayName { get; set; } = &quot;&quot;;
+    public string? Bio { get; set; }
+    public string? Website { get; set; }
+    public DateTime UpdatedAt { get; set; }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>This chapter covered form enhancement attributes:</p>
+<ul>
+<li><strong><code v-pre>hx-params</code></strong> controls which fields are sent: <code v-pre>*</code> (all), <code v-pre>none</code>, <code v-pre>not fieldName</code>, or specific field names</li>
+<li><strong><code v-pre>hx-vals</code></strong> injects additional data using JSON syntax or <code v-pre>js:</code> prefix for dynamic values</li>
+<li><strong><code v-pre>hx-validate</code></strong> triggers HTML5 validation before htmx sends the request</li>
+<li><strong>Real-time validation</strong> uses <code v-pre>hx-get</code> with <code v-pre>delay:</code> trigger and <code v-pre>hx-sync=&quot;this:replace&quot;</code></li>
+<li><strong>Server validation</strong> should always run on submit, even if client-side checks passed</li>
+</ul>
+<p>These attributes give you fine control over form data while keeping validation logic on the server where it can access databases, enforce business rules, and stay consistent across all clients.</p>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>Chapter 18 covers drag-and-drop functionality with htmx and Hyperscript. You will learn to build sortable lists, kanban boards, and file upload zones that let users rearrange content with natural mouse and touch interactions.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -427,7 +1243,7 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-base-text-muted">Previous</span>
-                                                <span class="block mt-1">Chap 16 - Scoped Updates with htmx and Out-​of-​Band</span>
+                                                <span class="block mt-1">Chap 16 - Scoped Updates with hx-​select and Out-​of-​Band Swaps</span>
                                             </span>
                                         </a>
                                     </div>

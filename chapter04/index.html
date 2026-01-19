@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822057844241">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Understanding htmx Commands</title>
     <meta name="title" content="Understanding htmx Commands">
-    <meta name="description" content="You can find the source examples for this chapter here.">
+    <meta name="description" content="Chapter 3 introduced the basics of htmx with hx-get, hx-post, hx-target, and hx-swap.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter04/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter04/">
     <meta property="og:title" content="Understanding htmx Commands">
-    <meta property="og:description" content="You can find the source examples for this chapter here.">
+    <meta property="og:description" content="Chapter 3 introduced the basics of htmx with hx-get, hx-post, hx-target, and hx-swap.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter04/">
     <meta property="twitter:title" content="Understanding htmx Commands">
-    <meta property="twitter:description" content="You can find the source examples for this chapter here.">
+    <meta property="twitter:description" content="Chapter 3 introduced the basics of htmx with hx-get, hx-post, hx-target, and hx-swap.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822057844241" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822057844241" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822057844241" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -247,176 +247,797 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="4" class="break-words">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#4">#</doc-anchor-trigger>
-        <span>4</span>
-    </h1>
-</doc-anchor-target>
-<doc-anchor-target id="understanding-htmx-commands">
+<doc-anchor-target id="understanding-htmx-commands" class="break-words">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#understanding-htmx-commands">#</doc-anchor-trigger>
         <span>Understanding htmx Commands</span>
     </h1>
 </doc-anchor-target>
-<p><em><strong>You can find the source examples for this chapter <a href="https://github.com/cwoodruff/book-aspnet-htmx/tree/main/_src/chap04">here</a>.</strong></em></p>
-<p>Welcome to the beating heart of htmx—the commands that empower you to make it all work! In this chapter, we&#x27;ll take a deep dive into the fundamental building blocks of htmx, exploring how simple HTML attributes can transform your Razor Pages into interactive, server-driven applications. Forget about wrestling with JavaScript-heavy frameworks; with htmx, your markup does the talking, fetching, swapping, and updating content dynamically with just a sprinkle of attributes.</p>
-<p>We&#x27;ll start with an overview of the htmx API, dissecting how it extends standard HTML with powerful commands like <code v-pre>hx-get</code>, <code v-pre>hx-post</code>, and <code v-pre>hx-swap</code>. You&#x27;ll see firsthand how these attributes enable seamless interactions, handling everything from fetching data to submitting forms, all without a single line of JavaScript. By the end of this chapter, you&#x27;ll understand not just what each command does but when and why to use them in an ASP.NET Core 9 Razor Pages project.</p>
-<p>But we&#x27;re not stopping at theory. You&#x27;ll get hands-on experience with practical examples, tackling common scenarios like dynamic content updates, form submissions, and RESTful operations—all with concise, effective code that you can immediately apply in your projects. So gear up, because by the time you reach the last page of this chapter, you&#x27;ll be wielding htmx commands like a pro, making your Razor Pages apps more interactive, responsive, and efficient than ever before.</p>
-<doc-anchor-target id="overview-of-the-htmx-api">
+<p>Chapter 3 introduced the basics of htmx with <code v-pre>hx-get</code>, <code v-pre>hx-post</code>, <code v-pre>hx-target</code>, and <code v-pre>hx-swap</code>. You built simple interactions and learned how htmx sends requests and updates the DOM. Now it is time to go deeper. This chapter expands your command vocabulary with <code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, <code v-pre>hx-delete</code>, and advanced targeting techniques. You will build complete CRUD operations, handle complex swap scenarios, and learn patterns that scale to real applications.</p>
+<p>By the end of this chapter, you will understand what each command does and when to choose one over another. You will have working code for create, read, update, and delete operations. You will know how to update multiple page elements from a single response. These are the building blocks for the interactive dashboards, admin panels, and data-driven applications you will build in later chapters.</p>
+<doc-anchor-target id="the-complete-htmx-command-set">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#overview-of-the-htmx-api">#</doc-anchor-trigger>
-        <span>Overview of the htmx API</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-complete-htmx-command-set">#</doc-anchor-trigger>
+        <span>The Complete htmx Command Set</span>
     </h2>
 </doc-anchor-target>
-<doc-anchor-target id="the-role-of-htmx-in-modern-web-applications">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#the-role-of-htmx-in-modern-web-applications">#</doc-anchor-trigger>
-        <span>The Role of htmx in Modern Web Applications</span>
-    </h3>
-</doc-anchor-target>
-<p>Modern web applications demand dynamic interactivity, and htmx serves as a bridge between traditional server-side rendering and the need for fast, smooth updates. Historically, developers leaned on JavaScript-heavy frameworks to provide this interactivity, but this often came at the cost of complexity, maintainability, and performance. htmx offers a more efficient alternative by enabling HTML itself to handle these interactions while keeping business logic on the server where it belongs.</p>
-<p>With htmx, an element on your page can directly request and update content from the server without requiring JavaScript event handlers or API requests structured around JSON. This makes applications lighter, easier to debug, and much more maintainable in the long run, allowing you to focus on the core functionality of your application and be more productive in your development tasks.</p>
-<doc-anchor-target id="how-htmx-extends-html-with-built-in-commands">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#how-htmx-extends-html-with-built-in-commands">#</doc-anchor-trigger>
-        <span>How htmx Extends HTML with Built-in Commands</span>
-    </h3>
-</doc-anchor-target>
-<p>At the core of htmx is its ability to enrich HTML elements with <code v-pre>hx-attributes</code>, which instruct the browser to interact with the server in a declarative way. Instead of writing JavaScript to handle AJAX requests and manually update the DOM, htmx allows you to express these interactions directly in your markup.</p>
-<p>For instance, consider the following example:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/api/message&quot; hx-target=&quot;#result&quot;&gt;Fetch Message&lt;/button&gt;
-&lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>Here, the <code v-pre>hx-get</code> attribute ensures that when the button is clicked, a <code v-pre>GET</code> request is sent to <code v-pre>/api/message</code>. The server&#x27;s response will then be inserted into the <code v-pre>&lt;div id= &quot;result&quot;&gt;</code>. This approach makes it incredibly easy to build interactive applications with minimal code.</p>
-<doc-anchor-target id="key-components-of-the-htmx-api">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#key-components-of-the-htmx-api">#</doc-anchor-trigger>
-        <span>Key Components of the htmx API</span>
-    </h3>
-</doc-anchor-target>
-<p>htmx provides several attributes that make dynamic interactions intuitive and expressive. Each serves a specific purpose in how elements communicate with the server and handle responses. Let&#x27;s explore them in detail:</p>
-<doc-anchor-target id="hx-get-retrieving-data-from-the-server">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-get-retrieving-data-from-the-server">#</doc-anchor-trigger>
-        <span><code v-pre>hx-get</code>: Retrieving Data from the Server</span>
-    </h4>
-</doc-anchor-target>
-<p>This attribute sends a <code v-pre>GET</code> request to the specified URL and updates the target element with the response. It&#x27;s ideal for retrieving data without refreshing the page.</p>
-<doc-anchor-target id="hx-post-submitting-forms-and-sending-data">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-post-submitting-forms-and-sending-data">#</doc-anchor-trigger>
-        <span><code v-pre>hx-post</code>: Submitting Forms and Sending Data</span>
-    </h4>
-</doc-anchor-target>
-<p>Instead of handling form submissions through JavaScript, <code v-pre>hx-post</code> sends form data to the server and updates the page with the returned HTML. This simplifies interactions such as comment submissions or user input processing.</p>
-<doc-anchor-target id="hx-put-hx-patch-hx-delete-restful-operations">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-put-hx-patch-hx-delete-restful-operations">#</doc-anchor-trigger>
-        <span><code v-pre>hx-put</code>, <code v-pre>hx-patch</code>, <code v-pre>hx-delete</code>: RESTful Operations</span>
-    </h4>
-</doc-anchor-target>
-<p>For scenarios where you need to update or delete data dynamically, these attributes send appropriate HTTP requests while keeping the logic minimal and readable.</p>
-<doc-anchor-target id="hx-target-where-should-the-response-go">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-target-where-should-the-response-go">#</doc-anchor-trigger>
-        <span><code v-pre>hx-target</code>: Where Should the Response Go?</span>
-    </h4>
-</doc-anchor-target>
-<p>By default, responses replace the element that initiated the request. However, hx-target allows developers to specify exactly where the new content should be inserted.</p>
-<doc-anchor-target id="hx-swap-how-should-the-response-be-inserted">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-swap-how-should-the-response-be-inserted">#</doc-anchor-trigger>
-        <span><code v-pre>hx-swap</code>: How Should the Response Be Inserted?</span>
-    </h4>
-</doc-anchor-target>
-<p>Different parts of an application may require responses to be inserted in different ways. The <code v-pre>hx-swap</code> attribute determines whether the new content replaces the target&#x27;s inner content (<code v-pre>innerHTML</code>), the entire element (<code v-pre>outerHTML</code>), or should be inserted in a different position like <code v-pre>beforebegin</code> or <code v-pre>afterend</code>.</p>
-<doc-anchor-target id="introducing-server-side-interactivity-with-razor-pages">
+<p>htmx provides HTTP method attributes that map directly to RESTful operations:</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Attribute</th>
+<th>HTTP Method</th>
+<th>Typical Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>hx-get</code></td>
+<td>GET</td>
+<td>Retrieve and display data</td>
+</tr>
+<tr>
+<td><code v-pre>hx-post</code></td>
+<td>POST</td>
+<td>Create new resources, submit forms</td>
+</tr>
+<tr>
+<td><code v-pre>hx-put</code></td>
+<td>PUT</td>
+<td>Replace an existing resource entirely</td>
+</tr>
+<tr>
+<td><code v-pre>hx-patch</code></td>
+<td>PATCH</td>
+<td>Partially update an existing resource</td>
+</tr>
+<tr>
+<td><code v-pre>hx-delete</code></td>
+<td>DELETE</td>
+<td>Remove a resource</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each attribute takes a URL as its value. When the element is triggered (by default, on click for buttons and links, on submit for forms), htmx sends the corresponding HTTP request to that URL.</p>
+<doc-anchor-target id="building-a-complete-crud-example">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#introducing-server-side-interactivity-with-razor-pages">#</doc-anchor-trigger>
-        <span>Introducing Server-Side Interactivity with Razor Pages</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#building-a-complete-crud-example">#</doc-anchor-trigger>
+        <span>Building a Complete CRUD Example</span>
     </h2>
 </doc-anchor-target>
-<doc-anchor-target id="the-htmx-powered-razor-pages-workflow">
+<p>Theory only takes you so far. Let us build a working task list that demonstrates all five HTTP methods. This example will show you how htmx commands work together in a realistic scenario.</p>
+<doc-anchor-target id="project-setup">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#the-htmx-powered-razor-pages-workflow">#</doc-anchor-trigger>
-        <span>The htmx-Powered Razor Pages Workflow</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#project-setup">#</doc-anchor-trigger>
+        <span>Project Setup</span>
     </h3>
 </doc-anchor-target>
-<p>Traditional Razor Pages rely on full-page reloads for updates, but htmx enhances this model by enabling seamless, partial updates. The result is a workflow where user interactions trigger lightweight AJAX requests that fetch updated content from the server, reducing unnecessary data transfer and improving performance.</p>
-<p>For example, suppose you want to update a section of your page dynamically based on a user&#x27;s interaction. With htmx, this is straightforward:</p>
+<p>Create a new Razor Pages project or add these files to an existing one. We will need a model, a page, and several partial views.</p>
+<p><strong>Models/TaskItem.cs</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Index?handler=List&quot; hx-target=&quot;#user-list&quot;&gt;Load Users&lt;/button&gt;
-&lt;div id=&quot;user-list&quot;&gt;&lt;/div&gt;</code></pre>
-</doc-codeblock></div>
-<p>And on the server:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public class IndexModel : PageModel
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">namespace YourApp.Models;
+
+public class TaskItem
 {
-    public IActionResult OnGetList()
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public bool IsComplete { get; set; }
+}</code></pre>
+</doc-codeblock></div>
+<p><strong>Services/TaskService.cs</strong></p>
+<p>For simplicity, we will use an in-memory store. In a real application, this would be a database.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">namespace YourApp.Services;
+
+using YourApp.Models;
+
+public class TaskService
+{
+    private static readonly List&lt;TaskItem&gt; Tasks = new()
     {
-        var users = new List&lt;string&gt; {&quot;Maarten&quot;, &quot;Woody&quot;, &quot;Khalid&quot;};
-        return Content($&quot;&lt;ul&gt;{string.Join(&quot;&quot;, users.Select(u =&gt; $&quot;&lt;li&gt;{u}&lt;/li&gt;&quot;))}&lt;/ul&gt;&quot;, &quot;text/html&quot;);
+        new TaskItem { Id = 1, Title = &quot;Learn htmx basics&quot;, IsComplete = true },
+        new TaskItem { Id = 2, Title = &quot;Build CRUD operations&quot;, IsComplete = false },
+        new TaskItem { Id = 3, Title = &quot;Master advanced patterns&quot;, IsComplete = false }
+    };
+    
+    private static int _nextId = 4;
+
+    public List&lt;TaskItem&gt; GetAll() =&gt; Tasks.ToList();
+    
+    public TaskItem? GetById(int id) =&gt; Tasks.FirstOrDefault(t =&gt; t.Id == id);
+    
+    public TaskItem Create(string title)
+    {
+        var task = new TaskItem { Id = _nextId++, Title = title };
+        Tasks.Add(task);
+        return task;
+    }
+    
+    public TaskItem? Update(int id, string title)
+    {
+        var task = GetById(id);
+        if (task != null)
+        {
+            task.Title = title;
+        }
+        return task;
+    }
+    
+    public TaskItem? ToggleComplete(int id)
+    {
+        var task = GetById(id);
+        if (task != null)
+        {
+            task.IsComplete = !task.IsComplete;
+        }
+        return task;
+    }
+    
+    public bool Delete(int id)
+    {
+        var task = GetById(id);
+        if (task != null)
+        {
+            Tasks.Remove(task);
+            return true;
+        }
+        return false;
     }
 }</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="partial-responses-vs-json-responses">
+<p>Register the service in <code v-pre>Program.cs</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">builder.Services.AddSingleton&lt;TaskService&gt;();</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="the-main-page">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#partial-responses-vs-json-responses">#</doc-anchor-trigger>
-        <span>Partial Responses vs. JSON Responses</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-main-page">#</doc-anchor-trigger>
+        <span>The Main Page</span>
     </h3>
 </doc-anchor-target>
-<p>A key difference between htmx and traditional client-side JavaScript frameworks is its reliance on partial HTML responses rather than JSON. When a request is made, htmx sends the request to the server, which processes it and returns a partial HTML response. This response is then inserted into the page, updating the content without the need for a full page reload. This approach allows Razor Pages to remain the central authority for rendering, reducing duplication of logic between client and server.</p>
-<p>Partial HTML Example:</p>
+<p><strong>Pages/Tasks.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnGetUserInfo()
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@page
+@model TasksModel
+@{
+    ViewData[&quot;Title&quot;] = &quot;Task Manager&quot;;
+}
+
+&lt;h1&gt;Task Manager&lt;/h1&gt;
+
+&lt;section&gt;
+    &lt;h2&gt;Add New Task&lt;/h2&gt;
+    &lt;form hx-post=&quot;/Tasks?handler=Create&quot; 
+          hx-target=&quot;#task-list&quot; 
+          hx-swap=&quot;beforeend&quot;
+          hx-on::after-request=&quot;this.reset()&quot;&gt;
+        @Html.AntiForgeryToken()
+        &lt;input type=&quot;text&quot; name=&quot;title&quot; required placeholder=&quot;Enter task title&quot; /&gt;
+        &lt;button type=&quot;submit&quot;&gt;Add Task&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/section&gt;
+
+&lt;section&gt;
+    &lt;h2&gt;Your Tasks&lt;/h2&gt;
+    &lt;div id=&quot;task-list&quot;&gt;
+        @foreach (var task in Model.Tasks)
+        {
+            &lt;partial name=&quot;_TaskItem&quot; model=&quot;task&quot; /&gt;
+        }
+    &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;div id=&quot;edit-modal&quot; class=&quot;modal&quot; style=&quot;display: none;&quot;&gt;
+    &lt;!-- Edit form loads here --&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Pages/Tasks.cshtml.cs</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using YourApp.Models;
+using YourApp.Services;
+
+public class TasksModel : PageModel
 {
-    User user = new User { Name = &quot;Tracy&quot;, Age = 29 };
-    return Partial(&quot;_UserInfo&quot;, user);
+    private readonly TaskService _taskService;
+    
+    public List&lt;TaskItem&gt; Tasks { get; set; } = new();
+
+    public TasksModel(TaskService taskService)
+    {
+        _taskService = taskService;
+    }
+
+    public void OnGet()
+    {
+        Tasks = _taskService.GetAll();
+    }
+
+    // CREATE: hx-post
+    public IActionResult OnPostCreate(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            return Content(&quot;&lt;p class=\&quot;error\&quot;&gt;Title is required&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        }
+        
+        var task = _taskService.Create(title);
+        return Partial(&quot;_TaskItem&quot;, task);
+    }
+
+    // READ: hx-get (load edit form)
+    public IActionResult OnGetEdit(int id)
+    {
+        var task = _taskService.GetById(id);
+        if (task == null)
+        {
+            return Content(&quot;&lt;p class=\&quot;error\&quot;&gt;Task not found&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        }
+        
+        return Partial(&quot;_TaskEditForm&quot;, task);
+    }
+
+    // UPDATE: hx-put (full update)
+    public IActionResult OnPutUpdate(int id, string title)
+    {
+        var task = _taskService.Update(id, title);
+        if (task == null)
+        {
+            return Content(&quot;&lt;p class=\&quot;error\&quot;&gt;Task not found&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        }
+        
+        return Partial(&quot;_TaskItem&quot;, task);
+    }
+
+    // PARTIAL UPDATE: hx-patch (toggle complete)
+    public IActionResult OnPatchToggle(int id)
+    {
+        var task = _taskService.ToggleComplete(id);
+        if (task == null)
+        {
+            return Content(&quot;&lt;p class=\&quot;error\&quot;&gt;Task not found&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        }
+        
+        return Partial(&quot;_TaskItem&quot;, task);
+    }
+
+    // DELETE: hx-delete
+    public IActionResult OnDeleteRemove(int id)
+    {
+        var success = _taskService.Delete(id);
+        if (!success)
+        {
+            return Content(&quot;&lt;p class=\&quot;error\&quot;&gt;Task not found&lt;/p&gt;&quot;, &quot;text/html&quot;);
+        }
+        
+        // Return empty content to remove the element
+        return Content(&quot;&quot;, &quot;text/html&quot;);
+    }
 }</code></pre>
 </doc-codeblock></div>
-<p>JSON Example (if needed):</p>
+<doc-anchor-target id="partial-views">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#partial-views">#</doc-anchor-trigger>
+        <span>Partial Views</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Pages/Shared/_TaskItem.cshtml</strong></p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">public JsonResult OnGetUserData()
-{
-    return new JsonResult(new { Name = &quot;Tracy&quot;, Age = 29 });
-}</code></pre>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model YourApp.Models.TaskItem
+
+&lt;div id=&quot;task-@Model.Id&quot; class=&quot;task-item @(Model.IsComplete ? &quot;complete&quot; : &quot;&quot;)&quot;&gt;
+    &lt;span class=&quot;task-title&quot;&gt;@Model.Title&lt;/span&gt;
+    
+    &lt;div class=&quot;task-actions&quot;&gt;
+        &lt;button hx-patch=&quot;/Tasks?handler=Toggle&amp;amp;id=@Model.Id&quot;
+                hx-target=&quot;#task-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;&gt;
+            @(Model.IsComplete ? &quot;Undo&quot; : &quot;Complete&quot;)
+        &lt;/button&gt;
+        
+        &lt;button hx-get=&quot;/Tasks?handler=Edit&amp;amp;id=@Model.Id&quot;
+                hx-target=&quot;#edit-modal&quot;
+                hx-swap=&quot;innerHTML&quot;
+                onclick=&quot;document.getElementById('edit-modal').style.display='block'&quot;&gt;
+            Edit
+        &lt;/button&gt;
+        
+        &lt;button hx-delete=&quot;/Tasks?handler=Remove&amp;amp;id=@Model.Id&quot;
+                hx-target=&quot;#task-@Model.Id&quot;
+                hx-swap=&quot;outerHTML&quot;
+                hx-confirm=&quot;Delete this task?&quot;&gt;
+            Delete
+        &lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
-<p>If a JSON API is necessary, htmx can still handle it by processing the response and updating the UI accordingly. However, in most cases, returning small HTML fragments is more efficient and simplifies development. We will examine htmx Partials for ASP.NET in a latter chapter.</p>
-<doc-anchor-target id="preparing-for-advanced-htmx-usage">
+<p><strong>Pages/Shared/_TaskEditForm.cshtml</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model YourApp.Models.TaskItem
+
+&lt;div class=&quot;edit-form&quot;&gt;
+    &lt;h3&gt;Edit Task&lt;/h3&gt;
+    &lt;form hx-put=&quot;/Tasks?handler=Update&amp;amp;id=@Model.Id&quot;
+          hx-target=&quot;#task-@Model.Id&quot;
+          hx-swap=&quot;outerHTML&quot;
+          hx-on::after-request=&quot;document.getElementById('edit-modal').style.display='none'&quot;&gt;
+        @Html.AntiForgeryToken()
+        &lt;input type=&quot;text&quot; name=&quot;title&quot; value=&quot;@Model.Title&quot; required /&gt;
+        &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
+        &lt;button type=&quot;button&quot; onclick=&quot;document.getElementById('edit-modal').style.display='none'&quot;&gt;
+            Cancel
+        &lt;/button&gt;
+    &lt;/form&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="configuring-anti-forgery-tokens-for-all-methods">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#configuring-anti-forgery-tokens-for-all-methods">#</doc-anchor-trigger>
+        <span>Configuring Anti-Forgery Tokens for All Methods</span>
+    </h3>
+</doc-anchor-target>
+<p>ASP.NET Core requires anti-forgery tokens for POST, PUT, PATCH, and DELETE requests. Add this script to your <code v-pre>_Layout.cshtml</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script src=&quot;https://unpkg.com/htmx.org@2.0.4&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p>For pages that use <code v-pre>hx-delete</code>, <code v-pre>hx-put</code>, or <code v-pre>hx-patch</code> outside of forms, include a hidden token somewhere on the page:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@Html.AntiForgeryToken()</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="understanding-each-operation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#understanding-each-operation">#</doc-anchor-trigger>
+        <span>Understanding Each Operation</span>
+    </h3>
+</doc-anchor-target>
+<p>Let us examine what each htmx command does in this example.</p>
+<p><strong>CREATE with <code v-pre>hx-post</code></strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Tasks?handler=Create&quot; 
+      hx-target=&quot;#task-list&quot; 
+      hx-swap=&quot;beforeend&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<p>When submitted, this form sends a POST request to <code v-pre>OnPostCreate()</code>. The handler creates a new task and returns the <code v-pre>_TaskItem</code> partial. The <code v-pre>hx-swap=&quot;beforeend&quot;</code> directive appends the new task to the end of the list rather than replacing the entire list.</p>
+<p>The <code v-pre>hx-on::after-request=&quot;this.reset()&quot;</code> attribute clears the form after successful submission, ready for the next entry.</p>
+<p><strong>READ with <code v-pre>hx-get</code></strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Tasks?handler=Edit&amp;amp;id=@Model.Id&quot;
+        hx-target=&quot;#edit-modal&quot;
+        hx-swap=&quot;innerHTML&quot;&gt;
+    Edit
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>Clicking Edit sends a GET request to <code v-pre>OnGetEdit()</code>, which returns the edit form partial. The form loads into the modal div. This pattern separates the read operation (loading the form) from the update operation (submitting changes).</p>
+<p><strong>UPDATE with <code v-pre>hx-put</code></strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-put=&quot;/Tasks?handler=Update&amp;amp;id=@Model.Id&quot;
+      hx-target=&quot;#task-@Model.Id&quot;
+      hx-swap=&quot;outerHTML&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<p>The edit form uses PUT because we are replacing the entire task resource. The handler returns an updated <code v-pre>_TaskItem</code> partial, which replaces the old task element. Using <code v-pre>outerHTML</code> ensures the entire task div gets replaced, including its id attribute.</p>
+<p><strong>PARTIAL UPDATE with <code v-pre>hx-patch</code></strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-patch=&quot;/Tasks?handler=Toggle&amp;amp;id=@Model.Id&quot;
+        hx-target=&quot;#task-@Model.Id&quot;
+        hx-swap=&quot;outerHTML&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<p>Toggling completion status is a partial update, so we use PATCH. We are not replacing the entire resource, just changing one property. The distinction between PUT and PATCH matters for API design clarity, even when both return the same partial view.</p>
+<p><strong>DELETE with <code v-pre>hx-delete</code></strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-delete=&quot;/Tasks?handler=Remove&amp;amp;id=@Model.Id&quot;
+        hx-target=&quot;#task-@Model.Id&quot;
+        hx-swap=&quot;outerHTML&quot;
+        hx-confirm=&quot;Delete this task?&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<p>The delete button sends a DELETE request and targets the task element itself. The handler returns empty content, so <code v-pre>outerHTML</code> swap effectively removes the element from the DOM. The <code v-pre>hx-confirm</code> attribute shows a browser confirmation dialog before sending the request.</p>
+<doc-anchor-target id="advanced-targeting-with-hx-target">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#preparing-for-advanced-htmx-usage">#</doc-anchor-trigger>
-        <span>Preparing for Advanced htmx Usage</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#advanced-targeting-with-hx-target">#</doc-anchor-trigger>
+        <span>Advanced Targeting with <code v-pre>hx-target</code></span>
     </h2>
 </doc-anchor-target>
-<doc-anchor-target id="security-considerations">
+<p>The <code v-pre>hx-target</code> attribute accepts CSS selectors, giving you precise control over where responses appear.</p>
+<doc-anchor-target id="targeting-by-id">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#security-considerations">#</doc-anchor-trigger>
-        <span>Security Considerations</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#targeting-by-id">#</doc-anchor-trigger>
+        <span>Targeting by ID</span>
     </h3>
 </doc-anchor-target>
-<p>Because htmx enables direct server interaction, developers must ensure their applications remain secure. This includes enforcing authentication, validating input on the server, and implementing CSRF protection when processing POST requests. Razor Pages have built-in anti-forgery mechanisms that should be leveraged to safeguard sensitive operations.</p>
-<doc-anchor-target id="debugging-and-performance-optimization">
+<p>The most common pattern targets elements by ID:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Data?handler=Load&quot; hx-target=&quot;#content&quot;&gt;Load&lt;/button&gt;
+&lt;div id=&quot;content&quot;&gt;&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="targeting-relative-to-the-element">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-and-performance-optimization">#</doc-anchor-trigger>
-        <span>Debugging and Performance Optimization</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#targeting-relative-to-the-element">#</doc-anchor-trigger>
+        <span>Targeting Relative to the Element</span>
     </h3>
 </doc-anchor-target>
-<p>htmx simplifies interactions, but debugging remains essential. Using browser dev tools to inspect network requests, checking logs on the server, and enabling <code v-pre>hx-debug= &quot;true&quot;</code> in problematic elements helps diagnose issues. Performance optimization strategies include:</p>
+<p>htmx provides special selectors for targeting elements relative to the trigger:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Target the closest ancestor with class 'card' --&gt;
+&lt;button hx-delete=&quot;/Items?handler=Remove&amp;amp;id=5&quot; 
+        hx-target=&quot;closest .card&quot;
+        hx-swap=&quot;outerHTML&quot;&gt;
+    Remove
+&lt;/button&gt;
+
+&lt;!-- Target the next sibling element --&gt;
+&lt;button hx-get=&quot;/Details?handler=Show&quot; 
+        hx-target=&quot;next .details&quot;&gt;
+    Show Details
+&lt;/button&gt;
+&lt;div class=&quot;details&quot;&gt;&lt;/div&gt;
+
+&lt;!-- Target a child element --&gt;
+&lt;div class=&quot;container&quot;&gt;
+    &lt;button hx-get=&quot;/Content?handler=Load&quot; 
+            hx-target=&quot;find .content-area&quot;&gt;
+        Load
+    &lt;/button&gt;
+    &lt;div class=&quot;content-area&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>Available relative selectors:</p>
 <ul>
-<li><strong>Caching Responses</strong>: If frequently requested content doesn&#x27;t change often, caching can significantly boost performance.</li>
-<li><strong>Minimizing Server Processing</strong>: Keep handlers efficient to prevent slowdowns.</li>
-<li><strong>Using hx-trigger Wisely</strong>: Instead of sending a request on every keystroke, introduce a delay (e.g., keyup changed delay:500ms).</li>
+<li><code v-pre>this</code>: The element that triggered the request</li>
+<li><code v-pre>closest &lt;selector&gt;</code>: The nearest ancestor matching the selector</li>
+<li><code v-pre>next &lt;selector&gt;</code>: The next element in the DOM matching the selector</li>
+<li><code v-pre>previous &lt;selector&gt;</code>: The previous element matching the selector</li>
+<li><code v-pre>find &lt;selector&gt;</code>: The first child element matching the selector</li>
 </ul>
-<doc-anchor-target id="looking-ahead-deep-diving-into-hx-get-and-hx-post">
+<doc-anchor-target id="targeting-the-document-body">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#looking-ahead-deep-diving-into-hx-get-and-hx-post">#</doc-anchor-trigger>
-        <span>Looking Ahead: Deep Diving into hx-get and hx-post</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#targeting-the-document-body">#</doc-anchor-trigger>
+        <span>Targeting the Document Body</span>
     </h3>
 </doc-anchor-target>
-<p>Now that we&#x27;ve explored htmx commands, the next step is mastering how data is fetched and submitted. The upcoming chapter will break down advanced techniques for handling form submissions, optimizing data retrieval, and structuring Razor Pages applications for maximum efficiency.</p>
-<p>By now, you should have a strong grasp of how htmx can transform Razor Pages development. With its ability to simplify interactivity and reduce reliance on JavaScript, it&#x27;s an invaluable tool for modern web applications that prioritize performance and maintainability.</p>
+<p>For full-page updates or navigation-like behavior:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;a hx-get=&quot;/Dashboard&quot; hx-target=&quot;body&quot; hx-push-url=&quot;true&quot;&gt;
+    Go to Dashboard
+&lt;/a&gt;</code></pre>
+</doc-codeblock></div>
+<p>This replaces the entire body content and updates the browser URL, simulating navigation without a full page reload.</p>
+<doc-anchor-target id="mastering-hx-swap-options">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#mastering-hx-swap-options">#</doc-anchor-trigger>
+        <span>Mastering <code v-pre>hx-swap</code> Options</span>
+    </h2>
+</doc-anchor-target>
+<p>The <code v-pre>hx-swap</code> attribute controls how the response content gets inserted. Each option serves different use cases.</p>
+<doc-anchor-target id="swap-options-comparison">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-options-comparison">#</doc-anchor-trigger>
+        <span>Swap Options Comparison</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Replace inner content (default) --&gt;
+&lt;div hx-get=&quot;/Content&quot; hx-swap=&quot;innerHTML&quot;&gt;
+    &lt;p&gt;This paragraph will be replaced&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;!-- Replace the entire element --&gt;
+&lt;div hx-get=&quot;/Content&quot; hx-swap=&quot;outerHTML&quot;&gt;
+    This entire div will be replaced
+&lt;/div&gt;
+
+&lt;!-- Insert before the element --&gt;
+&lt;ul&gt;
+    &lt;li hx-get=&quot;/NewItem&quot; hx-swap=&quot;beforebegin&quot;&gt;
+        New items appear above this
+    &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Insert after the element --&gt;
+&lt;li hx-get=&quot;/NewItem&quot; hx-swap=&quot;afterend&quot;&gt;
+    New items appear below this
+&lt;/li&gt;
+
+&lt;!-- Insert at the start of the element's children --&gt;
+&lt;ul hx-get=&quot;/NewItem&quot; hx-swap=&quot;afterbegin&quot;&gt;
+    &lt;li&gt;New items appear before this&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Insert at the end of the element's children --&gt;
+&lt;ul hx-get=&quot;/NewItem&quot; hx-swap=&quot;beforeend&quot;&gt;
+    &lt;li&gt;New items appear after this&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Delete the target element --&gt;
+&lt;div hx-delete=&quot;/Items?id=5&quot; hx-swap=&quot;delete&quot;&gt;
+    This element will be removed
+&lt;/div&gt;
+
+&lt;!-- Keep current content, useful for side effects only --&gt;
+&lt;button hx-post=&quot;/Track&quot; hx-swap=&quot;none&quot;&gt;
+    Track Click
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="swap-modifiers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-modifiers">#</doc-anchor-trigger>
+        <span>Swap Modifiers</span>
+    </h3>
+</doc-anchor-target>
+<p>You can add modifiers to control swap timing and behavior:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Wait 1 second before swapping --&gt;
+&lt;div hx-get=&quot;/Content&quot; hx-swap=&quot;innerHTML swap:1s&quot;&gt;
+    Loading...
+&lt;/div&gt;
+
+&lt;!-- Fade out old content, fade in new --&gt;
+&lt;div hx-get=&quot;/Content&quot; hx-swap=&quot;innerHTML transition:true&quot;&gt;
+    Content with transitions
+&lt;/div&gt;
+
+&lt;!-- Scroll to top of swapped content --&gt;
+&lt;div hx-get=&quot;/Content&quot; hx-swap=&quot;innerHTML scroll:top&quot;&gt;
+    Long content area
+&lt;/div&gt;
+
+&lt;!-- Show swapped content at top of viewport --&gt;
+&lt;div hx-get=&quot;/Content&quot; hx-swap=&quot;innerHTML show:top&quot;&gt;
+    Content that should be visible
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="out-of-band-swaps">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#out-of-band-swaps">#</doc-anchor-trigger>
+        <span>Out-of-Band Swaps</span>
+    </h2>
+</doc-anchor-target>
+<p>Sometimes a single server action needs to update multiple unrelated parts of the page. Out-of-band (OOB) swaps solve this problem cleanly.</p>
+<doc-anchor-target id="the-problem">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-problem">#</doc-anchor-trigger>
+        <span>The Problem</span>
+    </h3>
+</doc-anchor-target>
+<p>Consider a scenario where adding a task also needs to update a task count in the header. With standard htmx, you would need two separate requests. OOB swaps let you update both with one response.</p>
+<doc-anchor-target id="the-solution">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-solution">#</doc-anchor-trigger>
+        <span>The Solution</span>
+    </h3>
+</doc-anchor-target>
+<p>Your server response includes additional elements marked with <code v-pre>hx-swap-oob=&quot;true&quot;</code>:</p>
+<p><strong>Updated OnPostCreate handler:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostCreate(string title)
+{
+    if (string.IsNullOrWhiteSpace(title))
+    {
+        return Content(&quot;&lt;p class=\&quot;error\&quot;&gt;Title is required&lt;/p&gt;&quot;, &quot;text/html&quot;);
+    }
+    
+    var task = _taskService.Create(title);
+    var totalCount = _taskService.GetAll().Count;
+    
+    // Return the new task item plus an OOB update for the counter
+    var response = new StringBuilder();
+    response.Append(RenderPartial(&quot;_TaskItem&quot;, task));
+    response.Append($&quot;&lt;span id=\&quot;task-count\&quot; hx-swap-oob=\&quot;true\&quot;&gt;{totalCount}&lt;/span&gt;&quot;);
+    
+    return Content(response.ToString(), &quot;text/html&quot;);
+}</code></pre>
+</doc-codeblock></div>
+<p>Or using a partial view that includes OOB elements:</p>
+<p><strong>Pages/Shared/_TaskItemWithCount.cshtml</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">@model YourApp.ViewModels.TaskItemWithCountViewModel
+
+&lt;!-- Primary response --&gt;
+&lt;partial name=&quot;_TaskItem&quot; model=&quot;Model.Task&quot; /&gt;
+
+&lt;!-- Out-of-band update --&gt;
+&lt;span id=&quot;task-count&quot; hx-swap-oob=&quot;true&quot;&gt;@Model.TotalCount&lt;/span&gt;</code></pre>
+</doc-codeblock></div>
+<p>The page needs a matching element:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;header&gt;
+    &lt;span id=&quot;task-count&quot;&gt;@Model.Tasks.Count&lt;/span&gt; tasks
+&lt;/header&gt;</code></pre>
+</doc-codeblock></div>
+<p>When htmx receives the response, it:</p>
+<ol>
+<li>Swaps the primary content (the new task) into the target</li>
+<li>Finds any elements with <code v-pre>hx-swap-oob=&quot;true&quot;</code></li>
+<li>Swaps those elements into matching elements on the page by ID</li>
+</ol>
+<doc-anchor-target id="oob-swap-modes">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#oob-swap-modes">#</doc-anchor-trigger>
+        <span>OOB Swap Modes</span>
+    </h3>
+</doc-anchor-target>
+<p>You can specify how OOB elements should be swapped:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Replace the element (default) --&gt;
+&lt;div id=&quot;notifications&quot; hx-swap-oob=&quot;true&quot;&gt;New content&lt;/div&gt;
+
+&lt;!-- Append to the element --&gt;
+&lt;div id=&quot;log&quot; hx-swap-oob=&quot;beforeend&quot;&gt;New log entry&lt;/div&gt;
+
+&lt;!-- Prepend to the element --&gt;
+&lt;div id=&quot;messages&quot; hx-swap-oob=&quot;afterbegin&quot;&gt;New message&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="debugging-htmx-applications">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debugging-htmx-applications">#</doc-anchor-trigger>
+        <span>Debugging htmx Applications</span>
+    </h2>
+</doc-anchor-target>
+<p>When htmx requests do not behave as expected, you have several debugging options.</p>
+<doc-anchor-target id="enable-logging">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#enable-logging">#</doc-anchor-trigger>
+        <span>Enable Logging</span>
+    </h3>
+</doc-anchor-target>
+<p>Add this to your page during development:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script&gt;
+htmx.logAll();
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<p>This outputs every htmx event to the browser console, showing you exactly what htmx is doing.</p>
+<doc-anchor-target id="listen-to-specific-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#listen-to-specific-events">#</doc-anchor-trigger>
+        <span>Listen to Specific Events</span>
+    </h3>
+</doc-anchor-target>
+<p>For targeted debugging, listen to specific htmx events:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script&gt;
+document.body.addEventListener('htmx:beforeRequest', function(event) {
+    console.log('Request starting:', event.detail.pathInfo.requestPath);
+    console.log('Method:', event.detail.verb);
+});
+
+document.body.addEventListener('htmx:afterRequest', function(event) {
+    console.log('Response status:', event.detail.xhr.status);
+    console.log('Response body:', event.detail.xhr.responseText);
+});
+
+document.body.addEventListener('htmx:responseError', function(event) {
+    console.error('Request failed:', event.detail.xhr.status);
+});
+
+document.body.addEventListener('htmx:swapError', function(event) {
+    console.error('Swap failed:', event.detail.error);
+});
+&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="network-tab-inspection">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#network-tab-inspection">#</doc-anchor-trigger>
+        <span>Network Tab Inspection</span>
+    </h3>
+</doc-anchor-target>
+<p>The browser&#x27;s Network tab shows every htmx request. Check:</p>
+<ul>
+<li><strong>URL</strong>: Is the request going to the correct endpoint?</li>
+<li><strong>Method</strong>: Is it GET, POST, PUT, PATCH, or DELETE as expected?</li>
+<li><strong>Request Headers</strong>: Is the anti-forgery token present?</li>
+<li><strong>Request Body</strong>: For POST/PUT, is the form data correct?</li>
+<li><strong>Response Status</strong>: 200, 400, 404, 500?</li>
+<li><strong>Response Body</strong>: What HTML is the server returning?</li>
+</ul>
+<doc-anchor-target id="common-issues-and-solutions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-issues-and-solutions">#</doc-anchor-trigger>
+        <span>Common Issues and Solutions</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Problem</strong>: Request returns 400 Bad Request</p>
+<p><strong>Solution</strong>: The anti-forgery token is likely missing. Ensure <code v-pre>@Html.AntiForgeryToken()</code> is on the page and the token-forwarding script is in your layout.</p>
+<p><strong>Problem</strong>: Handler not found (404)</p>
+<p><strong>Solution</strong>: Verify the handler name matches your method. <code v-pre>handler=Create</code> needs <code v-pre>OnPostCreate()</code> for POST, <code v-pre>OnGetCreate()</code> for GET.</p>
+<p><strong>Problem</strong>: PUT/PATCH/DELETE returns 405 Method Not Allowed</p>
+<p><strong>Solution</strong>: ASP.NET Core needs handler methods named <code v-pre>OnPut*</code>, <code v-pre>OnPatch*</code>, <code v-pre>OnDelete*</code>. Verify spelling and that the method is public.</p>
+<p><strong>Problem</strong>: Response appears but in wrong location</p>
+<p><strong>Solution</strong>: Check your <code v-pre>hx-target</code> selector. Use browser dev tools to verify the target element exists and has the expected ID.</p>
+<p><strong>Problem</strong>: Element not removed after delete</p>
+<p><strong>Solution</strong>: Ensure you return empty content and use <code v-pre>hx-swap=&quot;outerHTML&quot;</code> so the element replaces itself with nothing.</p>
+<doc-anchor-target id="performance-considerations">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#performance-considerations">#</doc-anchor-trigger>
+        <span>Performance Considerations</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="minimize-response-size">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#minimize-response-size">#</doc-anchor-trigger>
+        <span>Minimize Response Size</span>
+    </h3>
+</doc-anchor-target>
+<p>Return only the HTML needed for the swap. Avoid returning full page layouts for partial updates:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Good: Returns only the needed fragment
+public IActionResult OnGetItem(int id)
+{
+    var item = _service.GetById(id);
+    return Partial(&quot;_Item&quot;, item);
+}
+
+// Avoid: Returns more than necessary
+public IActionResult OnGetItem(int id)
+{
+    var item = _service.GetById(id);
+    ViewData[&quot;Item&quot;] = item;
+    return Page(); // Returns entire page
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="use-appropriate-http-methods">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#use-appropriate-http-methods">#</doc-anchor-trigger>
+        <span>Use Appropriate HTTP Methods</span>
+    </h3>
+</doc-anchor-target>
+<p>Match your HTTP method to the operation semantics:</p>
+<ul>
+<li>GET for retrieving data (cacheable, safe)</li>
+<li>POST for creating resources</li>
+<li>PUT for full updates</li>
+<li>PATCH for partial updates</li>
+<li>DELETE for removal</li>
+</ul>
+<p>Using the correct method helps with caching, browser behavior, and API clarity.</p>
+<doc-anchor-target id="debounce-rapid-triggers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debounce-rapid-triggers">#</doc-anchor-trigger>
+        <span>Debounce Rapid Triggers</span>
+    </h3>
+</doc-anchor-target>
+<p>For inputs that fire on every keystroke, add a delay:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input type=&quot;text&quot;
+       hx-get=&quot;/Search?handler=Results&quot;
+       hx-target=&quot;#results&quot;
+       hx-trigger=&quot;keyup changed delay:300ms&quot; /&gt;</code></pre>
+</doc-codeblock></div>
+<p>The request only fires 300ms after the user stops typing, preventing server overload.</p>
+<doc-anchor-target id="summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#summary">#</doc-anchor-trigger>
+        <span>Summary</span>
+    </h2>
+</doc-anchor-target>
+<p>This chapter covered the complete htmx command set for building interactive Razor Pages applications:</p>
+<ul>
+<li><code v-pre>hx-get</code> retrieves data without page reloads</li>
+<li><code v-pre>hx-post</code> creates new resources and submits forms</li>
+<li><code v-pre>hx-put</code> replaces existing resources entirely</li>
+<li><code v-pre>hx-patch</code> partially updates resources</li>
+<li><code v-pre>hx-delete</code> removes resources</li>
+<li><code v-pre>hx-target</code> controls where responses appear using CSS selectors</li>
+<li><code v-pre>hx-swap</code> determines how responses are inserted into the DOM</li>
+<li>Out-of-band swaps update multiple page elements from one response</li>
+</ul>
+<p>You built a complete CRUD application demonstrating all five HTTP methods with proper anti-forgery protection. You learned advanced targeting with relative selectors and mastered swap options for different update scenarios.</p>
+<doc-anchor-target id="preview-of-next-chapter">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#preview-of-next-chapter">#</doc-anchor-trigger>
+        <span>Preview of Next Chapter</span>
+    </h2>
+</doc-anchor-target>
+<p>In the next chapter, we will explore <code v-pre>hx-trigger</code> in depth. You will learn how to fire requests on custom events, combine multiple triggers, add conditions and modifiers, and create responsive interfaces that react to user behavior in sophisticated ways.</p>
 
                                 
                                 <!-- Required only on API pages -->
