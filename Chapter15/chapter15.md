@@ -8,142 +8,902 @@ title: "Visual Feedback with hx-indicator and hx-preserve"
 
 # Visual Feedback with `hx-indicator` and `hx-preserve`
 
-In modern web applications, responsiveness is more than just speed, it’s about communication. Users want to know that something is happening the moment they click a button or submit a form. This chapter introduces two powerful tools in the htmx toolbox, `hx-indicator` and `hx-preserve`, that help your ASP.NET Core Razor Pages applications speak clearly to your users by providing smooth, purposeful visual feedback.
+Users hate uncertainty. When they click a button and nothing happens for 500 milliseconds, they wonder: Did it work? Should I click again? Is the page frozen? That half-second of silence erodes trust in your application. Visual feedback fills that gap. A spinner, a loading overlay, a subtle animation tells users "I heard you, I'm working on it."
 
-So far, we’ve explored how htmx enhances interactions through `hx-get`, `hx-post`, and a rich collection of other attributes like `hx-target`, `hx-trigger`, and `hx-swap`. We’ve dynamically loaded content, managed modal dialogs, and even refined our UI components like tabs and tables. Now, we turn to the often-overlooked yet absolutely essential aspect of user experience: providing users with immediate, visible clues that their actions are being processed.
+htmx provides two attributes for managing visual feedback: `hx-indicator` shows loading states during requests, and `hx-preserve` protects specific elements from being replaced during swaps. This chapter covers both with complete, working examples that include proper CSS patterns, accessibility considerations, and common use cases like button spinners, table overlays, and skeleton loaders.
 
-Whether it’s a loading spinner appearing during a long request or maintaining scroll position across updates, htmx gives us tools to craft applications that feel seamless and intuitive. `hx-indicator` lets us show activity during requests without manual JavaScript, while `hx-preserve` helps us keep parts of the page steady during dynamic changes. These features may not shout for attention, but they can quietly make or break how polished your app feels.
+## How `hx-indicator` Works
 
-In the next few sections, we’ll walk through how to wire up indicators for various scenarios and when to preserve specific elements to avoid jarring UI transitions. By the end of this chapter, you’ll be able to add the finishing touches that turn functional interactivity into a delightful user experience. Let’s bring your interfaces to life.
+When htmx sends a request, it adds the `htmx-request` CSS class to elements. By default, this class is added to the element that triggered the request. The `hx-indicator` attribute lets you specify additional elements that should receive this class during the request.
 
-## Loading in Style: Enhancing UX with `hx-indicator`
+Here's the key insight: **htmx adds `htmx-request` directly to the indicator element**, not to a parent. Your CSS must account for this.
 
-When a user interacts with your web app, submitting a form, clicking a button, filtering a table, there’s often a tiny window where nothing seems to happen. No new content, no animation, just silence. In that gap, even if the server is hard at work, users can become uncertain or frustrated. That’s where visual feedback becomes essential. It reassures users that their input was received and that the system is actively processing it. For asynchronous requests triggered by htmx, the `hx-indicator` attribute provides a straightforward way to bridge that communication gap.
-
-At its core, `hx-indicator` lets you define an HTML element that will automatically receive a CSS class (usually htmx-request) whenever an htmx request is in flight. That means you can toggle loading spinners, fade overlays, or even just disable buttons, all without writing any JavaScript. It’s a simple mechanism that unlocks significant improvements to your app’s perceived performance and usability.
-
-Here’s a basic example. Let’s say you have a search form that queries a database and updates a list of results without reloading the page. You’d like to show a loading spinner next to the search button while the query is running. Here’s how you’d do it:
-
-```html
-<form hx-get="/Index?handler=Search" hx-target="#results" hx-indicator="#spinner">
-    <input type="text" name="query" placeholder="Search users..." />
-    <button type="submit">Search</button>
-    <img id="spinner" class="htmx-indicator" src="/img/bars.svg"/>
-</form>
-<div id="results"></div>
-```
-
-And with a little CSS:
+### Basic Indicator CSS Pattern
 
 ```css
-.htmx-indicator{
-    opacity:0;
-    transition: opacity 500ms ease-in;
+/* Indicator starts hidden */
+.htmx-indicator {
+    display: none;
 }
-.htmx-request .htmx-indicator{
-    opacity:1;
-}
-.htmx-request.htmx-indicator{
-    opacity:1;
-}
-```
 
-When the user submits the form, htmx automatically adds the htmx-request class to the `#spinner` element, making it visible during the request. Once the server responds and the update is complete, the class is removed and the spinner fades away. This approach keeps your UI responsive and your users informed, without a single line of JavaScript.
-
-You can also apply `hx-indicator` to more than just inline spinners. Want to block an entire section while loading? Wrap your content in a container with an overlay and trigger it using `hx-indicator`. For example, on a table that updates dynamically, you could show a semi-transparent overlay:
-
-```html
-<div class="table-container" hx-indicator="#table-loader">
-    <div class="overlay visually-hidden" id="table-loader">Loading...</div>
-    <table>
-        <!-- rows rendered here -->
-    </table>
-</div>
-```
-
-This scales beautifully to larger components like modals, card lists, or any area where you need to signal that something is happening. And because the attribute can target any CSS selector, you can define very specific and context-aware indicators without duplicating logic across your app.
-
-For an even smoother user experience, consider pairing `hx-indicator` with `hx-target` and `hx-swap` for fine-tuned updates. For instance, as a user types into a search box, you can debounce the requests and still show a subtle spinner, keeping the UI lively without being overwhelming.
-
-Visual feedback might seem like a small detail, but in fast, interactive applications, it’s what separates “feels broken” from “feels polished.” With `hx-indicator`, you’ve got an elegant, server-driven way to let your users know the system is responsive and attentive to their actions. It's another example of htmx and Razor Pages working together to keep things simple, powerful, and user-friendly.
-
-## Maintaining State Between Updates with `hx-preserve`
-
-One of the subtle challenges in building interactive web apps with htmx is handling what happens after a partial update. When htmx replaces content inside a div or a section, it swaps out the HTML as if the user never touched it. That works great for displaying fresh content, but it can be jarring and even frustrating when it erases something the user was in the middle of doing. Think of a partially filled form that gets refreshed after an update, or a toggle switch that resets unexpectedly. It’s a small issue that can quickly turn into a big annoyance.
-
-That’s where `hx-preserve` comes in. It tells htmx: "Hey, if you’re about to replace this element with something new, please keep the original version if nothing has changed structurally." In other words, `hx-preserve` helps you maintain a user's place or input in the UI while still letting the server send back fresh content. It works by tracking DOM elements with the id attribute and comparing them during the update.
-
-Here’s a practical scenario. Let’s say you have a multi-field search form that updates a results list when submitted. If the server returns a refreshed version of the form (maybe with a validation message or updated placeholder), you don't want it to clear out everything the user just typed. By adding `hx-preserve` to the form inputs, htmx will keep their current values intact during the update.
-
-```html
-<form asp-page-handler="Search" hx-post="/Index?handler=Search" hx-target="#results">
-    <input id="query" name="query" type="text" placeholder="Search..." hx-preserve />
-    <select id="filter" name="filter" hx-preserve>
-        <option value="all">All</option>
-        <option value="active">Active</option>
-        <option value="archived">Archived</option>
-    </select>
-    <button type="submit">Go</button>
-</form>
-<div id="results"></div>
-```
-
-In this case, even if your Razor Page returns a refreshed <form> block (maybe to display error messages or change UI elements), the values in the input and select fields won’t be lost. The user won’t have to re-enter anything unless something actually changed in the response.
-
-Here’s how the backend might look in Search.cshtml.cs:
-
-```csharp
-public class SearchModel : PageModel
-{
-    [BindProperty]
-    public string Query { get; set; }
-
-    [BindProperty]
-    public string Filter { get; set; }
-
-    public IActionResult OnPost()
-    {
-        var results = PerformSearch(Query, Filter);
-        return Partial("_Results", results);
-    }
+/* When htmx-request class is added, show the indicator */
+.htmx-indicator.htmx-request {
+    display: inline-block;
 }
 ```
 
-With this setup, you can re-render the entire form or page section on each post without breaking the user’s flow. This makes for a smoother, more forgiving user experience, especially in dynamic applications where UI elements are expected to change frequently.
-
-`hx-preserve` shines in other places too, like editable table rows, multi-step forms, or anywhere users are working with interactive controls that shouldn’t reset unless they choose to. It's not a magic bullet, but it's a powerful little attribute that shows how htmx values thoughtful defaults and practical design.
-
-As you start adding more interactivity to your Razor Pages with htmx, don’t overlook how much preserving small pieces of state can improve the feel of your application. `hx-preserve` makes your UI smarter and friendlier by letting the user stay right where they left off, even when the DOM is changing under the hood.
-
-## Optimizing Visual Feedback for Performance and Accessibility
-
-Good visual feedback isn’t just about showing that “something is happening.” It’s about doing so gracefully without overwhelming users or creating friction in the experience. When using htmx with Razor Pages, it’s tempting to add indicators and animations everywhere. But the best user experiences are often the quietest ones: subtle transitions, well-timed loaders, and minimal distractions that let the user stay focused on their task.
-
-To strike the right balance, consider adding simple CSS transitions to your loading indicators. A sudden pop-in of a spinner can feel jarring, especially if the request finishes quickly. By easing in and out, you make the interaction feel smooth and intentional. Here’s an example of a reusable spinner with a fade-in effect:
-
-```html
-<span id="spinner" class="spinner visually-hidden">🔄</span>
-```
+For indicators **inside** the triggering element, use a descendant selector:
 
 ```css
-.spinner {
+.htmx-indicator {
+    display: none;
+}
+
+/* Show indicator when parent has htmx-request */
+.htmx-request .htmx-indicator {
+    display: inline-block;
+}
+```
+
+### Fade Transitions
+
+For smoother appearance, use opacity with transitions:
+
+```css
+.htmx-indicator {
     opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 200ms ease-in-out;
 }
 
-.htmx-request.spinner {
+.htmx-indicator.htmx-request {
     opacity: 1;
 }
 ```
 
-This simple transition ensures that even if a request lasts only a split second, the spinner doesn’t flash harshly; it gently fades in and out, improving the overall feel of the app. But keep in mind: not every action needs a visual cue. If a response happens so fast the user doesn’t notice the delay, adding an indicator may cause more harm than good by drawing unnecessary attention to what should feel instantaneous.
+## Button Loading States
 
-Another key to scaling visual feedback is thinking in components. Whether it’s a button-level spinner, a card overlay, or a full-page loader, define small, focused UI elements that can be reused across your app. A Razor partial that wraps content with a loader div and binds the indicator dynamically can save time and keep your layout DRY. These UI helpers don’t just improve performance, they simplify accessibility too.
+The most common indicator pattern shows a spinner inside a button during form submission.
 
-Speaking of which, accessibility matters here. Make sure your indicators are not just visual. If a spinner or overlay hides important content, add appropriate ARIA attributes. For example, you might use `aria-busy="true"` on sections that are being updated, or `role="status"` on indicators so screen readers can alert users that something is loading. These small touches ensure everyone has a good experience, regardless of how they interact with your app.
+### Button with Inline Spinner
 
-As your app grows, resist the urge to treat every dynamic interaction the same. Tailor the level of visual feedback to the user’s intent and the perceived cost of the action. Submitting a large form or fetching a long list? A spinner makes sense. Clicking a filter that updates a portion of the page quickly? Maybe the change itself is enough of a cue.
+**Pages/Tasks.cshtml:**
 
-We’ve now covered how `hx-indicator` and `hx-preserve` help you create smoother, smarter experiences. In the next chapter, we’ll take it a step further by refining which parts of the page get updated with `hx-select` and `hx-select-oob`. These tools let you surgically control what gets swapped, allowing for even more precise and efficient UI updates without replacing more of the DOM than necessary.
+```html
+@page
+@model TasksModel
 
-So while your server continues to do the heavy lifting, your front end can remain light, responsive, and thoughtfully designed. That's the kind of experience users remember.
+<h1>Tasks</h1>
+
+<form hx-post="/Tasks?handler=Create"
+      hx-target="#task-list"
+      hx-swap="beforeend"
+      hx-disabled-elt="find button"
+      class="mb-4">
+    @Html.AntiForgeryToken()
+    
+    <div class="input-group">
+        <input type="text" name="name" class="form-control" placeholder="New task name" required />
+        <button type="submit" class="btn btn-primary">
+            <span class="btn-text">Add Task</span>
+            <span class="btn-loading htmx-indicator">
+                <span class="spinner-border spinner-border-sm"></span>
+                Adding...
+            </span>
+        </button>
+    </div>
+</form>
+
+<ul id="task-list" class="list-group">
+    @foreach (var task in Model.Tasks)
+    {
+        <partial name="_TaskItem" model="task" />
+    }
+</ul>
+```
+
+**Button CSS:**
+
+```css
+/* Default state: show text, hide loading */
+.btn-text {
+    display: inline;
+}
+
+.btn-loading {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* During request: hide text, show loading */
+.htmx-request .btn-text {
+    display: none;
+}
+
+.htmx-request .btn-loading {
+    display: inline-flex;
+}
+
+/* Disabled appearance during request */
+button.htmx-request,
+.htmx-request button {
+    opacity: 0.7;
+    cursor: wait;
+}
+```
+
+**Pages/Tasks.cshtml.cs:**
+
+```csharp
+public class TasksModel : PageModel
+{
+    private readonly ITaskService _taskService;
+
+    public TasksModel(ITaskService taskService)
+    {
+        _taskService = taskService;
+    }
+
+    public List<TaskItem> Tasks { get; set; } = new();
+
+    public void OnGet()
+    {
+        Tasks = _taskService.GetAll();
+    }
+
+    public async Task<IActionResult> OnPostCreate(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            Response.StatusCode = 400;
+            return Content("<li class=\"list-group-item text-danger\">Task name is required</li>", "text/html");
+        }
+
+        // Simulate slow operation to see the spinner
+        await Task.Delay(500);
+
+        var task = new TaskItem { Name = name };
+        _taskService.Add(task);
+
+        return Partial("_TaskItem", task);
+    }
+}
+```
+
+**Pages/Shared/_TaskItem.cshtml:**
+
+```html
+@model TaskItem
+
+<li class="list-group-item d-flex justify-content-between align-items-center" id="task-@Model.Id">
+    <span>@Model.Name</span>
+    <button hx-delete="/Tasks?handler=Delete&amp;id=@Model.Id"
+            hx-target="#task-@Model.Id"
+            hx-swap="outerHTML"
+            hx-confirm="Delete this task?"
+            class="btn btn-sm btn-outline-danger">
+        <span class="btn-text">Delete</span>
+        <span class="btn-loading htmx-indicator">
+            <span class="spinner-border spinner-border-sm"></span>
+        </span>
+    </button>
+</li>
+```
+
+### Standalone Button Spinner
+
+When you want the spinner next to the button rather than inside:
+
+```html
+<div class="d-flex align-items-center gap-2">
+    <button hx-post="/Reports?handler=Generate"
+            hx-target="#report-output"
+            hx-indicator="#generate-spinner"
+            hx-disabled-elt="this"
+            class="btn btn-primary">
+        Generate Report
+    </button>
+    <span id="generate-spinner" class="htmx-indicator">
+        <span class="spinner-border spinner-border-sm"></span>
+        Generating...
+    </span>
+</div>
+
+<div id="report-output"></div>
+```
+
+```css
+#generate-spinner {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+}
+
+#generate-spinner.htmx-request {
+    display: inline-flex;
+}
+```
+
+## Table and List Loading Overlays
+
+For tables and lists that refresh data, overlay the entire container with a loading state.
+
+### Table Overlay Pattern
+
+**Pages/Products.cshtml:**
+
+```html
+@page
+@model ProductsModel
+
+<h1>Products</h1>
+
+<div class="table-wrapper">
+    <div id="table-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <span class="spinner-border"></span>
+            <span>Loading products...</span>
+        </div>
+    </div>
+
+    <div class="table-controls mb-3">
+        <input type="search" 
+               name="search"
+               placeholder="Search products..."
+               hx-get="/Products?handler=Filter"
+               hx-target="#product-tbody"
+               hx-trigger="keyup changed delay:300ms"
+               hx-indicator="#table-overlay"
+               class="form-control" />
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <a hx-get="/Products?handler=Sort&amp;sortBy=name"
+                       hx-target="#product-tbody"
+                       hx-indicator="#table-overlay">
+                        Name
+                    </a>
+                </th>
+                <th>
+                    <a hx-get="/Products?handler=Sort&amp;sortBy=price"
+                       hx-target="#product-tbody"
+                       hx-indicator="#table-overlay">
+                        Price
+                    </a>
+                </th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody id="product-tbody">
+            <partial name="_ProductRows" model="Model.Products" />
+        </tbody>
+    </table>
+</div>
+```
+
+**Overlay CSS:**
+
+```css
+.table-wrapper {
+    position: relative;
+    min-height: 200px;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: 4px;
+}
+
+.loading-overlay.htmx-request {
+    display: flex;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: #495057;
+}
+```
+
+**Pages/Products.cshtml.cs:**
+
+```csharp
+public class ProductsModel : PageModel
+{
+    private readonly IProductService _productService;
+
+    public ProductsModel(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    public List<Product> Products { get; set; } = new();
+
+    public void OnGet()
+    {
+        Products = _productService.GetAll();
+    }
+
+    public async Task<IActionResult> OnGetFilter(string search)
+    {
+        // Simulate network delay
+        await Task.Delay(300);
+
+        var products = string.IsNullOrEmpty(search)
+            ? _productService.GetAll()
+            : _productService.Search(search);
+
+        return Partial("_ProductRows", products);
+    }
+
+    public async Task<IActionResult> OnGetSort(string sortBy)
+    {
+        await Task.Delay(200);
+
+        var products = _productService.GetAll();
+        products = sortBy switch
+        {
+            "price" => products.OrderBy(p => p.Price).ToList(),
+            "name" => products.OrderBy(p => p.Name).ToList(),
+            _ => products
+        };
+
+        return Partial("_ProductRows", products);
+    }
+}
+```
+
+**Pages/Shared/_ProductRows.cshtml:**
+
+```html
+@model List<Product>
+
+@if (Model.Any())
+{
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>@product.Name</td>
+            <td>@product.Price.ToString("C")</td>
+            <td>@product.Category</td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="3" class="text-center text-muted py-4">
+            No products found.
+        </td>
+    </tr>
+}
+```
+
+## Skeleton Loaders
+
+Skeleton loaders show placeholder shapes that mimic the content layout. They feel faster than spinners because they set expectations about what's coming.
+
+### Profile Card Skeleton
+
+```html
+<div id="user-profile"
+     hx-get="/Profile?handler=Card"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+    <!-- Skeleton shown while loading -->
+    <div class="profile-skeleton">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-details">
+            <div class="skeleton-line skeleton-name"></div>
+            <div class="skeleton-line skeleton-email"></div>
+            <div class="skeleton-line skeleton-short"></div>
+        </div>
+    </div>
+</div>
+```
+
+**Skeleton CSS:**
+
+```css
+.profile-skeleton {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.skeleton-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+.skeleton-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.skeleton-line {
+    height: 1rem;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+.skeleton-name {
+    width: 60%;
+    height: 1.25rem;
+}
+
+.skeleton-email {
+    width: 80%;
+}
+
+.skeleton-short {
+    width: 40%;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+```
+
+**Server handler:**
+
+```csharp
+public async Task<IActionResult> OnGetCard()
+{
+    // Simulate data fetch
+    await Task.Delay(800);
+
+    var profile = _profileService.GetCurrentUser();
+    return Partial("_ProfileCard", profile);
+}
+```
+
+**Pages/Shared/_ProfileCard.cshtml:**
+
+```html
+@model UserProfile
+
+<div class="profile-card">
+    <img src="@Model.AvatarUrl" alt="@Model.Name" class="profile-avatar" />
+    <div class="profile-details">
+        <h3 class="profile-name">@Model.Name</h3>
+        <p class="profile-email">@Model.Email</p>
+        <p class="profile-role">@Model.Role</p>
+    </div>
+</div>
+```
+
+### Table Skeleton
+
+```html
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="users-tbody"
+           hx-get="/Users?handler=List"
+           hx-trigger="load"
+           hx-swap="innerHTML">
+        <!-- Skeleton rows while loading -->
+        @for (int i = 0; i < 5; i++)
+        {
+            <tr class="skeleton-row">
+                <td><div class="skeleton-cell" style="width: 60%"></div></td>
+                <td><div class="skeleton-cell" style="width: 80%"></div></td>
+                <td><div class="skeleton-cell" style="width: 40%"></div></td>
+            </tr>
+        }
+    </tbody>
+</table>
+```
+
+```css
+.skeleton-cell {
+    height: 1rem;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+}
+```
+
+## Understanding `hx-preserve`
+
+The `hx-preserve` attribute prevents an element from being replaced during a swap. This is critical to understand: **the element is never updated, even if the server sends new content for it.**
+
+### When to Use `hx-preserve`
+
+Use `hx-preserve` for elements that:
+- Would break or reset if replaced (video players, audio players)
+- Contain third-party widgets that initialize once (chat widgets, maps)
+- Have complex client-side state that can't be recreated
+
+### Video Player Example
+
+```html
+<div id="page-content"
+     hx-get="/Videos?handler=Content"
+     hx-trigger="revealed">
+    
+    <!-- This video player will NOT be replaced during swaps -->
+    <div id="video-player" hx-preserve>
+        <video controls>
+            <source src="/videos/intro.mp4" type="video/mp4">
+        </video>
+    </div>
+    
+    <!-- This content WILL be replaced -->
+    <div id="video-info">
+        <h2>@Model.Title</h2>
+        <p>@Model.Description</p>
+    </div>
+</div>
+```
+
+If htmx swaps `#page-content`, the video player keeps playing while the video info updates.
+
+### Third-Party Widget
+
+```html
+<div class="dashboard">
+    <!-- Chat widget initializes once and should never be replaced -->
+    <div id="intercom-container" hx-preserve>
+        <!-- Intercom widget loads here -->
+    </div>
+    
+    <!-- Dashboard content can refresh -->
+    <div id="dashboard-content"
+         hx-get="/Dashboard?handler=Refresh"
+         hx-trigger="every 30s">
+        <partial name="_DashboardStats" model="Model.Stats" />
+    </div>
+</div>
+```
+
+### When NOT to Use `hx-preserve`
+
+Do not use `hx-preserve` for:
+- Form inputs you want to validate (server can't update them)
+- Content that should refresh from the server
+- Elements that need server-side updates
+
+**Wrong approach for forms:**
+
+```html
+<!-- DON'T DO THIS - inputs will never receive validation messages -->
+<form hx-post="/Contact?handler=Submit" hx-target="this" hx-swap="outerHTML">
+    <input name="email" hx-preserve />  <!-- WRONG -->
+    <span class="error"></span>
+</form>
+```
+
+**Correct approach for forms:**
+
+```html
+<!-- Target only the results, not the form -->
+<form hx-post="/Contact?handler=Submit" hx-target="#result">
+    @Html.AntiForgeryToken()
+    <input name="email" />
+    <button type="submit">Submit</button>
+</form>
+<div id="result"></div>
+```
+
+Or use `hx-swap-oob` to update specific elements:
+
+```html
+<form hx-post="/Contact?handler=Submit" hx-target="#result">
+    @Html.AntiForgeryToken()
+    <input name="email" id="email-input" />
+    <span id="email-error"></span>
+    <button type="submit">Submit</button>
+</form>
+```
+
+Server response can include OOB update for error:
+
+```html
+<div id="result">Success!</div>
+<span id="email-error" hx-swap-oob="true" class="text-danger">Invalid email</span>
+```
+
+## Accessibility
+
+Loading indicators must work for all users, including those using screen readers.
+
+### ARIA Attributes for Loading States
+
+```html
+<div id="search-results" 
+     aria-live="polite"
+     aria-busy="false">
+    <!-- Results here -->
+</div>
+
+<button hx-get="/Search?handler=Results"
+        hx-target="#search-results"
+        hx-indicator="#search-spinner"
+        _="on htmx:beforeRequest set #search-results[@aria-busy] to 'true'
+           on htmx:afterRequest set #search-results[@aria-busy] to 'false'">
+    Search
+</button>
+
+<span id="search-spinner" class="htmx-indicator" role="status">
+    <span class="spinner-border spinner-border-sm"></span>
+    <span class="visually-hidden">Loading results...</span>
+</span>
+```
+
+Key accessibility patterns:
+- `aria-live="polite"` announces content changes to screen readers
+- `aria-busy="true"` during loading tells assistive technology content is updating
+- `role="status"` on spinners makes them announce to screen readers
+- `visually-hidden` class provides text for screen readers without visual display
+
+### Screen Reader CSS
+
+```css
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+```
+
+## Complete Example: Search with All Patterns
+
+**Pages/Search.cshtml:**
+
+```html
+@page
+@model SearchModel
+
+<h1>Product Search</h1>
+
+<div class="search-container">
+    <form hx-get="/Search?handler=Results"
+          hx-target="#search-results"
+          hx-indicator="#search-indicator"
+          hx-trigger="submit, keyup changed delay:300ms from:#search-query">
+        
+        <div class="input-group mb-3">
+            <input type="search" 
+                   id="search-query"
+                   name="query" 
+                   value="@Model.Query"
+                   class="form-control form-control-lg" 
+                   placeholder="Search products..."
+                   aria-label="Search products" />
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-text">Search</span>
+                <span class="btn-loading htmx-indicator">
+                    <span class="spinner-border spinner-border-sm"></span>
+                </span>
+            </button>
+        </div>
+    </form>
+
+    <div id="search-indicator" class="search-status htmx-indicator">
+        <span class="spinner-border spinner-border-sm"></span>
+        Searching...
+    </div>
+
+    <div id="search-results" 
+         aria-live="polite"
+         aria-busy="false"
+         class="results-container">
+        @if (Model.Results.Any())
+        {
+            <partial name="_SearchResults" model="Model.Results" />
+        }
+        else if (!string.IsNullOrEmpty(Model.Query))
+        {
+            <p class="text-muted">No products found for "@Model.Query"</p>
+        }
+        else
+        {
+            <p class="text-muted">Enter a search term to find products.</p>
+        }
+    </div>
+</div>
+```
+
+**Pages/Search.cshtml.cs:**
+
+```csharp
+public class SearchModel : PageModel
+{
+    private readonly IProductService _productService;
+
+    public SearchModel(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    [BindProperty(SupportsGet = true)]
+    public string? Query { get; set; }
+
+    public List<Product> Results { get; set; } = new();
+
+    public void OnGet()
+    {
+        if (!string.IsNullOrEmpty(Query))
+        {
+            Results = _productService.Search(Query);
+        }
+    }
+
+    public async Task<IActionResult> OnGetResults(string? query)
+    {
+        Query = query;
+
+        // Simulate search delay
+        await Task.Delay(300);
+
+        if (string.IsNullOrEmpty(query))
+        {
+            return Content("<p class=\"text-muted\">Enter a search term to find products.</p>", "text/html");
+        }
+
+        Results = _productService.Search(query);
+
+        if (!Results.Any())
+        {
+            return Content($"<p class=\"text-muted\">No products found for \"{query}\"</p>", "text/html");
+        }
+
+        return Partial("_SearchResults", Results);
+    }
+}
+```
+
+**Pages/Shared/_SearchResults.cshtml:**
+
+```html
+@model List<Product>
+
+<p class="results-count">Found @Model.Count product(s)</p>
+
+<div class="product-grid">
+    @foreach (var product in Model)
+    {
+        <div class="product-card">
+            <img src="@product.ImageUrl" alt="@product.Name" />
+            <h3>@product.Name</h3>
+            <p class="price">@product.Price.ToString("C")</p>
+            <button hx-post="/Cart?handler=Add&amp;productId=@product.Id"
+                    hx-target="#cart-count"
+                    hx-swap="innerHTML"
+                    class="btn btn-sm btn-outline-primary">
+                <span class="btn-text">Add to Cart</span>
+                <span class="btn-loading htmx-indicator">
+                    <span class="spinner-border spinner-border-sm"></span>
+                </span>
+            </button>
+        </div>
+    }
+</div>
+```
+
+**Complete CSS:**
+
+```css
+/* Button loading states */
+.btn-text {
+    display: inline;
+}
+
+.btn-loading {
+    display: none;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.htmx-request .btn-text {
+    display: none;
+}
+
+.htmx-request .btn-loading {
+    display: inline-flex;
+}
+
+/* Search status indicator */
+.search-status {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.search-status.htmx-request {
+    display: flex;
+}
+
+/* Results container fade during loading */
+.results-container {
+    transition: opacity 150ms ease;
+}
+
+.htmx-request ~ .results-container,
+.htmx-request .results-container {
+    opacity: 0.5;
+}
+
+/* Product grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.product-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.product-card img {
+    max-width: 100%;
+    height: 150px;
+    object-fit: contain;
+}
+```
+
+## Summary
+
+This chapter covered visual feedback with htmx:
+
+- **`hx-indicator`** specifies elements that receive the `htmx-request` class during requests
+- **CSS patterns** differ based on indicator placement (inside vs. outside trigger)
+- **Button spinners** replace button text with loading state during submission
+- **Table overlays** cover content with semi-transparent loading indicators
+- **Skeleton loaders** show placeholder shapes that mimic expected content
+- **`hx-preserve`** prevents elements from being replaced during swaps (use for video players, widgets)
+- **Accessibility** requires ARIA attributes (`aria-busy`, `aria-live`, `role="status"`)
+
+Visual feedback makes the difference between an application that feels broken and one that feels responsive. Users should never wonder if their action was received.
+
+## Preview of Next Chapter
+
+Chapter 16 covers `hx-select` and `hx-select-oob` for precise content selection. You will learn to extract specific elements from server responses, update multiple page sections with a single request, and build notification systems that update independently from main content.

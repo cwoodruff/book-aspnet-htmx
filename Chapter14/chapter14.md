@@ -8,38 +8,57 @@ title: "Building Blocks with HTML Components: Buttons and Action Links"
 
 # Building Blocks with HTML Components: Buttons and Action Links
 
-Buttons and links may seem like the simplest elements in your HTML toolbox, but in an htmx-powered Razor Pages application, they unlock a whole world of interactivity. In this chapter, we’ll take a focused look at how these humble components can become powerful conduits for user-driven behavior, without requiring a single line of custom JavaScript. Whether it’s triggering actions, prompting confirmations, or dynamically swapping content, buttons and action links form the bridge between your users and your server.
+Buttons and links are how users take action in your application. Every click represents intent: create this record, delete that item, toggle this setting, submit this form. Traditional web applications handle these clicks with full page reloads or complex JavaScript event handlers. htmx lets you wire up responsive, immediate interactions using HTML attributes alone.
 
-By now, you've built dynamic forms, interactive lists, and even modal popups using htmx. But as we step into this chapter, the spotlight is on how to make user interaction feel intuitive and immediate. Buttons and links are often the primary way users engage with your app, so it's crucial they behave as expected, with just the right amount of feedback and control. We'll explore how `hx-trigger` gives you granular control over when and how actions fire, and how prompts and confirmations can guide user intent without being intrusive.
+This chapter focuses on button and link patterns that go beyond basic form submission: inline prompts that collect input without forms, confirmation dialogs that prevent accidents, toggle buttons that flip state instantly, batch actions that operate on multiple items, and buttons that disable themselves during requests to prevent double-submission. Each pattern includes complete server-side code and proper security handling.
 
-The beauty of htmx is that you can enrich these components without leaving HTML. Want a delete button that asks for confirmation before proceeding? Easy. Need a link that fetches and renders content inline? No sweat. With the right combination of attributes and server responses, your application starts to feel dynamic and responsive, all while keeping the logic server-side and your markup clean.
+## Anti-Forgery Token Configuration
 
-By the end of this chapter, you’ll see that buttons and links aren’t just navigational or form-related—they’re versatile building blocks for almost any kind of interaction. You’ll be able to confidently build user flows that feel modern and fluid, all while staying true to the Razor Pages model. Let’s dig into the essential ways htmx can elevate even the most basic HTML components into smart, interactive experiences.
+All POST, PUT, PATCH, and DELETE requests require anti-forgery tokens. Add this configuration to your layout once, and all htmx requests will include the token automatically:
 
-## Smarter Clicks: Using `hx-trigger` and `hx-prompt` for Responsive Interactions
-
-Buttons and links might be the smallest parts of your UI, but when wired up correctly, they can drastically improve the usability of your application. In traditional web apps, these elements often trigger full page reloads or are wired up with bloated JavaScript just to perform a simple task. With htmx, however, you can make interactions feel smooth, fast, and responsive using a couple of attributes—most notably `hx-trigger` and `hx-prompt`.
-
-Let’s start with `hx-trigger`. By default, htmx will fire a request when the triggering element is clicked. But that’s just the beginning. With `hx-trigger`, you can precisely define when an interaction should happen—on click, hover, focus, or even custom JavaScript events. You can also delay requests or require multiple events. This gives you flexibility to fine-tune how your app responds to user behavior.
-
-Imagine a list of items with a “Rename” button next to each one. Instead of navigating to a new page or opening a modal, we can prompt the user for a new name right there in the list. This is where `hx-prompt` shines. With a single attribute, you can collect user input from a simple dialog and pass that data to the server without writing a single line of JavaScript.
-
-Here’s what the button might look like in Razor syntax:
+**Pages/Shared/_Layout.cshtml:**
 
 ```html
-<button
-    hx-post="/Items/Rename"
-    hx-include="[data-id]"
-    hx-prompt="Enter a new name:"
-    hx-trigger="click"
-    data-id="@item.Id">
-    Rename
-</button>
+@Html.AntiForgeryToken()
+
+<script>
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+</script>
 ```
 
-In this snippet, when the user clicks the button, htmx opens a browser prompt with the message “Enter a new name:”. The value the user enters is sent as the `prompt` parameter in the POST request to `/Items/Rename`. We’re also including the item ID using `hx-include` and a `data-id` attribute to help the server know which item is being renamed.
+## Inline Prompts with `hx-prompt`
 
-On the server side, the Razor Page handler might look like this:
+The `hx-prompt` attribute displays a browser prompt dialog and sends the user's input to the server. This works well for quick edits that don't warrant a full form.
+
+### Rename Button
+
+A button that prompts for a new name and updates the item inline:
+
+```html
+<tr id="item-@item.Id">
+    <td class="item-name">@item.Name</td>
+    <td>
+        <button hx-post="/Items?handler=Rename&amp;id=@item.Id"
+                hx-prompt="Enter a new name:"
+                hx-target="#item-@item.Id"
+                hx-swap="outerHTML"
+                hx-indicator="#rename-spinner-@item.Id"
+                class="btn btn-sm btn-outline-secondary">
+            Rename
+            <span id="rename-spinner-@item.Id" class="htmx-indicator spinner-border spinner-border-sm"></span>
+        </button>
+    </td>
+</tr>
+```
+
+**Important:** The prompt value arrives in the `HX-Prompt` request header, not as a form parameter.
+
+**Pages/Items.cshtml.cs:**
 
 ```csharp
 public class ItemsModel : PageModel
@@ -51,153 +70,768 @@ public class ItemsModel : PageModel
         _itemService = itemService;
     }
 
-    public IActionResult OnPostRename(int id, string prompt)
+    public List<Item> Items { get; set; } = new();
+
+    public void OnGet()
     {
-        if (!string.IsNullOrWhiteSpace(prompt))
+        Items = _itemService.GetAll();
+    }
+
+    public IActionResult OnPostRename(int id)
+    {
+        // Get the prompt value from the HX-Prompt header
+        var newName = Request.Headers["HX-Prompt"].ToString();
+
+        if (string.IsNullOrWhiteSpace(newName))
         {
-            _itemService.RenameItem(id, prompt);
+            Response.StatusCode = 400;
+            return Content("<td colspan=\"2\" class=\"text-danger\">Name cannot be empty</td>", "text/html");
         }
 
-        var updatedItem = _itemService.GetItemById(id);
-        return Partial("_ItemRow", updatedItem);
+        var item = _itemService.GetById(id);
+        if (item == null) return NotFound();
+
+        item.Name = newName;
+        _itemService.Update(item);
+
+        return Partial("_ItemRow", item);
     }
 }
 ```
 
-This method receives both the item ID and the user’s input from the prompt. After updating the item, it returns a partial view of the updated row to replace the existing one on the page. This approach makes editing feel instant and keeps users focused on the task at hand.
-
-Here's what the `_ItemRow.cshtml` partial might look like:
+**Pages/Shared/_ItemRow.cshtml:**
 
 ```html
+@model Item
+
 <tr id="item-@Model.Id">
-    <td>@Model.Name</td>
+    <td class="item-name">@Model.Name</td>
     <td>
-        <button 
-            hx-post="/Items/Rename" 
-            hx-include="[data-id]" 
-            hx-prompt="Enter a new name:" 
-            hx-trigger="click" 
-            data-id="@Model.Id">
+        <button hx-post="/Items?handler=Rename&amp;id=@Model.Id"
+                hx-prompt="Enter a new name:"
+                hx-target="#item-@Model.Id"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-outline-secondary">
             Rename
+        </button>
+        <button hx-delete="/Items?handler=Delete&amp;id=@Model.Id"
+                hx-target="#item-@Model.Id"
+                hx-swap="outerHTML"
+                hx-confirm="Delete '@Model.Name'?"
+                class="btn btn-sm btn-outline-danger">
+            Delete
         </button>
     </td>
 </tr>
 ```
 
-When used thoughtfully, `hx-trigger` and `hx-prompt` allow you to build interactive features that feel elegant and efficient. They eliminate the need for custom JavaScript just to ask a question or handle a click. And because the server is still in charge of processing the input and returning updated HTML, you maintain a clean, testable, and maintainable backend.
+### Quick Add with Prompt
 
-As you build more complex apps, you’ll start to appreciate how these simple attributes give you the tools to build highly usable interfaces. Buttons and links are no longer just passive UI controls—they become responsive, interactive features that improve the overall flow of your application.
-
-## Confirm Before You Commit: Handling Destructive Actions with Confidence
-
-When you're building any application that lets users create, update, or delete records, it's your job to make sure nothing gets wiped out by accident. Destructive actions—like deleting a user, clearing a list, or resetting settings—should never happen without giving the user a chance to reconsider. That’s where confirmation dialogs come in. They act as a simple safety net, preventing irreversible changes caused by an accidental click.
-
-htmx makes it incredibly easy to add basic confirmations with the `hx-confirm` attribute. Just add it to your button or link, and htmx will show a browser-native dialog box before sending the request. If the user confirms, the request proceeds as usual; if not, it’s canceled. This is perfect for quick validations where you don’t need anything fancy.
-
-Here’s an example of a delete button with a built-in confirmation:
+Add items without a form:
 
 ```html
-<button
-    hx-delete="/Items/Delete/123"
-    hx-target="#item-123"
-    hx-swap="outerHTML swap:1s"
-    hx-confirm="Are you sure you want to delete this item?">
+<button hx-post="/Items?handler=QuickAdd"
+        hx-prompt="Enter item name:"
+        hx-target="#items-list"
+        hx-swap="beforeend"
+        class="btn btn-primary">
+    Quick Add Item
+</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="items-list">
+        @foreach (var item in Model.Items)
+        {
+            <partial name="_ItemRow" model="item" />
+        }
+    </tbody>
+</table>
+```
+
+```csharp
+public IActionResult OnPostQuickAdd()
+{
+    var name = Request.Headers["HX-Prompt"].ToString();
+
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        return Content("", "text/html"); // User cancelled or empty input
+    }
+
+    var item = new Item { Name = name };
+    _itemService.Add(item);
+
+    return Partial("_ItemRow", item);
+}
+```
+
+## Confirmation Dialogs
+
+Destructive actions need confirmation. htmx provides two approaches: the simple `hx-confirm` attribute and custom modal confirmations.
+
+### Simple Confirmation with `hx-confirm`
+
+The `hx-confirm` attribute shows a browser confirmation dialog before sending the request:
+
+```html
+<button hx-delete="/Tasks?handler=Delete&amp;id=@task.Id"
+        hx-target="#task-@task.Id"
+        hx-swap="outerHTML"
+        hx-confirm="Delete '@task.Name'? This cannot be undone."
+        class="btn btn-sm btn-danger">
     Delete
 </button>
 ```
 
-In this case, when the button is clicked, the user sees a simple browser prompt. If they confirm, the DELETE request is sent to `/Items/Delete/123`, and the matching row (`#item-123`) is removed from the page using `outerHTML`. The `swap:1s` adds a fade-out transition, just for a little visual polish.
+If the user clicks "OK," the request proceeds. If they click "Cancel," nothing happens.
 
-For more complex situations—like when you want a custom-styled confirmation dialog instead of the default browser alert—you can build your own modal using htmx and partials. Instead of executing the delete immediately, you first load a confirmation UI into a modal container.
-
-First, here’s the delete link that triggers the confirmation:
-
-```html
-<a
-    hx-get="/Items/ConfirmDelete/123"
-    hx-target="#modal"
-    hx-trigger="click">
-    Delete
-</a>
-<div id="modal"></div>
-```
-
-Then, your `/Items/ConfirmDelete` endpoint returns a partial view that contains a confirmation dialog:
-
-```html
-<div class="modal">
-    <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
-    <button 
-        hx-delete="/Items/Delete/@Model.Id" 
-        hx-target="#item-@Model.Id" 
-        hx-swap="outerHTML swap:1s" 
-        _="on click remove closest .modal then send this request">
-        Confirm
-    </button>
-    <button _="on click remove closest .modal">Cancel</button>
-</div>
-```
-
-This custom modal gives you full control over the content, styling, and behavior. The use of Hyperscript in the `_=` attributes lets you remove the modal from the DOM after either action, without any JavaScript files involved.
-
-On the backend, the `OnDelete` handler is straightforward:
+**Server handler:**
 
 ```csharp
-public IActionResult OnDelete(int id)
+public IActionResult OnDeleteDelete(int id)
 {
-    _itemService.Delete(id);
-    return new EmptyResult(); // Nothing to render, just remove the item from the page
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+
+    _taskService.Delete(id);
+
+    // Return empty content to remove the row
+    return Content("", "text/html");
 }
 ```
 
-By offering both quick `hx-confirm` prompts and more nuanced modal confirmations, you give users a sense of control and reduce the risk of mistakes. These techniques are easy to implement but go a long way in building user trust. After all, nobody likes losing work because of a misclick. A second chance—whether via a browser alert or a custom modal—is always worth the extra line of code.
+### Custom Modal Confirmation
 
-## Responsive and Reliable: Streamlining Button and Link Behavior
+For styled confirmations with more context, load a modal:
 
-We’ve all experienced the frustration of clicking a button and wondering if it worked—especially when there’s no immediate feedback. Even worse is when the action gets triggered multiple times because the user keeps clicking. These kinds of glitches erode trust in your application. The good news is that htmx gives you simple tools to eliminate these issues and optimize button and link interactions so they feel crisp, responsive, and reliable.
-
-One of the best tools in your toolbox is `hx-disable`. This attribute automatically disables the triggering element during the request, which prevents duplicate submissions. It’s especially useful for forms, delete buttons, or anything that hits the server. Once the request completes, the button is re-enabled automatically. You don’t need to write JavaScript to manage this state—it just works.
-
-Here’s an example using `hx-disable` in a Razor Page:
+**Trigger button:**
 
 ```html
-<form 
-    hx-post="/Items/Create" 
-    hx-target="#items-list" 
-    hx-swap="beforeend" 
-    hx-disable>
-    <input type="text" name="name" required />
-    <button type="submit">Add Item</button>
+<button hx-get="/Tasks?handler=ConfirmDelete&amp;id=@task.Id"
+        hx-target="#modal-content"
+        hx-swap="innerHTML"
+        _="on htmx:afterSwap add .open to #modal"
+        class="btn btn-sm btn-danger">
+    Delete
+</button>
+```
+
+**Modal structure (in layout):**
+
+```html
+<div id="modal" class="modal" _="on click if event.target is #modal remove .open from #modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
+        <div id="modal-content"></div>
+    </div>
+</div>
+```
+
+**Pages/Shared/_ConfirmDeleteTask.cshtml:**
+
+```html
+@model TaskItem
+
+<div class="modal-header">
+    <h5>Delete Task</h5>
+    <button type="button" class="btn-close" _="on click remove .open from #modal"></button>
+</div>
+<div class="modal-body">
+    <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+    @if (Model.DueDate.HasValue)
+    {
+        <p class="text-muted">Due: @Model.DueDate.Value.ToString("MMM d, yyyy")</p>
+    }
+    <p class="text-danger">This action cannot be undone.</p>
+</div>
+<div class="modal-footer">
+    <button type="button" 
+            class="btn btn-secondary"
+            _="on click remove .open from #modal">
+        Cancel
+    </button>
+    <button hx-delete="/Tasks?handler=Delete&amp;id=@Model.Id"
+            hx-target="#task-@Model.Id"
+            hx-swap="outerHTML"
+            _="on htmx:afterRequest remove .open from #modal"
+            class="btn btn-danger">
+        Delete Task
+    </button>
+</div>
+```
+
+**Server handlers:**
+
+```csharp
+public IActionResult OnGetConfirmDelete(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+    return Partial("_ConfirmDeleteTask", task);
+}
+
+public IActionResult OnDeleteDelete(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+
+    _taskService.Delete(id);
+    return Content("", "text/html");
+}
+```
+
+**Modal CSS:**
+
+```css
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+}
+
+.modal.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1rem;
+}
+
+.modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+```
+
+## Toggle Buttons
+
+Toggle buttons switch state and update their appearance immediately.
+
+### Complete/Incomplete Toggle
+
+```html
+@model TaskItem
+
+<button hx-patch="/Tasks?handler=Toggle&amp;id=@Model.Id"
+        hx-target="this"
+        hx-swap="outerHTML"
+        class="btn btn-sm @(Model.IsComplete ? "btn-success" : "btn-outline-secondary")">
+    @if (Model.IsComplete)
+    {
+        <span>✓ Complete</span>
+    }
+    else
+    {
+        <span>Mark Complete</span>
+    }
+</button>
+```
+
+**Server handler:**
+
+```csharp
+public IActionResult OnPatchToggle(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+
+    task.IsComplete = !task.IsComplete;
+    task.CompletedAt = task.IsComplete ? DateTime.UtcNow : null;
+    _taskService.Update(task);
+
+    return Partial("_ToggleButton", task);
+}
+```
+
+**Pages/Shared/_ToggleButton.cshtml:**
+
+```html
+@model TaskItem
+
+<button hx-patch="/Tasks?handler=Toggle&amp;id=@Model.Id"
+        hx-target="this"
+        hx-swap="outerHTML"
+        class="btn btn-sm @(Model.IsComplete ? "btn-success" : "btn-outline-secondary")">
+    @if (Model.IsComplete)
+    {
+        <span>✓ Complete</span>
+    }
+    else
+    {
+        <span>Mark Complete</span>
+    }
+</button>
+```
+
+### Favorite/Unfavorite Toggle
+
+```html
+<button hx-post="/Products?handler=ToggleFavorite&amp;id=@product.Id"
+        hx-target="this"
+        hx-swap="outerHTML"
+        class="btn-favorite @(product.IsFavorite ? "favorited" : "")"
+        title="@(product.IsFavorite ? "Remove from favorites" : "Add to favorites")">
+    @(product.IsFavorite ? "★" : "☆")
+</button>
+```
+
+```css
+.btn-favorite {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s;
+}
+
+.btn-favorite:hover {
+    color: #ffc107;
+}
+
+.btn-favorite.favorited {
+    color: #ffc107;
+}
+```
+
+```csharp
+public IActionResult OnPostToggleFavorite(int id)
+{
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
+
+    product.IsFavorite = !product.IsFavorite;
+    _productService.Update(product);
+
+    return Partial("_FavoriteButton", product);
+}
+```
+
+## Preventing Double Submission
+
+Users sometimes click buttons multiple times during slow requests. Prevent this with the `hx-disabled-elt` attribute or CSS.
+
+### Using `hx-disabled-elt`
+
+The `hx-disabled-elt` attribute specifies which element(s) to disable during the request:
+
+```html
+<button hx-post="/Orders?handler=Submit"
+        hx-target="#order-result"
+        hx-disabled-elt="this"
+        class="btn btn-primary">
+    Place Order
+</button>
+```
+
+During the request, htmx adds the `disabled` attribute to the button. When the request completes, it removes it.
+
+### Disabling Multiple Elements
+
+Disable the entire form during submission:
+
+```html
+<form hx-post="/Checkout?handler=Process"
+      hx-target="#checkout-result"
+      hx-disabled-elt="find button, find input">
+    @Html.AntiForgeryToken()
+    
+    <input type="text" name="cardNumber" placeholder="Card Number" required />
+    <input type="text" name="expiry" placeholder="MM/YY" required />
+    <input type="text" name="cvv" placeholder="CVV" required />
+    
+    <button type="submit" class="btn btn-primary">
+        Pay Now
+    </button>
+</form>
+
+<div id="checkout-result"></div>
+```
+
+### CSS-Based Disable with Loading State
+
+For better visual feedback, combine `hx-disabled-elt` with loading indicators:
+
+```html
+<button hx-post="/Reports?handler=Generate"
+        hx-target="#report-content"
+        hx-disabled-elt="this"
+        hx-indicator="find .loading-state"
+        class="btn btn-primary generate-btn">
+    <span class="default-state">Generate Report</span>
+    <span class="loading-state htmx-indicator">
+        <span class="spinner-border spinner-border-sm"></span>
+        Generating...
+    </span>
+</button>
+```
+
+```css
+.generate-btn .loading-state {
+    display: none;
+}
+
+.generate-btn.htmx-request .default-state {
+    display: none;
+}
+
+.generate-btn.htmx-request .loading-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+```
+
+## Batch Actions
+
+Select multiple items and apply an action to all of them.
+
+### Batch Delete
+
+```html
+<form id="batch-form">
+    <div class="batch-toolbar mb-3" style="display: none;"
+         _="on change from .item-checkbox in #items-table
+            if (<.item-checkbox:checked/>.length > 0)
+                show me
+            else
+                hide me
+            end
+            put (<.item-checkbox:checked/>.length) + ' selected' into #selection-count">
+        <span id="selection-count">0 selected</span>
+        <button type="button"
+                hx-delete="/Items?handler=BatchDelete"
+                hx-target="#items-table tbody"
+                hx-include=".item-checkbox:checked"
+                hx-confirm="Delete selected items?"
+                class="btn btn-sm btn-danger">
+            Delete Selected
+        </button>
+    </div>
+
+    <table class="table" id="items-table">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" 
+                           _="on change set .item-checkbox.checked to my.checked" />
+                </th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr id="item-@item.Id">
+                    <td>
+                        <input type="checkbox" 
+                               name="ids" 
+                               value="@item.Id" 
+                               class="item-checkbox" />
+                    </td>
+                    <td>@item.Name</td>
+                    <td>
+                        <button hx-delete="/Items?handler=Delete&amp;id=@item.Id"
+                                hx-target="#item-@item.Id"
+                                hx-swap="outerHTML"
+                                hx-confirm="Delete '@item.Name'?"
+                                class="btn btn-sm btn-outline-danger">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </form>
 ```
 
-In this form, when the user clicks “Add Item,” htmx disables the button until the request is complete. This prevents the form from being submitted multiple times and provides a smoother experience. You can also pair this with `hx-indicator` in the next chapter for visual loading cues, but even on its own, disabling the button during the async operation is a solid UX improvement.
+**Server handler:**
 
-If you’re building interactive features repeatedly—like edit or delete buttons across rows in a table—it makes sense to turn those into reusable components. Razor partials are perfect for this. You can create a `_DeleteButton.cshtml` partial that accepts a model with the URL, display name, and ID, and centralize your behavior there. That way, changes to interaction logic, styles, or attributes can be made in one place, and reused wherever needed.
+```csharp
+public IActionResult OnDeleteBatchDelete([FromForm] int[] ids)
+{
+    if (ids == null || ids.Length == 0)
+    {
+        return Content("", "text/html");
+    }
 
-Here’s a basic example of a reusable delete button component:
+    foreach (var id in ids)
+    {
+        _itemService.Delete(id);
+    }
+
+    // Return the updated table body
+    var remainingItems = _itemService.GetAll();
+    return Partial("_ItemsTableBody", remainingItems);
+}
+```
+
+**Pages/Shared/_ItemsTableBody.cshtml:**
+
+```html
+@model List<Item>
+
+@if (Model.Any())
+{
+    @foreach (var item in Model)
+    {
+        <tr id="item-@item.Id">
+            <td>
+                <input type="checkbox" name="ids" value="@item.Id" class="item-checkbox" />
+            </td>
+            <td>@item.Name</td>
+            <td>
+                <button hx-delete="/Items?handler=Delete&amp;id=@item.Id"
+                        hx-target="#item-@item.Id"
+                        hx-swap="outerHTML"
+                        hx-confirm="Delete '@item.Name'?"
+                        class="btn btn-sm btn-outline-danger">
+                    Delete
+                </button>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="3" class="text-center text-muted py-4">
+            No items found.
+        </td>
+    </tr>
+}
+```
+
+## Action Links
+
+Links that trigger htmx actions instead of page navigation.
+
+### Load Content Link
+
+```html
+<a hx-get="/Help?handler=Topic&amp;topic=getting-started"
+   hx-target="#help-content"
+   hx-push-url="/Help/getting-started"
+   class="help-link">
+    Getting Started Guide
+</a>
+
+<div id="help-content">
+    Select a topic to view help content.
+</div>
+```
+
+### Tab-Style Links
+
+```html
+<nav class="nav nav-tabs">
+    <a hx-get="/Dashboard?handler=Overview"
+       hx-target="#dashboard-content"
+       hx-push-url="/Dashboard?tab=overview"
+       class="nav-link active"
+       _="on click remove .active from .nav-link then add .active to me">
+        Overview
+    </a>
+    <a hx-get="/Dashboard?handler=Analytics"
+       hx-target="#dashboard-content"
+       hx-push-url="/Dashboard?tab=analytics"
+       class="nav-link"
+       _="on click remove .active from .nav-link then add .active to me">
+        Analytics
+    </a>
+    <a hx-get="/Dashboard?handler=Settings"
+       hx-target="#dashboard-content"
+       hx-push-url="/Dashboard?tab=settings"
+       class="nav-link"
+       _="on click remove .active from .nav-link then add .active to me">
+        Settings
+    </a>
+</nav>
+
+<div id="dashboard-content" hx-history-elt>
+    <partial name="_DashboardOverview" model="Model.OverviewData" />
+</div>
+```
+
+## Reusable Button Components
+
+Create partial views for consistent button styling and behavior.
+
+### Delete Button Partial
+
+**Pages/Shared/_DeleteButton.cshtml:**
 
 ```html
 @model DeleteButtonModel
 
-<button
-    hx-delete="@Model.Url"
-    hx-target="#item-@Model.Id"
-    hx-swap="outerHTML swap:1s"
-    hx-confirm="Delete @Model.Name?"
-    hx-disable>
-    Delete
+<button hx-delete="@Model.Url"
+        hx-target="@Model.Target"
+        hx-swap="@(Model.Swap ?? "outerHTML")"
+        hx-confirm="@Model.ConfirmMessage"
+        hx-disabled-elt="this"
+        class="btn btn-sm @(Model.Outline ? "btn-outline-danger" : "btn-danger")">
+    @(Model.Text ?? "Delete")
 </button>
 ```
 
-When you use this in a table:
+**DeleteButtonModel.cs:**
 
-```html
-<partial name="_DeleteButton" model="new DeleteButtonModel { Url = $"/Items/Delete/{item.Id}", Id = item.Id, Name = item.Name }" />
+```csharp
+public class DeleteButtonModel
+{
+    public string Url { get; set; } = string.Empty;
+    public string Target { get; set; } = string.Empty;
+    public string? Swap { get; set; }
+    public string ConfirmMessage { get; set; } = "Are you sure?";
+    public string? Text { get; set; }
+    public bool Outline { get; set; } = true;
+}
 ```
 
-You keep your views clean and your logic consistent across the board. This pattern applies equally well to links, confirmation modals, or inline editing components. It makes your app easier to maintain and scale as features grow.
+**Usage:**
 
-Optimizing interactions isn’t just about performance—it’s about user confidence. Disabling buttons during operations and reusing consistent UI patterns helps users trust that what they clicked actually worked. And when paired with good feedback (which we’ll dive into next), you can elevate the overall feel of your application.
+```html
+<partial name="_DeleteButton" model="new DeleteButtonModel
+{
+    Url = $"/Tasks?handler=Delete&id={task.Id}",
+    Target = $"#task-{task.Id}",
+    ConfirmMessage = $"Delete '{task.Name}'?"
+}" />
+```
 
-In the next chapter, we’ll focus on giving users clear visual cues by integrating `hx-indicator` and `hx-preserve`. You’ll learn how to show spinners during requests, maintain UI state between swaps, and ensure users always know what’s happening behind the scenes. With the combination of interaction control and visual feedback, you’ll be building UI that feels fast, polished, and reliable.
+### Action Button Partial
+
+**Pages/Shared/_ActionButton.cshtml:**
+
+```html
+@model ActionButtonModel
+
+<button hx-@Model.Method.ToLower()="@Model.Url"
+        hx-target="@Model.Target"
+        hx-swap="@(Model.Swap ?? "innerHTML")"
+        @if (!string.IsNullOrEmpty(Model.Confirm)) { <text>hx-confirm="@Model.Confirm"</text> }
+        @if (!string.IsNullOrEmpty(Model.Prompt)) { <text>hx-prompt="@Model.Prompt"</text> }
+        hx-disabled-elt="this"
+        hx-indicator="find .btn-spinner"
+        class="btn @Model.CssClass">
+    <span class="btn-text">@Model.Text</span>
+    <span class="btn-spinner htmx-indicator spinner-border spinner-border-sm"></span>
+</button>
+```
+
+## Error Handling
+
+Handle failed requests gracefully:
+
+```html
+<div hx-on::response-error="handleButtonError(event, this)"
+     hx-on::send-error="handleButtonError(event, this)">
+    <button hx-post="/Items?handler=Process&amp;id=@item.Id"
+            hx-target="#result-@item.Id"
+            class="btn btn-primary">
+        Process
+    </button>
+    <span id="result-@item.Id"></span>
+</div>
+
+<script>
+function handleButtonError(event, container) {
+    var resultSpan = container.querySelector('[id^="result-"]');
+    if (resultSpan) {
+        resultSpan.innerHTML = '<span class="text-danger">Action failed. Please try again.</span>';
+    }
+}
+</script>
+```
+
+Or handle errors server-side with appropriate status codes:
+
+```csharp
+public IActionResult OnPostProcess(int id)
+{
+    try
+    {
+        var item = _itemService.GetById(id);
+        if (item == null)
+        {
+            Response.StatusCode = 404;
+            return Content("<span class=\"text-warning\">Item not found</span>", "text/html");
+        }
+
+        _itemService.Process(item);
+        return Content("<span class=\"text-success\">Processed successfully</span>", "text/html");
+    }
+    catch (Exception ex)
+    {
+        Response.StatusCode = 500;
+        return Content("<span class=\"text-danger\">Processing failed</span>", "text/html");
+    }
+}
+```
+
+## Summary
+
+This chapter covered button and link patterns with htmx:
+
+- **`hx-prompt`** displays a browser prompt and sends input via the `HX-Prompt` header
+- **`hx-confirm`** shows a confirmation dialog before proceeding
+- **Custom modal confirmations** provide styled dialogs with more context
+- **Toggle buttons** switch state and update appearance immediately
+- **`hx-disabled-elt`** prevents double-submission by disabling elements during requests
+- **Batch actions** operate on multiple selected items
+- **Action links** trigger htmx requests instead of page navigation
+- **Reusable partials** create consistent button components
+
+These patterns make user interactions feel immediate and responsive while keeping all business logic on the server.
+
+## Preview of Next Chapter
+
+Chapter 15 covers loading indicators with `hx-indicator` and state preservation with `hx-preserve`. You will learn to show spinners during requests, maintain scroll position and form state across swaps, and create loading skeletons that make your application feel fast and polished.

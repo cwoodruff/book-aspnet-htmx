@@ -8,290 +8,1224 @@ title: "Building Blocks with HTML Components: Lists and Tables"
 
 # Building Blocks with HTML Components: Lists and Tables
 
-Now that you've seen how forms, modals, tabs, and accordions can come to life with just a dash of htmx magic, it’s time to explore two of the most foundational elements of any web application: lists and tables. Whether you’re presenting product catalogs, user directories, or transaction histories, these components are at the heart of turning raw data into something structured, visual, and usable.
+Lists and tables display the data that drives business applications: product catalogs, user directories, transaction histories, order queues, audit logs. Traditional server-rendered tables require full page reloads to sort, filter, or paginate. That experience feels dated. Users expect to click a column header and see results instantly. They expect to scroll and load more items without navigating to a new page. They expect to delete a row and watch it disappear.
 
-In the world of server-rendered applications, updating tables or filtering lists used to mean one thing—full page reloads. That’s no longer the case. With htmx integrated into Razor Pages, we can provide highly responsive, seamless list and table interactions without introducing heavy frontend frameworks or duplicating business logic on the client. The result? Less code, better performance, and happier developers.
+htmx delivers these interactions with server-rendered HTML. Your Razor Pages return table rows and list items as partial views. htmx swaps them into the page. No JavaScript frameworks. No client-side data binding. No duplicated business logic. The server owns the data, the filtering, the sorting, the pagination. The client displays what the server sends.
 
-This chapter isn’t just about displaying data—it’s about making it dynamic. We'll look at how to load tables on demand, paginate large datasets, and even sort or filter content—all while staying within the comfort of your existing Razor Page models and partials. htmx handles the interactions, your server handles the logic, and your users get a smooth, modern experience.
+This chapter covers the patterns you need: dynamic table updates, sorting with clickable headers, pagination with page controls, infinite scroll for continuous loading, inline editing and deletion, and the combination of all these features into a cohesive data grid.
 
-You won’t need to re-learn everything from earlier chapters, but you will be building on concepts like hx-get, hx-trigger, and hx-target. If forms were your first taste of dynamic server interaction, lists and tables are where those techniques really start to shine. Let’s dive into how to make your data-driven components both powerful and elegant.
+## Anti-Forgery Configuration
 
-## Making Tables Talk: Dynamic Data with `hx-get` and `hx-trigger`
+Before building lists with delete and edit operations, configure anti-forgery token handling. Add this to your layout so all htmx requests include the token:
 
-When you’re working with large datasets—think product catalogs, order histories, or game leaderboards—the performance and user experience of your table views become critical. If every change in state requires a full page reload, you’re not just wasting bandwidth; you’re also breaking the user’s rhythm. That’s where htmx steps in. With just a couple of attributes—`hx-get` and `hx-trigger`—you can dynamically fetch and refresh table data on demand or even in real time, all while keeping your backend logic clean and server-driven.
+**Pages/Shared/_Layout.cshtml (in the head or before closing body):**
 
-Server-driven updates are not only simpler to maintain but also more scalable. When the server owns the rendering logic, you're free from the burden of duplicating state and behavior in JavaScript. It also means you can return precisely the markup you want, already formatted, sorted, and styled, without needing the client to piece things together. This pays off especially when you’re dealing with large amounts of data: paging, filtering, and updating become server responsibilities, reducing load on the client and giving you a more secure, maintainable architecture.
+```html
+@Html.AntiForgeryToken()
 
-Let’s see this in action with a leaderboard scenario. Imagine you’re building a competitive trivia game, and you want to show the top 10 players as they race for first place. You don’t want to refresh the entire page every few seconds, but you do want the table to stay current as new scores come in.
+<script>
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+</script>
+```
 
-First, let’s create the Razor Page endpoint that will serve the leaderboard data. This can be a partial view that returns just the table rows:
+This ensures DELETE, PUT, and POST requests from htmx include the anti-forgery token.
+
+## Dynamic Table Updates
+
+Tables that refresh without page reloads create a responsive experience. Use `hx-get` to fetch updated rows and `hx-trigger` to control when updates happen.
+
+### Live Leaderboard
+
+A leaderboard that updates every few seconds:
+
+**Pages/Leaderboard.cshtml:**
+
+```html
+@page
+@model LeaderboardModel
+
+<h1>Leaderboard</h1>
+
+<div class="leaderboard-container">
+    <div class="leaderboard-header">
+        <span id="last-update">Last updated: @DateTime.Now.ToString("h:mm:ss tt")</span>
+        <button hx-get="/Leaderboard?handler=Rows"
+                hx-target="#leaderboard-body"
+                hx-swap="innerHTML"
+                hx-indicator="#refresh-spinner"
+                class="btn btn-outline-secondary btn-sm">
+            Refresh Now
+            <span id="refresh-spinner" class="htmx-indicator spinner-border spinner-border-sm"></span>
+        </button>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Score</th>
+                <th>Games</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-body"
+               hx-get="/Leaderboard?handler=Rows"
+               hx-trigger="load, every 10s"
+               hx-swap="innerHTML"
+               hx-indicator="#table-loading">
+            <!-- Rows load here -->
+        </tbody>
+    </table>
+    
+    <div id="table-loading" class="htmx-indicator text-center py-3">
+        <span class="spinner-border"></span> Updating...
+    </div>
+</div>
+```
+
+**Pages/Leaderboard.cshtml.cs:**
 
 ```csharp
-// Pages/Leaderboard.cshtml.cs
 public class LeaderboardModel : PageModel
 {
+    private readonly ILeaderboardService _leaderboardService;
+
+    public LeaderboardModel(ILeaderboardService leaderboardService)
+    {
+        _leaderboardService = leaderboardService;
+    }
+
     public List<PlayerScore> TopPlayers { get; set; } = new();
 
-    public PartialViewResult OnGetTopPlayers()
+    public void OnGet()
     {
-        TopPlayers = LeaderboardService.GetTopPlayers(10); // Fetch top 10 players from your service or DB
-        return Partial("_LeaderboardRows", TopPlayers);
+        TopPlayers = _leaderboardService.GetTopPlayers(10);
+    }
+
+    public IActionResult OnGetRows()
+    {
+        var players = _leaderboardService.GetTopPlayers(10);
+        return Partial("_LeaderboardRows", players);
     }
 }
 ```
 
-Now for the partial view that renders the rows:
+**Pages/Shared/_LeaderboardRows.cshtml:**
 
 ```html
 @model List<PlayerScore>
 
-@foreach (var player in Model)
+@if (Model.Any())
+{
+    var rank = 1;
+    @foreach (var player in Model)
+    {
+        <tr class="@(rank <= 3 ? "table-warning" : "")">
+            <td>
+                @if (rank == 1) { <span class="badge bg-gold">1st</span> }
+                else if (rank == 2) { <span class="badge bg-silver">2nd</span> }
+                else if (rank == 3) { <span class="badge bg-bronze">3rd</span> }
+                else { @rank }
+            </td>
+            <td>@player.Name</td>
+            <td>@player.Score.ToString("N0")</td>
+            <td>@player.GamesPlayed</td>
+        </tr>
+        rank++;
+    }
+}
+else
 {
     <tr>
-        <td>@player.Rank</td>
-        <td>@player.Name</td>
-        <td>@player.Score</td>
+        <td colspan="4" class="text-center text-muted py-4">
+            No players yet. Be the first to play!
+        </td>
     </tr>
 }
 ```
 
-Next, let’s plug this into the main page. We’ll set up a table with a `tbody` element that will receive the updated rows. We'll use `hx-get` to define the endpoint and `hx-trigger` to refresh it automatically every few seconds:
+The `hx-trigger="load, every 10s"` loads data immediately and refreshes every 10 seconds. The manual refresh button lets users update on demand.
+
+## Sorting
+
+Clickable column headers that sort data require tracking the current sort state and toggling direction on repeated clicks.
+
+### Sortable Table
+
+**Pages/Tasks.cshtml:**
 
 ```html
-<table class="table">
-    <thead>
-        <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Score</th>
-        </tr>
-    </thead>
-    <tbody
-        hx-get="/Leaderboard?handler=TopPlayers"
-        hx-trigger="every 5s"
-        hx-swap="outerHTML"
-        id="leaderboard-body">
-        @await Html.PartialAsync("_LeaderboardRows", Model.TopPlayers)
-    </tbody>
-</table>
+@page
+@model TasksModel
+
+<h1>Tasks</h1>
+
+<div id="task-table-container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <a hx-get="/Tasks?handler=List&sortBy=name&sortDir=@Model.NextSortDir("name")"
+                       hx-target="#task-table-body"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       hx-indicator="#sort-spinner"
+                       class="sort-header @(Model.SortBy == "name" ? "active" : "")">
+                        Name
+                        @if (Model.SortBy == "name")
+                        {
+                            <span class="sort-icon">@(Model.SortDir == "asc" ? "▲" : "▼")</span>
+                        }
+                    </a>
+                </th>
+                <th>
+                    <a hx-get="/Tasks?handler=List&sortBy=dueDate&sortDir=@Model.NextSortDir("dueDate")"
+                       hx-target="#task-table-body"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       hx-indicator="#sort-spinner"
+                       class="sort-header @(Model.SortBy == "dueDate" ? "active" : "")">
+                        Due Date
+                        @if (Model.SortBy == "dueDate")
+                        {
+                            <span class="sort-icon">@(Model.SortDir == "asc" ? "▲" : "▼")</span>
+                        }
+                    </a>
+                </th>
+                <th>
+                    <a hx-get="/Tasks?handler=List&sortBy=status&sortDir=@Model.NextSortDir("status")"
+                       hx-target="#task-table-body"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       hx-indicator="#sort-spinner"
+                       class="sort-header @(Model.SortBy == "status" ? "active" : "")">
+                        Status
+                        @if (Model.SortBy == "status")
+                        {
+                            <span class="sort-icon">@(Model.SortDir == "asc" ? "▲" : "▼")</span>
+                        }
+                    </a>
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="task-table-body">
+            <partial name="_TaskRows" model="Model" />
+        </tbody>
+    </table>
+    
+    <span id="sort-spinner" class="htmx-indicator">Sorting...</span>
+</div>
 ```
 
-What’s happening here is pretty slick. Every five seconds, htmx sends a GET request to `/Leaderboard?handler=TopPlayers`, fetches the updated rows from the server, and swaps them into the `tbody`. The `hx-swap="outerHTML"` makes sure the entire tbody gets replaced, which is a clean way to reset the table without breaking the structure.
-
-You can also set this up to update on demand—for example, when a user clicks a "Refresh" button. Just add a button with an `hx-get` pointing to the same handler, and set `hx-target="#leaderboard-body"` to direct the response to the correct place.
-
-This approach gives you real-time-ish updates with almost no JavaScript and full control on the server. Whether you're building leaderboards, admin dashboards, or dynamic reports, `hx-get` and `hx-trigger` help you stay responsive without overcomplicating your architecture.
-
-Up next, we’ll explore how to handle pagination and sorting, still powered by server-rendered content and minimal markup.
-
-## Scroll On: Lazy-Loading Lists with Infinite htmx
-
-Infinite scrolling is one of those UX patterns that feels magical when done right. Instead of breaking content across clunky pagination links, you just scroll—and more content appears like it’s always been there. This kind of interaction is especially useful for things like product listings, activity feeds, or image galleries, where users expect to browse fluidly and uninterrupted. With htmx, implementing this kind of experience is easier than you might think, thanks to the `hx-get` and `hx-trigger="revealed"` combo.
-
-While traditional pagination requires users to stop, find the next link, click it, and wait for the page to reload (or at least update), infinite scrolling keeps users in the flow. It's a smoother experience and keeps people engaged longer. For e-commerce applications in particular, that can translate directly into better conversion rates. Of course, this needs to be balanced with performance—but htmx gives you a lightweight way to lazy-load new content without overloading the browser.
-
-Let’s walk through building a product catalog with infinite scrolling. The server will return batches of products, and the client will request the next batch when a hidden trigger element comes into view. First, we’ll need a Razor Page that can return a set of products based on a page number:
+**Pages/Tasks.cshtml.cs:**
 
 ```csharp
-// Pages/Products.cshtml.cs
-public class ProductsModel : PageModel
+public class TasksModel : PageModel
 {
-    public List<Product> Products { get; set; } = new();
-    [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
-    private const int PageSize = 20;
+    private readonly ITaskService _taskService;
 
-    public PartialViewResult OnGetMore()
+    public TasksModel(ITaskService taskService)
     {
-        Products = ProductService.GetPage(Page, PageSize);
-        return Partial("_ProductCards", Products);
+        _taskService = taskService;
+    }
+
+    public List<TaskItem> Tasks { get; set; } = new();
+    
+    [BindProperty(SupportsGet = true)]
+    public string SortBy { get; set; } = "dueDate";
+    
+    [BindProperty(SupportsGet = true)]
+    public string SortDir { get; set; } = "asc";
+
+    public IActionResult OnGet()
+    {
+        Tasks = GetSortedTasks();
+
+        if (Request.Headers.ContainsKey("HX-Request"))
+        {
+            return Partial("_TaskRows", this);
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnGetList(string sortBy = "dueDate", string sortDir = "asc")
+    {
+        SortBy = sortBy;
+        SortDir = sortDir;
+        Tasks = GetSortedTasks();
+        return Partial("_TaskRows", this);
+    }
+
+    private List<TaskItem> GetSortedTasks()
+    {
+        var query = _taskService.GetAll().AsQueryable();
+
+        query = (SortBy, SortDir) switch
+        {
+            ("name", "asc") => query.OrderBy(t => t.Name),
+            ("name", "desc") => query.OrderByDescending(t => t.Name),
+            ("dueDate", "asc") => query.OrderBy(t => t.DueDate),
+            ("dueDate", "desc") => query.OrderByDescending(t => t.DueDate),
+            ("status", "asc") => query.OrderBy(t => t.Status),
+            ("status", "desc") => query.OrderByDescending(t => t.Status),
+            _ => query.OrderBy(t => t.DueDate)
+        };
+
+        return query.ToList();
+    }
+
+    public string NextSortDir(string column)
+    {
+        if (SortBy == column)
+        {
+            return SortDir == "asc" ? "desc" : "asc";
+        }
+        return "asc";
     }
 }
 ```
 
-Now we create the partial view that renders a grid of product cards:
+**Pages/Shared/_TaskRows.cshtml:**
 
 ```html
-@model List<Product>
+@model TasksModel
 
-@foreach (var product in Model)
+@if (Model.Tasks.Any())
 {
-    <div class="product-card">
+    @foreach (var task in Model.Tasks)
+    {
+        <tr id="task-@task.Id">
+            <td>@task.Name</td>
+            <td>
+                @if (task.DueDate.HasValue)
+                {
+                    <span class="@(task.DueDate < DateTime.Today ? "text-danger" : "")">
+                        @task.DueDate.Value.ToString("MMM d, yyyy")
+                    </span>
+                }
+                else
+                {
+                    <span class="text-muted">No due date</span>
+                }
+            </td>
+            <td>
+                <span class="badge @GetStatusBadgeClass(task.Status)">
+                    @task.Status
+                </span>
+            </td>
+            <td>
+                <button hx-get="/Tasks?handler=EditForm&id=@task.Id"
+                        hx-target="#task-@task.Id"
+                        hx-swap="outerHTML"
+                        class="btn btn-sm btn-outline-primary">
+                    Edit
+                </button>
+                <button hx-delete="/Tasks?handler=Delete&id=@task.Id"
+                        hx-target="#task-@task.Id"
+                        hx-swap="outerHTML"
+                        hx-confirm="Delete '@task.Name'?"
+                        class="btn btn-sm btn-outline-danger">
+                    Delete
+                </button>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="4" class="text-center text-muted py-4">
+            <p>No tasks found.</p>
+            <button hx-get="/Tasks?handler=CreateForm" 
+                    hx-target="#modal-content"
+                    class="btn btn-primary">
+                Create your first task
+            </button>
+        </td>
+    </tr>
+}
+
+@functions {
+    string GetStatusBadgeClass(string status) => status switch
+    {
+        "Complete" => "bg-success",
+        "In Progress" => "bg-primary",
+        "Blocked" => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
+```
+
+### Sort Header CSS
+
+```css
+.sort-header {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.sort-header:hover {
+    color: #0d6efd;
+}
+
+.sort-header.active {
+    font-weight: 600;
+}
+
+.sort-icon {
+    font-size: 0.75rem;
+}
+```
+
+## Pagination
+
+Server-side pagination returns a subset of data based on page number and page size.
+
+### Paginated Product List
+
+**Pages/Products.cshtml:**
+
+```html
+@page
+@model ProductsModel
+
+<h1>Products</h1>
+
+<div id="products-container">
+    <div class="products-header">
+        <span>Showing @Model.StartItem - @Model.EndItem of @Model.TotalItems products</span>
+    </div>
+
+    <div id="product-list">
+        <partial name="_ProductList" model="Model" />
+    </div>
+</div>
+```
+
+**Pages/Products.cshtml.cs:**
+
+```csharp
+public class ProductsModel : PageModel
+{
+    private readonly IProductService _productService;
+    private const int PageSize = 12;
+
+    public ProductsModel(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    public List<Product> Products { get; set; } = new();
+    
+    [BindProperty(SupportsGet = true)]
+    public int CurrentPage { get; set; } = 1;
+    
+    public int TotalItems { get; set; }
+    public int TotalPages { get; set; }
+    public int StartItem => (CurrentPage - 1) * PageSize + 1;
+    public int EndItem => Math.Min(CurrentPage * PageSize, TotalItems);
+
+    public IActionResult OnGet(int currentPage = 1)
+    {
+        CurrentPage = currentPage;
+        LoadProducts();
+
+        if (Request.Headers.ContainsKey("HX-Request"))
+        {
+            return Partial("_ProductList", this);
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnGetPage(int page = 1)
+    {
+        CurrentPage = page;
+        LoadProducts();
+        return Partial("_ProductList", this);
+    }
+
+    private void LoadProducts()
+    {
+        var allProducts = _productService.GetAll();
+        TotalItems = allProducts.Count;
+        TotalPages = (int)Math.Ceiling(TotalItems / (double)PageSize);
+        
+        Products = allProducts
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+    }
+}
+```
+
+**Pages/Shared/_ProductList.cshtml:**
+
+```html
+@model ProductsModel
+
+<div class="product-grid">
+    @foreach (var product in Model.Products)
+    {
+        <div class="product-card">
+            <img src="@product.ImageUrl" alt="@product.Name" class="product-image" />
+            <h3 class="product-name">@product.Name</h3>
+            <p class="product-price">@product.Price.ToString("C")</p>
+            <button class="btn btn-primary btn-sm">Add to Cart</button>
+        </div>
+    }
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="pagination-container" aria-label="Product pagination">
+        <ul class="pagination">
+            @* Previous button *@
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                @if (Model.CurrentPage > 1)
+                {
+                    <a class="page-link"
+                       hx-get="/Products?handler=Page&page=@(Model.CurrentPage - 1)"
+                       hx-target="#product-list"
+                       hx-swap="innerHTML"
+                       hx-push-url="/Products?currentPage=@(Model.CurrentPage - 1)"
+                       hx-indicator="#page-spinner">
+                        Previous
+                    </a>
+                }
+                else
+                {
+                    <span class="page-link">Previous</span>
+                }
+            </li>
+
+            @* Page numbers *@
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       hx-get="/Products?handler=Page&page=@i"
+                       hx-target="#product-list"
+                       hx-swap="innerHTML"
+                       hx-push-url="/Products?currentPage=@i"
+                       hx-indicator="#page-spinner"
+                       @(i == Model.CurrentPage ? "aria-current=page" : "")>
+                        @i
+                    </a>
+                </li>
+            }
+
+            @* Next button *@
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <a class="page-link"
+                       hx-get="/Products?handler=Page&page=@(Model.CurrentPage + 1)"
+                       hx-target="#product-list"
+                       hx-swap="innerHTML"
+                       hx-push-url="/Products?currentPage=@(Model.CurrentPage + 1)"
+                       hx-indicator="#page-spinner">
+                        Next
+                    </a>
+                }
+                else
+                {
+                    <span class="page-link">Next</span>
+                }
+            </li>
+        </ul>
+        
+        <span id="page-spinner" class="htmx-indicator">Loading...</span>
+    </nav>
+}
+```
+
+## Infinite Scroll
+
+Infinite scroll loads more content as the user scrolls down, creating a continuous browsing experience.
+
+### Infinite Product Feed
+
+**Pages/Feed.cshtml:**
+
+```html
+@page
+@model FeedModel
+
+<h1>Product Feed</h1>
+
+<div id="feed-container">
+    <partial name="_FeedItems" model="Model" />
+</div>
+```
+
+**Pages/Feed.cshtml.cs:**
+
+```csharp
+public class FeedModel : PageModel
+{
+    private readonly IProductService _productService;
+    private const int PageSize = 20;
+
+    public FeedModel(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    public List<Product> Products { get; set; } = new();
+    
+    [BindProperty(SupportsGet = true)]
+    public int CurrentPage { get; set; } = 1;
+    
+    public bool HasMore { get; set; }
+
+    public void OnGet()
+    {
+        LoadProducts();
+    }
+
+    public IActionResult OnGetMore(int page = 1)
+    {
+        CurrentPage = page;
+        LoadProducts();
+        return Partial("_FeedItems", this);
+    }
+
+    private void LoadProducts()
+    {
+        var totalCount = _productService.GetCount();
+        
+        Products = _productService.GetPage(CurrentPage, PageSize);
+        HasMore = CurrentPage * PageSize < totalCount;
+    }
+}
+```
+
+**Pages/Shared/_FeedItems.cshtml:**
+
+```html
+@model FeedModel
+
+@foreach (var product in Model.Products)
+{
+    <div class="feed-item">
         <img src="@product.ImageUrl" alt="@product.Name" />
-        <h3>@product.Name</h3>
-        <p>$@product.Price</p>
+        <div class="feed-item-content">
+            <h3>@product.Name</h3>
+            <p>@product.Description</p>
+            <span class="price">@product.Price.ToString("C")</span>
+        </div>
+    </div>
+}
+
+@if (Model.HasMore)
+{
+    <div hx-get="/Feed?handler=More&page=@(Model.CurrentPage + 1)"
+         hx-trigger="revealed"
+         hx-swap="outerHTML"
+         hx-indicator="#load-more-spinner"
+         class="load-more-trigger">
+        <div id="load-more-spinner" class="htmx-indicator text-center py-4">
+            <span class="spinner-border"></span>
+            <p>Loading more products...</p>
+        </div>
+    </div>
+}
+else if (Model.CurrentPage > 1)
+{
+    <div class="end-of-feed text-center py-4 text-muted">
+        <p>You've reached the end!</p>
     </div>
 }
 ```
 
-On the main page, we render the initial product list and add a special `div` at the bottom that will serve as our scroll-triggered loader. This div will contain an `hx-get` pointing to the next page of products and will activate when it’s revealed on screen:
+The trigger div at the bottom uses `hx-trigger="revealed"` to fire when it scrolls into view. It replaces itself with the next batch of items plus a new trigger (if more items exist). When no more items exist, it shows an end message instead.
 
-```html
-<div id="product-grid">
-    @await Html.PartialAsync("_ProductCards", Model.Products)
-</div>
+### Infinite Scroll CSS
 
-<div 
-    hx-get="/Products?handler=More&page=2" 
-    hx-trigger="revealed" 
-    hx-swap="beforeend" 
-    hx-target="#product-grid"
-    class="load-more-trigger">
-</div>
-```
+```css
+.feed-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
 
-The trick here is that `hx-trigger="revealed"` fires when the element becomes visible in the viewport. As the user scrolls, the trigger appears, htmx sends the request, and the response is inserted into the product grid using `hx-swap="beforeend"`. This means new products are appended instead of replacing the whole grid. On the server, we only send a fixed number of items per request (20 in this case), so performance stays predictable and snappy.
+.feed-item img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
 
-To keep the process going, the server’s response should include the next trigger element with an incremented page number, like so:
+.load-more-trigger {
+    min-height: 100px;
+}
 
-```html
-@await Html.PartialAsync("_ProductCards", Model)
-
-<div 
-    hx-get="/Products?handler=More&page=@(Model.Page + 1)" 
-    hx-trigger="revealed" 
-    hx-swap="beforeend" 
-    hx-target="#product-grid"
-    class="load-more-trigger">
-</div>
-```
-
-This creates a chain of revealed triggers, each pulling the next page when needed. You don’t need timers, IntersectionObserver, or any JavaScript to wire it up. And since the content is streamed from the server, you maintain control over layout, data shaping, and rendering.
-
-Infinite scrolling with htmx offers the best of both worlds: a smooth, JavaScript-light frontend and full server-side control. Whether you're listing sneakers, blog posts, or customer transactions, this pattern keeps users moving and your app responsive. Next, we’ll look at how to add filters and sorting on top of this without breaking the lazy-load experience.
-
-## Smarter Tables: Paging and Sorting with Razor Pages and htmx
-
-While infinite scrolling is great for certain interfaces, sometimes your users just want control. Tables full of data—like admin dashboards, reports, or transaction histories—benefit from familiar pagination and sortable columns. htmx makes these features possible with very little overhead. You can implement both server-side pagination and sorting without any client-side JavaScript libraries. And best of all, it feels snappy and modern, thanks to dynamic updates using `hx-get`, `hx-target`, and `hx-swap`.
-
-Let’s build out a common use case: a transaction history table. We’ll assume your data lives on the server, and you want to present it in pages of 10 or 20 items, sortable by columns like Date, Amount, and Description. The server is responsible for slicing and sorting the data, and htmx just fetches and injects the updated HTML when the user interacts with the UI.
-
-We’ll begin with a Razor Page that accepts query parameters for pagination and sorting. Here's the model code:
-
-```csharp
-// Pages/Transactions.cshtml.cs
-public class TransactionsModel : PageModel
-{
-    public List<Transaction> Transactions { get; set; } = new();
-    [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
-    [BindProperty(SupportsGet = true)]
-    public string SortBy { get; set; } = "Date";
-    [BindProperty(SupportsGet = true)]
-    public bool Desc { get; set; } = true;
-
-    public PartialViewResult OnGetPage()
-    {
-        Transactions = TransactionService.GetPage(Page, 10, SortBy, Desc);
-        return Partial("_TransactionRows", Transactions);
-    }
+.end-of-feed {
+    color: #6c757d;
 }
 ```
 
-We’re binding query parameters like `page`, `sortBy`, and `desc`, which will control the data slice returned by the server. The `_TransactionRows` partial will render just the rows of the table. On the main page, the table might look like this:
+## Filtering
+
+Filters narrow down displayed data based on user criteria.
+
+### Filterable Task List
+
+**Pages/Tasks.cshtml (updated with filters):**
 
 ```html
+@page
+@model TasksModel
+
+<h1>Tasks</h1>
+
+<div class="filters-bar mb-3">
+    <div class="row g-2">
+        <div class="col-md-3">
+            <select name="status" 
+                    class="form-select"
+                    hx-get="/Tasks?handler=List"
+                    hx-target="#task-table-body"
+                    hx-include=".filters-bar"
+                    hx-push-url="true">
+                <option value="">All Statuses</option>
+                <option value="Pending" selected="@(Model.StatusFilter == "Pending")">Pending</option>
+                <option value="In Progress" selected="@(Model.StatusFilter == "In Progress")">In Progress</option>
+                <option value="Complete" selected="@(Model.StatusFilter == "Complete")">Complete</option>
+                <option value="Blocked" selected="@(Model.StatusFilter == "Blocked")">Blocked</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <input type="search" 
+                   name="search"
+                   value="@Model.SearchTerm"
+                   class="form-control"
+                   placeholder="Search tasks..."
+                   hx-get="/Tasks?handler=List"
+                   hx-target="#task-table-body"
+                   hx-include=".filters-bar"
+                   hx-trigger="keyup changed delay:300ms, search"
+                   hx-push-url="true" />
+        </div>
+        <div class="col-md-2">
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    hx-get="/Tasks?handler=List"
+                    hx-target="#task-table-body"
+                    hx-push-url="/Tasks">
+                Clear Filters
+            </button>
+        </div>
+    </div>
+    
+    @* Hidden inputs to preserve sort state *@
+    <input type="hidden" name="sortBy" value="@Model.SortBy" />
+    <input type="hidden" name="sortDir" value="@Model.SortDir" />
+</div>
+
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a 
-                    hx-get="/Transactions?handler=Page&sortBy=Date&desc=false" 
-                    hx-target="#transactions-body" 
-                    hx-swap="outerHTML"
-                    hx-trigger="click">Date</a>
-            </th>
-            <th>
-                <a 
-                    hx-get="/Transactions?handler=Page&sortBy=Amount&desc=true" 
-                    hx-target="#transactions-body" 
-                    hx-swap="outerHTML"
-                    hx-trigger="click">Amount</a>
-            </th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody id="transactions-body">
-        @await Html.PartialAsync("_TransactionRows", Model.Transactions)
+    <!-- thead with sortable headers -->
+    <tbody id="task-table-body">
+        <partial name="_TaskRows" model="Model" />
     </tbody>
 </table>
 ```
 
-Clicking a column header sends an `hx-get` to the page handler, specifying which field to sort by and whether it should be ascending or descending. The response is injected into the tbody, thanks to `hx-target="#transactions-body"` and `hx-swap="outerHTML"`. You can add logic in your handler to toggle the sort direction if you want that sort of UX.
+**Updated PageModel with filtering:**
 
-For pagination, you can generate a basic pager with links or buttons at the bottom of the table. Here’s a simple example of numbered links that fetch pages dynamically:
+```csharp
+public class TasksModel : PageModel
+{
+    private readonly ITaskService _taskService;
+
+    public TasksModel(ITaskService taskService)
+    {
+        _taskService = taskService;
+    }
+
+    public List<TaskItem> Tasks { get; set; } = new();
+    
+    [BindProperty(SupportsGet = true)]
+    public string SortBy { get; set; } = "dueDate";
+    
+    [BindProperty(SupportsGet = true)]
+    public string SortDir { get; set; } = "asc";
+    
+    [BindProperty(SupportsGet = true)]
+    public string? StatusFilter { get; set; }
+    
+    [BindProperty(SupportsGet = true)]
+    public string? SearchTerm { get; set; }
+
+    public IActionResult OnGet()
+    {
+        Tasks = GetFilteredAndSortedTasks();
+
+        if (Request.Headers.ContainsKey("HX-Request"))
+        {
+            return Partial("_TaskRows", this);
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnGetList(
+        string? status = null, 
+        string? search = null,
+        string sortBy = "dueDate", 
+        string sortDir = "asc")
+    {
+        StatusFilter = status;
+        SearchTerm = search;
+        SortBy = sortBy;
+        SortDir = sortDir;
+        
+        Tasks = GetFilteredAndSortedTasks();
+        return Partial("_TaskRows", this);
+    }
+
+    private List<TaskItem> GetFilteredAndSortedTasks()
+    {
+        var query = _taskService.GetAll().AsQueryable();
+
+        // Apply filters
+        if (!string.IsNullOrEmpty(StatusFilter))
+        {
+            query = query.Where(t => t.Status == StatusFilter);
+        }
+
+        if (!string.IsNullOrEmpty(SearchTerm))
+        {
+            var term = SearchTerm.ToLower();
+            query = query.Where(t => 
+                t.Name.ToLower().Contains(term) || 
+                (t.Description != null && t.Description.ToLower().Contains(term)));
+        }
+
+        // Apply sorting
+        query = (SortBy, SortDir) switch
+        {
+            ("name", "asc") => query.OrderBy(t => t.Name),
+            ("name", "desc") => query.OrderByDescending(t => t.Name),
+            ("dueDate", "asc") => query.OrderBy(t => t.DueDate),
+            ("dueDate", "desc") => query.OrderByDescending(t => t.DueDate),
+            ("status", "asc") => query.OrderBy(t => t.Status),
+            ("status", "desc") => query.OrderByDescending(t => t.Status),
+            _ => query.OrderBy(t => t.DueDate)
+        };
+
+        return query.ToList();
+    }
+
+    public string NextSortDir(string column) =>
+        SortBy == column && SortDir == "asc" ? "desc" : "asc";
+}
+```
+
+The `hx-include=".filters-bar"` ensures all filter values are sent with each request, preserving filter state when sorting or searching.
+
+## Inline Editing
+
+Edit rows in place without opening a modal or navigating to a new page.
+
+### Inline Edit Row
+
+**Pages/Shared/_TaskRow.cshtml (view mode):**
 
 ```html
-<div class="pagination">
-    @for (int i = 1; i <= 5; i++)
+@model TaskItem
+
+<tr id="task-@Model.Id">
+    <td>@Model.Name</td>
+    <td>@Model.DueDate?.ToString("MMM d, yyyy")</td>
+    <td><span class="badge @GetStatusClass()">@Model.Status</span></td>
+    <td>
+        <button hx-get="/Tasks?handler=EditForm&id=@Model.Id"
+                hx-target="#task-@Model.Id"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-outline-primary">
+            Edit
+        </button>
+        <button hx-delete="/Tasks?handler=Delete&id=@Model.Id"
+                hx-target="#task-@Model.Id"
+                hx-swap="outerHTML"
+                hx-confirm="Delete '@Model.Name'?"
+                class="btn btn-sm btn-outline-danger">
+            Delete
+        </button>
+    </td>
+</tr>
+
+@functions {
+    string GetStatusClass() => Model.Status switch
     {
-        <a 
-            hx-get="/Transactions?handler=Page&page=@i&sortBy=@Model.SortBy&desc=@Model.Desc"
-            hx-target="#transactions-body"
-            hx-swap="outerHTML"
-            class="page-link">@i</a>
+        "Complete" => "bg-success",
+        "In Progress" => "bg-primary",
+        "Blocked" => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
+```
+
+**Pages/Shared/_TaskEditRow.cshtml (edit mode):**
+
+```html
+@model TaskItem
+
+<tr id="task-@Model.Id" class="table-active">
+    <td>
+        <input type="text" 
+               name="name" 
+               value="@Model.Name" 
+               class="form-control form-control-sm" 
+               required />
+    </td>
+    <td>
+        <input type="date" 
+               name="dueDate" 
+               value="@Model.DueDate?.ToString("yyyy-MM-dd")" 
+               class="form-control form-control-sm" />
+    </td>
+    <td>
+        <select name="status" class="form-select form-select-sm">
+            <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+            <option value="In Progress" selected="@(Model.Status == "In Progress")">In Progress</option>
+            <option value="Complete" selected="@(Model.Status == "Complete")">Complete</option>
+            <option value="Blocked" selected="@(Model.Status == "Blocked")">Blocked</option>
+        </select>
+    </td>
+    <td>
+        <button hx-put="/Tasks?handler=Update&id=@Model.Id"
+                hx-target="#task-@Model.Id"
+                hx-swap="outerHTML"
+                hx-include="closest tr"
+                class="btn btn-sm btn-success">
+            Save
+        </button>
+        <button hx-get="/Tasks?handler=CancelEdit&id=@Model.Id"
+                hx-target="#task-@Model.Id"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-secondary">
+            Cancel
+        </button>
+    </td>
+</tr>
+```
+
+**Task handlers:**
+
+```csharp
+public IActionResult OnGetEditForm(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+    return Partial("_TaskEditRow", task);
+}
+
+public IActionResult OnGetCancelEdit(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+    return Partial("_TaskRow", task);
+}
+
+public IActionResult OnPutUpdate(int id, string name, DateTime? dueDate, string status)
+{
+    var task = _taskService.GetById(id);
+    if (task == null) return NotFound();
+
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        Response.StatusCode = 400;
+        return Partial("_TaskEditRow", task);
     }
+
+    task.Name = name;
+    task.DueDate = dueDate;
+    task.Status = status;
+    _taskService.Update(task);
+
+    return Partial("_TaskRow", task);
+}
+
+public IActionResult OnDeleteDelete(int id)
+{
+    var task = _taskService.GetById(id);
+    if (task == null)
+    {
+        Response.StatusCode = 404;
+        return Content("", "text/html");
+    }
+
+    _taskService.Delete(id);
+    return Content("", "text/html"); // Empty response removes the row
+}
+```
+
+## Complete Data Grid
+
+Combine sorting, filtering, pagination, and CRUD operations into a complete data grid:
+
+**Pages/Orders.cshtml:**
+
+```html
+@page
+@model OrdersModel
+
+<h1>Orders</h1>
+
+<div class="data-grid">
+    <!-- Filters -->
+    <div class="grid-toolbar mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select"
+                        hx-get="/Orders?handler=List"
+                        hx-target="#orders-grid"
+                        hx-include=".grid-toolbar">
+                    <option value="">All</option>
+                    @foreach (var status in Model.AvailableStatuses)
+                    {
+                        <option value="@status" selected="@(Model.StatusFilter == status)">@status</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">From</label>
+                <input type="date" name="fromDate" value="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       class="form-control"
+                       hx-get="/Orders?handler=List"
+                       hx-target="#orders-grid"
+                       hx-include=".grid-toolbar"
+                       hx-trigger="change" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">To</label>
+                <input type="date" name="toDate" value="@Model.ToDate?.ToString("yyyy-MM-dd")"
+                       class="form-control"
+                       hx-get="/Orders?handler=List"
+                       hx-target="#orders-grid"
+                       hx-include=".grid-toolbar"
+                       hx-trigger="change" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Search</label>
+                <input type="search" name="search" value="@Model.SearchTerm"
+                       class="form-control" placeholder="Order # or customer..."
+                       hx-get="/Orders?handler=List"
+                       hx-target="#orders-grid"
+                       hx-include=".grid-toolbar"
+                       hx-trigger="keyup changed delay:300ms" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-secondary w-100"
+                        hx-get="/Orders?handler=List"
+                        hx-target="#orders-grid">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+        <input type="hidden" name="sortBy" value="@Model.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.SortDir" />
+        <input type="hidden" name="page" value="1" />
+    </div>
+
+    <!-- Grid content -->
+    <div id="orders-grid" hx-history-elt>
+        <partial name="_OrdersGrid" model="Model" />
+    </div>
 </div>
 ```
 
-These links work just like the column headers. The only thing changing is the page parameter, and again, only the table body gets updated—no flickering, no full-page reloads.
-
-This kind of setup gives your users a familiar experience with just the right amount of interactivity. And because all the logic lives server-side, it’s secure and easy to maintain. You’re not rebuilding table sorting or pagination logic in JavaScript. You’re simply re-rendering Razor partials in response to lightweight htmx requests.
-
-Now that we’ve added paging and sorting, we’re ready to explore richer interactivity. In the next section, we’ll take a look at how to use buttons and links to drive inline actions—like approving transactions or deleting records—without leaving the page.
-
-## Fast, Friendly, and Reusable: Optimizing Lists and Tables
-
-By now, we’ve covered dynamic updates, sorting, paging, and lazy loading—core features that make lists and tables truly interactive. But good performance and UX aren’t just about fancy updates; they’re also about minimizing what you don’t need to do. When it comes to high-traffic or data-heavy applications, optimizing your interactions with smart caching, graceful loading states, and reusable component structure can have a huge impact on how fast and friendly your app feels.
-
-One of the easiest wins is caching. Razor Pages with htmx can take advantage of HTTP caching headers or output caching to avoid regenerating the same markup repeatedly. For example, if your leaderboard or product listing doesn’t change every second, you can cache the result of your partial with [OutputCache] or even a custom memory cache. Here’s a simple way to add output caching to a Razor Page handler:
-
-```csharp
-[OutputCache(Duration = 10)]
-public PartialViewResult OnGetTopPlayers()
-{
-    var players = LeaderboardService.GetTopPlayers(10);
-    return Partial("_LeaderboardRows", players);`
-}
-```
-This tells ASP.NET Core to cache the result of that partial for 10 seconds. Combined with htmx polling or on-demand updates, you can avoid redundant server calls and still keep things responsive. It’s especially useful for dashboards or public views where the data changes predictably.
-
-From a UX perspective, never leave your users guessing. When data is loading, show a visual cue—an animated spinner, a “loading…” message, or a placeholder row. You can use hx-indicator to automatically tie a loading indicator to your htmx request:
+**Pages/Shared/_OrdersGrid.cshtml:**
 
 ```html
-<div id="loading-spinner" class="spinner" style="display:none;"></div>
+@model OrdersModel
 
-<table hx-get="/Transactions?handler=Page" 
-       hx-target="#transaction-rows"
-       hx-indicator="#loading-spinner">
-    <!-- Table markup -->
-</table>
-```
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <a hx-get="/Orders?handler=List&sortBy=orderNumber&sortDir=@Model.NextSortDir("orderNumber")"
+                       hx-target="#orders-grid"
+                       hx-include=".grid-toolbar"
+                       class="sort-header @(Model.SortBy == "orderNumber" ? "active" : "")">
+                        Order #
+                        @if (Model.SortBy == "orderNumber")
+                        {
+                            <span>@(Model.SortDir == "asc" ? "▲" : "▼")</span>
+                        }
+                    </a>
+                </th>
+                <th>
+                    <a hx-get="/Orders?handler=List&sortBy=date&sortDir=@Model.NextSortDir("date")"
+                       hx-target="#orders-grid"
+                       hx-include=".grid-toolbar"
+                       class="sort-header @(Model.SortBy == "date" ? "active" : "")">
+                        Date
+                        @if (Model.SortBy == "date")
+                        {
+                            <span>@(Model.SortDir == "asc" ? "▲" : "▼")</span>
+                        }
+                    </a>
+                </th>
+                <th>Customer</th>
+                <th>
+                    <a hx-get="/Orders?handler=List&sortBy=total&sortDir=@Model.NextSortDir("total")"
+                       hx-target="#orders-grid"
+                       hx-include=".grid-toolbar"
+                       class="sort-header @(Model.SortBy == "total" ? "active" : "")">
+                        Total
+                        @if (Model.SortBy == "total")
+                        {
+                            <span>@(Model.SortDir == "asc" ? "▲" : "▼")</span>
+                        }
+                    </a>
+                </th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Orders.Any())
+            {
+                @foreach (var order in Model.Orders)
+                {
+                    <tr id="order-@order.Id">
+                        <td><a href="/Orders/@order.Id">@order.OrderNumber</a></td>
+                        <td>@order.OrderDate.ToString("MMM d, yyyy")</td>
+                        <td>@order.CustomerName</td>
+                        <td>@order.Total.ToString("C")</td>
+                        <td><span class="badge @GetStatusClass(order.Status)">@order.Status</span></td>
+                        <td>
+                            <a href="/Orders/@order.Id" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                        No orders found matching your criteria.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
-htmx will automatically show the indicator when the request begins and hide it when the response comes back. And when there’s no data at all? That’s your cue to handle the empty state. Instead of a blank table, return a message that communicates clearly:
-
-```html
-@if (!Model.Transactions.Any())
+@if (Model.TotalPages > 1)
 {
-    <tr>
-        <td colspan="3">No transactions found.</td>
-    </tr>
+    <nav class="d-flex justify-content-between align-items-center">
+        <span class="text-muted">
+            Showing @Model.StartItem - @Model.EndItem of @Model.TotalItems orders
+        </span>
+        <ul class="pagination mb-0">
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   hx-get="/Orders?handler=List&page=@(Model.CurrentPage - 1)"
+                   hx-target="#orders-grid"
+                   hx-include=".grid-toolbar">
+                    Previous
+                </a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       hx-get="/Orders?handler=List&page=@i"
+                       hx-target="#orders-grid"
+                       hx-include=".grid-toolbar">
+                        @i
+                    </a>
+                </li>
+            }
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   hx-get="/Orders?handler=List&page=@(Model.CurrentPage + 1)"
+                   hx-target="#orders-grid"
+                   hx-include=".grid-toolbar">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
 }
-else
-{
-    foreach (var transaction in Model.Transactions)
+
+@functions {
+    string GetStatusClass(string status) => status switch
     {
-        <tr>
-            <td>@transaction.Date</td>
-            <td>@transaction.Amount</td>
-            <td>@transaction.Description</td>
-        </tr>
-    }
+        "Delivered" => "bg-success",
+        "Shipped" => "bg-info",
+        "Processing" => "bg-primary",
+        "Cancelled" => "bg-danger",
+        _ => "bg-secondary"
+    };
 }
 ```
 
-Reusable components will also help keep your codebase clean and manageable. Use partial views for your table rows, extract shared filters or toolbars into dedicated Razor components, and follow consistent naming conventions. For example, if you have multiple list pages that all use a filter bar, extract that bar into a partial like _FilterToolbar.cshtml and pass any required parameters through the view model. This approach helps ensure that performance tweaks and UI changes stay DRY and centralized.
+## Error Handling
 
-When you combine smart caching, responsive feedback, and reusable structure, you not only get better performance—you get maintainable code and happier users. It’s the kind of polish that separates an app that just works from one that feels effortless.
+Handle failed requests gracefully:
 
-In the next chapter, we’ll take these interactive building blocks a step further by focusing on Buttons and Action Links. We'll explore how to enhance user interactions with one-click actions, confirmations, and inline updates—all powered by htmx and Razor Pages, of course.
+```html
+<tbody id="task-table-body"
+       hx-on::response-error="handleTableError(event)"
+       hx-on::send-error="handleTableError(event)">
+</tbody>
+
+<script>
+function handleTableError(event) {
+    var target = event.detail.target || document.getElementById('task-table-body');
+    target.innerHTML = `
+        <tr>
+            <td colspan="4" class="text-center py-4">
+                <div class="alert alert-danger mb-0">
+                    <p>Failed to load data. Please try again.</p>
+                    <button onclick="location.reload()" class="btn btn-outline-danger btn-sm">
+                        Reload Page
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+</script>
+```
+
+## Summary
+
+This chapter covered dynamic lists and tables with htmx:
+
+- **Anti-forgery tokens** configured globally for all htmx requests
+- **Live updates** with `hx-trigger="every Xs"` for real-time data
+- **Sorting** with clickable headers and toggle direction
+- **Pagination** with complete page controls and URL integration
+- **Infinite scroll** using `hx-trigger="revealed"` with dynamic page tracking
+- **Filtering** with combined filters using `hx-include`
+- **Inline editing** with view/edit row states
+- **Delete operations** with confirmation and proper token handling
+- **Empty states** and error handling for better UX
+- **Complete data grid** combining all features
+
+These patterns form the foundation for any data-driven application, from admin dashboards to e-commerce catalogs.
+
+## Preview of Next Chapter
+
+Chapter 14 covers buttons and action links. You will learn to build one-click actions that update UI instantly, confirmation workflows for dangerous operations, batch actions for multiple items, and status toggles that feel immediate and responsive.

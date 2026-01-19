@@ -8,189 +8,930 @@ title: "Form Enhancements with hx-params, hx-vals, and hx-validate"
 
 # Form Enhancements with `hx-params`, `hx-vals`, and `hx-validate`
 
-By now, you’ve built dynamic forms, submitted data without page reloads, and even added some validation magic using `hx-validate`. You’ve seen how htmx makes basic form handling elegant and server-friendly. But real-world forms are rarely basic. Sometimes, you need to customize what gets sent. Sometimes, you want to pass extra values that aren't part of the form. And sometimes, you need to validate in more nuanced ways, without turning to JavaScript.
+Forms collect data. htmx submits that data without page reloads. But real-world forms need more control. You need to exclude fields from submission, inject values that aren't visible in the form, and validate input before it reaches the server. This chapter covers three htmx attributes that give you that control: `hx-params` filters which fields get sent, `hx-vals` injects additional data into requests, and `hx-validate` triggers HTML5 validation before submission.
 
-That’s where this chapter comes in. We’ll explore the finer controls htmx gives you when dealing with form submissions. `hx-params` lets you choose exactly which fields get sent. `hx-vals` helps you inject values that don’t even exist in the form. And `hx-validate`? It goes beyond browser-level constraints, allowing you to create more interactive and user-friendly validation flows while keeping your JavaScript footprint nearly invisible.
+These attributes work together with the form patterns from Chapter 11. Combined with server-side validation, they create forms that guide users through correct input while keeping your validation logic where it belongs: on the server.
 
-This isn’t a rehash of the basics. You’ve already mastered how to submit a form with `hx-post`. Here, we’ll fine-tune the experience and make your forms work smarter. You’ll learn how to craft forms that respond to the user’s context, minimize unnecessary data transfer, and provide immediate feedback, all while adhering to the server-driven, Razor Pages-first design.
+## Anti-Forgery Token Setup
 
-Once you're comfortable with these advanced form strategies, you'll be well-positioned to tackle the next challenge: optimizing performance. In the following chapter, we’ll explore caching and browser history tricks that make your htmx-powered apps feel lightning-fast.
+All POST form examples in this chapter require anti-forgery tokens. Configure htmx to include them automatically:
 
-## Customizing Form Submission with `hx-params`
-
-Forms can quickly get messy, especially when they’re long, dynamic, or reused across multiple steps. Sometimes, you don’t want to send every single field to the server on every submission. Maybe you’ve got a multi-step form and only want to process one section at a time. Or perhaps you're using hidden fields to manage layout or state and don’t want them to interfere with your model binding. That’s where `hx-params` comes in.
-
-The hx-params attribute gives you control over which fields get included in the request triggered by htmx. By default, htmx submits all fields inside a form when an interaction happens. But you can override this by applying `hx-params` to any element that triggers a request, whether it's the <form> itself or an individual button inside it.
-
-Let’s walk through the three most common uses of `hx-params: *`, not fieldName, and none.
-
-Setting `hx-params="*"` means “send all the parameters,” which is actually the default behavior. It’s useful when you're overriding a narrower setting higher up and want to re-enable full submission on a specific button or input.
-
-On the other hand, `hx-params="not fieldName"` tells htmx to submit every field except the one you name. You can also exclude multiple fields by separating them with spaces. This is incredibly handy when you've data you don’t want to send back just yet, such as fields from a different step in a wizard-style form or a large textarea that the user hasn’t completed.
-
-Then there’s `hx-params="none"`, which does exactly what it sounds like: no form fields are included in the request. This can be useful when you're triggering a refresh or some background action that doesn’t rely on the form data at all.
-
-Here’s a quick example. Let’s say you’re building a three-step account setup form using Razor Pages. Each step is a partial that gets loaded and submitted independently. You want to make sure that only the fields from the current step are submitted when the user clicks "Next".
-
-In your Razor Page:
+**Pages/Shared/_Layout.cshtml:**
 
 ```html
-<form id="step-form"
-      hx-post="/AccountSetup?handler=Step1"
+@Html.AntiForgeryToken()
+
+<script>
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+</script>
+```
+
+## Filtering Parameters with `hx-params`
+
+The `hx-params` attribute controls which form fields are included in a request. By default, htmx sends all fields. With `hx-params`, you can include all, exclude specific fields, or send none.
+
+### `hx-params` Values
+
+| Value | Behavior |
+|-------|----------|
+| `*` | Send all parameters (default) |
+| `none` | Send no parameters |
+| `not fieldName` | Send all except the named field |
+| `fieldName` | Send only the named field |
+| `field1, field2` | Send only these fields |
+
+### Multi-Step Form Example
+
+A wizard-style form where each step submits only its own fields:
+
+**Pages/Signup.cshtml:**
+
+```html
+@page
+@model SignupModel
+
+<h1>Create Account</h1>
+
+<div id="step-container">
+    <partial name="_SignupStep1" />
+</div>
+```
+
+**Pages/Shared/_SignupStep1.cshtml:**
+
+```html
+<form hx-post="/Signup?handler=Step1"
       hx-target="#step-container"
-      hx-swap="innerHTML">
+      hx-swap="innerHTML"
+      hx-disabled-elt="find button">
     @Html.AntiForgeryToken()
-    <input type="text" name="FirstName" placeholder="First Name"/>
-    <input type="text" name="LastName" placeholder="Last Name"/>
-    <input type="email" name="Email" placeholder="Email"/>
-    <input type="hidden" name="Step" value="1"/>
-    <button type="submit" hx-params="not Step Email">Next</button>
-</form>
-```
-
-In this case, when the user clicks "Next", only the FirstName and LastName fields are submitted; the Email and hidden Step fields are excluded. This keeps the payload clean, allowing your server to focus on validating only the current step. Your handler might look like this:
-
-```csharp
-public IActionResult OnPostStep1(string FirstName, string LastName)
-{
-    // Store progress or validate names
-    return Partial("_Step2");
-}
-```
-
-You could also flip it around and have a button that triggers a backend validation or refresh that doesn’t require any form data. Simply add `hx-params="none"` to that button, and htmx will send the request without any fields included.
-
-The best part? You don’t have to restructure your form to make this work. `hx-params` is flexible, composable, and doesn’t interfere with your Razor Page model binding. Hence, you get clean, predictable behavior with minimal effort.
-
-This level of precision becomes critical as your forms become increasingly complex. Whether you’re building a checkout process, onboarding flow, or admin panel, `hx-params` helps you send only what matters, when it matters. It’s one of those features you don’t realize you need until you do.
-
-## Dynamically Modifying Request Data with `hx-vals`
-
-Sometimes, the data you need to send with a form submission or button click isn’t in the form at all. Perhaps you need to pass metadata, such as a timestamp, a role identifier, or a contextual flag, based on the user's actions. Instead of cluttering your form with hidden fields or patching things together with JavaScript, `hx-vals` gives you a clean, declarative way to inject additional data into your htmx requests.
-
-The `hx-vals` attribute allows you to add extra name-value pairs to the request payload. It works like an invisible, dynamic field set that’s sent along with your form data or triggered request. This is incredibly useful when your server-side handler expects more than just the visible inputs, like flags for conditional logic, environment details, or user-supplied metadata.
-
-You define `hx-vals` using a JavaScript object (as a JSON string) right in your markup. htmx parses that string and merges the values into the outgoing request. These values are included in the same way as form fields, so your Razor Page handler can access them just like any other bound parameter.
-
-Imagine you have a form that allows users to submit feedback, and you want to include the current timestamp and a user role to help categorize the submissions. You don’t need those fields in the UI, but you want them on the server. Here’s how you can do it:
-
-```html
-<form hx-post="/Feedback?handler=Submit" hx-target="#result">
-    <textarea name="Message" placeholder="Your feedback..."></textarea>
-    <button type="submit"
-            hx-vals='{"SubmittedAt": "' + new Date().toISOString() + '", "UserRole": "anonymous"}'>
-        Send Feedback
+    
+    <h2>Step 1: Personal Information</h2>
+    
+    <div class="form-group mb-3">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" name="FirstName" class="form-control" required />
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" name="LastName" class="form-control" required />
+    </div>
+    
+    <button type="submit" class="btn btn-primary">
+        Next Step
     </button>
 </form>
-<div id="result"></div>
 ```
 
-If you’re using this directly in Razor, you'll want to handle the date formatting with a bit more care.
-
-This is easy to handle on the server. Here’s what your Razor Page handler might look like:
-
-```csharp
-public IActionResult OnPostSubmit(string Message, DateTime SubmittedAt, string UserRole)
-{
-    // Log the metadata, store the feedback, or trigger different flows
-    // based on the user role
-    return Content($"<p>Thanks for your feedback! Received at {SubmittedAt} from a {UserRole} user.</p>", "text/html");
-}
-```
-
-With `hx-vals`, you don’t need to reshape your forms or maintain hidden inputs to sneak in that extra bit of data. You get a clean, declarative tool that respects the boundary between UI and intent, keeping your forms lightweight and your request payloads purposeful.
-
-This becomes even more powerful when paired with other htmx features, such as `hx-trigger` and `hx-target`, allowing you to build nuanced, data-rich interactions without a heavy JavaScript framework. You're not just submitting forms anymore, you’re shaping intent-driven messages to your backend.
-
-## Implementing Real-Time Validation with `hx-validate`
-
-Forms are at their best when they respond like a helpful guide, not a strict gatekeeper. One of the most considerable improvements you can make to the user experience is to provide real-time validation, letting users know when something is wrong while they’re filling out the form, not after they hit submit. This kind of instant feedback reduces frustration and helps users complete forms more quickly and confidently. With htmx, this pattern is easily implemented using `hx-validate` alongside `hx-trigger` and server-side checks.
-
-The `hx-validate` attribute tells htmx to use native browser validation before making a request. It works well for basic checks, such as verifying whether a required field is filled out or an email address is formatted correctly. However, if you want to check something more dynamic, such as whether a username is already taken, you’ll need to go a step further and involve the server. This is where htmx really shines, making lightweight, targeted requests for validation while users interact with the form.
-
-Let’s build a real-time username availability checker. You want the server to validate input as the user types and provide immediate feedback if the username is already taken. You’ll use `hx-get` with `hx-trigger="keyup changed delay:500ms"` to avoid spamming the server, and return a validation message if needed.
-
-Here’s the Razor Page form:
+**Pages/Shared/_SignupStep2.cshtml:**
 
 ```html
-<form>
-    <input type="text"
-           name="username"
-           placeholder="Choose a username"
-           hx-get="/Register?handler=CheckUsername"
-           hx-trigger="keyup changed delay:500ms"
-           hx-target="#username-validation"
-           hx-swap="innerHTML"
-           hx-validate />
-    <div id="username-validation" class="validation-message"></div>
+@model SignupStep2Model
+
+<form hx-post="/Signup?handler=Step2"
+      hx-target="#step-container"
+      hx-swap="innerHTML"
+      hx-disabled-elt="find button">
+    @Html.AntiForgeryToken()
+    
+    <h2>Step 2: Account Details</h2>
+    
+    <!-- Hidden fields preserve previous step data -->
+    <input type="hidden" name="FirstName" value="@Model.FirstName" />
+    <input type="hidden" name="LastName" value="@Model.LastName" />
+    
+    <div class="form-group mb-3">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="Email" class="form-control" required />
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="Password" class="form-control" required minlength="8" />
+    </div>
+    
+    <div class="d-flex gap-2">
+        <button type="button" 
+                hx-get="/Signup?handler=BackToStep1&firstName=@Model.FirstName&lastName=@Model.LastName"
+                hx-target="#step-container"
+                class="btn btn-secondary">
+            Back
+        </button>
+        <button type="submit" class="btn btn-primary">
+            Create Account
+        </button>
+    </div>
 </form>
 ```
 
-When the user types in the input, htmx waits for 500ms of inactivity, then fires a `GET` request to the `CheckUsername` handler. The response replaces the content of `#username-validation`, giving feedback directly beneath the input.
-
-On the server side, you can handle it like this:
+**Pages/Signup.cshtml.cs:**
 
 ```csharp
-public IActionResult OnGetCheckUsername(string username)
+public class SignupModel : PageModel
 {
-    var takenUsernames = new[] { "admin", "user1", "guest" };
-    if (string.IsNullOrWhiteSpace(username))
+    private readonly IUserService _userService;
+
+    public SignupModel(IUserService userService)
     {
-        return Content("<span style='color: red;'>Username is required.</span>", "text/html");
-    }
-    if (takenUsernames.Contains(username, StringComparer.OrdinalIgnoreCase))
-    {
-        return Content("<span style='color: red;'>That username is already taken.</span>", "text/html");
+        _userService = userService;
     }
 
-    return Content("<span style='color: green;'>Username is available!</span>", "text/html");
+    public void OnGet() { }
+
+    public IActionResult OnPostStep1(string firstName, string lastName)
+    {
+        if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+        {
+            ModelState.AddModelError("", "First and last name are required");
+            return Partial("_SignupStep1");
+        }
+
+        return Partial("_SignupStep2", new SignupStep2Model
+        {
+            FirstName = firstName,
+            LastName = lastName
+        });
+    }
+
+    public IActionResult OnGetBackToStep1(string firstName, string lastName)
+    {
+        return Partial("_SignupStep1WithValues", new SignupStep1Model
+        {
+            FirstName = firstName,
+            LastName = lastName
+        });
+    }
+
+    public IActionResult OnPostStep2(SignupInput input)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Partial("_SignupStep2", new SignupStep2Model
+            {
+                FirstName = input.FirstName,
+                LastName = input.LastName
+            });
+        }
+
+        _userService.CreateAccount(input);
+        return Partial("_SignupSuccess", input);
+    }
+}
+
+public class SignupStep2Model
+{
+    public string FirstName { get; set; } = "";
+    public string LastName { get; set; } = "";
+}
+
+public class SignupInput
+{
+    public string FirstName { get; set; } = "";
+    public string LastName { get; set; } = "";
+    public string Email { get; set; } = "";
+    public string Password { get; set; } = "";
 }
 ```
 
-This approach has a few advantages. First, you keep all validation logic on the server, where you can perform database checks or enforce business rules. Second, the user sees changes instantly, enabling them to correct mistakes early. Third, you keep your Razor Pages and HTML in sync, eliminating the need for client-side duplication and complex JavaScript state management.
+### Excluding Specific Fields
 
-One best practice is to ensure that your validation responses return clean, targeted HTML. Avoid dumping large templates or full layouts into your swap targets. You want the feedback to feel snappy and unobtrusive. You can also style the response based on success or error states, or apply CSS classes dynamically with server-rendered markup.
-
-Real-time validation like this is a slight touch that makes a big difference. When your forms guide users through their tasks instead of punishing them after submission, you build a better experience, and htmx makes that easier than ever.
-
-## Optimizing Form Behavior for Better UX
-
-By now, you've seen how `hx-params`, `hx-vals`, and `hx-validate` each bring a unique advantage to your forms. But where these features really shine is when you use them together. Modern forms often need to be flexible, innovative, and user-friendly, all without relying on a mountain of client-side JavaScript. With htmx and Razor Pages, you can craft interactive forms that behave exactly the way users expect, and do it with clean, server-driven logic.
-
-Consider a scenario where you're building a reusable profile form for both admins and regular users. You might want to exclude certain fields for regular users, include a hidden role value, and perform real-time validation on the username field. This is a perfect case for combining all three htmx enhancements.
-
-Here’s a snippet from such a form:
+Use `hx-params="not fieldName"` to exclude fields:
 
 ```html
-<form hx-post="/Profile?handler=Save" hx-target="#form-messages" hx-swap="innerHTML">
-    <input type="text" name="Username"
-           placeholder="Username"
-           hx-get="/Profile?handler=CheckUsername"
-           hx-trigger="keyup changed delay:500ms"
-           hx-target="#username-check"
-           hx-swap="innerHTML"
-           hx-validate />
-    <div id="username-check"></div>
+<form hx-post="/Search?handler=Execute" hx-target="#results">
+    @Html.AntiForgeryToken()
+    
+    <input type="text" name="Query" />
+    <input type="text" name="InternalTrackingId" value="abc123" />
+    
+    <!-- Don't send the tracking ID with this button -->
+    <button type="submit" hx-params="not InternalTrackingId">
+        Search
+    </button>
+    
+    <!-- Send everything with this button -->
+    <button type="submit" hx-params="*" name="action" value="search-and-track">
+        Search with Tracking
+    </button>
+</form>
+```
 
-    <input type="email" name="Email" placeholder="Email" />
-    <input type="hidden" name="UserId" value="@Model.UserId" />
+### Sending No Parameters
 
+Use `hx-params="none"` for actions that don't need form data:
+
+```html
+<form hx-post="/Editor?handler=Save" hx-target="#save-status">
+    @Html.AntiForgeryToken()
+    
+    <textarea name="Content" rows="10"></textarea>
+    
+    <button type="submit">Save Draft</button>
+    
+    <!-- Reset button doesn't need to send form data -->
+    <button type="button"
+            hx-post="/Editor?handler=Reset"
+            hx-target="#editor-container"
+            hx-params="none"
+            hx-confirm="Discard all changes?">
+        Reset
+    </button>
+</form>
+```
+
+## Injecting Values with `hx-vals`
+
+The `hx-vals` attribute adds extra name-value pairs to requests. These values don't appear in the form but get sent to the server alongside form fields.
+
+### Static Values
+
+For fixed values, use JSON syntax:
+
+```html
+<button hx-post="/Feedback?handler=Submit"
+        hx-target="#result"
+        hx-vals='{"source": "homepage", "category": "general"}'>
+    Submit Feedback
+</button>
+```
+
+The server receives `source=homepage` and `category=general` as if they were form fields.
+
+### Values from Razor
+
+Inject server-side values:
+
+```html
+<button hx-post="/Order?handler=Reorder"
+        hx-target="#order-status"
+        hx-vals='{"orderId": "@Model.Order.Id", "userId": "@Model.UserId"}'>
+    Reorder
+</button>
+```
+
+**Rendered HTML:**
+
+```html
+<button hx-post="/Order?handler=Reorder"
+        hx-target="#order-status"
+        hx-vals='{"orderId": "12345", "userId": "user-abc"}'>
+    Reorder
+</button>
+```
+
+### Dynamic JavaScript Values
+
+For values computed at request time, use the `js:` prefix:
+
+```html
+<button hx-post="/Analytics?handler=Track"
+        hx-vals='js:{"timestamp": new Date().toISOString(), "screenWidth": window.innerWidth, "timezone": Intl.DateTimeFormat().resolvedOptions().timeZone}'>
+    Track Event
+</button>
+```
+
+The `js:` prefix tells htmx to evaluate the object as JavaScript when the request fires.
+
+### Complete Feedback Form Example
+
+**Pages/Feedback.cshtml:**
+
+```html
+@page
+@model FeedbackModel
+
+<h1>Send Feedback</h1>
+
+<form hx-post="/Feedback?handler=Submit"
+      hx-target="#feedback-result"
+      hx-swap="outerHTML"
+      hx-disabled-elt="find button">
+    @Html.AntiForgeryToken()
+    
+    <div class="form-group mb-3">
+        <label for="message">Your Feedback</label>
+        <textarea id="message" name="Message" class="form-control" rows="5" required></textarea>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="rating">Rating</label>
+        <select id="rating" name="Rating" class="form-select">
+            <option value="5">Excellent</option>
+            <option value="4">Good</option>
+            <option value="3">Average</option>
+            <option value="2">Poor</option>
+            <option value="1">Terrible</option>
+        </select>
+    </div>
+    
     <button type="submit"
-            hx-vals='{"Role": "@Model.UserRole"}'
-            hx-params="not UserId">
-        Save
+            hx-vals='js:{"submittedAt": new Date().toISOString(), "pageUrl": window.location.href, "userAgent": navigator.userAgent}'
+            class="btn btn-primary">
+        <span class="btn-text">Send Feedback</span>
+        <span class="htmx-indicator">Sending...</span>
     </button>
 </form>
 
-<div id="form-messages"></div>
+<div id="feedback-result"></div>
 ```
 
-In this example, `hx-validate` ensures the username is checked on the fly. The `hx-params="not UserId"` keeps sensitive identifiers out of the POST body while still retaining context in the view model. Meanwhile, `hx-vals` discreetly injects the user’s role into the submission, which helps control server-side logic without bloating your markup. The form feels lightweight, responsive, and intelligent, and yet it’s all done with declarative attributes.
+**Pages/Feedback.cshtml.cs:**
 
-To make this approach scalable, it’s smart to encapsulate your forms into partials and organize them into components. Create small, focused partial Razor files for each form piece: inputs, validation feedback, and action buttons. This promotes reuse and maintains consistency in your UI across the app. When you need to update behavior, tweak validation logic, or add a new field, you can do it in one place without having to search through multiple pages.
+```csharp
+public class FeedbackModel : PageModel
+{
+    private readonly IFeedbackService _feedbackService;
 
-On the server, validation feedback and success messages should be treated with the same care. Return partial HTML updates that clearly indicate success or failure, and target a dedicated message area using `hx-target`. Avoid redirecting on success unless absolutely necessary. Let users stay where they are, see the result, and move forward naturally.
+    public FeedbackModel(IFeedbackService feedbackService)
+    {
+        _feedbackService = feedbackService;
+    }
 
-These optimizations aren't about flashy effects or animations but about getting the UX fundamentals right. They reduce friction, improve clarity, and build trust with your users. With Razor Pages and htmx working together, you're building an interface that feels responsive without the complexity of SPAs or client-heavy codebases.
+    public void OnGet() { }
 
-With forms now operating more intelligently, responding in real time, and submitting only the necessary data, you can handle more complex user interface interactions, such as drag-and-drop functionality. In the next chapter, we will explore how to incorporate intuitive, dynamic movement into your web applications using htmx in conjunction with Hyperscript. This combination will enable users to rearrange elements, trigger actions, and engage with content naturally and fluidly, all without relying on heavy frontend libraries.
+    public IActionResult OnPostSubmit(FeedbackInput input)
+    {
+        if (string.IsNullOrWhiteSpace(input.Message))
+        {
+            return Content("<div class=\"alert alert-danger\">Message is required</div>", "text/html");
+        }
+
+        _feedbackService.Save(new Feedback
+        {
+            Message = input.Message,
+            Rating = input.Rating,
+            SubmittedAt = input.SubmittedAt,
+            PageUrl = input.PageUrl,
+            UserAgent = input.UserAgent
+        });
+
+        return Content("<div class=\"alert alert-success\">Thank you for your feedback!</div>", "text/html");
+    }
+}
+
+public class FeedbackInput
+{
+    public string Message { get; set; } = "";
+    public int Rating { get; set; }
+    public DateTime SubmittedAt { get; set; }
+    public string PageUrl { get; set; } = "";
+    public string UserAgent { get; set; } = "";
+}
+```
+
+### Combining `hx-vals` with Form Data
+
+Values from `hx-vals` merge with form fields:
+
+```html
+<form hx-post="/Products?handler=AddToCart" hx-target="#cart-feedback">
+    @Html.AntiForgeryToken()
+    
+    <input type="number" name="Quantity" value="1" min="1" />
+    
+    <!-- Button adds productId and source to the form data -->
+    <button type="submit"
+            hx-vals='{"productId": "@product.Id", "source": "product-page"}'>
+        Add to Cart
+    </button>
+</form>
+```
+
+The server receives: `Quantity` (from form) + `productId` + `source` (from hx-vals).
+
+## HTML5 Validation with `hx-validate`
+
+The `hx-validate` attribute triggers HTML5 form validation before htmx sends a request. If validation fails, the request is cancelled and the browser shows validation messages.
+
+### Basic Usage
+
+```html
+<form hx-post="/Contact?handler=Submit"
+      hx-target="#contact-result"
+      hx-validate>
+    @Html.AntiForgeryToken()
+    
+    <input type="text" name="Name" required />
+    <input type="email" name="Email" required />
+    <textarea name="Message" required minlength="10"></textarea>
+    
+    <button type="submit">Send</button>
+</form>
+```
+
+Without `hx-validate`, htmx would send the request even if fields are empty. With `hx-validate`, the browser prevents submission and shows "Please fill out this field" messages.
+
+### Validation Attributes
+
+Common HTML5 validation attributes work with `hx-validate`:
+
+```html
+<input type="text" name="Username" 
+       required 
+       minlength="3" 
+       maxlength="20" 
+       pattern="[a-zA-Z0-9_]+" 
+       title="Username must be 3-20 characters, letters, numbers, and underscores only" />
+
+<input type="email" name="Email" required />
+
+<input type="url" name="Website" />
+
+<input type="number" name="Age" min="18" max="120" />
+
+<input type="tel" name="Phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Format: 123-456-7890" />
+```
+
+### When to Use `hx-validate`
+
+Use `hx-validate` on form submissions to catch obvious errors before hitting the server:
+
+```html
+<form hx-post="/Register?handler=Submit"
+      hx-target="#form-container"
+      hx-swap="outerHTML"
+      hx-validate>
+```
+
+Don't use `hx-validate` on real-time validation triggers (like `keyup`). It would prevent the request from firing at all if the field is incomplete:
+
+```html
+<!-- DON'T do this - hx-validate blocks the request -->
+<input hx-get="/Register?handler=CheckUsername"
+       hx-trigger="keyup changed delay:500ms"
+       hx-validate />  <!-- Remove this -->
+
+<!-- DO this instead -->
+<input hx-get="/Register?handler=CheckUsername"
+       hx-trigger="keyup changed delay:500ms"
+       hx-target="#username-feedback" />
+```
+
+## Real-Time Server Validation
+
+For validation that requires server checks (username availability, email uniqueness), use `hx-get` with debounced triggers.
+
+### Username Availability Check
+
+**Pages/Register.cshtml:**
+
+```html
+@page
+@model RegisterModel
+
+<h1>Register</h1>
+
+<form id="register-form"
+      hx-post="/Register?handler=Submit"
+      hx-target="#form-messages"
+      hx-swap="innerHTML"
+      hx-validate
+      hx-disabled-elt="find button[type='submit']">
+    @Html.AntiForgeryToken()
+    
+    <div class="form-group mb-3">
+        <label for="username">Username</label>
+        <div class="input-with-feedback">
+            <input type="text" 
+                   id="username" 
+                   name="Username" 
+                   class="form-control"
+                   required
+                   minlength="3"
+                   maxlength="20"
+                   pattern="[a-zA-Z0-9_]+"
+                   hx-get="/Register?handler=CheckUsername"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-target="#username-feedback"
+                   hx-swap="innerHTML"
+                   hx-sync="this:replace"
+                   hx-indicator="#username-spinner" />
+            <span id="username-spinner" class="htmx-indicator">
+                <span class="spinner-border spinner-border-sm"></span>
+            </span>
+        </div>
+        <div id="username-feedback" class="form-feedback"></div>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="email">Email</label>
+        <div class="input-with-feedback">
+            <input type="email" 
+                   id="email" 
+                   name="Email" 
+                   class="form-control"
+                   required
+                   hx-get="/Register?handler=CheckEmail"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-target="#email-feedback"
+                   hx-swap="innerHTML"
+                   hx-sync="this:replace"
+                   hx-indicator="#email-spinner" />
+            <span id="email-spinner" class="htmx-indicator">
+                <span class="spinner-border spinner-border-sm"></span>
+            </span>
+        </div>
+        <div id="email-feedback" class="form-feedback"></div>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="password">Password</label>
+        <input type="password" 
+               id="password" 
+               name="Password" 
+               class="form-control"
+               required
+               minlength="8" />
+        <small class="form-text text-muted">At least 8 characters</small>
+    </div>
+    
+    <div id="form-messages"></div>
+    
+    <button type="submit" class="btn btn-primary">
+        <span class="btn-text">Create Account</span>
+        <span class="htmx-indicator">Creating...</span>
+    </button>
+</form>
+```
+
+**Pages/Register.cshtml.cs:**
+
+```csharp
+public class RegisterModel : PageModel
+{
+    private readonly IUserService _userService;
+
+    public RegisterModel(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    public void OnGet() { }
+
+    public IActionResult OnGetCheckUsername(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Content("", "text/html");
+        }
+
+        if (username.Length < 3)
+        {
+            return Content("<span class=\"text-warning\">Username must be at least 3 characters</span>", "text/html");
+        }
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(username, @"^[a-zA-Z0-9_]+$"))
+        {
+            return Content("<span class=\"text-danger\">Only letters, numbers, and underscores allowed</span>", "text/html");
+        }
+
+        if (_userService.UsernameExists(username))
+        {
+            return Content("<span class=\"text-danger\">Username is already taken</span>", "text/html");
+        }
+
+        return Content("<span class=\"text-success\">Username is available</span>", "text/html");
+    }
+
+    public IActionResult OnGetCheckEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return Content("", "text/html");
+        }
+
+        if (!IsValidEmail(email))
+        {
+            return Content("<span class=\"text-danger\">Please enter a valid email address</span>", "text/html");
+        }
+
+        if (_userService.EmailExists(email))
+        {
+            return Content("<span class=\"text-danger\">An account with this email already exists</span>", "text/html");
+        }
+
+        return Content("<span class=\"text-success\">Email is available</span>", "text/html");
+    }
+
+    public IActionResult OnPostSubmit(RegisterInput input)
+    {
+        // Server-side validation (always validate again on submit)
+        var errors = new List<string>();
+
+        if (_userService.UsernameExists(input.Username))
+        {
+            errors.Add("Username is already taken");
+        }
+
+        if (_userService.EmailExists(input.Email))
+        {
+            errors.Add("Email is already registered");
+        }
+
+        if (input.Password.Length < 8)
+        {
+            errors.Add("Password must be at least 8 characters");
+        }
+
+        if (errors.Any())
+        {
+            return Partial("_RegisterErrors", errors);
+        }
+
+        _userService.Register(input);
+        
+        Response.Headers.Append("HX-Redirect", "/Register/Success");
+        return Content("", "text/html");
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == email;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}
+
+public class RegisterInput
+{
+    public string Username { get; set; } = "";
+    public string Email { get; set; } = "";
+    public string Password { get; set; } = "";
+}
+```
+
+**Pages/Shared/_RegisterErrors.cshtml:**
+
+```html
+@model List<string>
+
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach (var error in Model)
+        {
+            <li>@error</li>
+        }
+    </ul>
+</div>
+```
+
+### Key Patterns for Real-Time Validation
+
+**1. Debounce with delay:**
+
+```html
+hx-trigger="keyup changed delay:500ms"
+```
+
+Waits 500ms after typing stops before sending the request.
+
+**2. Cancel in-flight requests:**
+
+```html
+hx-sync="this:replace"
+```
+
+If the user keeps typing, cancel the previous request and send a new one.
+
+**3. Show loading state:**
+
+```html
+hx-indicator="#username-spinner"
+```
+
+Display a spinner while checking.
+
+**4. Target feedback area:**
+
+```html
+hx-target="#username-feedback"
+```
+
+Put validation messages in a dedicated container.
+
+### Validation CSS
+
+```css
+.input-with-feedback {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-feedback input {
+    flex: 1;
+}
+
+.input-with-feedback .htmx-indicator {
+    position: absolute;
+    right: 10px;
+    display: none;
+}
+
+.input-with-feedback .htmx-request ~ .htmx-indicator {
+    display: inline-block;
+}
+
+.form-feedback {
+    min-height: 1.5rem;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-feedback .text-success {
+    color: #198754;
+}
+
+.form-feedback .text-danger {
+    color: #dc3545;
+}
+
+.form-feedback .text-warning {
+    color: #ffc107;
+}
+```
+
+## Combining All Three Attributes
+
+A profile editor that uses all three attributes:
+
+**Pages/Profile.cshtml:**
+
+```html
+@page
+@model ProfileModel
+
+<h1>Edit Profile</h1>
+
+<form hx-post="/Profile?handler=Save"
+      hx-target="#profile-messages"
+      hx-swap="innerHTML"
+      hx-validate
+      hx-disabled-elt="find button[type='submit']">
+    @Html.AntiForgeryToken()
+    
+    <div class="form-group mb-3">
+        <label for="displayName">Display Name</label>
+        <input type="text" 
+               id="displayName"
+               name="DisplayName" 
+               value="@Model.Profile.DisplayName"
+               class="form-control"
+               required
+               maxlength="50"
+               hx-get="/Profile?handler=CheckDisplayName"
+               hx-trigger="keyup changed delay:500ms"
+               hx-target="#displayname-feedback"
+               hx-sync="this:replace" />
+        <div id="displayname-feedback" class="form-feedback"></div>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="bio">Bio</label>
+        <textarea id="bio"
+                  name="Bio"
+                  class="form-control"
+                  rows="4"
+                  maxlength="500">@Model.Profile.Bio</textarea>
+        <small class="form-text text-muted">
+            <span id="bio-count">@Model.Profile.Bio?.Length ?? 0</span>/500 characters
+        </small>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="website">Website</label>
+        <input type="url" 
+               id="website"
+               name="Website" 
+               value="@Model.Profile.Website"
+               class="form-control"
+               placeholder="https://example.com" />
+    </div>
+    
+    <div id="profile-messages"></div>
+    
+    <!-- hx-vals injects metadata, hx-params excludes debug field -->
+    <button type="submit"
+            hx-vals='js:{"updatedAt": new Date().toISOString()}'
+            hx-params="not _debugInfo"
+            class="btn btn-primary">
+        <span class="btn-text">Save Profile</span>
+        <span class="htmx-indicator">Saving...</span>
+    </button>
+    
+    <input type="hidden" name="_debugInfo" value="client-debug-data" />
+</form>
+
+<script>
+// Character counter for bio
+document.getElementById('bio').addEventListener('input', function() {
+    document.getElementById('bio-count').textContent = this.value.length;
+});
+</script>
+```
+
+**Pages/Profile.cshtml.cs:**
+
+```csharp
+public class ProfileModel : PageModel
+{
+    private readonly IProfileService _profileService;
+
+    public ProfileModel(IProfileService profileService)
+    {
+        _profileService = profileService;
+    }
+
+    public UserProfile Profile { get; set; } = null!;
+
+    public void OnGet()
+    {
+        Profile = _profileService.GetCurrentUserProfile();
+    }
+
+    public IActionResult OnGetCheckDisplayName(string displayName)
+    {
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            return Content("", "text/html");
+        }
+
+        var currentProfile = _profileService.GetCurrentUserProfile();
+        
+        // Allow keeping current name
+        if (displayName.Equals(currentProfile.DisplayName, StringComparison.OrdinalIgnoreCase))
+        {
+            return Content("<span class=\"text-success\">Current name</span>", "text/html");
+        }
+
+        if (_profileService.DisplayNameExists(displayName))
+        {
+            return Content("<span class=\"text-danger\">This display name is taken</span>", "text/html");
+        }
+
+        return Content("<span class=\"text-success\">Available</span>", "text/html");
+    }
+
+    public IActionResult OnPostSave(ProfileInput input)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Content("<div class=\"alert alert-danger\">Please correct the errors above</div>", "text/html");
+        }
+
+        var currentProfile = _profileService.GetCurrentUserProfile();
+
+        // Check display name uniqueness (skip if unchanged)
+        if (!input.DisplayName.Equals(currentProfile.DisplayName, StringComparison.OrdinalIgnoreCase)
+            && _profileService.DisplayNameExists(input.DisplayName))
+        {
+            return Content("<div class=\"alert alert-danger\">Display name is already taken</div>", "text/html");
+        }
+
+        currentProfile.DisplayName = input.DisplayName;
+        currentProfile.Bio = input.Bio;
+        currentProfile.Website = input.Website;
+        currentProfile.UpdatedAt = input.UpdatedAt;
+
+        _profileService.Save(currentProfile);
+
+        return Content("<div class=\"alert alert-success\">Profile saved!</div>", "text/html");
+    }
+}
+
+public class ProfileInput
+{
+    public string DisplayName { get; set; } = "";
+    public string? Bio { get; set; }
+    public string? Website { get; set; }
+    public DateTime UpdatedAt { get; set; }
+}
+```
+
+## Summary
+
+This chapter covered form enhancement attributes:
+
+- **`hx-params`** controls which fields are sent: `*` (all), `none`, `not fieldName`, or specific field names
+- **`hx-vals`** injects additional data using JSON syntax or `js:` prefix for dynamic values
+- **`hx-validate`** triggers HTML5 validation before htmx sends the request
+- **Real-time validation** uses `hx-get` with `delay:` trigger and `hx-sync="this:replace"`
+- **Server validation** should always run on submit, even if client-side checks passed
+
+These attributes give you fine control over form data while keeping validation logic on the server where it can access databases, enforce business rules, and stay consistent across all clients.
+
+## Preview of Next Chapter
+
+Chapter 18 covers drag-and-drop functionality with htmx and Hyperscript. You will learn to build sortable lists, kanban boards, and file upload zones that let users rearrange content with natural mouse and touch interactions.

@@ -99,7 +99,7 @@ To find translations, please check out the [Translations](./Translations.md) pag
         </tr>
         <tr>
             <td>16</td>
-            <td><a href="https://aspnet-htmx.com/chapter16/">Scoped Updates with hx-select and hx-select-oob</a></td>
+            <td><a href="https://aspnet-htmx.com/chapter16/">Scoped Updates with hx-select and Out-of-Band Swaps</a></td>
             <td>✔️</td>
         </tr>
         <tr>
