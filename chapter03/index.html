@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097508951">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822097616014">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,7 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>First Steps with htmx</title>
     <meta name="title" content="First Steps with htmx">
-    <meta name="description" content="The way we build web applications is changing. Client-side JavaScript frameworks dominate modern development, yet they often introduce complexity...">
+    <meta name="description" content="You can find the source examples for this chapter here.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/chapter03/">
@@ -24,23 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter03/">
     <meta property="og:title" content="First Steps with htmx">
-    <meta property="og:description" content="The way we build web applications is changing. Client-side JavaScript frameworks dominate modern development, yet they often introduce complexity...">
+    <meta property="og:description" content="You can find the source examples for this chapter here.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/chapter03/">
     <meta property="twitter:title" content="First Steps with htmx">
-    <meta property="twitter:description" content="The way we build web applications is changing. Client-side JavaScript frameworks dominate modern development, yet they often introduce complexity...">
+    <meta property="twitter:description" content="You can find the source examples for this chapter here.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../images/favicon.png" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.822097508951" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.822097616014" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.822097616014" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097508951" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097508951" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.822097616014" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.822097616014" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -253,6 +253,7 @@
         <span>First Steps with htmx</span>
     </h1>
 </doc-anchor-target>
+<p><em><strong>You can find the source examples for this chapter <a href="https://github.com/cwoodruff/book-aspnet-htmx/tree/main/_src/chap03">here</a>.</strong></em></p>
 <p>The way we build web applications is changing. Client-side JavaScript frameworks dominate modern development, yet they often introduce complexity that many projects do not need. State management, bundlers, elaborate frontend tooling: these concerns consume development time and add maintenance burden. htmx takes a different path. It enhances HTML&#x27;s native capabilities, allowing you to craft interactive experiences with minimal JavaScript. This chapter guides you through integrating htmx with ASP.NET Core Razor Pages to build dynamic web applications without the overhead of complex frontend frameworks.</p>
 <p>By focusing on server-driven interactions, htmx makes it possible to create fluid user experiences while keeping your application logic where it belongs: on the server. It uses declarative attributes to handle AJAX requests, event-driven interactions, and form submissions. Your markup stays clean and understandable. When combined with Razor Pages, htmx offers a way to blend server-side rendering with targeted interactivity, making your applications efficient and maintainable.</p>
 <p>This chapter takes you from fundamental principles to fully functional Razor Pages. You will learn to dynamically fetch, update, and submit content without full page reloads. We cover everything from using <code v-pre>hx-get</code> and <code v-pre>hx-post</code> for data retrieval and submission to debugging common issues and fine-tuning request behaviors. By the end, you will be ready to build interactive web applications that feel modern while remaining easy to maintain.</p>
@@ -485,7 +486,6 @@ document.body.addEventListener('htmx:configRequest', function(event) {
     &lt;/div&gt;
     &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
 &lt;/form&gt;
-
 &lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</code></pre>
 </doc-codeblock></div>
 <p><strong>Pages/Index.cshtml.cs</strong></p>
