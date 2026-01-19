@@ -5,196 +5,748 @@ label: Chap 7 - Working with hx-target and hx-swap
 meta:
 title: "Working with hx-target and hx-swap"
 ---
-# 7
 
 # Working with `hx-target` and `hx-swap`
 
-Using `hx-target` and `hx-swap` in htmx is akin to fine-tuning the steering and suspension of a high-performance car. While you can manage the basics, adjusting the precise location and method of content injection reveals how much more efficient and smooth your page interactions can become. These two attributes provide you with targeted control over which elements are updated and how those updates are applied, allowing you to create dynamic interfaces that feel intentional and polished.
+Every htmx request updates something on the page. The question is: what gets updated and how? By default, htmx replaces the inner content of the element that triggered the request. That works for simple cases. But real applications need precision. You need to update a sidebar when a form submits. You need to append items to a list without clearing existing content. You need to remove elements entirely when users delete them.
 
-With `hx-target`, you can direct server responses to specific parts of the page, ensuring that users see exactly what they need in the locations they expect. When combined with `hx-swap`, you can determine where the content will go and whether it should be replaced, wrapped around, or inserted before existing elements. This user-centric approach encourages careful consideration of your UI design—eliminating clutter and unnecessary movement, resulting in clean, targeted updates that keep users engaged.
+The `hx-target` attribute controls where the response goes. The `hx-swap` attribute controls how the response is inserted. Together, they give you complete control over DOM updates. This chapter covers both attributes in depth, including relative targeting, all swap strategies, swap modifiers, and out-of-band updates for complex multi-element changes.
 
-As you explore the potential of `hx-target` and `hx-swap`, you'll discover how these attributes can significantly reduce unnecessary page reloads and heavy front-end scripting, which refers to using client-side scripts to update the user interface dynamically. In this chapter, we will examine how to use these features effectively, explore various swapping strategies, and discuss best practices to ensure that your dynamic updates remain intuitive and maintainable. The outcome is a browsing experience that feels fluid and polished, requiring minimal effort on your part.
+## Understanding `hx-target`
 
-## Refining Page Updates with hx-target and hx-swap
+The `hx-target` attribute accepts a CSS selector that identifies where the server response should be placed. Without it, htmx targets the element that triggered the request.
 
-Many developers first encounter htmx by returning snippets of HTML that automatically replace the button or link that triggered the request. This default behavior feels magical at first, but once you move beyond basic demos, you’ll want more fine-grained control over where and how your new content is displayed. That’s where `hx-target` and `hx-swap` step in, letting you decide which element should be updated and exactly how the update should happen.
+### Basic ID Targeting
 
-By default, htmx injects the server’s response into the element that triggered the request. This works fine for small-scale interactions but can quickly become confusing if you have multiple clickable elements. Explicit targeting removes that guesswork. You can direct the response to the element you have in mind, whether it's a specific container, a section of the page, or a floating modal. The key is the `hx-target` attribute, which tells htmx exactly where to place the returned HTML.
+The most common pattern targets an element by ID:
 
-`hx-target` accepts a CSS selector or an element ID. If you specify `hx-target="#result"`, the content returned from the server will be swapped into an element whose `id="result"`. An example in Razor Pages might look like this:
-
-```HTML
-<button hx-get="/Index?handler=Details" hx-target="#detailsSection">
-    Show Details
+```html
+<button hx-get="/Products?handler=List" hx-target="#product-list">
+    Load Products
 </button>
 
-<div id="detailsSection"></div>
-```
-
-Here, clicking “Show Details” sends a request to the `OnGetDetails()` handler in your Index page model, and whatever HTML is returned lands in the `detailsSection` div. This approach keeps the rest of your page intact and allows you to update only the part the user cares about.
-
-`hx-swap` determines how the new content is inserted. The default value, innerHTML, replaces the target’s contents while preserving the target’s outer container. Other options like `outerHTML` or `beforebegin` can be handy for special layouts. If you don’t specify `hx-swap`, htmx uses `innerHTML` by default, but it’s good practice to set it explicitly when building more complex UIs. For instance, `hx-swap="beforeend"` would append to the existing content instead of replacing it entirely.
-
-A common real-world example involves updating a page section. Suppose you have a partial view called `_UserProfile.cshtml` that returns a snippet of HTML. You might add a button in your main page with:
-
-```HTML
-<button hx-get="/Profile?handler=LoadProfile" hx-target="#profileContainer" hx-swap="innerHTML">
-    View Profile
-</button>
-
-<div id="profileContainer">
-    <!-- Profile details will be injected here -->
+<div id="product-list">
+    <!-- Products will appear here -->
 </div>
 ```
 
-Your `Profile.cshtml.cs` file might contain:
+When clicked, the button fetches content from the server and inserts it into `#product-list`. The button itself remains unchanged.
 
-```C#
-public IActionResult OnGetLoadProfile()
+### CSS Selector Targeting
+
+Any valid CSS selector works with `hx-target`:
+
+```html
+<!-- Target by class (first matching element) -->
+<button hx-get="/Content" hx-target=".content-area">Load</button>
+
+<!-- Target by attribute -->
+<button hx-get="/Content" hx-target="[data-content-area]">Load</button>
+
+<!-- Target by tag -->
+<button hx-get="/Content" hx-target="main">Load</button>
+```
+
+### The `this` Keyword
+
+Use `this` to target the triggering element itself:
+
+```html
+<button hx-get="/Button?handler=Toggle"
+        hx-target="this"
+        hx-swap="outerHTML">
+    Click to Toggle
+</button>
+```
+
+The server returns a replacement button, and htmx swaps out the entire element. This pattern works well for toggle states, inline editing, and self-updating components.
+
+### Relative Targeting
+
+htmx provides special selectors for targeting elements relative to the trigger. These are invaluable when you have repeating components like list items or table rows.
+
+**`closest`** finds the nearest ancestor matching the selector:
+
+```html
+<div class="card">
+    <h3>Product Name</h3>
+    <button hx-delete="/Products?handler=Remove&amp;id=5"
+            hx-target="closest .card"
+            hx-swap="outerHTML">
+        Delete
+    </button>
+</div>
+```
+
+Clicking delete removes the entire card, including its contents.
+
+**`find`** targets a descendant of the triggering element:
+
+```html
+<div class="card">
+    <button hx-get="/Products?handler=Details&amp;id=5"
+            hx-target="find .card-body">
+        Load Details
+    </button>
+    <div class="card-body">
+        <!-- Details load here -->
+    </div>
+</div>
+```
+
+**`next`** targets the next sibling matching the selector:
+
+```html
+<button hx-get="/Help?handler=Topic&amp;id=intro"
+        hx-target="next .help-content">
+    Show Help
+</button>
+<div class="help-content"></div>
+```
+
+**`previous`** targets the previous sibling matching the selector:
+
+```html
+<div class="status-message"></div>
+<button hx-post="/Actions?handler=Run"
+        hx-target="previous .status-message">
+    Run Action
+</button>
+```
+
+### Targeting the Document Body
+
+For full-page updates or navigation-style interactions:
+
+```html
+<a hx-get="/Dashboard" 
+   hx-target="body" 
+   hx-push-url="true">
+    Go to Dashboard
+</a>
+```
+
+This replaces the entire body content and updates the browser URL, simulating navigation without a full page reload.
+
+## Understanding `hx-swap`
+
+The `hx-swap` attribute determines how the response content is inserted into the target. The default is `innerHTML`, but htmx provides many options for different scenarios.
+
+### `innerHTML` (Default)
+
+Replaces the target's inner content while keeping the target element itself:
+
+```html
+<div hx-get="/Content" hx-target="#container" hx-swap="innerHTML">
+    Load Content
+</div>
+
+<div id="container">
+    <p>This paragraph will be replaced</p>
+    <p>This one too</p>
+</div>
+```
+
+After the swap, `#container` still exists but contains only the server response.
+
+### `outerHTML`
+
+Replaces the entire target element, including the element itself:
+
+```html
+<div id="task-5" class="task">
+    <span>Complete project</span>
+    <button hx-patch="/Tasks?handler=Complete&amp;id=5"
+            hx-target="#task-5"
+            hx-swap="outerHTML">
+        Complete
+    </button>
+</div>
+```
+
+The server returns a new version of the task element (perhaps with a "completed" class), and it replaces the entire `#task-5` div.
+
+### Position-Based Swaps
+
+These options insert content relative to the target without replacing it:
+
+**`beforebegin`** inserts before the target element:
+
+```html
+<ul id="notifications">
+    <li>Existing notification</li>
+</ul>
+
+<button hx-post="/Notifications?handler=Add"
+        hx-target="#notifications"
+        hx-swap="beforebegin">
+    Add Alert Above List
+</button>
+```
+
+The new content appears before the `<ul>`, as a sibling.
+
+**`afterbegin`** inserts inside the target, before its first child:
+
+```html
+<ul id="messages">
+    <li>Older message</li>
+</ul>
+
+<button hx-get="/Messages?handler=Latest"
+        hx-target="#messages"
+        hx-swap="afterbegin">
+    Load New Messages
+</button>
+```
+
+New messages appear at the top of the list.
+
+**`beforeend`** inserts inside the target, after its last child:
+
+```html
+<ul id="log">
+    <li>First entry</li>
+</ul>
+
+<button hx-get="/Log?handler=More"
+        hx-target="#log"
+        hx-swap="beforeend">
+    Load More
+</button>
+```
+
+New entries append to the bottom. This is the standard pattern for infinite scroll and "load more" features.
+
+**`afterend`** inserts after the target element:
+
+```html
+<div id="comment-5">
+    <p>Original comment</p>
+    <button hx-get="/Comments?handler=Replies&amp;parentId=5"
+            hx-target="#comment-5"
+            hx-swap="afterend">
+        Show Replies
+    </button>
+</div>
+```
+
+Replies appear after the comment, as siblings.
+
+### `delete`
+
+Removes the target element entirely:
+
+```html
+<div id="item-5" class="item">
+    <span>Item to remove</span>
+    <button hx-delete="/Items?handler=Remove&amp;id=5"
+            hx-target="closest .item"
+            hx-swap="delete">
+        Remove
+    </button>
+</div>
+```
+
+The target element disappears from the DOM. The server response is ignored (though you should still return a 200 status).
+
+### `none`
+
+Performs no swap. The server response is received but not inserted into the DOM:
+
+```html
+<button hx-post="/Analytics?handler=Track"
+        hx-vals='{"event": "button_click"}'
+        hx-swap="none">
+    Track This Click
+</button>
+```
+
+Use this for side-effect-only requests like analytics, logging, or triggering background processes.
+
+## Swap Modifiers
+
+You can add modifiers to `hx-swap` to control timing, scrolling, and focus behavior.
+
+### Timing Modifiers
+
+**`swap:`** delays the swap operation:
+
+```html
+<div hx-get="/Content" hx-swap="innerHTML swap:500ms">
+    <!-- Content swaps 500ms after response arrives -->
+</div>
+```
+
+**`settle:`** delays the settle step (when htmx adds classes like `htmx-settling`):
+
+```html
+<div hx-get="/Content" hx-swap="innerHTML settle:300ms">
+    <!-- Settling classes applied 300ms after swap -->
+</div>
+```
+
+### Scroll Modifiers
+
+**`scroll:`** scrolls the target or window after the swap:
+
+```html
+<!-- Scroll target to top -->
+<div hx-get="/Content" hx-swap="innerHTML scroll:top">
+
+<!-- Scroll target to bottom -->
+<div hx-get="/Content" hx-swap="innerHTML scroll:bottom">
+
+<!-- Scroll window to top -->
+<div hx-get="/Content" hx-swap="innerHTML scroll:window:top">
+```
+
+**`show:`** ensures the target is visible after the swap:
+
+```html
+<!-- Show target at top of viewport -->
+<div hx-get="/Content" hx-swap="innerHTML show:top">
+
+<!-- Show target at bottom of viewport -->
+<div hx-get="/Content" hx-swap="innerHTML show:bottom">
+```
+
+### Focus Modifier
+
+**`focus-scroll:`** controls whether to scroll when focusing an element:
+
+```html
+<div hx-get="/Form" hx-swap="innerHTML focus-scroll:true">
+    <!-- After swap, scroll to focused element -->
+</div>
+```
+
+### Combining Modifiers
+
+Multiple modifiers can be combined:
+
+```html
+<div hx-get="/Content" 
+     hx-swap="innerHTML swap:200ms settle:100ms scroll:top show:top">
+    Load Content
+</div>
+```
+
+## Filtering Responses with `hx-select`
+
+Sometimes the server returns more HTML than you need. The `hx-select` attribute extracts specific content from the response:
+
+```html
+<button hx-get="/FullPage" 
+        hx-select="#just-this-section" 
+        hx-target="#container">
+    Load Section Only
+</button>
+```
+
+Even if `/FullPage` returns an entire page, htmx extracts only the element matching `#just-this-section` and swaps that into `#container`.
+
+This is useful when:
+- Reusing existing page handlers that return full pages
+- Extracting specific content from external sources
+- Avoiding duplicate handler methods for partial vs full responses
+
+## Out-of-Band Updates
+
+Standard htmx updates target a single element. But what if one action needs to update multiple unrelated parts of the page? A form submission might need to update a success message, a notification count in the header, and an item in a sidebar.
+
+Out-of-band (OOB) updates solve this. Elements in the server response marked with `hx-swap-oob="true"` are swapped into matching elements on the page by ID, regardless of the original target.
+
+### Basic OOB Example
+
+**Main page:**
+
+```html
+<header>
+    <span id="notification-count">5</span> notifications
+</header>
+
+<main>
+    <form hx-post="/Messages?handler=Send" hx-target="#result">
+        @Html.AntiForgeryToken()
+        <textarea name="message" required></textarea>
+        <button type="submit">Send Message</button>
+    </form>
+    <div id="result"></div>
+</main>
+```
+
+**Server response:**
+
+```html
+<!-- Primary response goes to #result -->
+<div class="success">Message sent!</div>
+
+<!-- OOB update goes to #notification-count -->
+<span id="notification-count" hx-swap-oob="true">6</span>
+```
+
+htmx processes the response as follows:
+1. The first element (without `hx-swap-oob`) goes to the target (`#result`)
+2. Elements with `hx-swap-oob="true"` find their matching elements by ID and replace them
+
+### OOB with Server-Side Code
+
+Here is a complete Razor Pages example:
+
+```csharp
+public class MessagesModel : PageModel
 {
-    var userProfile = ... // Load from database or another source
-    return Partial("_UserProfile", userProfile);
-}
-```
+    private readonly IMessageService _messageService;
+    private readonly INotificationService _notificationService;
 
-This setup ensures only the content inside profileContainer is replaced whenever the user clicks View Profile, leaving the rest of the page unchanged.
-
-Another place these attributes shine is when you’re working with lists and want to replace or append a single item without rerendering the entire container. Imagine a to-do list that you can update one entry at a time. Your htmx-triggered request can send only the new or edited item from the server, inserting it exactly where it belongs. For instance, `hx-swap="outerHTML"` could replace one list item in place, while `hx-swap="beforeend"` could be used to add newly created items to the bottom of the list without clearing out what’s already there.
-
-Once you start refining your page with `hx-target` and `hx-swap`, you’ll see how neatly they pair with Razor Pages. Instead of building an entire client-side framework for partial updates, you can let htmx handle the fetching and DOM manipulation while focusing on server-side rendering. This approach leads to a clean division of responsibilities, a maintainable codebase, and—most importantly—pages that feel fast and responsive.
-
-As you continue experimenting, you’ll find that `hx-target` and `hx-swap` open up a world of flexible options, letting you craft interactive experiences with minimal JavaScript overhead. It’s a step up from basic demos and a natural progression toward building larger, more dynamic applications where you control every subtlety of the user interface.
-
-## Mastering `hx-swap` for Smooth UI Updates
-
-One of htmx’s superpowers lies in its ability to update web page content seamlessly using different swap strategies. The `hx-swap` attribute tells htmx exactly how to inject the server’s response into the DOM, allowing you to tailor the user experience for each interaction. Knowing which swap mode to use—and when—gives you a higher level of control, transforming static pages into snappy, dynamic interfaces.
-
-At its simplest, `hx-swap` can be left off entirely, which defaults to innerHTML. This approach replaces only the inside of the targeted element, leaving the outer container intact. Often, that’s precisely what you need. For example, if your button triggers an update to a div with id="results", htmx will replace the contents of that div but keep the div itself in place, allowing you to change the data without losing existing container styles or attributes.
-
-outerHTML takes it one step further by swapping out the entire element, including the container itself. This is handy when you need to remove or replace an element altogether, such as swapping a placeholder container with a newly rendered component. You might see a code snippet like this in your Razor Page:
-
-```HTML
-<button hx-get="/Index?handler=CompleteTask" hx-target="#taskItem" hx-swap="outerHTML">
-    Complete
-</button>
-<div id="taskItem">
-    <p>Task in progress...</p>
-</div>
-```
-
-In this scenario, once the server returns the updated markup, the #taskItem div is replaced in its entirety, which is exactly what you’d want for removing or transforming a completed item.
-
-The modes beforebegin, afterbegin, beforeend, and afterend let you insert new content in specific positions around the target element without overriding its existing content. For example, if you have a dynamic list and want to add new items at the end, you might use `hx-swap="beforeend"`. Suppose your list is rendered in a partial view named `_ItemList.cshtml`. A simple approach could be:
-
-```HTML
-<button hx-get="/List?handler=AddItem" hx-target="#listContainer" hx-swap="beforeend">
-    Add More Items
-</button>
-<div id="listContainer">
-    <!-- The existing list items go here -->
-</div>
-```
-
-When the user clicks the button, the server returns a snippet for a new list item, which is then added to the bottom of the existing list, preserving whatever was there before.
-
-Replacing form content after submission is a common use case for these modes. Say you have a form that posts data to the server, and upon successful save, you want to replace the form with a thank-you message. You might do something like:
-
-```HTML
-<form hx-post="/Index?handler=SaveData" hx-target="#formContainer" hx-swap="innerHTML">
-    <input type="text" name="UserName" />
-    <button type="submit">Submit</button>
-</form>
-<div id="formContainer"></div>
-```
-
-The OnPostSaveData method can return a partial or a simple string. Whatever comes back is inserted into #formContainer, effectively replacing the original form content without a page reload.
-
-Adding items to a list is straightforward with insertion modes. If you want newly added items to appear at the top, set `hx-swap` to afterbegin. If you need them to appear at the bottom, use `beforeend`. The combination of `hx-get` for retrieving new items and `hx-post` for saving them makes it easy to craft intuitive list-based interfaces without resorting to complex JavaScript frameworks.
-
-Implementing an Infinite Scrolling list can take these ideas even further. You can attach an `hx-trigger` to a scroll event or a “Load More” button that appends new items to your existing collection whenever the user reaches the bottom of the page. For instance, setting `hx-get="/Items?handler=LoadNextPage" hx-swap="beforeend"` on a button that appears below your list means the server only sends the next chunk of items, and htmx appends them so the user can seamlessly keep scrolling.
-
-```HTML
-@page
-@model InfiniteScrollModel
-<div id="scrollable">
-    <ul id="feed">
-        @foreach (var post in Model.Posts)
-        {
-            <li>@post</li>
-        }
-    </ul>
-</div>
-<div hx-get="/InfiniteScroll?handler=LoadMore" hx-target="#feed" hx-swap="beforeend" hx-trigger="revealed">
-    <!-- This element triggers loading new items when it is revealed -->
-</div>
-
-@code {
-    public List<string> Posts { get; set; } = new() { "Post 1", "Post 2" };
-
-    public IActionResult OnGetLoadMore()
+    public MessagesModel(IMessageService messageService, INotificationService notificationService)
     {
-        return Content("<li>Post " + DateTime.Now.Ticks + "</li>", "text/html");
+        _messageService = messageService;
+        _notificationService = notificationService;
+    }
+
+    public IActionResult OnPostSend(string message)
+    {
+        _messageService.Send(message);
+        var notificationCount = _notificationService.GetUnreadCount();
+
+        var html = new StringBuilder();
+        
+        // Primary response
+        html.Append("<div class=\"success\">Message sent successfully!</div>");
+        
+        // OOB update for notification count
+        html.Append($"<span id=\"notification-count\" hx-swap-oob=\"true\">{notificationCount}</span>");
+
+        return Content(html.ToString(), "text/html");
     }
 }
 ```
 
-Choosing the right swap mode is all about preserving context while making room for the new. Whether you’re replacing a form with a confirmation message, removing an outdated element, or appending new content, `hx-swap` gives you the flexibility to handle any scenario. The more you use these modes, the more confident you’ll become in orchestrating sophisticated UI updates without writing extra JavaScript.
+### OOB Swap Modes
 
-## Orchestrating Multiple UI Updates with `hx-target` and `hx-swap`
+You can specify how OOB elements are swapped:
 
-Sometimes a single element swap isn’t enough. You might need to update multiple parts of your page, or even perform background changes that the user doesn’t directly trigger. By combining `hx-target` and `hx-swap` in creative ways, you can build surprisingly sophisticated interfaces without resorting to heavy JavaScript frameworks.
+```html
+<!-- Replace the element (default) -->
+<div id="sidebar" hx-swap-oob="true">New sidebar content</div>
 
-One powerful technique is the out-of-band (OOB) update, which lets you apply DOM changes in parts of the page that weren’t explicitly targeted. You can include an element in your server’s response with `hx-swap-oob="true"`, which signals htmx to find that element elsewhere on the page and replace it. This allows you to refresh, for example, a status bar or navigation badge in the background, even when the user interacts with a completely different section of the site.
+<!-- Append to the element -->
+<ul id="activity-log" hx-swap-oob="beforeend">
+    <li>New activity entry</li>
+</ul>
 
-Managing multiple content updates in a single request relies on returning multiple snippets, each tagged with its own OOB attributes. Suppose you have a shopping cart that needs to update an item’s subtotal, the cart total, and the cart count in the header. Your partial could look like this:
-
-```HTML
-<div id="cartItem_@(Model.Id)" hx-swap-oob="true">
-    <p>Item: @Model.Name - @Model.Quantity x @Model.Price</p>
+<!-- Prepend to the element -->
+<div id="alerts" hx-swap-oob="afterbegin">
+    <div class="alert">New alert!</div>
 </div>
 
-<div id="cartTotal" hx-swap-oob="true">
-    <p>Total: @Model.CartTotal</p>
+<!-- Replace inner content only -->
+<div id="status" hx-swap-oob="innerHTML">Updated status</div>
+```
+
+### Multiple OOB Updates
+
+A single response can include multiple OOB elements:
+
+```html
+<!-- Primary response -->
+<tr id="order-123">
+    <td>Order #123</td>
+    <td>Shipped</td>
+</tr>
+
+<!-- OOB: Update order count in sidebar -->
+<span id="pending-count" hx-swap-oob="true">4</span>
+
+<!-- OOB: Update status in header -->
+<div id="last-update" hx-swap-oob="true">Updated just now</div>
+
+<!-- OOB: Append to activity log -->
+<li hx-swap-oob="beforeend:#activity-log">Order #123 marked as shipped</li>
+```
+
+### `hx-select-oob`
+
+For more control, use `hx-select-oob` on the triggering element to specify which parts of the response should be treated as OOB:
+
+```html
+<button hx-get="/Dashboard?handler=Refresh"
+        hx-target="#main-content"
+        hx-select-oob="#sidebar-stats,#header-alerts">
+    Refresh Dashboard
+</button>
+```
+
+htmx will:
+1. Swap the response into `#main-content` (the target)
+2. Extract `#sidebar-stats` from the response and swap it into the matching element on the page
+3. Extract `#header-alerts` from the response and swap it into the matching element on the page
+
+## Practical Examples
+
+### Infinite Scroll
+
+Load more content as the user scrolls:
+
+```html
+@page
+@model FeedModel
+
+<div id="feed">
+    @foreach (var post in Model.Posts)
+    {
+        <partial name="_PostCard" model="post" />
+    }
 </div>
 
-<div id="headerCartCount" hx-swap-oob="true">
-    <span>Cart (@Model.ItemCount)</span>
+<!-- Trigger element at bottom of list -->
+<div hx-get="/Feed?handler=More&amp;page=@(Model.CurrentPage + 1)"
+     hx-target="#feed"
+     hx-swap="beforeend"
+     hx-trigger="revealed"
+     hx-indicator="#loading">
+    <span id="loading" class="htmx-indicator">Loading more posts...</span>
 </div>
 ```
 
-When the user clicks a button to update the cart, the server returns this chunk of HTML. htmx injects each element into its matching target by ID, even though your main `hx-target` might point somewhere else entirely.
-
-To see this in action, imagine a button that removes an item from the cart. The button might include `hx-get="/Cart?handler=RemoveItem&id=123"` and `hx-target="#cartContainer" hx-swap="innerHTML"`. The server would return a response that includes updated HTML for that particular item, the new total, and a header count. Once htmx processes the returned snippet, it uses the `hx-swap-oob` attributes to insert content into the existing elements outside of cartContainer, saving you the trouble of making multiple round trips or writing complex JavaScript.
-
-Sometimes you also need to orchestrate a more interactive flow, where updating one element leads to a fresh look in another. Combining multiple `hx-target` attributes, each paired with different swap modes, can help. For example, you could replace a button’s label with “Updating…” by using `hx-swap="outerHTML"` while also appending new rows to an order summary with `hx-swap="beforeend"`. Each part of the page gets the right kind of update, all triggered by a single server response.
-
-Implementing a fully interactive shopping cart with real-time updates showcases just how far you can push these concepts without diving into a separate frontend framework. You can increment or decrement item quantities, see the totals update immediately, and even watch as the cart icon in the header reflects the new item count, all from one streamlined set of server responses. This consistent, server-driven approach keeps your app’s logic in Razor Pages while still delivering a fluid user experience.
-
-Whether you’re inserting new content, removing elements, or making hidden background changes, combining `hx-target`, `hx-swap`, and out-of-band updates is a robust strategy for building more complex interactions. The ability to chain these updates, orchestrating multiple changes with a single request, is one of htmx’s biggest strengths and a perfect fit for ASP.NET Core Razor Pages.
-
-## Refining and Troubleshooting Targeted Content Updates
-
-One of the most common pitfalls when using `hx-target` and `hx-swap` is accidentally pointing to the wrong element. It’s easy to copy a snippet from another part of your page and forget to update the target’s ID or selector, leaving you wondering why your UI isn’t refreshing. If you see no errors in the console and the page isn’t updating, double-check that you’re referencing the correct element ID and that the server is returning valid HTML. Even a small syntax slip in your Razor partial can silently break the swap.
-
-When debugging, the browser’s developer tools are your best friend. You can watch the Network panel as htmx triggers requests, inspect the response, and confirm whether the returned HTML looks correct. If htmx is updating the page but not as expected, open the Elements panel and see how the DOM changes after each request. This real-time view makes it easy to confirm whether your target element received the new content or if you’re accidentally replacing the wrong part of your layout.
-
-Performance-wise, avoid extra re-renders by returning only the snippet you need. If all you want to change is a single row in a table or a single card in a list, don’t return the entire page or the entire list. Keeping server responses lean and highly focused reduces network overhead and speeds up DOM operations. Your goal is to minimize the payload so that htmx can do its job quickly, leaving the rest of the page untouched.
-
-A simple strategy for checking what your code is doing under the hood is to show comments in the browser’s console. Suppose you have a debugging call inside your Razor Page Model:
-
-```C#
-public IActionResult OnGetDebug()
+```csharp
+public IActionResult OnGetMore(int page)
 {
-    // You can log anything server-side here
-    Console.WriteLine("Server says hello!");
-    return Content("<script>console.log('Client says hello!')</script>", "text/html");
+    var posts = _postService.GetPage(page, pageSize: 10);
+    
+    if (!posts.Any())
+    {
+        return Content("", "text/html"); // No more posts
+    }
+
+    var html = new StringBuilder();
+    foreach (var post in posts)
+    {
+        html.Append(RenderPartial("_PostCard", post));
+    }
+    
+    // Include next trigger if more posts exist
+    if (_postService.HasMore(page))
+    {
+        html.Append($@"
+            <div hx-get=""/Feed?handler=More&page={page + 1}""
+                 hx-target=""#feed""
+                 hx-swap=""beforeend""
+                 hx-trigger=""revealed"">
+            </div>");
+    }
+
+    return Content(html.ToString(), "text/html");
 }
 ```
 
-When you load that response, htmx inserts the `<script>` tag into the DOM, causing the console message to appear. Although it’s a bit unconventional for production, this trick can come in handy when you need quick insights into what’s happening behind the scenes.
+### Live Search with Results Panel
 
-Another key to avoiding unnecessary re-renders is to chain smaller updates rather than cramming multiple big swaps into a single interaction. If you discover that you’re reloading a large part of the UI to make minor changes, consider dividing your layout into multiple targetable sections. That way, each user action updates only what’s strictly necessary, keeping everything snappy.
+```html
+<div class="search-container">
+    <input type="text" 
+           name="query"
+           placeholder="Search products..."
+           hx-get="/Search?handler=Results"
+           hx-target="#search-results"
+           hx-trigger="keyup changed delay:300ms"
+           hx-indicator="#search-spinner" />
+    <span id="search-spinner" class="htmx-indicator">Searching...</span>
+</div>
 
-As you refine and troubleshoot these targeted content updates, you’ll notice your pages gain a certain fluidity that feels closer to a single-page app, yet remains firmly rooted in server-side rendering. htmx lets you combine the best of both worlds, but it also requires careful planning to ensure you’re calling the right endpoints, returning properly scoped partials, and pointing your `hx-target` attributes in the right direction.
+<div id="search-results"></div>
+```
 
-In the next chapter, we’ll explore “Handling Events with `hx-trigger` and `hx-on`,” where you’ll learn how to better control when updates happen. That knowledge pairs beautifully with targeted content updates, letting you orchestrate conditional swaps, delay actions, and even respond to custom events as your UI grows in complexity.
+```csharp
+public IActionResult OnGetResults(string query)
+{
+    if (string.IsNullOrWhiteSpace(query))
+    {
+        return Content("", "text/html");
+    }
+
+    var results = _searchService.Search(query);
+    return Partial("_SearchResults", results);
+}
+```
+
+### Inline Edit with Cancel
+
+```html
+<!-- Display mode -->
+<div id="user-name-5" class="editable">
+    <span>John Doe</span>
+    <button hx-get="/Users?handler=EditName&amp;id=5"
+            hx-target="#user-name-5"
+            hx-swap="outerHTML">
+        Edit
+    </button>
+</div>
+```
+
+**_UserNameEdit.cshtml:**
+
+```html
+@model UserNameEditViewModel
+
+<div id="user-name-@Model.Id" class="editing">
+    <form hx-put="/Users?handler=UpdateName&amp;id=@Model.Id"
+          hx-target="#user-name-@Model.Id"
+          hx-swap="outerHTML">
+        @Html.AntiForgeryToken()
+        <input type="text" name="name" value="@Model.Name" required />
+        <button type="submit">Save</button>
+        <button type="button"
+                hx-get="/Users?handler=CancelEdit&amp;id=@Model.Id"
+                hx-target="#user-name-@Model.Id"
+                hx-swap="outerHTML">
+            Cancel
+        </button>
+    </form>
+</div>
+```
+
+```csharp
+public IActionResult OnGetEditName(int id)
+{
+    var user = _userService.GetById(id);
+    return Partial("_UserNameEdit", new UserNameEditViewModel { Id = id, Name = user.Name });
+}
+
+public IActionResult OnPutUpdateName(int id, string name)
+{
+    var user = _userService.GetById(id);
+    user.Name = name;
+    _userService.Update(user);
+    return Partial("_UserNameDisplay", user);
+}
+
+public IActionResult OnGetCancelEdit(int id)
+{
+    var user = _userService.GetById(id);
+    return Partial("_UserNameDisplay", user);
+}
+```
+
+### Shopping Cart with Multiple Updates
+
+```html
+<header>
+    <span id="cart-count">3</span> items in cart
+</header>
+
+<div id="cart-items">
+    @foreach (var item in Model.Items)
+    {
+        <partial name="_CartItem" model="item" />
+    }
+</div>
+
+<div id="cart-total">
+    Total: @Model.Total.ToString("C")
+</div>
+```
+
+**_CartItem.cshtml:**
+
+```html
+@model CartItem
+
+<div id="cart-item-@Model.Id" class="cart-item">
+    <span>@Model.Name</span>
+    <span>@Model.Price.ToString("C")</span>
+    <button hx-delete="/Cart?handler=Remove&amp;id=@Model.Id"
+            hx-target="#cart-item-@Model.Id"
+            hx-swap="outerHTML">
+        Remove
+    </button>
+</div>
+```
+
+```csharp
+public IActionResult OnDeleteRemove(int id)
+{
+    _cartService.RemoveItem(id);
+    var cart = _cartService.GetCart();
+
+    var html = new StringBuilder();
+    
+    // Primary response: empty string to remove the item
+    // (outerHTML with empty content removes the element)
+    
+    // OOB: Update cart count
+    html.Append($"<span id=\"cart-count\" hx-swap-oob=\"true\">{cart.ItemCount}</span>");
+    
+    // OOB: Update cart total
+    html.Append($"<div id=\"cart-total\" hx-swap-oob=\"true\">Total: {cart.Total:C}</div>");
+
+    return Content(html.ToString(), "text/html");
+}
+```
+
+## Debugging Target and Swap Issues
+
+### Common Problems
+
+**Target element not found**
+
+htmx silently fails if the target selector does not match any element. Verify:
+- The element exists in the DOM
+- The ID or class is spelled correctly
+- The element is not inside a template or script tag
+
+**Wrong element updated**
+
+Check for duplicate IDs on the page. Each ID should be unique.
+
+**OOB elements not updating**
+
+Verify:
+- The element ID in the response matches an element on the page exactly
+- The `hx-swap-oob` attribute is on the element in the response, not on the page
+
+**Content appears but in wrong position**
+
+Review your `hx-swap` value. Common confusion:
+- `beforeend` adds inside the target, at the end
+- `afterend` adds outside the target, after it
+
+### Browser Developer Tools
+
+Open the Network tab to inspect responses. Check:
+- Is the response HTML valid?
+- Does it contain the expected content?
+- For OOB, do element IDs match?
+
+Use the Elements tab to watch DOM changes in real-time as htmx processes responses.
+
+### htmx Logging
+
+Enable verbose logging:
+
+```html
+<script>
+htmx.logAll();
+</script>
+```
+
+This outputs every htmx event to the console, including target resolution and swap operations.
+
+## Summary
+
+This chapter covered `hx-target` and `hx-swap` in depth:
+
+- **`hx-target`** accepts CSS selectors, including `this` and relative selectors (`closest`, `find`, `next`, `previous`)
+- **`hx-swap`** controls insertion: `innerHTML`, `outerHTML`, `beforebegin`, `afterbegin`, `beforeend`, `afterend`, `delete`, `none`
+- **Swap modifiers** control timing (`swap:`, `settle:`), scrolling (`scroll:`, `show:`), and focus (`focus-scroll:`)
+- **`hx-select`** filters which part of the response to use
+- **`hx-swap-oob`** enables updating multiple unrelated elements from a single response
+- **`hx-select-oob`** provides fine-grained control over OOB element selection
+
+These attributes give you precise control over how your UI responds to server updates, enabling complex interactions without custom JavaScript.
+
+## Preview of Next Chapter
+
+Chapter 8 explores `hx-trigger` and event handling. You will learn how to control when requests fire, respond to custom events, add conditions and modifiers, and build responsive interfaces that react to user behavior in sophisticated ways.

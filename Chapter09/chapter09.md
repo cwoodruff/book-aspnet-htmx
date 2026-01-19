@@ -8,142 +8,784 @@ title: "Integrating Hyperscript for Complex Logic"
 
 # Integrating Hyperscript for Complex Logic
 
-Up to this point, we have explored how htmx brings delightful simplicity to ASP.NET Core Razor Pages by handling requests, updating UI fragments, and interacting with the server with minimal JavaScript. However, there are moments when this declarative approach may not suffice. We may require conditional logic, event chaining, or dynamic decision-making that doesn’t fit neatly into the hx-* attributes. This is where Hyperscript comes into play.
+htmx handles most interactions beautifully. Click a button, fetch content, swap it into the page. But some interactions need client-side logic that htmx alone cannot provide: toggling classes based on conditions, waiting for animations to complete, orchestrating multi-step sequences, or managing temporary UI state. You have two choices: write JavaScript or use Hyperscript.
 
-Think of Hyperscript as the missing piece of the htmx puzzle. It is a lightweight scripting language designed specifically for browsers, allowing you to express complex behaviors while maintaining an HTML-native feel. Unlike JavaScript, which often requires switching mental contexts, Hyperscript resides directly within your markup, keeping your logic closely tied to your HTML and easy to follow. It is declarative, readable, and surprisingly powerful for tasks typically handled by JavaScript.
+Hyperscript is a scripting language built for HTML. It lives in your markup using the `_` attribute, reads like English, and integrates tightly with htmx events. For many interactions, it provides a cleaner alternative to JavaScript event listeners and DOM manipulation.
 
-In this chapter, we will explore how Hyperscript complements htmx by enabling more advanced client-side logic without disrupting the clean, server-first development model we have established. You will learn how to trigger custom sequences of events, incorporate decision-making logic into your UI, and enhance interactivity without relying on a full JavaScript framework. Let’s dive in and elevate your Razor Pages with the elegance of Hyperscript.
+This chapter teaches you when Hyperscript makes sense, when htmx alone suffices, and how to combine both for sophisticated interactions. You will learn the syntax, see complete working examples with Razor Pages, and understand the trade-offs involved.
 
-## Getting Reactive: Hyperscript in the Flow of htmx
+## Installing Hyperscript
 
-htmx is a powerful tool for adding dynamic behavior to Razor Pages without needing a full frontend framework. However, sometimes you might require a bit more client-side logic. This is where Hyperscript comes in. It’s a lightweight scripting language designed to work seamlessly with htmx and HTML. You can think of it as a more concise and focused version of JavaScript—specifically created to enhance user interactions without the need for an entire script file or complicating your code with imperative logic.
-
-Hyperscript allows you to define behavior in a natural, readable format directly within HTML attributes. Rather than using JavaScript event listeners, conditionals, and DOM manipulation APIs, you can declaratively express your logic right alongside your HTML elements. This approach keeps your Razor Pages organized and ensures that the behavior is contextual, complementing htmx's philosophy of placing behavior close to the markup.
-
-For instance, if you want to execute a sequence of actions when a user clicks a button—like hiding a message, updating a class, and making an htmx request—doing this in JavaScript would typically involve setting up an event listener, executing multiple DOM calls, and utilizing a fetch or `htmx.trigger()` method. With Hyperscript, however, you can express the entire process inline using plain language. The outcome is simpler, more maintainable templates.
-
-Hyperscript is especially useful when you want to chain actions together, respond to user inputs based on conditions, or reflect changes in client-side state within your UI. For example, if you want to show a tooltip only when certain conditions are met or to animate a modal opening only if it’s not already visible, you can easily express this logic directly in your markup without referring to a JavaScript file or a global state manager.
-
-Here’s a practical example—let’s create a lightweight tooltip system without using any JavaScript. You’ll define a tooltip component and utilize Hyperscript to control its visibility on hover.
+Add Hyperscript to your `_Layout.cshtml` after htmx:
 
 ```html
-<span _="on mouseenter
-         add .visible to #tooltip
-         then wait 100ms
-         then remove .hidden from #tooltip
-       on mouseleave
-         add .hidden to #tooltip
-         then wait 100ms
-         then remove .visible from #tooltip">
-  Hover over me
-</span>
-
-<div id="tooltip" class="tooltip hidden">This is your tooltip</div>
+<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 ```
 
-And your CSS:
+Or install locally:
 
-```CSS
+```bash
+npm install hyperscript.org
+```
+
+Then reference from your wwwroot:
+
+```html
+<script src="~/lib/hyperscript.org/dist/_hyperscript.min.js"></script>
+```
+
+Hyperscript uses the `_` attribute (underscore) for its code. This keeps it visually distinct from htmx's `hx-` attributes.
+
+## Hyperscript Syntax Basics
+
+Hyperscript reads like English. Here are the fundamental patterns:
+
+### Event Handling
+
+```html
+<!-- Single event -->
+<button _="on click add .active to me">
+    Click Me
+</button>
+
+<!-- Multiple events -->
+<div _="on mouseenter add .hover to me
+        on mouseleave remove .hover from me">
+    Hover Area
+</div>
+```
+
+### Class Manipulation
+
+```html
+<!-- Add class -->
+<button _="on click add .loading to me">Start</button>
+
+<!-- Remove class -->
+<button _="on click remove .hidden from #panel">Show</button>
+
+<!-- Toggle class -->
+<button _="on click toggle .open on #menu">Toggle Menu</button>
+
+<!-- Add to another element -->
+<button _="on click add .highlight to #target">Highlight Target</button>
+```
+
+### Waiting and Timing
+
+```html
+<!-- Wait a duration -->
+<button _="on click 
+           add .processing to me
+           wait 2s
+           remove .processing from me">
+    Process
+</button>
+
+<!-- Wait for an event -->
+<button _="on click 
+           trigger loadContent on #content
+           wait for htmx:afterSwap from #content
+           add .loaded to #content">
+    Load
+</button>
+```
+
+### Conditionals
+
+```html
+<!-- If statement -->
+<button _="on click
+           if I match .active
+               remove .active from me
+           else
+               add .active to me
+           end">
+    Toggle State
+</button>
+
+<!-- Confirm dialog -->
+<button _="on click
+           if confirm('Are you sure?')
+               trigger delete on #form
+           end">
+    Delete
+</button>
+```
+
+### Targeting Elements
+
+```html
+<!-- me/I refers to current element -->
+<button _="on click add .clicked to me">Click</button>
+
+<!-- CSS selectors -->
+<button _="on click add .open to #modal">Open Modal</button>
+
+<!-- Relative selectors -->
+<button _="on click remove .error from closest .form-group">Clear Error</button>
+
+<!-- Multiple targets -->
+<button _="on click add .hidden to .notification">Hide All</button>
+```
+
+### Triggering Events
+
+```html
+<!-- Trigger on another element -->
+<button _="on click trigger submit on #myForm">Submit Form</button>
+
+<!-- Send custom event -->
+<button _="on click send refreshData to #dashboard">Refresh</button>
+
+<!-- Trigger htmx request -->
+<button _="on click trigger click on #hidden-htmx-button">Load via htmx</button>
+```
+
+## When to Use Hyperscript vs htmx Alone
+
+Before reaching for Hyperscript, check if htmx already provides what you need.
+
+### Use htmx Alone For:
+
+**Confirmation dialogs** - htmx has `hx-confirm`:
+
+```html
+<!-- Don't need Hyperscript for this -->
+<button hx-delete="/Items?handler=Remove&amp;id=5"
+        hx-target="closest .item"
+        hx-swap="outerHTML"
+        hx-confirm="Delete this item?">
+    Delete
+</button>
+```
+
+**Triggering requests from other elements** - Use `hx-trigger` with `from:`:
+
+```html
+<!-- Don't need Hyperscript for this -->
+<div hx-get="/Content?handler=Load"
+     hx-trigger="load, customEvent from:body"
+     hx-target="this">
+    Content loads on page load and when customEvent fires
+</div>
+```
+
+**Refreshing elements after actions** - Use `HX-Trigger` response header:
+
+```csharp
+public IActionResult OnPostCreate()
+{
+    _service.Create();
+    Response.Headers.Append("HX-Trigger", "itemCreated");
+    return Content("<div>Created!</div>", "text/html");
+}
+```
+
+```html
+<!-- List auto-refreshes when itemCreated event fires -->
+<div hx-get="/Items?handler=List"
+     hx-trigger="load, itemCreated from:body"
+     hx-target="this">
+</div>
+```
+
+### Use Hyperscript For:
+
+**Class toggling with conditions:**
+
+```html
+<button _="on click
+           if I match .active
+               remove .active from me
+               put 'Enable' into me
+           else
+               add .active to me
+               put 'Disable' into me
+           end">
+    Enable
+</button>
+```
+
+**Sequenced animations:**
+
+```html
+<button _="on click
+           add .fade-out to #old-content
+           wait 300ms
+           trigger loadNew on #content-area
+           wait for htmx:afterSwap from #content-area
+           add .fade-in to #content-area">
+    Transition Content
+</button>
+```
+
+**Temporary UI state:**
+
+```html
+<button _="on click
+           add .copied to me
+           writeText('Copied!') into navigator.clipboard
+           wait 2s
+           remove .copied from me">
+    Copy to Clipboard
+</button>
+```
+
+**Multi-step user flows:**
+
+```html
+<button _="on click
+           if #email.value is ''
+               add .error to #email
+               exit
+           end
+           add .loading to me
+           trigger submit on #form">
+    Submit
+</button>
+```
+
+## Integrating Hyperscript with htmx Events
+
+htmx fires events throughout the request lifecycle. Hyperscript can listen for these events and respond accordingly.
+
+### Key htmx Events
+
+| Event | When It Fires |
+|-------|---------------|
+| `htmx:beforeRequest` | Before request is sent |
+| `htmx:afterRequest` | After request completes |
+| `htmx:beforeSwap` | Before content is swapped |
+| `htmx:afterSwap` | After content is swapped |
+| `htmx:afterSettle` | After CSS transitions complete |
+| `htmx:responseError` | When server returns error |
+
+### Responding to htmx Events
+
+```html
+<form hx-post="/Contact?handler=Submit" 
+      hx-target="#result"
+      _="on htmx:beforeRequest add .submitting to me
+         on htmx:afterRequest remove .submitting from me">
+    @Html.AntiForgeryToken()
+    <input type="text" name="message" required />
+    <button type="submit">Send</button>
+</form>
+<div id="result"></div>
+```
+
+### Triggering htmx from Hyperscript
+
+Sometimes you need Hyperscript to initiate an htmx request. The cleanest approach triggers a click on an htmx-enabled element:
+
+```html
+<!-- Hyperscript triggers the htmx request -->
+<button _="on click
+           if confirm('Load fresh data?')
+               trigger click on #refresh-btn
+           end">
+    Confirm and Refresh
+</button>
+
+<!-- htmx handles the actual request -->
+<button id="refresh-btn" 
+        hx-get="/Dashboard?handler=Refresh"
+        hx-target="#dashboard"
+        style="display: none">
+</button>
+
+<div id="dashboard">Dashboard content</div>
+```
+
+### Chaining Actions After htmx Completes
+
+```html
+<button hx-get="/Notifications?handler=List"
+        hx-target="#notifications"
+        hx-swap="innerHTML"
+        _="on htmx:afterSwap 
+           wait 100ms
+           add .loaded to #notifications
+           send notificationsLoaded to body">
+    Load Notifications
+</button>
+
+<div id="notifications"></div>
+
+<!-- Another element responds to the custom event -->
+<div _="on notificationsLoaded from body
+        put 'Updated just now' into me">
+    Last updated: Never
+</div>
+```
+
+## Practical Examples
+
+### Tooltip System
+
+A tooltip that appears on hover with smooth transitions:
+
+```html
+<span class="has-tooltip"
+      _="on mouseenter
+           add .visible to next .tooltip
+         on mouseleave
+           remove .visible from next .tooltip">
+    Hover over me
+    <span class="tooltip">This is the tooltip content</span>
+</span>
+```
+
+```css
 .tooltip {
     position: absolute;
     background: #333;
     color: white;
-    padding: 0.5rem;
-    border-radius: 5px;
-    transition: opacity 0.2s ease;
-}
-.hidden {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     opacity: 0;
+    transition: opacity 0.2s ease;
     pointer-events: none;
 }
-.visible {
+
+.tooltip.visible {
     opacity: 1;
 }
 ```
 
-That `_=` attribute is Hyperscript in action. It listens for mouse events, modifies classes, and adds delays for smooth transitions—all inline and all readable. There’s no JavaScript file, no document.querySelector, and no external dependencies. This approach keeps your code clean, maintainable, and easy to debug, especially within Razor Pages where tight coupling between markup and behavior is a plus.
+### Modal Dialog
 
-When paired with htmx, Hyperscript is the perfect tool for those “just a bit of logic” moments that would otherwise balloon into unnecessary complexity. It's not here to replace JavaScript for heavy lifting, but for 80% of UI interactivity use cases—especially when working with server-rendered apps—Hyperscript hits the sweet spot.
-
-## Leveling Up Events: Hyperscript + htmx in Harmony
-
-htmx gives you a fantastic way to wire up interactions using attributes like `hx-get`, `hx-post`, and `hx-trigger`. But sometimes, the built-in triggers aren’t quite enough—you need to wait, sequence actions, or respond to one event by firing another. That’s where Hyperscript becomes your secret weapon. You can use it to dynamically extend or respond to htmx-driven behavior, enabling smoother and smarter interactions in your Razor Pages without writing JavaScript.
-
-Let’s say you have a dashboard widget that refreshes itself after a background update. htmx can fetch new content from the server, but how do you wait until the update is complete before triggering the refresh? With Hyperscript, you can hook into htmx events like `htmx:afterRequest` or `htmx:afterSwap` and trigger additional actions from there. These custom sequences keep the user interface responsive and tightly orchestrated.
-
-Here’s how you might implement this. Suppose you have a component that updates via an hx-post request—like a status toggle. You want to refresh a summary section once the update completes:
+A modal that opens, loads content via htmx, and closes on completion:
 
 ```html
-<form hx-post="/Status/Toggle" hx-target="#status-section" hx-swap="outerHTML" _="
-    on htmx:afterRequest 
-        wait 250ms 
-        then send refresh to #summary">
-    <button type="submit">Toggle Status</button>
-</form>
+@page
+@model ModalDemoModel
 
-<div id="summary" hx-get="/Status/Summary" hx-trigger="refresh from:body"></div>
-```
-
-In this example, Hyperscript listens for the `htmx:afterRequest` event on the form. Once it fires, Hyperscript waits a short moment, then triggers a synthetic `refresh` event that causes htmx to re-fetch the updated summary. This kind of choreography would usually require JavaScript and DOM listeners, but here it’s self-contained and crystal clear in the markup.
-
-When debugging Hyperscript behaviors in Razor Pages, your best friend is the browser console. Hyperscript provides helpful runtime error messages, and you can enable verbose output with a query string like `?hyperscript-debug=true` or by setting `window._hyperscript.debug = true` in a small inline script. If you’re not seeing the behavior you expect, check that your Hyperscript is correctly bound (the `_=` attribute must be on the right element), and that events are properly scoped.
-
-The real power of Hyperscript in Razor Pages apps is how seamlessly it fits into the htmx flow. Instead of bouncing between HTML and JavaScript files, you stay in the same mental space—markup, behavior, and logic all in one place. As your interactivity needs grow, Hyperscript helps you grow with them—without ever dragging you into the deep waters of full SPA complexity.
-
-## From Clicks to Conversations: Building Interaction Flows with Hyperscript
-
-One of the hardest parts of client-side development is managing the branching logic that comes with real-world user interactions. Should something happen only under a certain condition? Should a sequence wait on a user action, or pause before progressing? JavaScript gives you full control, but that control often comes with boilerplate, complexity, and separation from your markup. Hyperscript flips the script, letting you express those same ideas right in your HTML in a clean, declarative way.
-
-Imagine a scenario where you want to confirm a user’s intent before executing a destructive action—say, deleting a record. With Hyperscript, you can handle the prompt and the conditional follow-up without ever leaving your Razor Page.
-
-Here’s an example:
-
-```html
-<button _="on click
-        if confirm('Are you sure you want to delete this?')
-        then add .loading to me
-        then send deleteRequest to #deleteForm">
-    Delete
+<!-- Open button -->
+<button _="on click add .open to #modal">
+    View Product Details
 </button>
 
-<form id="deleteForm" hx-delete="/Item/Delete" hx-target="#item-list" hx-swap="outerHTML"></form>
-```
-
-This one snippet introduces conditional logic, a state change (adding a class), and an htmx-triggered request—all from inside a Hyperscript attribute. There’s no JavaScript file, no click event handler, and no global state. It’s expressive, readable, and maintains the tight markup-behavior cohesion that makes Razor Pages so productive.
-
-You can also use Hyperscript to build complex, multi-step interactions that evolve in response to user input. One common pattern is a modal dialog that appears, fetches content asynchronously, then allows for form submission inside it. Normally, this involves multiple scripts and nested callbacks. But with Hyperscript and htmx, it’s much more approachable.
-
-Let’s walk through a fully dynamic modal flow:
-
-```html
-<button _="on click
-        add .open to #modal
-        then put 'Loading...' into #modal-body
-        then get '/Product/Details?id=42'
-        then put the result into #modal-body">
-    View Details
-</button>
-
+<!-- Modal structure -->
 <div id="modal" class="modal">
-  <div id="modal-body"></div>
+    <div class="modal-backdrop" _="on click remove .open from #modal"></div>
+    <div class="modal-content">
+        <button class="modal-close" _="on click remove .open from #modal">X</button>
+        <div id="modal-body"
+             hx-get="/ModalDemo?handler=ProductDetails&amp;id=42"
+             hx-trigger="load"
+             hx-target="this">
+            Loading...
+        </div>
+    </div>
 </div>
 ```
 
-This snippet adds a class to show the modal, displays a loading message, and then asynchronously loads the content into the modal’s body. All this happens in a single readable sequence, and because htmx handles the get request and Hyperscript binds the actions, you don’t write a line of JavaScript.
+```csharp
+public class ModalDemoModel : PageModel
+{
+    private readonly IProductService _productService;
 
-You can even hook into form submissions inside the modal using htmx as usual. If you wanted to post a form and close the modal on success, you might have something like this:
+    public ModalDemoModel(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    public void OnGet() { }
+
+    public IActionResult OnGetProductDetails(int id)
+    {
+        var product = _productService.GetById(id);
+        if (product == null) return NotFound();
+        return Partial("_ProductDetails", product);
+    }
+}
+```
+
+**Pages/Shared/_ProductDetails.cshtml:**
 
 ```html
-<form hx-post="/Product/Update" hx-target="#modal-body" hx-swap="innerHTML" 
+@model Product
+
+<h2>@Model.Name</h2>
+<p>@Model.Description</p>
+<p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+
+<form hx-post="/ModalDemo?handler=AddToCart"
+      hx-target="#cart-count"
       _="on htmx:afterRequest remove .open from #modal">
-  @Html.AntiForgeryToken()
-  <!-- form fields here -->
-  <button type="submit">Save</button>
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="productId" value="@Model.Id" />
+    <button type="submit">Add to Cart</button>
 </form>
 ```
 
-The modal closes itself when the form is successfully submitted, providing an elegant interaction loop with just Hyperscript and htmx.
+```css
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
 
-These kinds of flows—simple but nuanced—are where Hyperscript truly shines. You can orchestrate interactions that feel thoughtful and responsive, all without leaving the Razor Pages model or introducing additional libraries. Hyperscript bridges the last mile of user experience in server-rendered apps, letting you finesse the client side without surrendering to complexity.
+.modal.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-In the next chapter, we’ll shift from handling dynamic content to managing browser behavior. We’ll look at how hx-push-url and hx-replace-url let you take control of navigation in a single-page style—without a full page reload or needing a JavaScript router. You’ll learn how to keep URLs in sync with the UI, enable back-button support, and build deep-linkable components that feel seamless and fast.
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+}
+```
+
+### Accordion Component
+
+An accordion that allows only one section open at a time:
+
+```html
+<div class="accordion">
+    <div class="accordion-item">
+        <button class="accordion-header"
+                _="on click
+                   if next .accordion-body matches .open
+                       remove .open from next .accordion-body
+                   else
+                       remove .open from .accordion-body in closest .accordion
+                       add .open to next .accordion-body
+                   end">
+            Section 1
+        </button>
+        <div class="accordion-body">
+            <p>Content for section 1</p>
+        </div>
+    </div>
+    
+    <div class="accordion-item">
+        <button class="accordion-header"
+                _="on click
+                   if next .accordion-body matches .open
+                       remove .open from next .accordion-body
+                   else
+                       remove .open from .accordion-body in closest .accordion
+                       add .open to next .accordion-body
+                   end">
+            Section 2
+        </button>
+        <div class="accordion-body">
+            <p>Content for section 2</p>
+        </div>
+    </div>
+</div>
+```
+
+```css
+.accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.accordion-body.open {
+    max-height: 500px;
+}
+```
+
+### Form with Client-Side Validation
+
+Validate before submitting, show loading state, handle errors:
+
+```html
+@page
+@model ContactModel
+
+<form id="contact-form"
+      hx-post="/Contact?handler=Submit"
+      hx-target="#form-result"
+      _="on submit
+           if #email.value is ''
+               halt the event
+               add .error to #email
+               put 'Email is required' into #email-error
+               exit
+           end
+           if not #email.value contains '@'
+               halt the event
+               add .error to #email
+               put 'Enter a valid email' into #email-error
+               exit
+           end
+           remove .error from #email
+           put '' into #email-error
+         on htmx:beforeRequest
+           add .submitting to me
+         on htmx:afterRequest
+           remove .submitting from me">
+    @Html.AntiForgeryToken()
+    
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" 
+               _="on input remove .error from me" />
+        <span id="email-error" class="error-message"></span>
+    </div>
+    
+    <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+    </div>
+    
+    <button type="submit">
+        <span class="normal-text">Send Message</span>
+        <span class="loading-text">Sending...</span>
+    </button>
+</form>
+
+<div id="form-result"></div>
+```
+
+```css
+.form-group input.error {
+    border-color: red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.875rem;
+}
+
+form.submitting button .normal-text {
+    display: none;
+}
+
+form.submitting button .loading-text {
+    display: inline;
+}
+
+button .loading-text {
+    display: none;
+}
+```
+
+```csharp
+public class ContactModel : PageModel
+{
+    private readonly IEmailService _emailService;
+
+    public ContactModel(IEmailService emailService)
+    {
+        _emailService = emailService;
+    }
+
+    public void OnGet() { }
+
+    public async Task<IActionResult> OnPostSubmit(string email, string message)
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(message))
+        {
+            Response.StatusCode = 400;
+            return Content("<div class=\"error\">All fields are required</div>", "text/html");
+        }
+
+        await _emailService.SendAsync(email, message);
+        return Content("<div class=\"success\">Message sent! We will respond shortly.</div>", "text/html");
+    }
+}
+```
+
+### Dashboard with Refresh Controls
+
+A dashboard with manual refresh and auto-refresh toggle:
+
+```html
+@page
+@model DashboardModel
+
+<div class="dashboard-controls">
+    <button hx-get="/Dashboard?handler=Stats"
+            hx-target="#stats"
+            hx-indicator="#refresh-indicator">
+        Refresh Now
+    </button>
+    
+    <label>
+        <input type="checkbox" id="auto-refresh"
+               _="on change
+                  if I am checked
+                      set @hx-trigger of #stats to 'load, every 30s'
+                      call htmx.process(#stats)
+                  else
+                      set @hx-trigger of #stats to 'load'
+                      call htmx.process(#stats)
+                  end" />
+        Auto-refresh every 30s
+    </label>
+    
+    <span id="refresh-indicator" class="htmx-indicator">Refreshing...</span>
+</div>
+
+<div id="stats"
+     hx-get="/Dashboard?handler=Stats"
+     hx-trigger="load"
+     hx-target="this">
+    Loading stats...
+</div>
+```
+
+```csharp
+public class DashboardModel : PageModel
+{
+    private readonly IStatsService _statsService;
+
+    public DashboardModel(IStatsService statsService)
+    {
+        _statsService = statsService;
+    }
+
+    public void OnGet() { }
+
+    public IActionResult OnGetStats()
+    {
+        var stats = _statsService.GetCurrent();
+        return Partial("_DashboardStats", stats);
+    }
+}
+```
+
+### Copy to Clipboard
+
+A button that copies text and shows feedback:
+
+```html
+<div class="code-block">
+    <pre id="code-content">npm install htmx.org</pre>
+    <button class="copy-btn"
+            _="on click
+               writeText(#code-content.innerText) on navigator.clipboard
+               add .copied to me
+               wait 2s
+               remove .copied from me">
+        <span class="copy-text">Copy</span>
+        <span class="copied-text">Copied!</span>
+    </button>
+</div>
+```
+
+```css
+.copy-btn .copied-text {
+    display: none;
+}
+
+.copy-btn.copied .copy-text {
+    display: none;
+}
+
+.copy-btn.copied .copied-text {
+    display: inline;
+}
+
+.copy-btn.copied {
+    background-color: #28a745;
+}
+```
+
+## Debugging Hyperscript
+
+### Enable Debug Mode
+
+Add this script to see verbose output in the console:
+
+```html
+<script>
+_hyperscript.config.debug = true;
+</script>
+```
+
+### Common Issues
+
+**Script not running**
+
+- Verify Hyperscript is loaded after htmx
+- Check that the `_` attribute is on the correct element
+- Look for syntax errors in the browser console
+
+**Event not firing**
+
+- Confirm the event name is correct (htmx events use colons: `htmx:afterSwap`)
+- Check that the source element exists when the event fires
+- Use `from:` to listen for events bubbling from child elements
+
+**Element not found**
+
+- Verify the selector is correct
+- Ensure the target element exists in the DOM
+- Use browser dev tools to test the selector
+
+**Action not completing**
+
+- Check for `exit` statements that might be stopping execution
+- Verify conditionals are properly closed with `end`
+- Add `log` statements to trace execution: `_="on click log 'clicked' then ..."`
+
+### Debugging with Log
+
+```html
+<button _="on click
+           log 'Button clicked'
+           log me
+           add .active to me
+           log 'Class added'">
+    Debug Me
+</button>
+```
+
+The `log` command outputs to the browser console.
+
+## Performance Considerations
+
+Hyperscript is lightweight (about 15KB minified), but keep these points in mind:
+
+**Avoid heavy computation** - Hyperscript is interpreted at runtime. Complex logic should live in JavaScript or on the server.
+
+**Minimize DOM queries** - Cache references when performing multiple operations on the same element.
+
+**Use htmx for network requests** - Hyperscript can make HTTP requests, but htmx handles them better with swapping, indicators, and error handling.
+
+**Keep scripts focused** - If a Hyperscript block exceeds 10-15 lines, consider moving the logic to JavaScript.
+
+## Summary
+
+Hyperscript provides a readable, English-like syntax for client-side interactions that live directly in your markup:
+
+- **Installation**: Add the script after htmx in your layout
+- **Syntax**: Uses `_` attribute with English-like commands
+- **Class manipulation**: `add`, `remove`, `toggle` classes on elements
+- **Event handling**: `on click`, `on mouseenter`, `on htmx:afterSwap`
+- **Timing**: `wait 500ms`, `wait for eventName`
+- **Conditionals**: `if ... else ... end`
+- **htmx integration**: Listen for htmx events, trigger htmx requests
+
+Use Hyperscript for UI state and sequencing. Use htmx alone when its built-in features (`hx-confirm`, `hx-trigger`, `HX-Trigger` header) suffice. The combination gives you sophisticated interactions without JavaScript frameworks.
+
+## Preview of Next Chapter
+
+Chapter 10 covers URL management with `hx-push-url` and `hx-replace-url`. You will learn how to update the browser's address bar during htmx navigation, enable back-button support, and create deep-linkable components that maintain state across page loads.

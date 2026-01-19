@@ -5,130 +5,733 @@ label: Chap 4 - Understanding htmx Commands
 meta:
 title: "Understanding htmx Commands"
 ---
-# 4
 
 # Understanding htmx Commands
 
-_**You can find the source examples for this chapter [here](https://github.com/cwoodruff/book-aspnet-htmx/tree/main/_src/chap04).**_
+Chapter 3 introduced the basics of htmx with `hx-get`, `hx-post`, `hx-target`, and `hx-swap`. You built simple interactions and learned how htmx sends requests and updates the DOM. Now it is time to go deeper. This chapter expands your command vocabulary with `hx-put`, `hx-patch`, `hx-delete`, and advanced targeting techniques. You will build complete CRUD operations, handle complex swap scenarios, and learn patterns that scale to real applications.
 
-Welcome to the beating heart of htmx—the commands that empower you to make it all work! In this chapter, we'll take a deep dive into the fundamental building blocks of htmx, exploring how simple HTML attributes can transform your Razor Pages into interactive, server-driven applications. Forget about wrestling with JavaScript-heavy frameworks; with htmx, your markup does the talking, fetching, swapping, and updating content dynamically with just a sprinkle of attributes.
+By the end of this chapter, you will understand what each command does and when to choose one over another. You will have working code for create, read, update, and delete operations. You will know how to update multiple page elements from a single response. These are the building blocks for the interactive dashboards, admin panels, and data-driven applications you will build in later chapters.
 
-We'll start with an overview of the htmx API, dissecting how it extends standard HTML with powerful commands like `hx-get`, `hx-post`, and `hx-swap`. You'll see firsthand how these attributes enable seamless interactions, handling everything from fetching data to submitting forms, all without a single line of JavaScript. By the end of this chapter, you'll understand not just what each command does but when and why to use them in an ASP.NET Core 9 Razor Pages project.
+## The Complete htmx Command Set
 
-But we're not stopping at theory. You'll get hands-on experience with practical examples, tackling common scenarios like dynamic content updates, form submissions, and RESTful operations—all with concise, effective code that you can immediately apply in your projects. So gear up, because by the time you reach the last page of this chapter, you'll be wielding htmx commands like a pro, making your Razor Pages apps more interactive, responsive, and efficient than ever before.
+htmx provides HTTP method attributes that map directly to RESTful operations:
 
-## Overview of the htmx API
+| Attribute | HTTP Method | Typical Use |
+|-----------|-------------|-------------|
+| `hx-get` | GET | Retrieve and display data |
+| `hx-post` | POST | Create new resources, submit forms |
+| `hx-put` | PUT | Replace an existing resource entirely |
+| `hx-patch` | PATCH | Partially update an existing resource |
+| `hx-delete` | DELETE | Remove a resource |
 
-### The Role of htmx in Modern Web Applications
+Each attribute takes a URL as its value. When the element is triggered (by default, on click for buttons and links, on submit for forms), htmx sends the corresponding HTTP request to that URL.
 
-Modern web applications demand dynamic interactivity, and htmx serves as a bridge between traditional server-side rendering and the need for fast, smooth updates. Historically, developers leaned on JavaScript-heavy frameworks to provide this interactivity, but this often came at the cost of complexity, maintainability, and performance. htmx offers a more efficient alternative by enabling HTML itself to handle these interactions while keeping business logic on the server where it belongs.
+## Building a Complete CRUD Example
 
-With htmx, an element on your page can directly request and update content from the server without requiring JavaScript event handlers or API requests structured around JSON. This makes applications lighter, easier to debug, and much more maintainable in the long run, allowing you to focus on the core functionality of your application and be more productive in your development tasks.
+Theory only takes you so far. Let us build a working task list that demonstrates all five HTTP methods. This example will show you how htmx commands work together in a realistic scenario.
 
-### How htmx Extends HTML with Built-in Commands
+### Project Setup
 
-At the core of htmx is its ability to enrich HTML elements with `hx-attributes`, which instruct the browser to interact with the server in a declarative way. Instead of writing JavaScript to handle AJAX requests and manually update the DOM, htmx allows you to express these interactions directly in your markup.
+Create a new Razor Pages project or add these files to an existing one. We will need a model, a page, and several partial views.
 
-For instance, consider the following example:
+**Models/TaskItem.cs**
 
-```HTML
-<button hx-get="/api/message" hx-target="#result">Fetch Message</button>
-<div id="result"></div>
-```
+```csharp
+namespace YourApp.Models;
 
-Here, the `hx-get` attribute ensures that when the button is clicked, a `GET` request is sent to `/api/message`. The server's response will then be inserted into the `<div id= "result">`. This approach makes it incredibly easy to build interactive applications with minimal code.
-
-### Key Components of the htmx API
-
-htmx provides several attributes that make dynamic interactions intuitive and expressive. Each serves a specific purpose in how elements communicate with the server and handle responses. Let's explore them in detail:
-
-#### `hx-get`: Retrieving Data from the Server
-
-This attribute sends a `GET` request to the specified URL and updates the target element with the response. It's ideal for retrieving data without refreshing the page.
-
-#### `hx-post`: Submitting Forms and Sending Data
-
-Instead of handling form submissions through JavaScript, `hx-post` sends form data to the server and updates the page with the returned HTML. This simplifies interactions such as comment submissions or user input processing.
-
-#### `hx-put`, `hx-patch`, `hx-delete`: RESTful Operations
-
-For scenarios where you need to update or delete data dynamically, these attributes send appropriate HTTP requests while keeping the logic minimal and readable.
-
-#### `hx-target`: Where Should the Response Go?
-
-By default, responses replace the element that initiated the request. However, hx-target allows developers to specify exactly where the new content should be inserted.
-
-#### `hx-swap`: How Should the Response Be Inserted?
-
-Different parts of an application may require responses to be inserted in different ways. The `hx-swap` attribute determines whether the new content replaces the target's inner content (`innerHTML`), the entire element (`outerHTML`), or should be inserted in a different position like `beforebegin` or `afterend`.
-
-## Introducing Server-Side Interactivity with Razor Pages
-
-### The htmx-Powered Razor Pages Workflow
-
-Traditional Razor Pages rely on full-page reloads for updates, but htmx enhances this model by enabling seamless, partial updates. The result is a workflow where user interactions trigger lightweight AJAX requests that fetch updated content from the server, reducing unnecessary data transfer and improving performance.
-
-For example, suppose you want to update a section of your page dynamically based on a user's interaction. With htmx, this is straightforward:
-
-```HTML
-<button hx-get="/Index?handler=List" hx-target="#user-list">Load Users</button>
-<div id="user-list"></div>
-```
-
-And on the server:
-
-```C#
-public class IndexModel : PageModel
+public class TaskItem
 {
-    public IActionResult OnGetList()
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public bool IsComplete { get; set; }
+}
+```
+
+**Services/TaskService.cs**
+
+For simplicity, we will use an in-memory store. In a real application, this would be a database.
+
+```csharp
+namespace YourApp.Services;
+
+using YourApp.Models;
+
+public class TaskService
+{
+    private static readonly List<TaskItem> Tasks = new()
     {
-        var users = new List<string> {"Maarten", "Woody", "Khalid"};
-        return Content($"<ul>{string.Join("", users.Select(u => $"<li>{u}</li>"))}</ul>", "text/html");
+        new TaskItem { Id = 1, Title = "Learn htmx basics", IsComplete = true },
+        new TaskItem { Id = 2, Title = "Build CRUD operations", IsComplete = false },
+        new TaskItem { Id = 3, Title = "Master advanced patterns", IsComplete = false }
+    };
+    
+    private static int _nextId = 4;
+
+    public List<TaskItem> GetAll() => Tasks.ToList();
+    
+    public TaskItem? GetById(int id) => Tasks.FirstOrDefault(t => t.Id == id);
+    
+    public TaskItem Create(string title)
+    {
+        var task = new TaskItem { Id = _nextId++, Title = title };
+        Tasks.Add(task);
+        return task;
+    }
+    
+    public TaskItem? Update(int id, string title)
+    {
+        var task = GetById(id);
+        if (task != null)
+        {
+            task.Title = title;
+        }
+        return task;
+    }
+    
+    public TaskItem? ToggleComplete(int id)
+    {
+        var task = GetById(id);
+        if (task != null)
+        {
+            task.IsComplete = !task.IsComplete;
+        }
+        return task;
+    }
+    
+    public bool Delete(int id)
+    {
+        var task = GetById(id);
+        if (task != null)
+        {
+            Tasks.Remove(task);
+            return true;
+        }
+        return false;
     }
 }
 ```
 
-### Partial Responses vs. JSON Responses
+Register the service in `Program.cs`:
 
-A key difference between htmx and traditional client-side JavaScript frameworks is its reliance on partial HTML responses rather than JSON. When a request is made, htmx sends the request to the server, which processes it and returns a partial HTML response. This response is then inserted into the page, updating the content without the need for a full page reload. This approach allows Razor Pages to remain the central authority for rendering, reducing duplication of logic between client and server.
+```csharp
+builder.Services.AddSingleton<TaskService>();
+```
 
-Partial HTML Example:
+### The Main Page
 
-```C#
-public IActionResult OnGetUserInfo()
+**Pages/Tasks.cshtml**
+
+```html
+@page
+@model TasksModel
+@{
+    ViewData["Title"] = "Task Manager";
+}
+
+<h1>Task Manager</h1>
+
+<section>
+    <h2>Add New Task</h2>
+    <form hx-post="/Tasks?handler=Create" 
+          hx-target="#task-list" 
+          hx-swap="beforeend"
+          hx-on::after-request="this.reset()">
+        @Html.AntiForgeryToken()
+        <input type="text" name="title" required placeholder="Enter task title" />
+        <button type="submit">Add Task</button>
+    </form>
+</section>
+
+<section>
+    <h2>Your Tasks</h2>
+    <div id="task-list">
+        @foreach (var task in Model.Tasks)
+        {
+            <partial name="_TaskItem" model="task" />
+        }
+    </div>
+</section>
+
+<div id="edit-modal" class="modal" style="display: none;">
+    <!-- Edit form loads here -->
+</div>
+```
+
+**Pages/Tasks.cshtml.cs**
+
+```csharp
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using YourApp.Models;
+using YourApp.Services;
+
+public class TasksModel : PageModel
 {
-    User user = new User { Name = "Tracy", Age = 29 };
-    return Partial("_UserInfo", user);
+    private readonly TaskService _taskService;
+    
+    public List<TaskItem> Tasks { get; set; } = new();
+
+    public TasksModel(TaskService taskService)
+    {
+        _taskService = taskService;
+    }
+
+    public void OnGet()
+    {
+        Tasks = _taskService.GetAll();
+    }
+
+    // CREATE: hx-post
+    public IActionResult OnPostCreate(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            return Content("<p class=\"error\">Title is required</p>", "text/html");
+        }
+        
+        var task = _taskService.Create(title);
+        return Partial("_TaskItem", task);
+    }
+
+    // READ: hx-get (load edit form)
+    public IActionResult OnGetEdit(int id)
+    {
+        var task = _taskService.GetById(id);
+        if (task == null)
+        {
+            return Content("<p class=\"error\">Task not found</p>", "text/html");
+        }
+        
+        return Partial("_TaskEditForm", task);
+    }
+
+    // UPDATE: hx-put (full update)
+    public IActionResult OnPutUpdate(int id, string title)
+    {
+        var task = _taskService.Update(id, title);
+        if (task == null)
+        {
+            return Content("<p class=\"error\">Task not found</p>", "text/html");
+        }
+        
+        return Partial("_TaskItem", task);
+    }
+
+    // PARTIAL UPDATE: hx-patch (toggle complete)
+    public IActionResult OnPatchToggle(int id)
+    {
+        var task = _taskService.ToggleComplete(id);
+        if (task == null)
+        {
+            return Content("<p class=\"error\">Task not found</p>", "text/html");
+        }
+        
+        return Partial("_TaskItem", task);
+    }
+
+    // DELETE: hx-delete
+    public IActionResult OnDeleteRemove(int id)
+    {
+        var success = _taskService.Delete(id);
+        if (!success)
+        {
+            return Content("<p class=\"error\">Task not found</p>", "text/html");
+        }
+        
+        // Return empty content to remove the element
+        return Content("", "text/html");
+    }
 }
 ```
 
-JSON Example (if needed):
+### Partial Views
 
-```javascript
-public JsonResult OnGetUserData()
+**Pages/Shared/_TaskItem.cshtml**
+
+```html
+@model YourApp.Models.TaskItem
+
+<div id="task-@Model.Id" class="task-item @(Model.IsComplete ? "complete" : "")">
+    <span class="task-title">@Model.Title</span>
+    
+    <div class="task-actions">
+        <button hx-patch="/Tasks?handler=Toggle&amp;id=@Model.Id"
+                hx-target="#task-@Model.Id"
+                hx-swap="outerHTML">
+            @(Model.IsComplete ? "Undo" : "Complete")
+        </button>
+        
+        <button hx-get="/Tasks?handler=Edit&amp;id=@Model.Id"
+                hx-target="#edit-modal"
+                hx-swap="innerHTML"
+                onclick="document.getElementById('edit-modal').style.display='block'">
+            Edit
+        </button>
+        
+        <button hx-delete="/Tasks?handler=Remove&amp;id=@Model.Id"
+                hx-target="#task-@Model.Id"
+                hx-swap="outerHTML"
+                hx-confirm="Delete this task?">
+            Delete
+        </button>
+    </div>
+</div>
+```
+
+**Pages/Shared/_TaskEditForm.cshtml**
+
+```html
+@model YourApp.Models.TaskItem
+
+<div class="edit-form">
+    <h3>Edit Task</h3>
+    <form hx-put="/Tasks?handler=Update&amp;id=@Model.Id"
+          hx-target="#task-@Model.Id"
+          hx-swap="outerHTML"
+          hx-on::after-request="document.getElementById('edit-modal').style.display='none'">
+        @Html.AntiForgeryToken()
+        <input type="text" name="title" value="@Model.Title" required />
+        <button type="submit">Save</button>
+        <button type="button" onclick="document.getElementById('edit-modal').style.display='none'">
+            Cancel
+        </button>
+    </form>
+</div>
+```
+
+### Configuring Anti-Forgery Tokens for All Methods
+
+ASP.NET Core requires anti-forgery tokens for POST, PUT, PATCH, and DELETE requests. Add this script to your `_Layout.cshtml`:
+
+```html
+<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+<script>
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
+});
+</script>
+```
+
+For pages that use `hx-delete`, `hx-put`, or `hx-patch` outside of forms, include a hidden token somewhere on the page:
+
+```html
+@Html.AntiForgeryToken()
+```
+
+### Understanding Each Operation
+
+Let us examine what each htmx command does in this example.
+
+**CREATE with `hx-post`**
+
+```html
+<form hx-post="/Tasks?handler=Create" 
+      hx-target="#task-list" 
+      hx-swap="beforeend">
+```
+
+When submitted, this form sends a POST request to `OnPostCreate()`. The handler creates a new task and returns the `_TaskItem` partial. The `hx-swap="beforeend"` directive appends the new task to the end of the list rather than replacing the entire list.
+
+The `hx-on::after-request="this.reset()"` attribute clears the form after successful submission, ready for the next entry.
+
+**READ with `hx-get`**
+
+```html
+<button hx-get="/Tasks?handler=Edit&amp;id=@Model.Id"
+        hx-target="#edit-modal"
+        hx-swap="innerHTML">
+    Edit
+</button>
+```
+
+Clicking Edit sends a GET request to `OnGetEdit()`, which returns the edit form partial. The form loads into the modal div. This pattern separates the read operation (loading the form) from the update operation (submitting changes).
+
+**UPDATE with `hx-put`**
+
+```html
+<form hx-put="/Tasks?handler=Update&amp;id=@Model.Id"
+      hx-target="#task-@Model.Id"
+      hx-swap="outerHTML">
+```
+
+The edit form uses PUT because we are replacing the entire task resource. The handler returns an updated `_TaskItem` partial, which replaces the old task element. Using `outerHTML` ensures the entire task div gets replaced, including its id attribute.
+
+**PARTIAL UPDATE with `hx-patch`**
+
+```html
+<button hx-patch="/Tasks?handler=Toggle&amp;id=@Model.Id"
+        hx-target="#task-@Model.Id"
+        hx-swap="outerHTML">
+```
+
+Toggling completion status is a partial update, so we use PATCH. We are not replacing the entire resource, just changing one property. The distinction between PUT and PATCH matters for API design clarity, even when both return the same partial view.
+
+**DELETE with `hx-delete`**
+
+```html
+<button hx-delete="/Tasks?handler=Remove&amp;id=@Model.Id"
+        hx-target="#task-@Model.Id"
+        hx-swap="outerHTML"
+        hx-confirm="Delete this task?">
+```
+
+The delete button sends a DELETE request and targets the task element itself. The handler returns empty content, so `outerHTML` swap effectively removes the element from the DOM. The `hx-confirm` attribute shows a browser confirmation dialog before sending the request.
+
+## Advanced Targeting with `hx-target`
+
+The `hx-target` attribute accepts CSS selectors, giving you precise control over where responses appear.
+
+### Targeting by ID
+
+The most common pattern targets elements by ID:
+
+```html
+<button hx-get="/Data?handler=Load" hx-target="#content">Load</button>
+<div id="content"></div>
+```
+
+### Targeting Relative to the Element
+
+htmx provides special selectors for targeting elements relative to the trigger:
+
+```html
+<!-- Target the closest ancestor with class 'card' -->
+<button hx-delete="/Items?handler=Remove&amp;id=5" 
+        hx-target="closest .card"
+        hx-swap="outerHTML">
+    Remove
+</button>
+
+<!-- Target the next sibling element -->
+<button hx-get="/Details?handler=Show" 
+        hx-target="next .details">
+    Show Details
+</button>
+<div class="details"></div>
+
+<!-- Target a child element -->
+<div class="container">
+    <button hx-get="/Content?handler=Load" 
+            hx-target="find .content-area">
+        Load
+    </button>
+    <div class="content-area"></div>
+</div>
+```
+
+Available relative selectors:
+
+- `this`: The element that triggered the request
+- `closest <selector>`: The nearest ancestor matching the selector
+- `next <selector>`: The next element in the DOM matching the selector
+- `previous <selector>`: The previous element matching the selector
+- `find <selector>`: The first child element matching the selector
+
+### Targeting the Document Body
+
+For full-page updates or navigation-like behavior:
+
+```html
+<a hx-get="/Dashboard" hx-target="body" hx-push-url="true">
+    Go to Dashboard
+</a>
+```
+
+This replaces the entire body content and updates the browser URL, simulating navigation without a full page reload.
+
+## Mastering `hx-swap` Options
+
+The `hx-swap` attribute controls how the response content gets inserted. Each option serves different use cases.
+
+### Swap Options Comparison
+
+```html
+<!-- Replace inner content (default) -->
+<div hx-get="/Content" hx-swap="innerHTML">
+    <p>This paragraph will be replaced</p>
+</div>
+
+<!-- Replace the entire element -->
+<div hx-get="/Content" hx-swap="outerHTML">
+    This entire div will be replaced
+</div>
+
+<!-- Insert before the element -->
+<ul>
+    <li hx-get="/NewItem" hx-swap="beforebegin">
+        New items appear above this
+    </li>
+</ul>
+
+<!-- Insert after the element -->
+<li hx-get="/NewItem" hx-swap="afterend">
+    New items appear below this
+</li>
+
+<!-- Insert at the start of the element's children -->
+<ul hx-get="/NewItem" hx-swap="afterbegin">
+    <li>New items appear before this</li>
+</ul>
+
+<!-- Insert at the end of the element's children -->
+<ul hx-get="/NewItem" hx-swap="beforeend">
+    <li>New items appear after this</li>
+</ul>
+
+<!-- Delete the target element -->
+<div hx-delete="/Items?id=5" hx-swap="delete">
+    This element will be removed
+</div>
+
+<!-- Keep current content, useful for side effects only -->
+<button hx-post="/Track" hx-swap="none">
+    Track Click
+</button>
+```
+
+### Swap Modifiers
+
+You can add modifiers to control swap timing and behavior:
+
+```html
+<!-- Wait 1 second before swapping -->
+<div hx-get="/Content" hx-swap="innerHTML swap:1s">
+    Loading...
+</div>
+
+<!-- Fade out old content, fade in new -->
+<div hx-get="/Content" hx-swap="innerHTML transition:true">
+    Content with transitions
+</div>
+
+<!-- Scroll to top of swapped content -->
+<div hx-get="/Content" hx-swap="innerHTML scroll:top">
+    Long content area
+</div>
+
+<!-- Show swapped content at top of viewport -->
+<div hx-get="/Content" hx-swap="innerHTML show:top">
+    Content that should be visible
+</div>
+```
+
+## Out-of-Band Swaps
+
+Sometimes a single server action needs to update multiple unrelated parts of the page. Out-of-band (OOB) swaps solve this problem cleanly.
+
+### The Problem
+
+Consider a scenario where adding a task also needs to update a task count in the header. With standard htmx, you would need two separate requests. OOB swaps let you update both with one response.
+
+### The Solution
+
+Your server response includes additional elements marked with `hx-swap-oob="true"`:
+
+**Updated OnPostCreate handler:**
+
+```csharp
+public IActionResult OnPostCreate(string title)
 {
-    return new JsonResult(new { Name = "Tracy", Age = 29 });
+    if (string.IsNullOrWhiteSpace(title))
+    {
+        return Content("<p class=\"error\">Title is required</p>", "text/html");
+    }
+    
+    var task = _taskService.Create(title);
+    var totalCount = _taskService.GetAll().Count;
+    
+    // Return the new task item plus an OOB update for the counter
+    var response = new StringBuilder();
+    response.Append(RenderPartial("_TaskItem", task));
+    response.Append($"<span id=\"task-count\" hx-swap-oob=\"true\">{totalCount}</span>");
+    
+    return Content(response.ToString(), "text/html");
 }
 ```
 
-If a JSON API is necessary, htmx can still handle it by processing the response and updating the UI accordingly. However, in most cases, returning small HTML fragments is more efficient and simplifies development. We will examine htmx Partials for ASP.NET in a latter chapter.
+Or using a partial view that includes OOB elements:
 
-## Preparing for Advanced htmx Usage
+**Pages/Shared/_TaskItemWithCount.cshtml**
 
-### Security Considerations
+```html
+@model YourApp.ViewModels.TaskItemWithCountViewModel
 
-Because htmx enables direct server interaction, developers must ensure their applications remain secure. This includes enforcing authentication, validating input on the server, and implementing CSRF protection when processing POST requests. Razor Pages have built-in anti-forgery mechanisms that should be leveraged to safeguard sensitive operations.
+<!-- Primary response -->
+<partial name="_TaskItem" model="Model.Task" />
 
-### Debugging and Performance Optimization
+<!-- Out-of-band update -->
+<span id="task-count" hx-swap-oob="true">@Model.TotalCount</span>
+```
 
-htmx simplifies interactions, but debugging remains essential. Using browser dev tools to inspect network requests, checking logs on the server, and enabling `hx-debug= "true"` in problematic elements helps diagnose issues. Performance optimization strategies include:
+The page needs a matching element:
 
-* **Caching Responses**: If frequently requested content doesn't change often, caching can significantly boost performance.
-* **Minimizing Server Processing**: Keep handlers efficient to prevent slowdowns.
-* **Using hx-trigger Wisely**: Instead of sending a request on every keystroke, introduce a delay (e.g., keyup changed delay:500ms).
+```html
+<header>
+    <span id="task-count">@Model.Tasks.Count</span> tasks
+</header>
+```
 
-### Looking Ahead: Deep Diving into hx-get and hx-post
+When htmx receives the response, it:
+1. Swaps the primary content (the new task) into the target
+2. Finds any elements with `hx-swap-oob="true"`
+3. Swaps those elements into matching elements on the page by ID
 
-Now that we've explored htmx commands, the next step is mastering how data is fetched and submitted. The upcoming chapter will break down advanced techniques for handling form submissions, optimizing data retrieval, and structuring Razor Pages applications for maximum efficiency.
+### OOB Swap Modes
 
-By now, you should have a strong grasp of how htmx can transform Razor Pages development. With its ability to simplify interactivity and reduce reliance on JavaScript, it's an invaluable tool for modern web applications that prioritize performance and maintainability.
+You can specify how OOB elements should be swapped:
+
+```html
+<!-- Replace the element (default) -->
+<div id="notifications" hx-swap-oob="true">New content</div>
+
+<!-- Append to the element -->
+<div id="log" hx-swap-oob="beforeend">New log entry</div>
+
+<!-- Prepend to the element -->
+<div id="messages" hx-swap-oob="afterbegin">New message</div>
+```
+
+## Debugging htmx Applications
+
+When htmx requests do not behave as expected, you have several debugging options.
+
+### Enable Logging
+
+Add this to your page during development:
+
+```html
+<script>
+htmx.logAll();
+</script>
+```
+
+This outputs every htmx event to the browser console, showing you exactly what htmx is doing.
+
+### Listen to Specific Events
+
+For targeted debugging, listen to specific htmx events:
+
+```html
+<script>
+document.body.addEventListener('htmx:beforeRequest', function(event) {
+    console.log('Request starting:', event.detail.pathInfo.requestPath);
+    console.log('Method:', event.detail.verb);
+});
+
+document.body.addEventListener('htmx:afterRequest', function(event) {
+    console.log('Response status:', event.detail.xhr.status);
+    console.log('Response body:', event.detail.xhr.responseText);
+});
+
+document.body.addEventListener('htmx:responseError', function(event) {
+    console.error('Request failed:', event.detail.xhr.status);
+});
+
+document.body.addEventListener('htmx:swapError', function(event) {
+    console.error('Swap failed:', event.detail.error);
+});
+</script>
+```
+
+### Network Tab Inspection
+
+The browser's Network tab shows every htmx request. Check:
+
+- **URL**: Is the request going to the correct endpoint?
+- **Method**: Is it GET, POST, PUT, PATCH, or DELETE as expected?
+- **Request Headers**: Is the anti-forgery token present?
+- **Request Body**: For POST/PUT, is the form data correct?
+- **Response Status**: 200, 400, 404, 500?
+- **Response Body**: What HTML is the server returning?
+
+### Common Issues and Solutions
+
+**Problem**: Request returns 400 Bad Request
+
+**Solution**: The anti-forgery token is likely missing. Ensure `@Html.AntiForgeryToken()` is on the page and the token-forwarding script is in your layout.
+
+**Problem**: Handler not found (404)
+
+**Solution**: Verify the handler name matches your method. `handler=Create` needs `OnPostCreate()` for POST, `OnGetCreate()` for GET.
+
+**Problem**: PUT/PATCH/DELETE returns 405 Method Not Allowed
+
+**Solution**: ASP.NET Core needs handler methods named `OnPut*`, `OnPatch*`, `OnDelete*`. Verify spelling and that the method is public.
+
+**Problem**: Response appears but in wrong location
+
+**Solution**: Check your `hx-target` selector. Use browser dev tools to verify the target element exists and has the expected ID.
+
+**Problem**: Element not removed after delete
+
+**Solution**: Ensure you return empty content and use `hx-swap="outerHTML"` so the element replaces itself with nothing.
+
+## Performance Considerations
+
+### Minimize Response Size
+
+Return only the HTML needed for the swap. Avoid returning full page layouts for partial updates:
+
+```csharp
+// Good: Returns only the needed fragment
+public IActionResult OnGetItem(int id)
+{
+    var item = _service.GetById(id);
+    return Partial("_Item", item);
+}
+
+// Avoid: Returns more than necessary
+public IActionResult OnGetItem(int id)
+{
+    var item = _service.GetById(id);
+    ViewData["Item"] = item;
+    return Page(); // Returns entire page
+}
+```
+
+### Use Appropriate HTTP Methods
+
+Match your HTTP method to the operation semantics:
+
+- GET for retrieving data (cacheable, safe)
+- POST for creating resources
+- PUT for full updates
+- PATCH for partial updates
+- DELETE for removal
+
+Using the correct method helps with caching, browser behavior, and API clarity.
+
+### Debounce Rapid Triggers
+
+For inputs that fire on every keystroke, add a delay:
+
+```html
+<input type="text"
+       hx-get="/Search?handler=Results"
+       hx-target="#results"
+       hx-trigger="keyup changed delay:300ms" />
+```
+
+The request only fires 300ms after the user stops typing, preventing server overload.
+
+## Summary
+
+This chapter covered the complete htmx command set for building interactive Razor Pages applications:
+
+- `hx-get` retrieves data without page reloads
+- `hx-post` creates new resources and submits forms
+- `hx-put` replaces existing resources entirely
+- `hx-patch` partially updates resources
+- `hx-delete` removes resources
+- `hx-target` controls where responses appear using CSS selectors
+- `hx-swap` determines how responses are inserted into the DOM
+- Out-of-band swaps update multiple page elements from one response
+
+You built a complete CRUD application demonstrating all five HTTP methods with proper anti-forgery protection. You learned advanced targeting with relative selectors and mastered swap options for different update scenarios.
+
+## Preview of Next Chapter
+
+In the next chapter, we will explore `hx-trigger` in depth. You will learn how to fire requests on custom events, combine multiple triggers, add conditions and modifiers, and create responsive interfaces that react to user behavior in sophisticated ways.

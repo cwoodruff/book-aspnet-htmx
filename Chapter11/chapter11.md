@@ -8,197 +8,931 @@ title: "Building Blocks with HTML Components: Forms and Modal Forms"
 
 # Building Blocks with HTML Components: Forms and Modal Forms
 
-In previous chapters, we’ve explored how htmx breathes new life into our Razor Pages by enhancing interactivity without the need for heavy JavaScript frameworks. We’ve connected pages with dynamic partials, layered in real-time updates, and even built reusable UI components. Now, it’s time to focus on a web staple that no application can do without—forms. Whether it’s creating a new account, submitting a support ticket, or updating a product listing, forms are where users interact most directly with your application.
+Forms are where users interact most directly with your application. Registration, login, contact forms, settings pages, checkout flows. Every meaningful action requires a form. Traditional HTML forms reload the entire page on submit, destroying scroll position, clearing transient state, and making users wait while the browser re-renders everything. This experience feels dated.
 
-This chapter dives into building clean, responsive, and user-friendly forms using htmx in an ASP.NET Core Razor Pages app. We’ll approach this not just with usability in mind, but also from the angle of maintaining modular, component-based structures that align with the patterns we’ve been building throughout the book. You’ll see how to construct forms that feel seamless and immediate, using htmx to load, submit, and respond to input without full page reloads.
+htmx transforms forms into responsive, immediate interactions. Submit a form, get back a fragment of HTML, swap it into the page. No reload. No flicker. The user stays in context. Combined with modal dialogs, you can create focused workflows that collect input without navigating away from the current page.
 
-We’ll also take a closer look at modal forms—compact, focused interfaces that pop into view without navigating away from the current page. These can elevate your user experience by reducing friction and making workflows smoother. And with htmx, implementing them is refreshingly straightforward. We'll walk through the key considerations to keep these modals lightweight and performant, while still providing a polished, professional user experience.
+This chapter covers both patterns with complete, working examples. You will build inline forms that submit and update in place, modal forms that appear on demand and close on success, and learn how to handle validation errors gracefully. Every example includes the server-side code required to make it work.
 
-By the end of this chapter, you’ll have the confidence to build forms and modal forms that are not only functionally solid but also easy to maintain and integrate into your broader application architecture. You already have the foundation—now let’s add these essential building blocks to your htmx toolkit.
+## Form Submission with `hx-post`
 
-## Smoother Interactions with `hx-post` and Form Enhancements
+The `hx-post` attribute converts a traditional form into an htmx-powered form. Instead of reloading the page, the form submits asynchronously and htmx swaps the response into a target element.
 
-One of the most common frustrations with traditional HTML forms is the full-page reload that follows a submission. While this behavior has been the norm for decades, it breaks the fluidity of the user experience, especially in modern web applications where users expect seamless interaction. Each reload discards the current page state, flashes the screen, and introduces a noticeable delay. For simple actions like submitting a comment or updating a profile field, this feels like overkill.
+### Basic Contact Form
 
-This is where htmx steps in with hx-post, a simple yet powerful attribute that replaces traditional form submission with a dynamic request. Instead of submitting the entire page to the server and waiting for a full HTML response, hx-post makes an asynchronous HTTP POST call to the specified endpoint and swaps the result into a target element. With this one attribute, you get smoother UX, less flicker, and more control over what gets updated on the page.
+Here's a complete contact form implementation:
 
-Let’s say we’re building a basic comment form in Razor Pages. Here’s the form markup using htmx:
+**Pages/Contact.cshtml:**
 
 ```html
-<form hx-post="/comment" hx-target="#comments-list" hx-swap="beforeend">
-    @Html.AntiForgeryToken()
-    <textarea name="message" rows="4" class="form-control" required></textarea>
-    <button type="submit" class="btn btn-primary" hx-disable="true">Post Comment</button>
-</form>
+@page
+@model ContactModel
+
+<h1>Contact Us</h1>
+
+<div id="form-container">
+    <partial name="_ContactForm" model="Model.Input" />
+</div>
 ```
 
-This form posts to the /comment endpoint when submitted, and whatever HTML is returned will be inserted just before the end of the #comments-list element. No page reload, no scroll jump—just a new comment appearing instantly where it belongs. This feels far more natural for users and avoids jarring context shifts.
-
-We’ve also added hx-disable="true" to the submit button. This attribute prevents users from submitting the form multiple times by disabling the button during the request. It's a small touch that helps maintain clean server-side data and reduces accidental duplicates—something that becomes increasingly important as your forms grow in complexity or involve transactional operations.
-
-On the server side, the handler in the Razor Page’s OnPostAsync method should return a partial view containing just the new comment HTML. For example:
+**Pages/Contact.cshtml.cs:**
 
 ```csharp
-public async Task<PartialViewResult> OnPostAsync()
+public class ContactModel : PageModel
 {
-    var comment = new Comment { Message = Request.Form["message"], CreatedAt = DateTime.UtcNow };
-    _db.Comments.Add(comment);
-    await _db.SaveChangesAsync();
-    return Partial("_CommentPartial", comment);
+    private readonly IEmailService _emailService;
+
+    public ContactModel(IEmailService emailService)
+    {
+        _emailService = emailService;
+    }
+
+    [BindProperty]
+    public ContactFormInput Input { get; set; } = new();
+
+    public void OnGet() { }
+
+    public async Task<IActionResult> OnPostSubmit()
+    {
+        if (!ModelState.IsValid)
+        {
+            // Return the form with validation errors
+            return Partial("_ContactForm", Input);
+        }
+
+        // Process the form
+        await _emailService.SendContactEmailAsync(Input.Name, Input.Email, Input.Message);
+
+        // Return success message
+        return Partial("_ContactSuccess", Input);
+    }
+}
+
+public class ContactFormInput
+{
+    [Required(ErrorMessage = "Name is required")]
+    [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
+    public string Name { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+    public string Email { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Message is required")]
+    [StringLength(2000, ErrorMessage = "Message cannot exceed 2000 characters")]
+    public string Message { get; set; } = string.Empty;
 }
 ```
 
-This returns a small, focused HTML fragment rendered from _CommentPartial.cshtml, which represents a single comment block. htmx drops that into the page where the user expects to see it. From the user’s perspective, their comment appears instantly, right after hitting submit—no waiting, no reloading, no wondering if it worked.
-
-This small enhancement makes a big difference. Your users stay in context. They don’t lose their place. And for you as the developer, you get to keep your UI logic modular and focused. As we move forward, we’ll build on this idea with modal forms and error handling, but for now, this setup is already a solid leap forward from the old form-post-refresh cycle.
-
-## Real-Time Feedback and Confirmation with Validation Tools
-
-When it comes to form interactions, validation plays a critical role—not just in protecting your server, but in guiding your users toward successful submissions. In traditional web applications, validation is often a clunky mix of client-side JavaScript and full-page refreshes when something goes wrong. With htmx and ASP.NET Core, we can achieve a far more refined experience by combining real-time validation feedback, dynamic error handling, and confirmation prompts—all without leaving the page.
-
-htmx offers a helpful hx-validate attribute that wires into the browser’s built-in form validation. When used alongside hx-trigger, it allows you to validate user input before sending anything to the server. This keeps the experience responsive and makes it easier to highlight missing or incorrect fields without relying on external JavaScript libraries.
-
-Here’s a basic registration form with htmx validation in place:
+**Pages/Shared/_ContactForm.cshtml:**
 
 ```html
-<form hx-post="/account/register"
-      hx-trigger="submit"
-      hx-validate
-      hx-target="#form-messages"
-      hx-swap="innerHTML">
+@model ContactFormInput
+
+<form hx-post="/Contact?handler=Submit" 
+      hx-target="#form-container" 
+      hx-swap="innerHTML"
+      hx-indicator="#form-spinner">
     @Html.AntiForgeryToken()
-    <input type="text" name="username" required class="form-control" placeholder="Username" />
-    <input type="email" name="email" required class="form-control" placeholder="Email" />
-    <input type="password" name="password" required minlength="6" class="form-control" placeholder="Password" />
-    <button type="submit" class="btn btn-primary" hx-confirm="Are you sure you want to register with this information?">Register</button>
-</form>
-```
-
-The hx-validate attribute ensures that the browser’s native validation kicks in before any request is sent. Fields marked required or with other validation attributes like minlength must pass before the form is submitted. This reduces unnecessary server traffic and gives the user instant feedback. Meanwhile, the hx-confirm attribute adds a simple confirmation dialog before the form is actually posted—perfect for actions like registration, deletion, or any irreversible changes.
-
-Even with strong client-side validation, server-side validation is still essential. You can’t trust every request that hits your endpoint. In ASP.NET Core, validation errors are typically returned as part of the ModelState. With htmx, you can return a partial view containing just the validation messages and insert them into the form dynamically.
-
-Here’s an example server-side handler in your Razor Page:
-
-```csharp
-public async Task<IActionResult> OnPostAsync()
-{
-    if (!ModelState.IsValid)
+    
+    @if (!ViewData.ModelState.IsValid)
     {
-        return Partial("_ValidationErrors", ModelState);
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
     }
     
-    var user = new User { Username = Input.Username, Email = Input.Email };
-    await _userManager.CreateAsync(user, Input.Password);
-    return Partial("_RegistrationSuccess", user);
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label asp-for="Message" class="form-label"></label>
+        <textarea asp-for="Message" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Message" class="text-danger"></span>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">
+        Send Message
+        <span id="form-spinner" class="htmx-indicator spinner-border spinner-border-sm ms-2"></span>
+    </button>
+</form>
+```
+
+**Pages/Shared/_ContactSuccess.cshtml:**
+
+```html
+@model ContactFormInput
+
+<div class="alert alert-success">
+    <h4 class="alert-heading">Message Sent!</h4>
+    <p>Thank you, @Model.Name. We've received your message and will respond to @Model.Email shortly.</p>
+    <hr>
+    <button hx-get="/Contact" 
+            hx-target="#form-container" 
+            hx-swap="innerHTML"
+            class="btn btn-outline-success">
+        Send Another Message
+    </button>
+</div>
+```
+
+**CSS for the spinner:**
+
+```css
+.htmx-indicator {
+    display: none;
+}
+.htmx-request .htmx-indicator {
+    display: inline-block;
+}
+.htmx-request button[type="submit"] {
+    opacity: 0.7;
+    pointer-events: none;
 }
 ```
 
-If the model is invalid, the server returns a _ValidationErrors.cshtml partial containing a summary of the issues. The hx-target="#form-messages" in the form ensures these messages appear in the designated spot on the page without reloading or losing the user’s input.
+This form:
+1. Submits via htmx without page reload
+2. Shows validation errors inline if submission fails
+3. Displays a spinner during submission
+4. Disables the button to prevent double-submission
+5. Shows a success message with option to send another
 
-With this combination of hx-validate, hx-confirm, and thoughtful server-side handling, you can build forms that feel responsive, respectful of the user’s time, and safe to use. This approach scales well for other types of forms, too—think billing updates, profile settings, or anything where mistakes need to be caught early. The result is a friendlier, more modern web experience that users will appreciate, all while keeping your Razor Pages clean and maintainable.
+### Comment Form with List Update
 
-## Dynamic Modals and Form Workflows with htmx and Hyperscript
+For forms that add items to a list, use `hx-swap="beforeend"` to append new items:
 
-Modals are a familiar part of modern web apps—offering a way to keep users in context while completing small, focused tasks like filling out a form or confirming an action. Traditionally, they require a fair amount of JavaScript to manage their visibility and state. But with htmx and a bit of help from Hyperscript, you can create dynamic, responsive modal forms with surprisingly little effort and no front-end framework overhead.
-
-htmx makes it easy to load modal content on demand, rather than embedding all possible modals in your HTML from the start. This keeps your pages clean and snappy. To get started, all you need is a trigger element that loads the form via htmx into a designated modal container.
-
-Here’s the trigger button to launch a modal for adding a new user:
+**Pages/Comments.cshtml:**
 
 ```html
-<button hx-get="/users/create"
-        hx-target="#modal-content"
-        hx-trigger="click"
-        _="on htmx:afterOnLoad add .show to #modal">
-    Add New User
-</button>
+@page
+@model CommentsModel
+
+<h1>Comments</h1>
+
+<div id="comments-list">
+    @foreach (var comment in Model.Comments)
+    {
+        <partial name="_Comment" model="comment" />
+    }
+</div>
+
+<div id="comment-form-container">
+    <partial name="_CommentForm" />
+</div>
 ```
 
-The hx-get fetches the Razor Partial View at /users/create, which contains the form. That form is injected into the #modal-content element inside your modal wrapper. The _= attribute uses Hyperscript to add a .show class to the modal after the content is loaded, making it visible. Here's a simple modal container:
+**Pages/Shared/_CommentForm.cshtml:**
 
 ```html
-<div id="modal" class="modal" _="on click if event.target is #modal remove .show">
+<form hx-post="/Comments?handler=Add" 
+      hx-target="#comments-list" 
+      hx-swap="beforeend"
+      hx-on::after-request="if(event.detail.successful) this.reset()">
+    @Html.AntiForgeryToken()
+    
+    <div class="form-group mb-3">
+        <label for="author" class="form-label">Name</label>
+        <input type="text" id="author" name="author" class="form-control" required />
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="message" class="form-label">Comment</label>
+        <textarea id="message" name="message" class="form-control" rows="3" required></textarea>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Post Comment</button>
+</form>
+```
+
+**Pages/Comments.cshtml.cs:**
+
+```csharp
+public class CommentsModel : PageModel
+{
+    private readonly ICommentService _commentService;
+
+    public CommentsModel(ICommentService commentService)
+    {
+        _commentService = commentService;
+    }
+
+    public List<Comment> Comments { get; set; } = new();
+
+    public void OnGet()
+    {
+        Comments = _commentService.GetAll();
+    }
+
+    public IActionResult OnPostAdd(string author, string message)
+    {
+        if (string.IsNullOrWhiteSpace(author) || string.IsNullOrWhiteSpace(message))
+        {
+            Response.StatusCode = 400;
+            return Content("<div class=\"alert alert-danger\">Name and comment are required.</div>", "text/html");
+        }
+
+        var comment = new Comment
+        {
+            Author = author,
+            Message = message,
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        _commentService.Add(comment);
+        
+        return Partial("_Comment", comment);
+    }
+}
+```
+
+**Pages/Shared/_Comment.cshtml:**
+
+```html
+@model Comment
+
+<div class="card mb-3" id="comment-@Model.Id">
+    <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted">
+            @Model.Author - @Model.CreatedAt.ToString("MMM d, yyyy h:mm tt")
+        </h6>
+        <p class="card-text">@Model.Message</p>
+    </div>
+</div>
+```
+
+The `hx-on::after-request` attribute clears the form after successful submission so users can immediately post another comment.
+
+## Inline Editing
+
+Allow users to edit content in place without navigating to a separate page:
+
+**Pages/Shared/_UserRow.cshtml:**
+
+```html
+@model User
+
+<tr id="user-@Model.Id">
+    <td>@Model.Name</td>
+    <td>@Model.Email</td>
+    <td>
+        <button hx-get="/Users?handler=EditForm&amp;id=@Model.Id"
+                hx-target="#user-@Model.Id"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-outline-primary">
+            Edit
+        </button>
+        <button hx-delete="/Users?handler=Delete&amp;id=@Model.Id"
+                hx-target="#user-@Model.Id"
+                hx-swap="outerHTML"
+                hx-confirm="Delete @Model.Name?"
+                class="btn btn-sm btn-outline-danger">
+            Delete
+        </button>
+    </td>
+</tr>
+```
+
+**Pages/Shared/_UserEditRow.cshtml:**
+
+```html
+@model User
+
+<tr id="user-@Model.Id" class="table-active">
+    <td>
+        <input type="text" name="name" value="@Model.Name" class="form-control form-control-sm" required />
+    </td>
+    <td>
+        <input type="email" name="email" value="@Model.Email" class="form-control form-control-sm" required />
+    </td>
+    <td>
+        <button hx-put="/Users?handler=Update&amp;id=@Model.Id"
+                hx-target="#user-@Model.Id"
+                hx-swap="outerHTML"
+                hx-include="closest tr"
+                class="btn btn-sm btn-success">
+            Save
+        </button>
+        <button hx-get="/Users?handler=CancelEdit&amp;id=@Model.Id"
+                hx-target="#user-@Model.Id"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-secondary">
+            Cancel
+        </button>
+    </td>
+</tr>
+```
+
+**Pages/Users.cshtml.cs (handlers):**
+
+```csharp
+public IActionResult OnGetEditForm(int id)
+{
+    var user = _userService.GetById(id);
+    if (user == null) return NotFound();
+    return Partial("_UserEditRow", user);
+}
+
+public IActionResult OnGetCancelEdit(int id)
+{
+    var user = _userService.GetById(id);
+    if (user == null) return NotFound();
+    return Partial("_UserRow", user);
+}
+
+public IActionResult OnPutUpdate(int id, string name, string email)
+{
+    var user = _userService.GetById(id);
+    if (user == null) return NotFound();
+
+    if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email))
+    {
+        Response.StatusCode = 400;
+        return Partial("_UserEditRow", user);
+    }
+
+    user.Name = name;
+    user.Email = email;
+    _userService.Update(user);
+
+    return Partial("_UserRow", user);
+}
+
+public IActionResult OnDeleteDelete(int id)
+{
+    var user = _userService.GetById(id);
+    if (user == null) return NotFound();
+
+    _userService.Delete(id);
+    return Content("", "text/html");
+}
+```
+
+## Modal Forms
+
+Modal forms appear on demand without navigating away from the current page. They focus user attention and work well for quick actions like adding items or confirming operations.
+
+### Modal Structure
+
+First, add a modal container to your layout or page:
+
+```html
+<!-- Modal container - add to _Layout.cshtml or individual pages -->
+<div id="modal" class="modal" _="on click if event.target is #modal remove .open from #modal">
+    <div class="modal-backdrop"></div>
     <div class="modal-dialog">
-        <div class="modal-content" id="modal-content">
-            <!-- Form gets loaded here -->
+        <div class="modal-header">
+            <h5 id="modal-title">Modal</h5>
+            <button type="button" class="btn-close" _="on click remove .open from #modal"></button>
+        </div>
+        <div id="modal-content" class="modal-body">
+            <!-- Content loads here -->
         </div>
     </div>
 </div>
 ```
 
-Notice the Hyperscript on the #modal div: it closes the modal when the background is clicked by removing the .show class. This keeps the experience clean without needing custom JavaScript. You can enhance the styling with your favorite CSS framework, or roll your own—htmx and Hyperscript don’t get in the way.
+**Modal CSS:**
 
-Now, let’s look at what happens when the user submits the form inside the modal. The form itself can be a typical Razor Partial, enhanced with htmx to post the data and update the user list dynamically. Here's the form loaded into the modal:
+```css
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+}
+
+.modal.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-body {
+    padding: 1rem;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+```
+
+### Opening the Modal
+
+Trigger buttons load content into the modal and open it:
 
 ```html
-<form hx-post="/users/create"
+<button hx-get="/Users?handler=CreateForm"
+        hx-target="#modal-content"
+        hx-swap="innerHTML"
+        _="on htmx:afterSwap add .open to #modal
+           on htmx:afterSwap set #modal-title.textContent to 'Add New User'">
+    Add User
+</button>
+```
+
+### Modal Form Content
+
+**Pages/Shared/_UserCreateForm.cshtml:**
+
+```html
+@model UserCreateInput
+
+<form hx-post="/Users?handler=Create"
       hx-target="#user-list"
       hx-swap="beforeend"
-      _="on htmx:afterRequest remove .show from #modal">
+      _="on htmx:afterRequest if event.detail.successful remove .open from #modal">
     @Html.AntiForgeryToken()
-    <input type="text" name="name" required class="form-control" placeholder="Name" />
-    <input type="email" name="email" required class="form-control" placeholder="Email" />
-    <button type="submit" class="btn btn-primary">Create User</button>
+    
+    <div id="form-errors"></div>
+    
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group mb-3">
+        <label asp-for="Role" class="form-label"></label>
+        <select asp-for="Role" class="form-select">
+            <option value="">Select a role...</option>
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+        </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+    
+    <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-secondary" _="on click remove .open from #modal">
+            Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+            Create User
+            <span class="htmx-indicator spinner-border spinner-border-sm ms-2"></span>
+        </button>
+    </div>
 </form>
 ```
 
-When the form is submitted, htmx posts it to the server. The server returns a small HTML fragment representing the new user, which is inserted into #user-list using hx-swap="beforeend". Immediately after the request finishes, Hyperscript closes the modal by removing the .show class. The user gets instant feedback, the new data appears in the list, and the UI remains uninterrupted.
+### Server-Side Modal Handlers
 
-On the server side, this is just a Razor Page with an OnPostAsync that returns the HTML for a new user row:
+**Pages/Users.cshtml.cs:**
 
 ```csharp
-public async Task<PartialViewResult> OnPostAsync(UserInputModel input)
+public class UsersModel : PageModel
 {
-    var user = new User { Name = input.Name, Email = input.Email };
-    _db.Users.Add(user);
-    await _db.SaveChangesAsync();
+    private readonly IUserService _userService;
+
+    public UsersModel(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    public List<User> Users { get; set; } = new();
+
+    [BindProperty]
+    public UserCreateInput CreateInput { get; set; } = new();
+
+    public void OnGet()
+    {
+        Users = _userService.GetAll();
+    }
+
+    public IActionResult OnGetCreateForm()
+    {
+        return Partial("_UserCreateForm", new UserCreateInput());
+    }
+
+    public IActionResult OnPostCreate()
+    {
+        if (!ModelState.IsValid)
+        {
+            Response.StatusCode = 400;
+            return Partial("_UserCreateForm", CreateInput);
+        }
+
+        var user = new User
+        {
+            Name = CreateInput.Name,
+            Email = CreateInput.Email,
+            Role = CreateInput.Role
+        };
+        
+        _userService.Add(user);
+
+        // Return the new user row to append to the list
+        return Partial("_UserRow", user);
+    }
+}
+
+public class UserCreateInput
+{
+    [Required(ErrorMessage = "Name is required")]
+    public string Name { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email address")]
+    public string Email { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Role is required")]
+    public string Role { get; set; } = string.Empty;
+}
+```
+
+### Closing Modal with HX-Trigger Header
+
+An alternative to Hyperscript is using the `HX-Trigger` response header:
+
+```csharp
+public IActionResult OnPostCreate()
+{
+    if (!ModelState.IsValid)
+    {
+        Response.StatusCode = 400;
+        return Partial("_UserCreateForm", CreateInput);
+    }
+
+    var user = new User
+    {
+        Name = CreateInput.Name,
+        Email = CreateInput.Email,
+        Role = CreateInput.Role
+    };
+    
+    _userService.Add(user);
+
+    // Trigger modal close event
+    Response.Headers.Append("HX-Trigger", "closeModal");
+
     return Partial("_UserRow", user);
 }
 ```
 
-This kind of modal interaction is powerful because it doesn’t just look nice—it also keeps your app logic decoupled and modular. Each modal pulls in only the content it needs, performs its job, and cleans up after itself. With Hyperscript managing transitions and visibility, and htmx handling the data flow, you end up with a solution that’s elegant and maintainable without being JavaScript-heavy.
-
-As you start layering in more complex modals—editing items, confirmations, multi-step forms—you’ll find this pattern holds up surprisingly well. The real beauty is that your Razor Pages stay focused, your views stay clean, and your users never have to wait for a full page reload to see their actions reflected.
-
-## Polished Interactions and Practical Structure for Form UX
-
-Once your form is working correctly and handling data without page reloads, the next step is smoothing out the rough edges in the user experience. A form that works is good. A form that feels fast, accessible, and intuitive is great. With htmx and ASP.NET Core, you can bring your forms into that “great” category by layering in small, thoughtful touches that reduce friction and improve responsiveness.
-
-Let’s start with loading indicators. When users click a button, they expect some sort of feedback—especially if there’s a delay. htmx provides the hx-indicator attribute to show a visual indicator while a request is in flight. You can attach it to any element, such as a spinner or loading message, and htmx will automatically toggle its visibility based on the request lifecycle.
-
-Here's an example using a spinner on a submit button:
+Add a listener in your layout:
 
 ```html
-<form hx-post="/users/update"
-      hx-target="#user-info"
-      hx-indicator="#loading-spinner">
+<script>
+document.body.addEventListener('closeModal', function() {
+    document.getElementById('modal').classList.remove('open');
+});
+</script>
+```
+
+And simplify the form:
+
+```html
+<form hx-post="/Users?handler=Create"
+      hx-target="#user-list"
+      hx-swap="beforeend">
     @Html.AntiForgeryToken()
-    <input type="text" name="name" required />
-    <button type="submit" class="btn btn-primary">
-        Save
-        <span id="loading-spinner" class="spinner-border spinner-border-sm d-none"></span>
-    </button>
+    <!-- fields -->
 </form>
 ```
 
-The #loading-spinner element starts hidden using d-none. htmx removes the class while the request is active, and adds it back when done. This kind of feedback keeps users informed and reduces the temptation to click buttons multiple times in frustration.
+### Edit Modal
 
-Beyond interactivity, accessibility matters just as much. Dynamic forms should still play nicely with screen readers, keyboard navigation, and other assistive technologies. Make sure that all inputs have proper label tags, use semantic HTML elements, and keep your focus management predictable. If you’re showing a validation message or success notification, consider using aria-live="polite" to alert assistive tech without jarring the user experience.
-
-As you build more forms across your application, reusability becomes essential. Try to think in terms of Razor Partial Views that represent pieces of your form: an input group, a validation summary, a submit button with a spinner. Wrap these in consistent layouts so you don’t duplicate logic. Use tag helpers and model binding conventions in your views to keep your forms strongly typed and aligned with your server-side models.
-
-Here’s an example partial for a labeled input that can be reused across forms:
+The same pattern works for editing existing items:
 
 ```html
-@model InputFieldModel
-<div class="form-group">
-    <label asp-for="@Model.Name"></label>
-    <input asp-for="@Model.Name" class="form-control" />
-    <span asp-validation-for="@Model.Name" class="text-danger"></span>
+<button hx-get="/Users?handler=EditForm&amp;id=@user.Id"
+        hx-target="#modal-content"
+        hx-swap="innerHTML"
+        _="on htmx:afterSwap add .open to #modal
+           on htmx:afterSwap set #modal-title.textContent to 'Edit User'">
+    Edit
+</button>
+```
+
+**Pages/Shared/_UserEditForm.cshtml:**
+
+```html
+@model User
+
+<form hx-put="/Users?handler=ModalUpdate&amp;id=@Model.Id"
+      hx-target="#user-@Model.Id"
+      hx-swap="outerHTML"
+      _="on htmx:afterRequest if event.detail.successful remove .open from #modal">
+    @Html.AntiForgeryToken()
+    
+    <div class="form-group mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" id="name" name="name" value="@Model.Name" class="form-control" required />
+    </div>
+    
+    <div class="form-group mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" name="email" value="@Model.Email" class="form-control" required />
+    </div>
+    
+    <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-secondary" _="on click remove .open from #modal">
+            Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+</form>
+```
+
+```csharp
+public IActionResult OnGetEditForm(int id)
+{
+    var user = _userService.GetById(id);
+    if (user == null) return NotFound();
+    return Partial("_UserEditForm", user);
+}
+
+public IActionResult OnPutModalUpdate(int id, string name, string email)
+{
+    var user = _userService.GetById(id);
+    if (user == null) return NotFound();
+
+    user.Name = name;
+    user.Email = email;
+    _userService.Update(user);
+
+    Response.Headers.Append("HX-Trigger", "closeModal");
+    return Partial("_UserRow", user);
+}
+```
+
+## Confirmation Dialogs
+
+For dangerous actions, use `hx-confirm` for simple confirmations:
+
+```html
+<button hx-delete="/Items?handler=Delete&amp;id=@item.Id"
+        hx-target="#item-@item.Id"
+        hx-swap="outerHTML"
+        hx-confirm="Delete '@item.Name'? This cannot be undone."
+        class="btn btn-danger">
+    Delete
+</button>
+```
+
+For custom confirmation modals with more detail:
+
+```html
+<button hx-get="/Items?handler=ConfirmDelete&amp;id=@item.Id"
+        hx-target="#modal-content"
+        hx-swap="innerHTML"
+        _="on htmx:afterSwap add .open to #modal">
+    Delete
+</button>
+```
+
+**Pages/Shared/_ConfirmDelete.cshtml:**
+
+```html
+@model Item
+
+<div class="text-center">
+    <h5>Delete Item?</h5>
+    <p class="text-muted">You are about to delete "@Model.Name". This action cannot be undone.</p>
+    
+    <div class="d-flex justify-content-center gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" _="on click remove .open from #modal">
+            Cancel
+        </button>
+        <button hx-delete="/Items?handler=Delete&amp;id=@Model.Id"
+                hx-target="#item-@Model.Id"
+                hx-swap="outerHTML"
+                _="on htmx:afterRequest remove .open from #modal"
+                class="btn btn-danger">
+            Delete
+        </button>
+    </div>
 </div>
 ```
 
-By splitting your form into components like this, you can compose entire forms quickly while keeping your markup consistent and easy to maintain. It’s a small investment that pays off every time you need to add a new feature or tweak a layout.
+## Form Validation Patterns
 
-Looking ahead, the next chapter builds on the same component-driven mindset but focuses on navigation and layout. We’ll explore tabs and accordions—two classic UI elements that can be made highly interactive with htmx and a touch of Hyperscript. Just like with forms, we’ll keep things lightweight and modular so your users can move around your app quickly, without waiting for page reloads or relying on heavy front-end libraries. If you’ve enjoyed building dynamic forms, you’ll love what’s coming next.
+### Client-Side Validation
+
+HTML5 validation attributes work with htmx. The form will not submit until validation passes:
+
+```html
+<input type="email" name="email" required pattern="[^@]+@[^@]+\.[^@]+" />
+```
+
+### Server-Side Validation with Error Display
+
+Return the form partial with ModelState errors:
+
+```csharp
+public IActionResult OnPostSubmit()
+{
+    if (!ModelState.IsValid)
+    {
+        // Return form with validation errors highlighted
+        return Partial("_ContactForm", Input);
+    }
+    
+    // Process and return success
+}
+```
+
+The partial uses tag helpers to display errors:
+
+```html
+<span asp-validation-for="Email" class="text-danger"></span>
+```
+
+### Validation Summary
+
+For a summary of all errors:
+
+```html
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <h6>Please fix the following errors:</h6>
+        <ul class="mb-0">
+            @foreach (var state in ViewData.ModelState.Values)
+            {
+                @foreach (var error in state.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}
+```
+
+## Accessibility Considerations
+
+Make your forms accessible:
+
+### Labels and Inputs
+
+Always associate labels with inputs:
+
+```html
+<label for="email" class="form-label">Email Address</label>
+<input type="email" id="email" name="email" class="form-control" required aria-describedby="email-help" />
+<div id="email-help" class="form-text">We'll never share your email.</div>
+```
+
+### Error Announcements
+
+Use `aria-live` for dynamic error messages:
+
+```html
+<div id="form-errors" aria-live="polite">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" role="alert">
+            Please correct the errors below.
+        </div>
+    }
+</div>
+```
+
+### Focus Management in Modals
+
+When a modal opens, focus should move to the first interactive element:
+
+```html
+<button hx-get="/Users?handler=CreateForm"
+        hx-target="#modal-content"
+        _="on htmx:afterSwap 
+           add .open to #modal
+           then wait 50ms
+           then focus() on the first <input/> in #modal-content">
+    Add User
+</button>
+```
+
+## Reusable Form Components
+
+Create partial views for common form patterns:
+
+**Pages/Shared/_FormGroup.cshtml:**
+
+```html
+@model FormGroupModel
+
+<div class="form-group mb-3">
+    <label for="@Model.Id" class="form-label">@Model.Label</label>
+    
+    @if (Model.Type == "textarea")
+    {
+        <textarea id="@Model.Id" 
+                  name="@Model.Name" 
+                  class="form-control @(Model.HasError ? "is-invalid" : "")"
+                  rows="@Model.Rows"
+                  required="@Model.Required">@Model.Value</textarea>
+    }
+    else
+    {
+        <input type="@Model.Type" 
+               id="@Model.Id" 
+               name="@Model.Name" 
+               value="@Model.Value"
+               class="form-control @(Model.HasError ? "is-invalid" : "")"
+               required="@Model.Required" />
+    }
+    
+    @if (!string.IsNullOrEmpty(Model.HelpText))
+    {
+        <div class="form-text">@Model.HelpText</div>
+    }
+    
+    @if (Model.HasError)
+    {
+        <div class="invalid-feedback">@Model.ErrorMessage</div>
+    }
+</div>
+```
+
+Use it across forms:
+
+```html
+<partial name="_FormGroup" model="new FormGroupModel { 
+    Id = "email", 
+    Name = "Email", 
+    Label = "Email Address", 
+    Type = "email", 
+    Required = true 
+}" />
+```
+
+## Summary
+
+This chapter covered forms and modal forms with htmx:
+
+- **Basic forms** submit with `hx-post` and swap responses without page reload
+- **Anti-forgery tokens** are required in all forms using `@Html.AntiForgeryToken()`
+- **Validation errors** display by returning the form partial with ModelState
+- **Loading indicators** use `hx-indicator` to show progress
+- **Comment/list patterns** use `hx-swap="beforeend"` to append items
+- **Inline editing** swaps table rows between view and edit states
+- **Modal forms** load content on demand and close on success
+- **`HX-Trigger` header** provides server-controlled modal closing
+- **`hx-confirm`** adds simple confirmation dialogs
+- **Accessibility** requires proper labels, aria attributes, and focus management
+
+These patterns combine into sophisticated form workflows while keeping your Razor Pages clean and maintainable.
+
+## Preview of Next Chapter
+
+Chapter 12 covers tabs and accordions, two classic UI patterns that organize content into collapsible or switchable sections. You will learn to build tab interfaces that load content on demand, accordions that expand and collapse smoothly, and navigation patterns that combine with the URL management techniques from Chapter 10.

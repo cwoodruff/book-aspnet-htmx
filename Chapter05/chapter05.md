@@ -3,558 +3,816 @@ order: 26
 icon: stack
 label: Chap 5 - Mastering hx-get and hx-post
 meta:
-title: "Mastering `hx-get` and `hx-post`"
+title: "Mastering hx-get and hx-post"
 ---
-# 5
 
 # Mastering `hx-get` and `hx-post`
 
-Interactivity is at the heart of every modern web application, and in this chapter, we'll explore two of the most essential tools in htmx: `hx-get` and `hx-post`. These attributes allow your HTML elements to fetch and submit data dynamically, eliminating full-page reloads and making your Razor Pages feel fluid and responsive. Whether retrieving new content, handling form submissions, or updating elements on the fly, mastering these fundamental htmx commands is key to building a seamless user experience.
+The previous chapters introduced htmx commands and showed you how to build basic interactions. Now it is time to master the two commands you will use most often: `hx-get` and `hx-post`. These attributes handle the majority of web application interactions, from loading dynamic content to submitting forms and processing user input.
 
-Unlike traditional AJAX requests that require JavaScript, `hx-get` and `hx-post` integrate directly into your HTML, making server communication as easy as adding an attribute. With hx-get, you can fetch new content from your server with a simple button click, while `hx-post` lets you submit forms asynchronously without disrupting the page flow. These lightweight yet powerful capabilities enable you to enhance user interactions while keeping your Razor Pages project clean, maintainable, and free from unnecessary JavaScript complexity.
+This chapter goes beyond the basics. You will learn how to construct dynamic URLs, include additional parameters with requests, handle file uploads, and manage server responses effectively. You will build real patterns: live search with debouncing, inline editing, bulk operations, and proper error handling. By the end, you will have the skills to build sophisticated server-driven interactions without writing JavaScript.
 
-By the end of this chapter, you'll have a solid grasp of how to use `hx-get` and `hx-post` effectively within an ASP.NET Core Razor Pages application. You'll learn how to work with Razor Pages endpoints, manage server responses, and even handle security considerations such as CSRF (Cross-Site Request Forgery) protection. Once you've mastered these core concepts, you'll be well on your way to building dynamic, server-driven web applications with minimal effort.
+## Fetching Dynamic Content with `hx-get`
 
-## Fetching Dynamic Content with hx-get
+The `hx-get` attribute sends HTTP GET requests to your server and updates the page with the response. GET requests are ideal for retrieving data because they are cacheable, bookmarkable, and do not modify server state.
 
-Interactivity is the foundation of any modern web application, and hx-get plays a crucial role in making server-side data retrieval seamless and efficient. Unlike traditional JavaScript-based AJAX requests, hx-get allows you to fetch content from your server using simple HTML attributes, making your Razor Pages more dynamic without the overhead of a JavaScript framework. Whether you're updating sections of a page, retrieving user details, or handling bulk operations, `hx-get` provides a declarative way to make your UI more responsive.
+### Basic Content Loading
 
-Using `hx-get`, you can dynamically load content from Razor Pages without requiring full-page reloads. Imagine a scenario where you have a user list, and clicking on a user should display their profile details without navigating away from the page. Instead of embedding all user details upfront, you can use `hx-get` to fetch the relevant data only when needed. Here's a simple example where clicking a button loads user profile information into a designated section:
+The simplest use of `hx-get` loads content when a user clicks a button:
 
-```HTML
-<button hx-get="/Users?handler=Profile&id=1" hx-target="#profile-details" hx-swap="innerHTML">View Profile</button>
+```html
+<button hx-get="/Users?handler=Profile&id=1" 
+        hx-target="#profile-details">
+    View Profile
+</button>
 <div id="profile-details"></div>
 ```
 
-On the server side, you define the Razor Pages handler to fetch and return the profile data:
+The server handler returns HTML:
 
-```C#
+```csharp
 public class UsersModel : PageModel
 {
+    private readonly UserService _userService;
+
+    public UsersModel(UserService userService)
+    {
+        _userService = userService;
+    }
+
     public IActionResult OnGetProfile(int id)
     {
-        var user = _context.Users.Find(id);
-        if (user == null) return NotFound();
-    
-        return Content($"<h3>{user.Name}</h3><p>Email: {user.Email}</p>", "text/html");
+        var user = _userService.GetById(id);
+        if (user == null)
+        {
+            return Content("<p class=\"error\">User not found</p>", "text/html");
+        }
+
+        return Partial("_UserProfile", user);
     }
 }
 ```
 
-In this setup, when the button is clicked, an `hx-get` request is made to the server, fetching the profile details and inserting them into the #profile-details div. The `hx-swap="innerHTML"` ensures that only the selected element is updated with new content, preventing unnecessary re-renders of the entire page.
+The partial view renders the user data:
 
-Dynamic URL construction is another powerful feature of `hx-get`, allowing you to pass query parameters and modify requests based on user input. For example, if you have a search input that filters countries dynamically as the user types, `hx-get` can handle this efficiently:
-
-```HTML
-<input type="text" name="query" hx-get="/Index?handler=Search" hx-target="#search-results" hx-trigger="keyup changed delay:300ms" />
-<div id="search-results"></div>
-```
-
-On the backend, the `OnGetSearch` handler processes the query parameter and returns the filtered results:
-
-```C#
-public IActionResult OnGetSearch(string query)
-{
-    var users = _context.Users
-        .Where(u => u.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
-        .Select(u => $"<p>{u.Name} ({u.Email})</p>")
-        .ToList();
-
-    return Content(string.Join("", users), "text/html");
-}
-```
-
-This allows real-time updates without unnecessary full-page reloads. The `hx-trigger="keyup changed delay:300ms"` ensures that requests are only sent after the user pauses typing for 300 milliseconds, reducing server load and improving efficiency.
-
-Beyond simple retrieval of content, `hx-get` can be used for bulk operations such as activating or deactivating multiple table entries at once. Consider an admin dashboard where users can select multiple accounts and activate or deactivate them with a single click. You can structure the table with checkboxes and a bulk action button:
-
-_Index.cshtml_
+**Pages/Shared/_UserProfile.cshtml**
 
 ```html
-<div id="content">
-    <!-- Begin Page Content -->
-    <div class="container-fluid">
-        <!-- Page Heading -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h4 class="m-0 font-weight-bold text-primary">Bulk Update</h4>
-            </div>
-            <div class="card-body">
+@model User
 
-                <div hx-include="#checked-contacts" hx-target="#tbody">
-                    <button class="btn btn-primary btn-icon-split" hx-put="/BulkUpdate/Index?handler=activate">Activate</button>
-                    <button class="btn btn-primary btn-icon-split" hx-put="/BulkUpdate/Index?handler=deactivate">Deactivate</button>
-                </div>
-
-                @if (Model.ContactTableRows != null && Model.ContactTableRows.Count() > 0)
-                {
-                    <form id="checked-contacts">
-                        @Html.AntiForgeryToken()
-                        <table>
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                            </tr>
-                            </thead>
-
-                            <tbody id="tbody">
-                            <partial name="BulkUpdate/_tbody" model="@Model.ContactTableRows"/>
-                            </tbody>
-                        </table>
-                    </form>
-                }
-
-            </div>
-        </div>
-
-    </div>
-    <!-- /.container-fluid -->
+<div class="user-profile">
+    <h3>@Model.Name</h3>
+    <p>Email: @Model.Email</p>
+    <p>Member since: @Model.CreatedAt.ToString("MMMM yyyy")</p>
 </div>
 ```
 
-On the server side, the handler processes the selected user IDs and updates their status:
+### Live Search with Debouncing
 
-_Index.cshtml.cs_
+Search boxes that update as users type need careful handling. Without debouncing, every keystroke triggers a server request. The `hx-trigger` attribute with a delay prevents this:
 
-```C#
-public class Index : PageModel
+```html
+<div class="search-container">
+    <input type="text" 
+           name="query"
+           placeholder="Search users..."
+           hx-get="/Users?handler=Search" 
+           hx-target="#search-results" 
+           hx-trigger="keyup changed delay:300ms"
+           hx-indicator="#search-spinner" />
+    <span id="search-spinner" class="htmx-indicator">Searching...</span>
+</div>
+<div id="search-results"></div>
+```
+
+The trigger expression breaks down as:
+- `keyup`: Fire on keyup events
+- `changed`: Only if the value actually changed
+- `delay:300ms`: Wait 300ms after the last keystroke
+
+The server handler filters and returns results:
+
+```csharp
+public IActionResult OnGetSearch(string query)
 {
-    private readonly IContactService service;
-
-    public Index(IContactService service)
+    if (string.IsNullOrWhiteSpace(query))
     {
-        this.service = service;
+        return Content("", "text/html");
     }
 
-    public List<Contact>? ContactTableRows { get; set; }
-
-    public void OnGet()
-    {
-        ContactTableRows = service.Get().ToList();
-    }
-
-
-    public PartialViewResult OnPutActivate(int[] Ids)
-    {
-        foreach (var Id in Ids)
-            service.Update(Id, true);
-        var models = service.Get();
-        foreach (var m in models)
-            if (Ids.Contains(m.Id))
-                m.Updated = true;
-            else m.Updated = false;
-        return Partial("_tbody", models.ToList());
-    }
-
-    public PartialViewResult OnPutDeactivate(int[] Ids)
-    {
-        foreach (var Id in Ids)
-            service.Update(Id, false);
-        var models = service.Get();
-        foreach (var m in models)
-            if (Ids.Contains(m.Id))
-                m.Updated = true;
-            else m.Updated = false;
-
-        return Partial("_tbody", models.ToList());
-    }
+    var users = _userService.Search(query);
+    return Partial("_UserSearchResults", users);
 }
 ```
 
-_IContactService.cs_
+**Pages/Shared/_UserSearchResults.cshtml**
 
-```C#
-public interface IContactService
+```html
+@model IEnumerable<User>
+
+@if (!Model.Any())
 {
-    IEnumerable<Contact> Get();
-    void Update(int Id, bool Status);
+    <p class="no-results">No users found</p>
+}
+else
+{
+    <ul class="search-results">
+        @foreach (var user in Model)
+        {
+            <li>
+                <a hx-get="/Users?handler=Profile&amp;id=@user.Id"
+                   hx-target="#profile-details">
+                    @user.Name
+                </a>
+                <span class="email">@user.Email</span>
+            </li>
+        }
+    </ul>
 }
 ```
 
-_ContactService.cs_
+### Passing Parameters with `hx-vals`
 
-```C#
+Sometimes you need to send additional data with a GET request beyond what is in the URL. The `hx-vals` attribute adds JSON-formatted values:
+
+```html
+<button hx-get="/Products?handler=Filter"
+        hx-target="#product-list"
+        hx-vals='{"category": "electronics", "inStock": true}'>
+    Show Electronics
+</button>
+```
+
+The handler receives these as parameters:
+
+```csharp
+public IActionResult OnGetFilter(string category, bool inStock)
 {
-    private Dictionary<int, Contact> contacts;
-
-    public ContactService()
-    {
-        int key = 0;
-        // Initialize the static contact member.
-        contacts = new();
-        contacts.Add(++key, new(key, "Bobby Jones", "bobby@jones.org"));
-        contacts.Add(++key, new(key, "Sally Ride", "sally@apace.org"));
-        contacts.Add(++key, new(key, "Brian Woodruff", "dr.brian@doctor.org"));
-        contacts.Add(++key, new(key, "Spencer Woodruff", "spencer@woodruff.org") { Status = false });
-    }
-
-    public IEnumerable<Contact> Get()
-    {
-        return contacts.Select(c => c.Value);
-    }
-
-    public void Update(int Id, bool status)
-    {
-        contacts[Id].Status = status;
-        contacts[Id].Updated = false;
-    }
+    var products = _productService.Filter(category, inStock);
+    return Partial("_ProductList", products);
 }
 ```
 
-_Program.cs_
+### Including Form Fields with `hx-include`
 
-```C#
-var builder = WebApplication.CreateBuilder(args);
+When you need to include values from form fields outside the triggering element, use `hx-include`:
 
-// Add services to the container.
-builder.Services
-    .AddSingleton<htmx_examples.Pages.BulkUpdate.IContactService, htmx_examples.Pages.BulkUpdate.ContactService>();
-builder.Services.AddRazorPages();
+```html
+<div class="filter-controls">
+    <select id="category-select" name="category">
+        <option value="">All Categories</option>
+        <option value="electronics">Electronics</option>
+        <option value="clothing">Clothing</option>
+    </select>
+    
+    <input type="number" id="max-price" name="maxPrice" placeholder="Max price" />
+    
+    <button hx-get="/Products?handler=Filter"
+            hx-target="#product-list"
+            hx-include="#category-select, #max-price">
+        Apply Filters
+    </button>
+</div>
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapRazorPages();
-
-app.Run();
+<div id="product-list"></div>
 ```
 
-This approach allows admins to perform bulk updates efficiently without refreshing the page.
+The `hx-include` selector can be:
+- An ID: `#category-select`
+- Multiple selectors: `#category-select, #max-price`
+- A CSS selector: `.filter-input`
+- `closest form`: Include all fields in the nearest ancestor form
+- `this`: Include the triggering element itself
 
-With `hx-get`, you can build highly dynamic and interactive Razor Pages that fetch data only when needed, reducing unnecessary server load and improving performance. Whether you’re loading user profiles, implementing real-time search, or handling bulk updates, `hx-get` provides a powerful way to make your application more responsive while keeping your frontend code clean and maintainable.
+### Caching GET Responses
 
-## Seamless Form Submissions with `hx-post`
+For data that does not change frequently, server-side caching reduces load:
 
-Handling form submissions is a fundamental aspect of any web application. The `hx-post` feature provides a clean and efficient way to submit data asynchronously without needing JavaScript. By integrating `hx-post` into your Razor Pages application, you can create forms that dynamically send data to the server, process responses, and update the user interface—all without requiring a full page reload. This approach keeps your frontend lightweight while delivering a modern and responsive user experience.
-
-Consider a basic form that collects a user's name and email address. Instead of using traditional form submissions that reload the page, `hx-post` allows us to manage everything in the background. Here’s how you can implement it in Razor Pages:
-
-```HTML
-<form hx-post="/Users?handler=Register" hx-target="#response" hx-indicator="#loading">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required />
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required />
-
-    <button type="submit">Register</button>
-</form>
-
-<div id="loading" style="display: none;">Submitting...</div>
-<div id="response"></div>
-```
-
-```C#
-public class UsersModel : PageModel
+```csharp
+public IActionResult OnGetCategories()
 {
-    [BindProperty] public string Name { get; set; }
-    [BindProperty] public string Email { get; set; }
-
-    public IActionResult OnPostRegister()
-    {
-        if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Email))
-            return BadRequest("Both fields are required.");
-
-        return Content($"<p>Thank you, {Name}. Your email {Email} has been registered!</p>", "text/html");
-    }
+    Response.Headers.Append("Cache-Control", "public, max-age=300");
+    
+    var categories = _categoryService.GetAll();
+    return Partial("_CategoryList", categories);
 }
 ```
 
-In this setup, when the user submits the form, the `hx-post` attribute sends the data to the `OnPostRegister` handler, which processes the input and returns a response. The `hx-target="#response"` attribute ensures that only the relevant part of the page is updated, providing a smoother user experience. At the same time, the `hx-indicator="#loading"` attribute offers feedback to the user while the request is in progress.
+The browser caches this response for 5 minutes, avoiding redundant server requests.
 
-For more advanced scenarios, you may want to send additional data or modify the behavior of the form dynamically. For example, if you're implementing a commenting system where users submit comments and see them appear instantly, you can use the `hx-swap="beforeend"` attribute to append new comments directly without reloading the page.
+## Submitting Data with `hx-post`
 
-```HTML
-<form hx-post="/Comments?handler=Add" hx-target="#comments" hx-swap="beforeend">
-    <textarea name="comment" required></textarea>
-    <button type="submit">Post Comment</button>
-</form>
+The `hx-post` attribute sends HTTP POST requests, typically for creating resources or submitting forms. POST requests can modify server state and require anti-forgery protection in ASP.NET Core.
 
-<div id="comments"></div>
-```
+### Setting Up Anti-Forgery Token Handling
 
-```C#
-public class CommentsModel : PageModel
-{
-    [BindProperty] public string Comment { get; set; }
+Before any POST examples will work, configure htmx to include anti-forgery tokens. Add this to your `_Layout.cshtml`:
 
-    public IActionResult OnPostAdd()
-    {
-        if (string.IsNullOrWhiteSpace(Comment))
-            return BadRequest("Comment cannot be empty.");
-
-        return Content($"<p>{Comment}</p>", "text/html");
-    }
-}
-```
-
-Here, `hx-swap="beforeend"` ensures that each new comment is added to the existing list instead of replacing it. This small addition makes a big difference in the user experience, allowing for seamless interaction without requiring JavaScript.
-
-Another powerful use case for `hx-post` is handling complex validation and dynamic error messages. Instead of performing client-side validation, you can let the server handle everything and return validation messages in real time. Here’s how you can modify the earlier registration form to display validation errors without reloading the page:
-
-```HTML
-<form hx-post="/Users?handler=Register" hx-target="#response" hx-indicator="#loading">
-    <input type="text" name="name" placeholder="Name" required />
-    <input type="email" name="email" placeholder="Email" required />
-    <button type="submit">Register</button>
-</form>
-
-<div id="loading" style="display: none;">Submitting...</div>
-<div id="response" class="error-message"></div>
-```
-
-```C#
-public class UsersModel : PageModel
-{
-    [BindProperty] public string Name { get; set; }
-    [BindProperty] public string Email { get; set; }
-
-    public IActionResult OnPostRegister()
-    {
-        if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Email))
-            return BadRequest("<p class='error'>Both fields are required.</p>");
-
-        if (!Email.Contains("@"))
-            return BadRequest("<p class='error'>Please enter a valid email.</p>");
-
-        return Content($"<p class='success'>Thank you, {Name}. You are now registered.</p>", "text/html");
-    }
-}
-```
-
-This setup ensures that validation feedback is displayed dynamically without requiring JavaScript. If the server detects an issue, it returns an error message, which is inserted into `#response`. Users receive immediate feedback without the disruption of a full-page reload.
-
-For even greater flexibility, `hx-post` can be combined with hx-vals to send additional parameters programmatically. For instance, if you need to submit hidden values alongside user input, you can do it like this:
-
-```HTML
-<form hx-post="/Orders?handler=Submit" hx-target="#confirmation" hx-vals='{"productId": 1234, "quantity": 2}'>
-    <button type="submit">Place Order</button>
-</form>
-
-<div id="confirmation"></div>
-```
-
-```C#
-public class OrdersModel : PageModel
-{
-    public IActionResult OnPostSubmit(int productId, int quantity)
-    {
-        return Content($"<p>Order placed: Product {productId}, Quantity {quantity}.</p>", "text/html");
-    }
-}
-```
-
-This approach simplifies the process of passing additional data without the need for hidden form fields or JavaScript event handlers.
-
-By using `hx-post`, you can create highly interactive, server-driven applications that effectively manage form submissions. Whether you are processing simple forms, dynamically adding content, or implementing real-time validation, `hx-post` enables you to accomplish all of this with minimal effort. Its seamless integration with Razor Pages ensures that your application remains clean, maintainable, and free from unnecessary JavaScript complexity.
-
-## Securing `hx-post` Requests with Anti-Forgery Tokens
-
-Security is crucial for any web application, particularly when it comes to handling form submissions. In ASP.NET Core, CSRF attacks are prevented through the use of Anti-Forgery Tokens. This measure ensures that malicious websites cannot trick users into submitting unauthorized requests. While traditional Razor Pages forms automatically incorporate this protection, htmx-based requests need explicit handling to effectively integrate `hx-post` with ASP.NET Core’s CSRF defenses.
-
-ASP.NET Core applies anti-forgery validation to all POST, PUT, PATCH, and DELETE requests by default. When using `hx-post`, you must include the anti-forgery token to ensure successful validation. While this token is typically embedded in forms using the `@Html.AntiForgeryToken()` helper, htmx does not automatically send it. Therefore, you need to manually include the token with each `hx-post` request.
-
-Here is an example of a secure form using hx-post with CSRF protection:
-
-```HTML
-<form hx-post="/Users?handler=Register" hx-target="#response">
-    <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
-
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required />
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required />
-
-    <button type="submit">Register</button>
-</form>
-
-<div id="response"></div>
-```
-
-This form includes the anti-forgery token as a hidden input field, ensuring it is sent along with the request. However, this approach requires a manual update to every form. A more flexible solution is to dynamically inject the token into all htmx requests using JavaScript.
-
-To automatically append the CSRF token to every `hx-post` request, you can use the `htmx:configRequest` event in JavaScript:
-
-```HTML
+```html
+<script src="https://unpkg.com/htmx.org@2.0.4"></script>
 <script>
-document.body.addEventListener('htmx:configRequest', (event) => {
-    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-    event.detail.headers['RequestVerificationToken'] = token;
+document.body.addEventListener('htmx:configRequest', function(event) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]');
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token.value;
+    }
 });
 </script>
 ```
 
-This script monitors all htmx requests and automatically adds the CSRF token to the request headers. As a result, all hx-post submissions will include the necessary token without requiring any changes to individual forms.
+### Basic Form Submission
 
-On the server side, you must ensure that the request validation is enforced. ASP.NET Core provides the [ValidateAntiForgeryToken] attribute, which should be applied to the OnPost handler:
+With token handling configured, forms submit without page reloads:
 
-```C#
-[ValidateAntiForgeryToken]
+```html
+<form hx-post="/Contact?handler=Submit" hx-target="#response">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="Name" required />
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="Email" required />
+    </div>
+    <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="Message" required></textarea>
+    </div>
+    <button type="submit">Send Message</button>
+</form>
+<div id="response"></div>
+```
+
+The handler processes the submission:
+
+```csharp
+public class ContactModel : PageModel
+{
+    private readonly IEmailService _emailService;
+
+    public ContactModel(IEmailService emailService)
+    {
+        _emailService = emailService;
+    }
+
+    public void OnGet()
+    {
+    }
+
+    public async Task<IActionResult> OnPostSubmit(ContactForm form)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = string.Join("<br>",
+                ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+            return Content($"<div class=\"error\">{errors}</div>", "text/html");
+        }
+
+        await _emailService.SendContactEmailAsync(form);
+        
+        return Content("<div class=\"success\">Thank you for your message. We will respond shortly.</div>", "text/html");
+    }
+}
+
+public class ContactForm
+{
+    [Required]
+    [StringLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(2000)]
+    public string Message { get; set; } = string.Empty;
+}
+```
+
+### Controlling Which Parameters Are Sent
+
+The `hx-params` attribute controls which form fields are included in the request:
+
+```html
+<!-- Include only specific fields -->
+<form hx-post="/Users?handler=UpdateEmail" hx-params="email">
+    @Html.AntiForgeryToken()
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="text" name="phone" />
+    <button type="submit">Update Email Only</button>
+</form>
+
+<!-- Include all fields (default for forms) -->
+<form hx-post="/Users?handler=UpdateAll" hx-params="*">
+    @Html.AntiForgeryToken()
+    <!-- fields -->
+</form>
+
+<!-- Exclude specific fields -->
+<form hx-post="/Users?handler=UpdateProfile" hx-params="not password,confirmPassword">
+    @Html.AntiForgeryToken()
+    <!-- fields -->
+</form>
+```
+
+### File Uploads
+
+File uploads require the `hx-encoding` attribute to set the correct content type:
+
+```html
+<form hx-post="/Documents?handler=Upload"
+      hx-encoding="multipart/form-data"
+      hx-target="#upload-result">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="file">Select File</label>
+        <input type="file" id="file" name="file" required />
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" id="description" name="description" />
+    </div>
+    <button type="submit">Upload</button>
+</form>
+<div id="upload-result"></div>
+```
+
+The handler receives the file:
+
+```csharp
+public async Task<IActionResult> OnPostUpload(IFormFile file, string description)
+{
+    if (file == null || file.Length == 0)
+    {
+        return Content("<div class=\"error\">Please select a file</div>", "text/html");
+    }
+
+    var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".txt" };
+    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+    
+    if (!allowedExtensions.Contains(extension))
+    {
+        return Content("<div class=\"error\">Invalid file type</div>", "text/html");
+    }
+
+    var fileName = $"{Guid.NewGuid()}{extension}";
+    var filePath = Path.Combine(_environment.WebRootPath, "uploads", fileName);
+
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+        await file.CopyToAsync(stream);
+    }
+
+    var document = new Document
+    {
+        FileName = fileName,
+        OriginalName = file.FileName,
+        Description = description,
+        UploadedAt = DateTime.UtcNow
+    };
+    
+    _documentService.Add(document);
+
+    return Content($"<div class=\"success\">Uploaded: {file.FileName}</div>", "text/html");
+}
+```
+
+### Buttons Outside Forms
+
+Sometimes you need a button to POST data without being inside a form. Use `hx-vals` to send the data:
+
+```html
+@Html.AntiForgeryToken()
+
+<button hx-post="/Cart?handler=Add"
+        hx-vals='{"productId": @product.Id, "quantity": 1}'
+        hx-target="#cart-count"
+        hx-swap="innerHTML">
+    Add to Cart
+</button>
+
+<span id="cart-count">@Model.CartItemCount</span>
+```
+
+```csharp
+public IActionResult OnPostAdd(int productId, int quantity)
+{
+    _cartService.AddItem(productId, quantity);
+    var count = _cartService.GetItemCount();
+    return Content(count.ToString(), "text/html");
+}
+```
+
+## Bulk Operations
+
+Admin interfaces often need to operate on multiple items at once. This pattern uses checkboxes with `hx-include` to send selected IDs:
+
+```html
+@page
+@model BulkOperationsModel
+
+<h1>User Management</h1>
+
+<div class="bulk-actions" hx-include="#user-table" hx-target="#user-list">
+    @Html.AntiForgeryToken()
+    <button hx-put="/Admin/Users?handler=Activate" class="btn btn-success">
+        Activate Selected
+    </button>
+    <button hx-put="/Admin/Users?handler=Deactivate" class="btn btn-warning">
+        Deactivate Selected
+    </button>
+    <button hx-delete="/Admin/Users?handler=Delete" 
+            hx-confirm="Delete selected users?"
+            class="btn btn-danger">
+        Delete Selected
+    </button>
+</div>
+
+<form id="user-table">
+    <table class="table">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="select-all" /></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="user-list">
+            @foreach (var user in Model.Users)
+            {
+                <partial name="_UserRow" model="user" />
+            }
+        </tbody>
+    </table>
+</form>
+
+<script>
+document.getElementById('select-all').addEventListener('change', function() {
+    var checkboxes = document.querySelectorAll('input[name="ids"]');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+});
+</script>
+```
+
+**Pages/Shared/_UserRow.cshtml**
+
+```html
+@model User
+
+<tr id="user-@Model.Id" class="@(Model.IsActive ? "" : "inactive")">
+    <td><input type="checkbox" name="ids" value="@Model.Id" /></td>
+    <td>@Model.Name</td>
+    <td>@Model.Email</td>
+    <td>
+        <span class="badge @(Model.IsActive ? "badge-success" : "badge-secondary")">
+            @(Model.IsActive ? "Active" : "Inactive")
+        </span>
+    </td>
+</tr>
+```
+
+The handlers process the selected IDs:
+
+```csharp
 public class UsersModel : PageModel
 {
-    [BindProperty] public string Name { get; set; }
-    [BindProperty] public string Email { get; set; }
+    private readonly IUserService _userService;
 
-    public IActionResult OnPostRegister()
+    public UsersModel(IUserService userService)
     {
-        if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Email))
-            return BadRequest("<p class='error'>Both fields are required.</p>");
+        _userService = userService;
+    }
 
-        return Content($"<p class='success'>Thank you, {Name}. You are now registered.</p>", "text/html");
+    public List<User> Users { get; set; } = new();
+
+    public void OnGet()
+    {
+        Users = _userService.GetAll();
+    }
+
+    public IActionResult OnPutActivate(int[] ids)
+    {
+        if (ids == null || ids.Length == 0)
+        {
+            return Content("<tr><td colspan=\"4\">No users selected</td></tr>", "text/html");
+        }
+
+        _userService.SetActiveStatus(ids, true);
+        var users = _userService.GetByIds(ids);
+        
+        return Partial("_UserRows", users);
+    }
+
+    public IActionResult OnPutDeactivate(int[] ids)
+    {
+        if (ids == null || ids.Length == 0)
+        {
+            return Content("<tr><td colspan=\"4\">No users selected</td></tr>", "text/html");
+        }
+
+        _userService.SetActiveStatus(ids, false);
+        var users = _userService.GetByIds(ids);
+        
+        return Partial("_UserRows", users);
+    }
+
+    public IActionResult OnDeleteDelete(int[] ids)
+    {
+        if (ids == null || ids.Length == 0)
+        {
+            return Content("<tr><td colspan=\"4\">No users selected</td></tr>", "text/html");
+        }
+
+        _userService.Delete(ids);
+        
+        // Return remaining users
+        var remainingUsers = _userService.GetAll();
+        return Partial("_UserRows", remainingUsers);
     }
 }
 ```
 
-When an hx-post request is sent without a valid anti-forgery token, the server responds with a **400 Bad Request** message. This mechanism ensures that only legitimate requests originating from your site are processed, effectively preventing CSRF attacks.
+**Pages/Shared/_UserRows.cshtml**
 
-While disabling CSRF protection is not recommended in production, there are cases where you might want to bypass it temporarily, such as during local development or API testing. ASP.NET Core allows you to override token validation by applying the [IgnoreAntiforgeryToken] attribute to your handler. This should only be done when security is not a concern, such as testing isolated features.
+```html
+@model IEnumerable<User>
 
-```C#
-[IgnoreAntiforgeryToken]
-public IActionResult OnPostSubmit()
+@foreach (var user in Model)
 {
-    return Content("<p class='success'>CSRF protection is disabled for testing purposes.</p>", "text/html");
+    <partial name="_UserRow" model="user" />
 }
 ```
 
-By correctly implementing anti-forgery tokens, you can ensure that your htmx-enhanced Razor Pages applications are secure while still benefiting from the simplicity of `hx-post`. You can protect user data from malicious attacks by employing hidden fields or by dynamically appending tokens through JavaScript, all without compromising the seamless user experience that htmx offers.
+## Inline Editing
 
-## Laying the Groundwork for Complex Data Interactions
+Inline editing lets users modify data directly in a table without navigating to a separate page:
 
-As you start working with more advanced data operations in your Razor Pages application, it's essential to establish a solid foundation for managing dynamic updates, state management, and real-time changes. While using `hx-get` and `hx-post` addresses the basics of data retrieval and submission, more complex scenarios necessitate a structured approach to modifying existing records, handling partial updates, and ensuring smooth user interactions. By setting up a flexible data layer and efficiently organizing your htmx requests, you'll find it much easier to implement future operations with `hx-put`, `hx-patch`, and `hx-delete`.
-
-A well-designed API for advanced operations begins with a robust entity model. For example, if you’re managing a list of products in an inventory system, each product must support full updates (replacing all fields), partial updates (modifying only specific fields), and deletions. Here’s a simple model for managing products:
-
-```C#
-public class Product
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public decimal Price { get; set; }
-    public int Stock { get; set; }
-}
-```
-
-Instead of reloading the entire page when updating product information, htmx allows you to send targeted updates that modify only the necessary parts of the UI. A list of products can be rendered as follows:
-
-```HTML
-<table>
+```html
+<table class="table">
     <thead>
-        <tr><th>Name</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+        </tr>
     </thead>
     <tbody id="product-list">
         @foreach (var product in Model.Products)
         {
-            <tr id="product-@product.Id">
-                <td>@product.Name</td>
-                <td>@product.Price</td>
-                <td>@product.Stock</td>
-                <td>
-                    <button hx-get="/Products?handler=Edit&id=@product.Id" hx-target="#product-@product.Id">Edit</button>
-                    <button hx-delete="/Products?handler=Delete&id=@product.Id" hx-target="#product-@product.Id" hx-swap="outerHTML">Delete</button>
-                </td>
-            </tr>
+            <partial name="_ProductRow" model="product" />
         }
     </tbody>
 </table>
 ```
 
-This setup allows each product row to include buttons for dynamically editing or deleting an item. When the "Edit" button is clicked, an `hx-get` request loads an editable form directly into the same row, enabling inline editing. In contrast, the `hx-delete` request completely removes the row after a successful deletion. To handle updates efficiently on the server, it's essential to define specific endpoints for retrieving and modifying product details.
+**Pages/Shared/_ProductRow.cshtml**
 
-The handler for the "Edit" button retrieves the selected product and returns a partial HTML response that contains the update form.
+```html
+@model Product
 
-```C#
-public IActionResult OnGetEdit(int id)
-{
-    var product = _context.Products.Find(id);
-    if (product == null) return NotFound();
-
-    return Partial("_ProductEdit", product);
-}
-```
-
-```HTML
-<!-- _ProductEdit.cshtml -->
 <tr id="product-@Model.Id">
-    <td><input type="text" name="name" value="@Model.Name" /></td>
-    <td><input type="number" name="price" value="@Model.Price" step="0.01" /></td>
-    <td><input type="number" name="stock" value="@Model.Stock" /></td>
+    <td>@Model.Name</td>
+    <td>@Model.Price.ToString("C")</td>
+    <td>@Model.Stock</td>
     <td>
-        <button hx-put="/Products?handler=Update&id=@Model.Id" hx-target="#product-@Model.Id" hx-include="closest tr">Save</button>
-        <button hx-get="/Products?handler=Cancel&id=@Model.Id" hx-target="#product-@Model.Id">Cancel</button>
+        <button hx-get="/Products?handler=Edit&amp;id=@Model.Id"
+                hx-target="#product-@Model.Id"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-primary">
+            Edit
+        </button>
     </td>
 </tr>
 ```
 
-With `hx-include="closest tr"`, the form fields are automatically included in the `hx-put` request. The server-side update handler then processes the request and returns the updated row:
+**Pages/Shared/_ProductEditRow.cshtml**
 
-```C#
+```html
+@model Product
+
+<tr id="product-@Model.Id" class="editing">
+    <td>
+        <input type="text" name="name" value="@Model.Name" class="form-control" />
+    </td>
+    <td>
+        <input type="number" name="price" value="@Model.Price" step="0.01" class="form-control" />
+    </td>
+    <td>
+        <input type="number" name="stock" value="@Model.Stock" class="form-control" />
+    </td>
+    <td>
+        <button hx-put="/Products?handler=Update&amp;id=@Model.Id"
+                hx-target="#product-@Model.Id"
+                hx-swap="outerHTML"
+                hx-include="closest tr"
+                class="btn btn-sm btn-success">
+            Save
+        </button>
+        <button hx-get="/Products?handler=Cancel&amp;id=@Model.Id"
+                hx-target="#product-@Model.Id"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-secondary">
+            Cancel
+        </button>
+    </td>
+</tr>
+```
+
+The handlers switch between view and edit modes:
+
+```csharp
+public IActionResult OnGetEdit(int id)
+{
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
+
+    return Partial("_ProductEditRow", product);
+}
+
+public IActionResult OnGetCancel(int id)
+{
+    var product = _productService.GetById(id);
+    if (product == null) return NotFound();
+
+    return Partial("_ProductRow", product);
+}
+
 public IActionResult OnPutUpdate(int id, string name, decimal price, int stock)
 {
-    var product = _context.Products.Find(id);
+    var product = _productService.GetById(id);
     if (product == null) return NotFound();
 
     product.Name = name;
     product.Price = price;
     product.Stock = stock;
-    _context.SaveChanges();
+    
+    _productService.Update(product);
 
     return Partial("_ProductRow", product);
 }
 ```
 
-This method ensures that only the modified row is updated on the user interface, which prevents unnecessary page refreshes. By organizing your Razor Pages and htmx requests in this manner, you create a scalable foundation for effectively managing RESTful updates.
+The `hx-include="closest tr"` on the Save button includes all input fields from the table row in the PUT request.
 
-When working with `hx-post`, a successful operation typically results in an HTML snippet being returned to update the page. However, when an error occurs—such as missing form fields or a server issue—you need to provide meaningful feedback to the user. Consider a scenario where a user submits a form with required fields. If validation fails, the server should return an error message while keeping the form visible:
+## Error Handling
 
-```C#
+Users need clear feedback when something goes wrong. Return appropriate HTTP status codes and error messages:
+
+```csharp
 public IActionResult OnPostRegister(string name, string email)
 {
-    if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email))
-        return BadRequest("<p class='error'>All fields are required.</p>");
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        Response.StatusCode = 400;
+        return Content("<div class=\"error\">Name is required</div>", "text/html");
+    }
 
-    return Content($"<p class='success'>Thank you, {name}. Your registration is complete.</p>", "text/html");
+    if (string.IsNullOrWhiteSpace(email))
+    {
+        Response.StatusCode = 400;
+        return Content("<div class=\"error\">Email is required</div>", "text/html");
+    }
+
+    if (_userService.EmailExists(email))
+    {
+        Response.StatusCode = 409;
+        return Content("<div class=\"error\">This email is already registered</div>", "text/html");
+    }
+
+    try
+    {
+        _userService.Register(name, email);
+        return Content("<div class=\"success\">Registration complete! Check your email.</div>", "text/html");
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Registration failed for {Email}", email);
+        Response.StatusCode = 500;
+        return Content("<div class=\"error\">An unexpected error occurred. Please try again.</div>", "text/html");
+    }
 }
 ```
 
-The BadRequest response ensures that the form remains on the screen while displaying the error message dynamically. On the client side, `hx-target` can be used to direct this response into a dedicated error container, ensuring the UI remains responsive:
+On the client side, you can handle errors with htmx events:
 
-```HTML
-<form hx-post="/Users?handler=Register" hx-target="#response">
-    <input type="text" name="name" placeholder="Name" required />
-    <input type="email" name="email" placeholder="Email" required />
+```html
+<form hx-post="/Users?handler=Register" 
+      hx-target="#response"
+      hx-target-error="#error-container">
+    @Html.AntiForgeryToken()
+    <input type="text" name="name" required />
+    <input type="email" name="email" required />
     <button type="submit">Register</button>
 </form>
 
 <div id="response"></div>
+<div id="error-container"></div>
+
+<script>
+document.body.addEventListener('htmx:responseError', function(event) {
+    console.error('Request failed:', event.detail.xhr.status);
+});
+</script>
 ```
-Debugging network requests is an essential skill when working with htmx. Since requests are made asynchronously, errors may not always be immediately visible. Using browser developer tools, you can inspect network traffic, check request payloads, and view server responses. In Chrome or Edge, opening DevTools (F12) → Network tab allows you to filter requests by XHR and see the details of every hx-get or hx-post call. Common issues include missing anti-forgery tokens, incorrect content types, or unexpected 400/500 status codes from the server.
 
-Performance considerations become critical when making repeated requests. If a page element triggers frequent `hx-get` or `hx-post` calls—such as a live search feature or an auto-refreshing dashboard—it’s important to avoid overwhelming the server. Using `hx-trigger` with a debounce delay ensures that requests are sent only when necessary. A search bar that updates results as the user types should use a short delay to prevent excessive queries:
+## Loading Indicators
 
-```HTML
-<input type="text" name="query" hx-get="/Users?handler=Search" hx-target="#results" hx-trigger="keyup changed delay:300ms" />
-<div id="results"></div>
+Users need visual feedback during requests. The `hx-indicator` attribute shows an element while the request is in progress:
+
+```html
+<button hx-post="/Reports?handler=Generate"
+        hx-target="#report-content"
+        hx-indicator="#report-spinner">
+    Generate Report
+</button>
+
+<span id="report-spinner" class="htmx-indicator">
+    <img src="/images/spinner.gif" alt="Loading..." />
+    Generating report...
+</span>
+
+<div id="report-content"></div>
 ```
 
-For scenarios where the same data is fetched multiple times, caching responses at the server or leveraging hx-history can improve performance. If a dashboard refreshes frequently, returning a `304 Not Modified` response when data hasn't changed can significantly reduce server load.
+Add CSS to hide indicators by default:
 
-In the next chapter, we will delve into `hx-put`, `hx-patch`, and `hx-delete`, focusing on their roles in implementing full and partial updates within a RESTful architecture. These methods are essential for making your applications more dynamic, responsive, and in line with modern best practices.
+```css
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
+}
+```
+
+## Debugging htmx Requests
+
+When requests do not work as expected, use these debugging techniques:
+
+### Browser Network Tab
+
+Open Developer Tools (F12) and go to the Network tab. Filter by XHR/Fetch to see htmx requests. Check:
+
+- Request URL and method
+- Request headers (look for RequestVerificationToken)
+- Request body (form data)
+- Response status code
+- Response body
+
+### htmx Logging
+
+Enable verbose logging during development:
+
+```html
+<script>
+htmx.logAll();
+</script>
+```
+
+### Common Issues
+
+**400 Bad Request**
+
+Usually a missing anti-forgery token. Ensure `@Html.AntiForgeryToken()` is present and the token-forwarding script is in your layout.
+
+**404 Not Found**
+
+The handler name does not match your method. `handler=Submit` requires `OnPostSubmit()` for POST requests.
+
+**Empty Response**
+
+The handler might be returning `null` or the wrong content type. Verify the handler returns `Content(..., "text/html")` or `Partial(...)`.
+
+**Response Not Updating Target**
+
+Check that the `hx-target` selector matches an element that exists. Verify the element has the correct `id`.
+
+## Summary
+
+This chapter covered `hx-get` and `hx-post` in depth:
+
+- `hx-get` retrieves data with GET requests, ideal for search, filtering, and loading content
+- `hx-post` submits data with POST requests, requiring anti-forgery token handling
+- `hx-vals` adds JSON data to requests
+- `hx-include` includes form fields from outside the triggering element
+- `hx-params` controls which form fields are sent
+- `hx-encoding` enables file uploads with multipart form data
+- `hx-indicator` shows loading feedback during requests
+
+You built patterns for live search, bulk operations, inline editing, file uploads, and error handling. These patterns form the foundation for most web application interactions.
+
+## Preview of Next Chapter
+
+Chapter 6 explores `hx-put`, `hx-patch`, and `hx-delete` for RESTful update and delete operations. You will learn when to use each method, how to handle partial updates, and patterns for optimistic UI updates that make your application feel responsive.
