@@ -1,0 +1,277 @@
+@page
+@model DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>Dashboard - State Preservation Demo</h2>
+        <p class="mb-4">This dashboard demonstrates <code>hx-history-elt</code> for preserving tab states, scroll positions, and form inputs.</p>
+        
+        <!-- Tabs with state preservation -->
+        <div id="tabs" hx-history-elt>
+            <ul class="nav nav-pills mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link btn-tab active" 
+                            id="analytics-tab"
+                            _="on click remove .active from .nav-link then add .active to me then hide .tab-content then show #analytics-content">
+                        📊 Analytics
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link btn-tab" 
+                            id="reports-tab"
+                            _="on click remove .active from .nav-link then add .active to me then hide .tab-content then show #reports-content">
+                        📋 Reports  
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link btn-tab" 
+                            id="settings-tab"
+                            _="on click remove .active from .nav-link then add .active to me then hide .tab-content then show #settings-content">
+                        ⚙️ Settings
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Analytics Tab -->
+            <div id="analytics-content" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Analytics Dashboard</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="scrollable-content">
+                            <h6>Sales Metrics</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body text-center">
+                                            <h4>$24,567</h4>
+                                            <small>Total Sales</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body text-center">
+                                            <h4>1,234</h4>
+                                            <small>Orders</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body text-center">
+                                            <h4>567</h4>
+                                            <small>Customers</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body text-center">
+                                            <h4>89%</h4>
+                                            <small>Satisfaction</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6>Performance Charts</h6>
+                            <div class="mb-3">
+                                <div class="bg-light p-3 rounded" style="height: 200px;">
+                                    <p>📈 Sales Chart Placeholder</p>
+                                    <p>Scroll down to see more charts and test scroll position preservation...</p>
+                                </div>
+                            </div>
+
+                            <h6>Traffic Analysis</h6>
+                            <div class="mb-3">
+                                <div class="bg-light p-3 rounded" style="height: 200px;">
+                                    <p>🌍 Traffic Chart Placeholder</p>
+                                    <p>Continue scrolling to test the scroll position memory...</p>
+                                </div>
+                            </div>
+
+                            <h6>User Engagement</h6>
+                            <div class="mb-3">
+                                <div class="bg-light p-3 rounded" style="height: 200px;">
+                                    <p>👥 Engagement Chart Placeholder</p>
+                                    <p>Scroll position in this tab will be remembered when you navigate away and come back!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports-content" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Reports Center</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="scrollable-content">
+                            <h6>Generate Reports</h6>
+                            <form class="mb-4" hx-history-elt>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Report Type</label>
+                                        <select class="form-select">
+                                            <option>Sales Summary</option>
+                                            <option>Customer Analysis</option>
+                                            <option>Product Performance</option>
+                                            <option>Financial Report</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Date Range</label>
+                                        <select class="form-select">
+                                            <option>Last 7 days</option>
+                                            <option>Last 30 days</option>
+                                            <option>Last 3 months</option>
+                                            <option>Custom Range</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Additional Notes</label>
+                                        <textarea class="form-control" rows="3" placeholder="Enter any additional notes for the report..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-primary">Generate Report</button>
+                                    <button type="button" class="btn btn-outline-secondary">Schedule</button>
+                                </div>
+                            </form>
+
+                            <h6>Recent Reports</h6>
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Sales Summary - Q3 2024</h6>
+                                        <small>3 days ago</small>
+                                    </div>
+                                    <p class="mb-1">Comprehensive sales analysis for Q3 2024</p>
+                                    <button class="btn btn-sm btn-outline-primary">Download PDF</button>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Customer Analysis - September</h6>
+                                        <small>1 week ago</small>
+                                    </div>
+                                    <p class="mb-1">Customer behavior and segmentation analysis</p>
+                                    <button class="btn btn-sm btn-outline-primary">Download PDF</button>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Product Performance - August</h6>
+                                        <small>2 weeks ago</small>
+                                    </div>
+                                    <p class="mb-1">Top performing products and category analysis</p>
+                                    <button class="btn btn-sm btn-outline-primary">Download PDF</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-content" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>User Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="scrollable-content">
+                            <form hx-history-elt>
+                                <h6>Profile Information</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" class="form-control" value="John">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" value="Doe">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" value="john.doe@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Department</label>
+                                    <select class="form-select">
+                                        <option>Sales</option>
+                                        <option>Marketing</option>
+                                        <option>Development</option>
+                                        <option>Support</option>
+                                    </select>
+                                </div>
+
+                                <h6 class="mt-4">Preferences</h6>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="emailNotifications">
+                                        <label class="form-check-label" for="emailNotifications">
+                                            Email Notifications
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="darkMode" checked>
+                                        <label class="form-check-label" for="darkMode">
+                                            Dark Mode
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="autoSave">
+                                        <label class="form-check-label" for="autoSave">
+                                            Auto-save Changes
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-4">Security</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" class="form-control">
+                                </div>
+
+                                <div class="mt-4">
+                                    <button type="button" class="btn btn-primary">Save Changes</button>
+                                    <button type="button" class="btn btn-outline-danger ms-2">Reset Form</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="alert alert-info">
+                <h6>💡 Testing hx-history-elt Features:</h6>
+                <ul class="mb-0">
+                    <li><strong>Tab State:</strong> Switch tabs, then navigate to another page and return - your active tab will be preserved</li>
+                    <li><strong>Scroll Position:</strong> Scroll within any tab content, navigate away, and return - scroll position is maintained</li>
+                    <li><strong>Form Input:</strong> Fill out form fields in Settings tab, navigate away, and return - all inputs are preserved</li>
+                    <li><strong>Test Navigation:</strong> <a href="/Search">Go to Search</a> or <a href="/">Home</a>, then use browser back button</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

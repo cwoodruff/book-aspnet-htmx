@@ -232,6 +232,7 @@ With token handling configured, you can create forms that submit without page re
     </div>
     <button type="submit">Submit</button>
 </form>
+
 <div id="result"></div>
 ```
 

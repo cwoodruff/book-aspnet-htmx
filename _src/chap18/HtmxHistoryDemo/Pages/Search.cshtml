@@ -1,0 +1,111 @@
+@page
+@model SearchModel
+@{
+    ViewData["Title"] = "Product Search";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- Filters sidebar - preserved with hx-history-elt -->
+        <div id="filters" hx-history-elt>
+            <h5>Search & Filter</h5>
+            <form hx-get="/Search?handler=Results"
+                  hx-target="#product-list"
+                  hx-select="#product-list"
+                  hx-push-url="true"
+                  hx-history="true"
+                  hx-trigger="submit, change from:input[type=checkbox]">
+
+                <div class="mb-3">
+                    <input type="text"
+                           name="query"
+                           class="form-control"
+                           placeholder="Search products..."
+                           value="@Model.Query"/>
+                </div>
+
+                <div class="mb-3">
+                    <h6>Categories</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="category" value="books"
+                               @(Model.HasBooks ? "checked" : "") id="books">
+                        <label class="form-check-label" for="books">Books</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="category" value="electronics"
+                               @(Model.HasElectronics ? "checked" : "") id="electronics">
+                        <label class="form-check-label" for="electronics">Electronics</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="category" value="clothing"
+                               @(Model.HasClothing ? "checked" : "") id="clothing">
+                        <label class="form-check-label" for="clothing">Clothing</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                <button type="reset" class="btn btn-outline-secondary btn-sm"
+                        _="on click
+                           repeat for input in my.closest('form').querySelectorAll('input')
+                             set input.value to ''
+                           end
+                           then trigger submit">
+                    Clear
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div id="product-container">
+            <!-- Initial load or search results will appear here -->
+            <div id="product-list">
+                @if (Model.SearchResult != null && Model.SearchResult.Products.Any())
+                {
+                    <partial name="_SearchResults" model="Model.SearchResult"/>
+                }
+                else if (!string.IsNullOrEmpty(Model.Query) || Model.SelectedCategories.Any())
+                {
+                    <div class="alert alert-info">
+                        <h5>No products found</h5>
+                        <p>Try adjusting your search criteria or browse all products.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-primary">
+                        <h5>Welcome to Product Search</h5>
+                        <p>Use the search box and filters on the left to find products. Your search state will be
+                            preserved when navigating back and forth!</p>
+                        <button class="btn btn-outline-primary"
+                                hx-get="/Search?handler=Results"
+                                hx-target="#product-list"
+                                hx-select="#product-list"
+                                hx-push-url="true"
+                                hx-history="true">
+                            Show All Products
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Focus management for accessibility
+        document.addEventListener('htmx:afterOnLoad', function (evt) {
+            if (evt.detail.target.id === 'product-list') {
+                // Announce to screen readers
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.textContent = 'Search results updated';
+                announcement.style.position = 'absolute';
+                announcement.style.left = '-10000px';
+                document.body.appendChild(announcement);
+                setTimeout(() => document.body.removeChild(announcement), 1000);
+            }
+        });
+    </script>
+}
