@@ -1,12 +1,12 @@
 ---
 order: 9
 icon: stack
-label: Chap 22 - Developing an E-Commerce Application
+label: Chap 22 - Testing htmx Applications
 meta:
-title: "Developing an E-Commerce Application"
+title: "Testing htmx Applications"
 visibility: protected
 ---
-# Developing an E-Commerce Application
+# Testing htmx Applications
 
 
 

@@ -124,34 +124,18 @@ To find translations, please check out the [Translations](./Translations.md) pag
             <td>✔️</td>
         </tr>
         <tr>
-            <td rowspan=3>Section 6: Real-World Scenarios</td>
+            <td rowspan=3>Section 6: Deployment and Maintenance</td>
             <td>21</td>
-            <td>Building a Dashboard with htmx</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>22</td>
-            <td>Developing an E-Commerce Application</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>23</td>
-            <td>Creating a Chat Application</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td rowspan=3>Section 7: Deployment and Maintenance</td>
-            <td>24</td>
             <td>Debugging htmx Applications</td>
             <td></td>
         </tr>
         <tr>
-            <td>25</td>
+            <td>22</td>
             <td>Testing htmx Applications</td>
             <td></td>
         </tr>
         <tr>
-            <td>26</td>
+            <td>23</td>
             <td>Deploying htmx Applications on Azure</td>
             <td></td>
         </tr>

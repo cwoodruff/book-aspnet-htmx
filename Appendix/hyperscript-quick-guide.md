@@ -1,7 +1,7 @@
 ---
-order: 3
+order: 2
 icon: stack
-label: Appendix B - Hyperscript Quick Guide
+label: Appendix C - Hyperscript Quick Guide
 meta:
 title: "Hyperscript Quick Guide"
 visibility: hidden

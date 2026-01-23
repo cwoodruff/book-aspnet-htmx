@@ -1,12 +1,12 @@
 ---
 order: 8
 icon: stack
-label: Chap 23 - Creating a Chat Application
+label: Chap 23 - Deploying htmx Applications on Azure
 meta:
-title: "Creating a Chat Application"
+title: "Deploying htmx Applications on Azure"
 visibility: protected
 ---
-# Creating a Chat Application
+# Deploying htmx Applications on Azure
 
 
 

@@ -1,12 +1,12 @@
 ---
 order: 10
 icon: stack
-label: Chap 21 - Building a Dashboard with htmx
+label: Chap 21 - Debugging htmx Applications
 meta:
-title: "Building a Dashboard with htmx"
+title: "Debugging htmx Applications"
 visibility: protected
 ---
-# Building a Dashboard with htmx
+# Debugging htmx Applications
 
 
 
