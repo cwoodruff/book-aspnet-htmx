@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822511642234">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822704458067">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Hyperscript Quick Guide</title>
     <meta name="title" content="Hyperscript Quick Guide">
+    <meta name="description" content="Hyperscript is a companion scripting language for htmx that provides a readable, English-like syntax for client-side interactions.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/appendix/hyperscript-quick-guide/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/appendix/hyperscript-quick-guide/">
     <meta property="og:title" content="Hyperscript Quick Guide">
+    <meta property="og:description" content="Hyperscript is a companion scripting language for htmx that provides a readable, English-like syntax for client-side interactions.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/appendix/hyperscript-quick-guide/">
     <meta property="twitter:title" content="Hyperscript Quick Guide">
+    <meta property="twitter:description" content="Hyperscript is a companion scripting language for htmx that provides a readable, English-like syntax for client-side interactions.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../../images/favicon.png" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.11.0.822511642234" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.11.0.822704458067" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.11.0.822511642234" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.11.0.822704458067" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.11.0.822511642234" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.11.0.822704458067" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.11.0.822704458067" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -243,18 +247,732 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="hyperscript-quick-guide" class="break-words">
+<doc-anchor-target id="appendix-c-hyperscript-quick-guide" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#hyperscript-quick-guide">#</doc-anchor-trigger>
-        <span>Hyperscript Quick Guide</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#appendix-c-hyperscript-quick-guide">#</doc-anchor-trigger>
+        <span>Appendix C: Hyperscript Quick Guide</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>Hyperscript is a companion scripting language for htmx that provides a readable, English-like syntax for client-side interactions. This appendix covers the essential patterns for using Hyperscript with htmx applications.</p>
+<hr>
+<doc-anchor-target id="c1-introduction">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#c1-introduction">#</doc-anchor-trigger>
+        <span>C.1 Introduction</span>
+    </h2>
 </doc-anchor-target>
+<doc-anchor-target id="what-is-hyperscript">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#what-is-hyperscript">#</doc-anchor-trigger>
+        <span>What is Hyperscript?</span>
+    </h3>
+</doc-anchor-target>
+<p>Hyperscript is an expressive scripting language designed to be embedded directly in HTML. It complements htmx by handling client-side interactions that don&#x27;t require server round-trips.</p>
+<doc-anchor-target id="when-to-use-hyperscript">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#when-to-use-hyperscript">#</doc-anchor-trigger>
+        <span>When to Use Hyperscript</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Use Hyperscript For</th>
+<th>Use htmx For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Toggle visibility</td>
+<td>Fetch server content</td>
+</tr>
+<tr>
+<td>Add/remove classes</td>
+<td>Form submissions</td>
+</tr>
+<tr>
+<td>Keyboard shortcuts</td>
+<td>CRUD operations</td>
+</tr>
+<tr>
+<td>Close modals</td>
+<td>Search/filter</td>
+</tr>
+<tr>
+<td>Client-side validation</td>
+<td>Load partial views</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="installation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#installation">#</doc-anchor-trigger>
+        <span>Installation</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;script src=&quot;https://unpkg.com/hyperscript.org@0.9.12&quot;&gt;&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="c2-core-syntax">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#c2-core-syntax">#</doc-anchor-trigger>
+        <span>C.2 Core Syntax</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="the-_-attribute">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-_-attribute">#</doc-anchor-trigger>
+        <span>The <code v-pre>_</code> Attribute</span>
+    </h3>
+</doc-anchor-target>
+<p>Hyperscript code goes in the <code v-pre>_</code> attribute (or <code v-pre>data-script</code>):</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click add .active to me&quot;&gt;
+    Click Me
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="basic-structure">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-structure">#</doc-anchor-trigger>
+        <span>Basic Structure</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">on &lt;event&gt; &lt;commands&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Single command --&gt;
+&lt;button _=&quot;on click toggle .active on me&quot;&gt;Toggle&lt;/button&gt;
+
+&lt;!-- Multiple commands (use 'then') --&gt;
+&lt;button _=&quot;on click add .loading to me then wait 1s then remove .loading from me&quot;&gt;
+    Load
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="targeting-elements">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#targeting-elements">#</doc-anchor-trigger>
+        <span>Targeting Elements</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Target</th>
+<th>Syntax</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Self</td>
+<td><code v-pre>me</code></td>
+<td><code v-pre>add .active to me</code></td>
+</tr>
+<tr>
+<td>By ID</td>
+<td><code v-pre>#id</code></td>
+<td><code v-pre>remove .hidden from #modal</code></td>
+</tr>
+<tr>
+<td>By class</td>
+<td><code v-pre>.class</code></td>
+<td><code v-pre>add .highlight to .item</code></td>
+</tr>
+<tr>
+<td>Closest ancestor</td>
+<td><code v-pre>closest &lt;selector&gt;</code></td>
+<td><code v-pre>remove closest .card</code></td>
+</tr>
+<tr>
+<td>Parent</td>
+<td><code v-pre>my parent</code></td>
+<td><code v-pre>hide my parent</code></td>
+</tr>
+<tr>
+<td>Next sibling</td>
+<td><code v-pre>next &lt;selector&gt;</code></td>
+<td><code v-pre>show next .content</code></td>
+</tr>
+<tr>
+<td>Previous sibling</td>
+<td><code v-pre>previous &lt;selector&gt;</code></td>
+<td><code v-pre>hide previous .header</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><code v-pre>&lt;selector/&gt;</code></td>
+<td><code v-pre>set &lt;input/&gt;.value to ''</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Target by ID --&gt;
+&lt;button _=&quot;on click show #details&quot;&gt;Show Details&lt;/button&gt;
+
+&lt;!-- Target closest ancestor --&gt;
+&lt;button _=&quot;on click remove closest .notification&quot;&gt;Dismiss&lt;/button&gt;
+
+&lt;!-- Target next sibling --&gt;
+&lt;button _=&quot;on click toggle .expanded on next .content&quot;&gt;Expand&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="c3-common-commands">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#c3-common-commands">#</doc-anchor-trigger>
+        <span>C.3 Common Commands</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="classes-add-remove-toggle">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#classes-add-remove-toggle">#</doc-anchor-trigger>
+        <span>Classes: add, remove, toggle</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Add class --&gt;
+&lt;button _=&quot;on click add .active to me&quot;&gt;Activate&lt;/button&gt;
+
+&lt;!-- Remove class --&gt;
+&lt;button _=&quot;on click remove .error from #form&quot;&gt;Clear Error&lt;/button&gt;
+
+&lt;!-- Toggle class --&gt;
+&lt;button _=&quot;on click toggle .open on #menu&quot;&gt;Toggle Menu&lt;/button&gt;
+
+&lt;!-- Toggle between classes --&gt;
+&lt;button _=&quot;on click toggle between .light and .dark on &lt;body/&gt;&quot;&gt;
+    Theme
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="attributes-set-remove">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#attributes-set-remove">#</doc-anchor-trigger>
+        <span>Attributes: set, remove</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Set attribute --&gt;
+&lt;button _=&quot;on click set #input.disabled to true&quot;&gt;Disable&lt;/button&gt;
+
+&lt;!-- Remove attribute --&gt;
+&lt;button _=&quot;on click remove @disabled from #input&quot;&gt;Enable&lt;/button&gt;
+
+&lt;!-- Set multiple --&gt;
+&lt;button _=&quot;on click set #form.dataset.submitted to 'true'&quot;&gt;Submit&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="visibility-show-hide-toggle">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#visibility-show-hide-toggle">#</doc-anchor-trigger>
+        <span>Visibility: show, hide, toggle</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Show element --&gt;
+&lt;button _=&quot;on click show #panel&quot;&gt;Show&lt;/button&gt;
+
+&lt;!-- Hide element --&gt;
+&lt;button _=&quot;on click hide #panel&quot;&gt;Hide&lt;/button&gt;
+
+&lt;!-- Toggle visibility --&gt;
+&lt;button _=&quot;on click toggle the *display of #panel&quot;&gt;Toggle&lt;/button&gt;
+
+&lt;!-- With animation --&gt;
+&lt;button _=&quot;on click transition #panel's opacity to 0 then hide #panel&quot;&gt;
+    Fade Out
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="variables-set-get">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#variables-set-get">#</doc-anchor-trigger>
+        <span>Variables: set, get</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Set variable --&gt;
+&lt;div _=&quot;on load set $count to 0&quot;&gt;
+    &lt;button _=&quot;on click set $count to $count + 1 then put $count into #counter&quot;&gt;
+        Increment
+    &lt;/button&gt;
+    &lt;span id=&quot;counter&quot;&gt;0&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;!-- Get property --&gt;
+&lt;button _=&quot;on click get #input.value then log it&quot;&gt;Log Value&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="timing-wait-settle">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#timing-wait-settle">#</doc-anchor-trigger>
+        <span>Timing: wait, settle</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Wait before action --&gt;
+&lt;button _=&quot;on click add .loading then wait 2s then remove .loading&quot;&gt;
+    Load
+&lt;/button&gt;
+
+&lt;!-- Wait for htmx settle --&gt;
+&lt;div _=&quot;on htmx:afterSettle wait 100ms then add .ready&quot;&gt;
+    Content
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="events-trigger-send">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#events-trigger-send">#</doc-anchor-trigger>
+        <span>Events: trigger, send</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Trigger event --&gt;
+&lt;button _=&quot;on click trigger closeModal&quot;&gt;Close&lt;/button&gt;
+
+&lt;!-- Send event to element --&gt;
+&lt;button _=&quot;on click send refresh to #data-panel&quot;&gt;Refresh&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="javascript-call-js">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#javascript-call-js">#</doc-anchor-trigger>
+        <span>JavaScript: call, js</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Call JavaScript function --&gt;
+&lt;button _=&quot;on click call alert('Hello!')&quot;&gt;Alert&lt;/button&gt;
+
+&lt;!-- Inline JavaScript --&gt;
+&lt;button _=&quot;on click js console.log('clicked') end&quot;&gt;Log&lt;/button&gt;
+
+&lt;!-- Call with return value --&gt;
+&lt;button _=&quot;on click call prompt('Name?') then set #name.innerText to it&quot;&gt;
+    Ask Name
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="c4-event-handling">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#c4-event-handling">#</doc-anchor-trigger>
+        <span>C.4 Event Handling</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="basic-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-events">#</doc-anchor-trigger>
+        <span>Basic Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Click --&gt;
+&lt;button _=&quot;on click add .clicked to me&quot;&gt;Click&lt;/button&gt;
+
+&lt;!-- Mouse events --&gt;
+&lt;div _=&quot;on mouseenter add .hover to me on mouseleave remove .hover from me&quot;&gt;
+    Hover Me
+&lt;/div&gt;
+
+&lt;!-- Keyboard --&gt;
+&lt;input _=&quot;on keyup if event.key is 'Enter' trigger submit&quot;&gt;
+
+&lt;!-- Form --&gt;
+&lt;form _=&quot;on submit halt&quot;&gt;...&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="event-modifiers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#event-modifiers">#</doc-anchor-trigger>
+        <span>Event Modifiers</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Modifier</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>once</code></td>
+<td>Fire only once</td>
+<td><code v-pre>on click once</code></td>
+</tr>
+<tr>
+<td><code v-pre>debounced</code></td>
+<td>Debounce</td>
+<td><code v-pre>on keyup debounced at 300ms</code></td>
+</tr>
+<tr>
+<td><code v-pre>throttled</code></td>
+<td>Throttle</td>
+<td><code v-pre>on scroll throttled at 100ms</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Fire once --&gt;
+&lt;button _=&quot;on click once add .initialized&quot;&gt;Init&lt;/button&gt;
+
+&lt;!-- Debounce input --&gt;
+&lt;input _=&quot;on keyup debounced at 300ms trigger search&quot;&gt;
+
+&lt;!-- Throttle scroll --&gt;
+&lt;div _=&quot;on scroll throttled at 100ms call checkPosition()&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="event-filtering">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#event-filtering">#</doc-anchor-trigger>
+        <span>Event Filtering</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Filter by key --&gt;
+&lt;input _=&quot;on keydown[key=='Escape'] trigger cancel&quot;&gt;
+
+&lt;!-- Filter by target --&gt;
+&lt;div _=&quot;on click[target==me] hide me&quot;&gt;
+    Click backdrop to close
+&lt;/div&gt;
+
+&lt;!-- Compound filters --&gt;
+&lt;input _=&quot;on keydown[ctrlKey and key=='s'] halt trigger save&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="custom-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#custom-events">#</doc-anchor-trigger>
+        <span>Custom Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Listen for custom event --&gt;
+&lt;div _=&quot;on closeModal remove me&quot;&gt;Modal Content&lt;/div&gt;
+
+&lt;!-- Listen for htmx events --&gt;
+&lt;form _=&quot;on htmx:afterRequest reset() me&quot;&gt;
+    &lt;input name=&quot;data&quot; /&gt;
+    &lt;button&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="c5-htmx-integration-patterns">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#c5-htmx-integration-patterns">#</doc-anchor-trigger>
+        <span>C.5 htmx Integration Patterns</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="modal-close-on-backdrop-click">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#modal-close-on-backdrop-click">#</doc-anchor-trigger>
+        <span>Modal: Close on Backdrop Click</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;modal-backdrop&quot; 
+     _=&quot;on click if event.target is me trigger closeModal&quot;&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;modal&quot; 
+     _=&quot;on closeModal remove .modal-backdrop from previous &lt;div/&gt; 
+        then remove me&quot;&gt;
+    Modal content
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="modal-close-on-escape-key">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#modal-close-on-escape-key">#</doc-anchor-trigger>
+        <span>Modal: Close on Escape Key</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;modal&quot; 
+     _=&quot;on keydown[key=='Escape'] from window trigger closeModal
+        on closeModal remove me&quot;&gt;
+    Modal content
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="form-reset-after-htmx-submit">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#form-reset-after-htmx-submit">#</doc-anchor-trigger>
+        <span>Form: Reset After htmx Submit</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/api/create&quot; 
+      hx-target=&quot;#list&quot; 
+      hx-swap=&quot;afterbegin&quot;
+      _=&quot;on htmx:afterRequest reset() me&quot;&gt;
+    &lt;input name=&quot;title&quot; /&gt;
+    &lt;button&gt;Create&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="form-focus-first-input-in-modal">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#form-focus-first-input-in-modal">#</doc-anchor-trigger>
+        <span>Form: Focus First Input in Modal</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;modal&quot; 
+     _=&quot;on load set $input to first &lt;input/&gt; in me then $input.focus()&quot;&gt;
+    &lt;input name=&quot;name&quot; /&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="toast-auto-dismiss">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#toast-auto-dismiss">#</doc-anchor-trigger>
+        <span>Toast: Auto-Dismiss</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div class=&quot;toast&quot; 
+     _=&quot;init wait 5s then transition my opacity to 0 then remove me&quot;&gt;
+    Success message
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="loading-button-state">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#loading-button-state">#</doc-anchor-trigger>
+        <span>Loading: Button State</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/save&quot; 
+        _=&quot;on htmx:beforeRequest add .loading to me
+           on htmx:afterRequest remove .loading from me&quot;&gt;
+    &lt;span class=&quot;normal&quot;&gt;Save&lt;/span&gt;
+    &lt;span class=&quot;loading hidden&quot;&gt;Saving...&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="keyboard-global-shortcuts">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#keyboard-global-shortcuts">#</doc-anchor-trigger>
+        <span>Keyboard: Global Shortcuts</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;body _=&quot;on keydown[key=='/' and not target.matches('input')] 
+           halt then call document.getElementById('search').focus()&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="infinite-scroll-remove-trigger">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#infinite-scroll-remove-trigger">#</doc-anchor-trigger>
+        <span>Infinite Scroll: Remove Trigger</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-get=&quot;/more&quot; 
+     hx-trigger=&quot;revealed&quot; 
+     hx-swap=&quot;afterend&quot;
+     _=&quot;on htmx:afterRequest remove me&quot;&gt;
+    Loading more...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="inline-edit-cancel-on-escape">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#inline-edit-cancel-on-escape">#</doc-anchor-trigger>
+        <span>Inline Edit: Cancel on Escape</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;tr _=&quot;on keyup[key=='Escape'] trigger click on #cancel-btn&quot;&gt;
+    &lt;td&gt;
+        &lt;input name=&quot;name&quot; /&gt;
+    &lt;/td&gt;
+    &lt;td&gt;
+        &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
+        &lt;button id=&quot;cancel-btn&quot; hx-get=&quot;/cancel&quot;&gt;Cancel&lt;/button&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="confirmation-custom-dialog">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#confirmation-custom-dialog">#</doc-anchor-trigger>
+        <span>Confirmation: Custom Dialog</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button _=&quot;on click halt 
+           then set result to call confirm('Delete?')
+           then if result trigger confirmed&quot;&gt;
+    Delete
+&lt;/button&gt;
+
+&lt;form hx-delete=&quot;/item/5&quot; 
+      hx-trigger=&quot;confirmed from previous &lt;button/&gt;&quot;&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="c6-quick-reference">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#c6-quick-reference">#</doc-anchor-trigger>
+        <span>C.6 Quick Reference</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="syntax-cheat-sheet">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax-cheat-sheet">#</doc-anchor-trigger>
+        <span>Syntax Cheat Sheet</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Action</th>
+<th>Syntax</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add class</td>
+<td><code v-pre>add .class to element</code></td>
+</tr>
+<tr>
+<td>Remove class</td>
+<td><code v-pre>remove .class from element</code></td>
+</tr>
+<tr>
+<td>Toggle class</td>
+<td><code v-pre>toggle .class on element</code></td>
+</tr>
+<tr>
+<td>Show element</td>
+<td><code v-pre>show element</code></td>
+</tr>
+<tr>
+<td>Hide element</td>
+<td><code v-pre>hide element</code></td>
+</tr>
+<tr>
+<td>Remove element</td>
+<td><code v-pre>remove element</code></td>
+</tr>
+<tr>
+<td>Set property</td>
+<td><code v-pre>set element.prop to value</code></td>
+</tr>
+<tr>
+<td>Set variable</td>
+<td><code v-pre>set $var to value</code></td>
+</tr>
+<tr>
+<td>Wait</td>
+<td><code v-pre>wait 1s</code></td>
+</tr>
+<tr>
+<td>Trigger event</td>
+<td><code v-pre>trigger eventName</code></td>
+</tr>
+<tr>
+<td>Call function</td>
+<td><code v-pre>call functionName()</code></td>
+</tr>
+<tr>
+<td>Log</td>
+<td><code v-pre>log value</code></td>
+</tr>
+<tr>
+<td>Halt event</td>
+<td><code v-pre>halt</code></td>
+</tr>
+<tr>
+<td>Conditional</td>
+<td><code v-pre>if condition action</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="common-patterns">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-patterns">#</doc-anchor-trigger>
+        <span>Common Patterns</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Close on Escape</td>
+<td><code v-pre>on keydown[key=='Escape'] remove me</code></td>
+</tr>
+<tr>
+<td>Close on backdrop</td>
+<td><code v-pre>on click if event.target is me remove me</code></td>
+</tr>
+<tr>
+<td>Toggle sibling</td>
+<td><code v-pre>on click toggle .open on next .content</code></td>
+</tr>
+<tr>
+<td>Auto-dismiss</td>
+<td><code v-pre>init wait 5s then remove me</code></td>
+</tr>
+<tr>
+<td>Reset form</td>
+<td><code v-pre>on htmx:afterRequest reset() me</code></td>
+</tr>
+<tr>
+<td>Focus input</td>
+<td><code v-pre>on load set $i to first &lt;input/&gt; in me then $i.focus()</code></td>
+</tr>
+<tr>
+<td>Debounce</td>
+<td><code v-pre>on keyup debounced at 300ms trigger search</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="htmx-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#htmx-events">#</doc-anchor-trigger>
+        <span>htmx Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Event</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>htmx:beforeRequest</code></td>
+<td>Add loading state</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterRequest</code></td>
+<td>Remove loading state, reset form</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSettle</code></td>
+<td>Initialize components</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSwap</code></td>
+<td>Post-swap actions</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:confirm</code></td>
+<td>Custom confirmation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<p><em>For more details, see the <a href="https://hyperscript.org">Hyperscript documentation</a>.</em></p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -268,6 +986,27 @@
                                     </a>
                                 </div>
                             
+                                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../appendix/htmx-extensions/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                                <span class="block mt-1">Appendix B - htmx Command Extensions</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../appendix/valuable-tools-and-resource/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                                <span class="block mt-1">Appendix D - Valuable Tools and Resources for htmx and Razor Pages Development</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
                             </footer>
                         </main>
                 
@@ -326,6 +1065,6 @@
 
     <div id="retype-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Appendix C - Hyperscript Quick Guide", level: 2, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Appendix C - Hyperscript Quick Guide", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

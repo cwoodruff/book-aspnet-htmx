@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822511642234">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822704458067">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>Valuable Tools and Resources for htmx and Razor Pages Development</title>
     <meta name="title" content="Valuable Tools and Resources for htmx and Razor Pages Development">
+    <meta name="description" content="This appendix provides a curated collection of tools, libraries, and resources for htmx and ASP.NET Core Razor Pages development.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/appendix/valuable-tools-and-resource/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/appendix/valuable-tools-and-resource/">
     <meta property="og:title" content="Valuable Tools and Resources for htmx and Razor Pages Development">
+    <meta property="og:description" content="This appendix provides a curated collection of tools, libraries, and resources for htmx and ASP.NET Core Razor Pages development.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/appendix/valuable-tools-and-resource/">
     <meta property="twitter:title" content="Valuable Tools and Resources for htmx and Razor Pages Development">
+    <meta property="twitter:description" content="This appendix provides a curated collection of tools, libraries, and resources for htmx and ASP.NET Core Razor Pages development.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../../images/favicon.png" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.11.0.822511642234" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.11.0.822704458067" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.11.0.822511642234" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.11.0.822704458067" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.11.0.822511642234" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.11.0.822704458067" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.11.0.822704458067" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -243,18 +247,1283 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="valuable-tools-and-resources-for-htmx-and-razor-pages-development" class="break-words">
+<doc-anchor-target id="appendix-d-tools-and-resources" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#valuable-tools-and-resources-for-htmx-and-razor-pages-development">#</doc-anchor-trigger>
-        <span>Valuable Tools and Resources for htmx and Razor Pages Development</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#appendix-d-tools-and-resources">#</doc-anchor-trigger>
+        <span>Appendix D: Tools and Resources</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>This appendix provides a curated collection of tools, libraries, and resources for htmx and ASP.NET Core Razor Pages development.</p>
+<hr>
+<doc-anchor-target id="d1-development-tools">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#d1-development-tools">#</doc-anchor-trigger>
+        <span>D.1 Development Tools</span>
+    </h2>
 </doc-anchor-target>
+<doc-anchor-target id="browser-extensions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#browser-extensions">#</doc-anchor-trigger>
+        <span>Browser Extensions</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Browser</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>htmx Debugger</strong></td>
+<td>Chrome</td>
+<td>Inspect htmx requests, view headers, debug swaps</td>
+</tr>
+<tr>
+<td><strong>htmx Devtools</strong></td>
+<td>Firefox</td>
+<td>Similar debugging for Firefox</td>
+</tr>
+<tr>
+<td><strong>JSON Viewer</strong></td>
+<td>Chrome/Firefox</td>
+<td>Format JSON responses for inspection</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>htmx Debugger Chrome Extension:</strong></p>
+<ul>
+<li>View all htmx requests in dedicated panel</li>
+<li>Inspect HX-* request/response headers</li>
+<li>Monitor swap operations</li>
+<li>Available in Chrome Web Store</li>
+</ul>
+<doc-anchor-target id="visual-studio-code-extensions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#visual-studio-code-extensions">#</doc-anchor-trigger>
+        <span>Visual Studio Code Extensions</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Extension</th>
+<th>Publisher</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>htmx-tags</strong></td>
+<td>otovo-oss</td>
+<td>Syntax highlighting and snippets for htmx</td>
+</tr>
+<tr>
+<td><strong>Hyperscript</strong></td>
+<td>dz4k</td>
+<td>Hyperscript syntax highlighting</td>
+</tr>
+<tr>
+<td><strong>C# Dev Kit</strong></td>
+<td>Microsoft</td>
+<td>C# language support</td>
+</tr>
+<tr>
+<td><strong>ASP.NET Core Snippets</strong></td>
+<td>rahulsahay19</td>
+<td>Razor Pages snippets</td>
+</tr>
+<tr>
+<td><strong>Tailwind CSS IntelliSense</strong></td>
+<td>Tailwind Labs</td>
+<td>Tailwind autocomplete</td>
+</tr>
+<tr>
+<td><strong>REST Client</strong></td>
+<td>Huachao Mao</td>
+<td>Test HTTP endpoints directly</td>
+</tr>
+<tr>
+<td><strong>SQLite Viewer</strong></td>
+<td>alexcvzz</td>
+<td>View SQLite databases</td>
+</tr>
+<tr>
+<td><strong>Live Server</strong></td>
+<td>Ritwick Dey</td>
+<td>Local development server</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Recommended VS Code Settings for htmx:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-json"><code v-pre class="language-json">{
+  &quot;emmet.includeLanguages&quot;: {
+    &quot;razor&quot;: &quot;html&quot;,
+    &quot;aspnetcorerazor&quot;: &quot;html&quot;
+  },
+  &quot;files.associations&quot;: {
+    &quot;*.cshtml&quot;: &quot;aspnetcorerazor&quot;
+  },
+  &quot;[html]&quot;: {
+    &quot;editor.defaultFormatter&quot;: &quot;vscode.html-language-features&quot;
+  }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="visual-studio-extensions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#visual-studio-extensions">#</doc-anchor-trigger>
+        <span>Visual Studio Extensions</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Extension</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Web Essentials</strong></td>
+<td>HTML/CSS/JS tooling</td>
+</tr>
+<tr>
+<td><strong>Bundler &amp; Minifier</strong></td>
+<td>Bundle and minify static assets</td>
+</tr>
+<tr>
+<td><strong>Image Optimizer</strong></td>
+<td>Optimize images for web</td>
+</tr>
+<tr>
+<td><strong>File Nesting</strong></td>
+<td>Organize related files</td>
+</tr>
+<tr>
+<td><strong>Add New File</strong></td>
+<td>Quick file creation with templates</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="jetbrains-rider">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#jetbrains-rider">#</doc-anchor-trigger>
+        <span>JetBrains Rider</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Built-in Razor support</td>
+<td>Full IntelliSense for .cshtml files</td>
+</tr>
+<tr>
+<td>HTTP Client</td>
+<td>Test API endpoints</td>
+</tr>
+<tr>
+<td>Database Tools</td>
+<td>SQLite/SQL Server browsing</td>
+</tr>
+<tr>
+<td>NuGet Browser</td>
+<td>Package management</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="command-line-tools">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#command-line-tools">#</doc-anchor-trigger>
+        <span>Command Line Tools</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Install</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>dotnet-ef</strong></td>
+<td><code v-pre>dotnet tool install -g dotnet-ef</code></td>
+<td>EF Core migrations</td>
+</tr>
+<tr>
+<td><strong>dotnet-watch</strong></td>
+<td>Built-in</td>
+<td>Hot reload during development</td>
+</tr>
+<tr>
+<td><strong>libman</strong></td>
+<td><code v-pre>dotnet tool install -g Microsoft.Web.LibraryManager.Cli</code></td>
+<td>Client library management</td>
+</tr>
+<tr>
+<td><strong>httprepl</strong></td>
+<td><code v-pre>dotnet tool install -g Microsoft.dotnet-httprepl</code></td>
+<td>REST API testing</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="d2-nuget-packages">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#d2-nuget-packages">#</doc-anchor-trigger>
+        <span>D.2 NuGet Packages</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="htmx-integration">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#htmx-integration">#</doc-anchor-trigger>
+        <span>htmx Integration</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th>Description</th>
+<th>Install</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Htmx</strong></td>
+<td>Tag helpers and response extensions</td>
+<td><code v-pre>dotnet add package Htmx</code></td>
+</tr>
+<tr>
+<td><strong>Htmx.TagHelpers</strong></td>
+<td>htmx-specific tag helpers</td>
+<td><code v-pre>dotnet add package Htmx.TagHelpers</code></td>
+</tr>
+<tr>
+<td><strong>Rizzy</strong></td>
+<td>Razor component library with htmx</td>
+<td><code v-pre>dotnet add package Rizzy</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Htmx Package Usage:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Check if htmx request
+if (Request.IsHtmx())
+{
+    return Partial(&quot;_Content&quot;);
+}
+
+// Response extensions
+Response.Htmx(h =&gt; {
+    h.Retarget(&quot;#error&quot;);
+    h.Reswap(&quot;innerHTML&quot;);
+});</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="entity-framework-core">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#entity-framework-core">#</doc-anchor-trigger>
+        <span>Entity Framework Core</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Microsoft.EntityFrameworkCore.Sqlite</strong></td>
+<td>SQLite provider</td>
+</tr>
+<tr>
+<td><strong>Microsoft.EntityFrameworkCore.SqlServer</strong></td>
+<td>SQL Server provider</td>
+</tr>
+<tr>
+<td><strong>Microsoft.EntityFrameworkCore.Design</strong></td>
+<td>EF tooling</td>
+</tr>
+<tr>
+<td><strong>Microsoft.EntityFrameworkCore.Tools</strong></td>
+<td>PMC commands</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="testing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#testing">#</doc-anchor-trigger>
+        <span>Testing</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Microsoft.AspNetCore.Mvc.Testing</strong></td>
+<td>Integration testing</td>
+</tr>
+<tr>
+<td><strong>Microsoft.Playwright</strong></td>
+<td>Browser automation</td>
+</tr>
+<tr>
+<td><strong>Moq</strong></td>
+<td>Mocking framework</td>
+</tr>
+<tr>
+<td><strong>FluentAssertions</strong></td>
+<td>Assertion library</td>
+</tr>
+<tr>
+<td><strong>Bogus</strong></td>
+<td>Fake data generation</td>
+</tr>
+<tr>
+<td><strong>AngleSharp</strong></td>
+<td>HTML parsing for tests</td>
+</tr>
+<tr>
+<td><strong>Verify.Http</strong></td>
+<td>Snapshot testing for HTTP</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="complementary-packages">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#complementary-packages">#</doc-anchor-trigger>
+        <span>Complementary Packages</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Package</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Serilog.AspNetCore</strong></td>
+<td>Structured logging</td>
+</tr>
+<tr>
+<td><strong>FluentValidation</strong></td>
+<td>Model validation</td>
+</tr>
+<tr>
+<td><strong>AutoMapper</strong></td>
+<td>Object mapping</td>
+</tr>
+<tr>
+<td><strong>MediatR</strong></td>
+<td>Mediator pattern</td>
+</tr>
+<tr>
+<td><strong>Polly</strong></td>
+<td>Resilience and transient fault handling</td>
+</tr>
+<tr>
+<td><strong>HealthChecks.UI</strong></td>
+<td>Health check dashboard</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="d3-client-side-libraries">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#d3-client-side-libraries">#</doc-anchor-trigger>
+        <span>D.3 Client-Side Libraries</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="htmx-and-extensions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#htmx-and-extensions">#</doc-anchor-trigger>
+        <span>htmx and Extensions</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Library</th>
+<th>CDN URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>htmx</strong></td>
+<td><code v-pre>https://unpkg.com/htmx.org@1.9.10</code></td>
+</tr>
+<tr>
+<td><strong>htmx (minified)</strong></td>
+<td><code v-pre>https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js</code></td>
+</tr>
+<tr>
+<td><strong>Hyperscript</strong></td>
+<td><code v-pre>https://unpkg.com/hyperscript.org@0.9.12</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>htmx Extensions:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-none"><code v-pre class="language-none">https://unpkg.com/htmx.org@1.9.10/dist/ext/json-enc.js
+https://unpkg.com/htmx.org@1.9.10/dist/ext/loading-states.js
+https://unpkg.com/htmx.org@1.9.10/dist/ext/response-targets.js
+https://unpkg.com/htmx.org@1.9.10/dist/ext/preload.js
+https://unpkg.com/htmx.org@1.9.10/dist/ext/sse.js
+https://unpkg.com/htmx.org@1.9.10/dist/ext/ws.js</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="css-frameworks">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#css-frameworks">#</doc-anchor-trigger>
+        <span>CSS Frameworks</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Framework</th>
+<th>Notes</th>
+<th>CDN</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tailwind CSS</strong></td>
+<td>Utility-first, pairs excellently with htmx</td>
+<td>Play CDN or build</td>
+</tr>
+<tr>
+<td><strong>Bootstrap</strong></td>
+<td>Component library</td>
+<td><code v-pre>https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css</code></td>
+</tr>
+<tr>
+<td><strong>Pico CSS</strong></td>
+<td>Minimal, classless</td>
+<td><code v-pre>https://unpkg.com/@picocss/pico@latest/css/pico.min.css</code></td>
+</tr>
+<tr>
+<td><strong>Simple.css</strong></td>
+<td>Classless styling</td>
+<td><code v-pre>https://cdn.simplecss.org/simple.min.css</code></td>
+</tr>
+<tr>
+<td><strong>Water.css</strong></td>
+<td>Classless, dark mode</td>
+<td><code v-pre>https://cdn.jsdelivr.net/npm/water.css@2/out/water.css</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="icon-libraries">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#icon-libraries">#</doc-anchor-trigger>
+        <span>Icon Libraries</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Library</th>
+<th>CDN</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Heroicons</strong></td>
+<td><code v-pre>https://unpkg.com/heroicons@2.0.0/</code></td>
+</tr>
+<tr>
+<td><strong>Lucide</strong></td>
+<td><code v-pre>https://unpkg.com/lucide@latest</code></td>
+</tr>
+<tr>
+<td><strong>Feather Icons</strong></td>
+<td><code v-pre>https://unpkg.com/feather-icons@4.29.0/dist/feather.min.js</code></td>
+</tr>
+<tr>
+<td><strong>Bootstrap Icons</strong></td>
+<td><code v-pre>https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="utility-libraries">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#utility-libraries">#</doc-anchor-trigger>
+        <span>Utility Libraries</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Library</th>
+<th>Purpose</th>
+<th>CDN</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Alpine.js</strong></td>
+<td>Lightweight reactivity</td>
+<td><code v-pre>https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js</code></td>
+</tr>
+<tr>
+<td><strong>morphdom</strong></td>
+<td>DOM diffing</td>
+<td><code v-pre>https://unpkg.com/morphdom@2.7.0/dist/morphdom-umd.min.js</code></td>
+</tr>
+<tr>
+<td><strong>Sortable.js</strong></td>
+<td>Drag and drop</td>
+<td><code v-pre>https://unpkg.com/sortablejs@1.15.0/Sortable.min.js</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="d4-testing-tools">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#d4-testing-tools">#</doc-anchor-trigger>
+        <span>D.4 Testing Tools</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="browser-testing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#browser-testing">#</doc-anchor-trigger>
+        <span>Browser Testing</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+<th>Website</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Playwright</strong></td>
+<td>Cross-browser automation</td>
+<td>playwright.dev</td>
+</tr>
+<tr>
+<td><strong>Selenium</strong></td>
+<td>Browser automation</td>
+<td>selenium.dev</td>
+</tr>
+<tr>
+<td><strong>Cypress</strong></td>
+<td>E2E testing</td>
+<td>cypress.io</td>
+</tr>
+<tr>
+<td><strong>Puppeteer</strong></td>
+<td>Chrome automation</td>
+<td>pptr.dev</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Playwright with .NET:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">dotnet add package Microsoft.Playwright
+pwsh bin/Debug/net8.0/playwright.ps1 install</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="api-testing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#api-testing">#</doc-anchor-trigger>
+        <span>API Testing</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Type</th>
+<th>Website</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Postman</strong></td>
+<td>GUI</td>
+<td>postman.com</td>
+</tr>
+<tr>
+<td><strong>Insomnia</strong></td>
+<td>GUI</td>
+<td>insomnia.rest</td>
+</tr>
+<tr>
+<td><strong>Bruno</strong></td>
+<td>GUI, Git-friendly</td>
+<td>usebruno.com</td>
+</tr>
+<tr>
+<td><strong>httpie</strong></td>
+<td>CLI</td>
+<td>httpie.io</td>
+</tr>
+<tr>
+<td><strong>curl</strong></td>
+<td>CLI</td>
+<td>Built into most systems</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="load-testing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#load-testing">#</doc-anchor-trigger>
+        <span>Load Testing</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>k6</strong></td>
+<td>Modern load testing</td>
+</tr>
+<tr>
+<td><strong>NBomber</strong></td>
+<td>.NET load testing</td>
+</tr>
+<tr>
+<td><strong>Apache JMeter</strong></td>
+<td>Java-based load testing</td>
+</tr>
+<tr>
+<td><strong>Artillery</strong></td>
+<td>Node.js load testing</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="d5-online-resources">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#d5-online-resources">#</doc-anchor-trigger>
+        <span>D.5 Online Resources</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="official-documentation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#official-documentation">#</doc-anchor-trigger>
+        <span>Official Documentation</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Resource</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>htmx Documentation</strong></td>
+<td>htmx.org/docs</td>
+</tr>
+<tr>
+<td><strong>htmx Reference</strong></td>
+<td>htmx.org/reference</td>
+</tr>
+<tr>
+<td><strong>htmx Examples</strong></td>
+<td>htmx.org/examples</td>
+</tr>
+<tr>
+<td><strong>Hyperscript Documentation</strong></td>
+<td>hyperscript.org/docs</td>
+</tr>
+<tr>
+<td><strong>ASP.NET Core Documentation</strong></td>
+<td>learn.microsoft.com/aspnet/core</td>
+</tr>
+<tr>
+<td><strong>Razor Pages Documentation</strong></td>
+<td>learn.microsoft.com/aspnet/core/razor-pages</td>
+</tr>
+<tr>
+<td><strong>Entity Framework Core</strong></td>
+<td>learn.microsoft.com/ef/core</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="tutorials-and-learning">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#tutorials-and-learning">#</doc-anchor-trigger>
+        <span>Tutorials and Learning</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Resource</th>
+<th>Description</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>htmx Essays</strong></td>
+<td>Philosophy and patterns</td>
+<td>htmx.org/essays</td>
+</tr>
+<tr>
+<td><strong>Hypermedia Systems</strong></td>
+<td>Free online book</td>
+<td>hypermedia.systems</td>
+</tr>
+<tr>
+<td><strong>.NET Documentation</strong></td>
+<td>Official tutorials</td>
+<td>learn.microsoft.com/dotnet</td>
+</tr>
+<tr>
+<td><strong>Microsoft Learn</strong></td>
+<td>Interactive modules</td>
+<td>learn.microsoft.com</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="community">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#community">#</doc-anchor-trigger>
+        <span>Community</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Resource</th>
+<th>Description</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>htmx Discord</strong></td>
+<td>Active community chat</td>
+<td>htmx.org/discord</td>
+</tr>
+<tr>
+<td><strong>htmx GitHub</strong></td>
+<td>Source and issues</td>
+<td>github.com/bigskysoftware/htmx</td>
+</tr>
+<tr>
+<td><strong>r/htmx</strong></td>
+<td>Reddit community</td>
+<td>reddit.com/r/htmx</td>
+</tr>
+<tr>
+<td><strong>r/dotnet</strong></td>
+<td>.NET Reddit</td>
+<td>reddit.com/r/dotnet</td>
+</tr>
+<tr>
+<td><strong>Stack Overflow [htmx]</strong></td>
+<td>Q&amp;A</td>
+<td>stackoverflow.com/questions/tagged/htmx</td>
+</tr>
+<tr>
+<td><strong>Stack Overflow [razor-pages]</strong></td>
+<td>Q&amp;A</td>
+<td>stackoverflow.com/questions/tagged/razor-pages</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="blogs-and-articles">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#blogs-and-articles">#</doc-anchor-trigger>
+        <span>Blogs and Articles</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Blog</th>
+<th>Author/Source</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>htmx.org Blog</strong></td>
+<td>htmx team</td>
+<td>htmx patterns and philosophy</td>
+</tr>
+<tr>
+<td><strong>Andrew Lock</strong></td>
+<td>andrewlock.net</td>
+<td>ASP.NET Core deep dives</td>
+</tr>
+<tr>
+<td><strong>.NET Blog</strong></td>
+<td>Microsoft</td>
+<td>Official .NET updates</td>
+</tr>
+<tr>
+<td><strong>Scott Hanselman</strong></td>
+<td>hanselman.com</td>
+<td>.NET and web development</td>
+</tr>
+<tr>
+<td><strong>David Fowler</strong></td>
+<td>Twitter/GitHub</td>
+<td>ASP.NET Core architecture</td>
+</tr>
+<tr>
+<td><strong>Steve Smith</strong></td>
+<td>ardalis.com</td>
+<td>Clean architecture</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="video-resources">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#video-resources">#</doc-anchor-trigger>
+        <span>Video Resources</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Channel/Course</th>
+<th>Platform</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>htmx in 100 Seconds</strong></td>
+<td>YouTube (Fireship)</td>
+<td>Quick introduction</td>
+</tr>
+<tr>
+<td><strong>Nick Chapsas</strong></td>
+<td>YouTube</td>
+<td>.NET and C#</td>
+</tr>
+<tr>
+<td><strong>IAmTimCorey</strong></td>
+<td>YouTube</td>
+<td>C# tutorials</td>
+</tr>
+<tr>
+<td><strong>Raw Coding</strong></td>
+<td>YouTube</td>
+<td>ASP.NET Core</td>
+</tr>
+<tr>
+<td><strong>Pluralsight</strong></td>
+<td>Subscription</td>
+<td>Professional courses</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="d6-sample-projects">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#d6-sample-projects">#</doc-anchor-trigger>
+        <span>D.6 Sample Projects</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="github-repositories">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#github-repositories">#</doc-anchor-trigger>
+        <span>GitHub Repositories</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>bigskysoftware/htmx</strong></td>
+<td>htmx source code and examples</td>
+</tr>
+<tr>
+<td><strong>bigskysoftware/contact-app</strong></td>
+<td>Reference htmx application (Python)</td>
+</tr>
+<tr>
+<td><strong>htmx-examples</strong></td>
+<td>Community examples collection</td>
+</tr>
+<tr>
+<td><strong>dotnet/aspnetcore</strong></td>
+<td>ASP.NET Core source</td>
+</tr>
+<tr>
+<td><strong>dotnet/eShop</strong></td>
+<td>Reference .NET application</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="project-templates">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#project-templates">#</doc-anchor-trigger>
+        <span>Project Templates</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Template</th>
+<th>Install</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Razor Pages</strong></td>
+<td><code v-pre>dotnet new razor</code></td>
+</tr>
+<tr>
+<td><strong>Web App</strong></td>
+<td><code v-pre>dotnet new webapp</code></td>
+</tr>
+<tr>
+<td><strong>API</strong></td>
+<td><code v-pre>dotnet new webapi</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Custom htmx Template (create your own):</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">dotnet new install ./MyHtmxTemplate
+dotnet new htmx-razor -n MyProject</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="reference-implementations">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#reference-implementations">#</doc-anchor-trigger>
+        <span>Reference Implementations</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Project</th>
+<th>Technology</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chinook Dashboard</strong></td>
+<td>Razor Pages + htmx</td>
+<td>Full CRUD, search, modals</td>
+</tr>
+<tr>
+<td><strong>TodoMVC-htmx</strong></td>
+<td>Various backends</td>
+<td>Classic todo app</td>
+</tr>
+<tr>
+<td><strong>RealWorld htmx</strong></td>
+<td>htmx spec</td>
+<td>Blog platform</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="d7-books-and-references">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#d7-books-and-references">#</doc-anchor-trigger>
+        <span>D.7 Books and References</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="recommended-reading">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#recommended-reading">#</doc-anchor-trigger>
+        <span>Recommended Reading</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Book</th>
+<th>Author</th>
+<th>Topic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hypermedia Systems</strong></td>
+<td>Carson Gross et al.</td>
+<td>htmx philosophy (free online)</td>
+</tr>
+<tr>
+<td><strong>ASP.NET Core in Action</strong></td>
+<td>Andrew Lock</td>
+<td>ASP.NET Core comprehensive</td>
+</tr>
+<tr>
+<td><strong>Entity Framework Core in Action</strong></td>
+<td>Jon P Smith</td>
+<td>EF Core deep dive</td>
+</tr>
+<tr>
+<td><strong>C# in Depth</strong></td>
+<td>Jon Skeet</td>
+<td>C# language mastery</td>
+</tr>
+<tr>
+<td><strong>Designing Data-Intensive Applications</strong></td>
+<td>Martin Kleppmann</td>
+<td>System design</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="specifications-and-standards">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#specifications-and-standards">#</doc-anchor-trigger>
+        <span>Specifications and Standards</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Specification</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HTML Living Standard</strong></td>
+<td>html.spec.whatwg.org</td>
+</tr>
+<tr>
+<td><strong>HTTP Semantics (RFC 9110)</strong></td>
+<td>httpwg.org/specs/rfc9110.html</td>
+</tr>
+<tr>
+<td><strong>REST Dissertation</strong></td>
+<td>ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm</td>
+</tr>
+<tr>
+<td><strong>HATEOAS</strong></td>
+<td>Part of REST architectural style</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="d8-quick-setup-checklist">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#d8-quick-setup-checklist">#</doc-anchor-trigger>
+        <span>D.8 Quick Setup Checklist</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="new-project-setup">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#new-project-setup">#</doc-anchor-trigger>
+        <span>New Project Setup</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash"># Create project
+dotnet new webapp -n MyHtmxApp
+cd MyHtmxApp
+
+# Add packages
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add package Htmx
+
+# Add client libraries
+dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+libman init
+libman install htmx.org@1.9.10 -d wwwroot/lib/htmx
+libman install hyperscript.org@0.9.12 -d wwwroot/lib/hyperscript
+
+# Run with hot reload
+dotnet watch</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="essential-vs-code-extensions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#essential-vs-code-extensions">#</doc-anchor-trigger>
+        <span>Essential VS Code Extensions</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash">code --install-extension ms-dotnettools.csdevkit
+code --install-extension otovo-oss.htmx-tags
+code --install-extension bradlc.vscode-tailwindcss</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="recommended-libmanjson">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#recommended-libmanjson">#</doc-anchor-trigger>
+        <span>Recommended libman.json</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-json"><code v-pre class="language-json">{
+  &quot;version&quot;: &quot;1.0&quot;,
+  &quot;defaultProvider&quot;: &quot;unpkg&quot;,
+  &quot;libraries&quot;: [
+    {
+      &quot;library&quot;: &quot;htmx.org@1.9.10&quot;,
+      &quot;destination&quot;: &quot;wwwroot/lib/htmx/&quot;,
+      &quot;files&quot;: [&quot;dist/htmx.min.js&quot;, &quot;dist/ext/json-enc.js&quot;, &quot;dist/ext/loading-states.js&quot;]
+    },
+    {
+      &quot;library&quot;: &quot;hyperscript.org@0.9.12&quot;,
+      &quot;destination&quot;: &quot;wwwroot/lib/hyperscript/&quot;,
+      &quot;files&quot;: [&quot;dist/_hyperscript.min.js&quot;]
+    }
+  ]
+}</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="resource-links-summary">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#resource-links-summary">#</doc-anchor-trigger>
+        <span>Resource Links Summary</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="essential-links">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#essential-links">#</doc-anchor-trigger>
+        <span>Essential Links</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Resource</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>htmx</td>
+<td>htmx.org</td>
+</tr>
+<tr>
+<td>Hyperscript</td>
+<td>hyperscript.org</td>
+</tr>
+<tr>
+<td>ASP.NET Core</td>
+<td>learn.microsoft.com/aspnet/core</td>
+</tr>
+<tr>
+<td>.NET Downloads</td>
+<td>dotnet.microsoft.com/download</td>
+</tr>
+<tr>
+<td>NuGet</td>
+<td>nuget.org</td>
+</tr>
+<tr>
+<td>GitHub</td>
+<td>github.com</td>
+</tr>
+<tr>
+<td>Stack Overflow</td>
+<td>stackoverflow.com</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="cdn-quick-reference">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#cdn-quick-reference">#</doc-anchor-trigger>
+        <span>CDN Quick Reference</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- htmx --&gt;
+&lt;script src=&quot;https://unpkg.com/htmx.org@1.9.10&quot;&gt;&lt;/script&gt;
+
+&lt;!-- Hyperscript --&gt;
+&lt;script src=&quot;https://unpkg.com/hyperscript.org@0.9.12&quot;&gt;&lt;/script&gt;
+
+&lt;!-- Tailwind CSS (Play CDN - dev only) --&gt;
+&lt;script src=&quot;https://cdn.tailwindcss.com&quot;&gt;&lt;/script&gt;
+
+&lt;!-- Alpine.js --&gt;
+&lt;script defer src=&quot;https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<p><em>All URLs verified as of publication. Check official sources for latest versions.</em></p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -268,6 +1537,27 @@
                                     </a>
                                 </div>
                             
+                                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../appendix/hyperscript-quick-guide/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                                <span class="block mt-1">Appendix C - Hyperscript Quick Guide</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../authorbio/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                                <span class="block mt-1">Author Bio</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
                             </footer>
                         </main>
                 
@@ -326,6 +1616,6 @@
 
     <div id="retype-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Appendix D - Valuable Tools and Resources for htmx and Razor Pages Development", level: 2, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Appendix D - Valuable Tools and Resources for htmx and Razor Pages Development", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

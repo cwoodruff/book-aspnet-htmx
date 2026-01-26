@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="turbo-root" content="/book-aspnet-htmx">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822511642234">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.822704458067">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -15,6 +15,7 @@
     <!-- Primary Meta Tags -->
     <title>htmx Command Reference</title>
     <meta name="title" content="htmx Command Reference">
+    <meta name="description" content="This appendix provides a complete reference for htmx attributes, headers, events, and JavaScript API.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://cwoodruff.github.io/book-aspnet-htmx/appendix/htmx-command-reference/">
@@ -23,20 +24,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cwoodruff.github.io/book-aspnet-htmx/appendix/htmx-command-reference/">
     <meta property="og:title" content="htmx Command Reference">
+    <meta property="og:description" content="This appendix provides a complete reference for htmx attributes, headers, events, and JavaScript API.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cwoodruff.github.io/book-aspnet-htmx/appendix/htmx-command-reference/">
     <meta property="twitter:title" content="htmx Command Reference">
+    <meta property="twitter:description" content="This appendix provides a complete reference for htmx attributes, headers, events, and JavaScript API.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link href="../../images/favicon.png" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.11.0.822511642234" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.11.0.822704458067" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.11.0.822511642234" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.11.0.822704458067" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.11.0.822511642234" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.11.0.822704458067" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.11.0.822704458067" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -243,18 +247,2469 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="htmx-command-reference" class="break-words">
+<doc-anchor-target id="appendix-a-htmx-command-reference" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#htmx-command-reference">#</doc-anchor-trigger>
-        <span>htmx Command Reference</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#appendix-a-htmx-command-reference">#</doc-anchor-trigger>
+        <span>Appendix A: htmx Command Reference</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="xxxxxxxx">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#xxxxxxxx">#</doc-anchor-trigger>
-        <span>XXXXXXXX</span>
-    </h1>
+<p>This appendix provides a complete reference for htmx attributes, headers, events, and JavaScript API. Use it as a quick lookup while building htmx applications with ASP.NET Core.</p>
+<hr>
+<doc-anchor-target id="a1-core-attributes">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a1-core-attributes">#</doc-anchor-trigger>
+        <span>A.1 Core Attributes</span>
+    </h2>
 </doc-anchor-target>
+<p>These attributes initiate HTTP requests when triggered.</p>
+<doc-anchor-target id="hx-get">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-get">#</doc-anchor-trigger>
+        <span>hx-get</span>
+    </h3>
+</doc-anchor-target>
+<p>Issues an HTTP GET request to the specified URL.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/Artists?handler=List&quot; 
+        hx-target=&quot;#artist-list&quot;&gt;
+    Load Artists
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Razor Pages handler
+public IActionResult OnGetList()
+{
+    var artists = _artistService.GetAll();
+    return Partial(&quot;_ArtistList&quot;, artists);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-post">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-post">#</doc-anchor-trigger>
+        <span>hx-post</span>
+    </h3>
+</doc-anchor-target>
+<p>Issues an HTTP POST request. Form values are sent in the request body.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-post=&quot;/Artists?handler=Create&quot; 
+      hx-target=&quot;#artist-list&quot; 
+      hx-swap=&quot;afterbegin&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;text&quot; name=&quot;name&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Create&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnPostCreate(string name)
+{
+    var artist = _artistService.Create(name);
+    return Partial(&quot;_ArtistRow&quot;, artist);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-put">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-put">#</doc-anchor-trigger>
+        <span>hx-put</span>
+    </h3>
+</doc-anchor-target>
+<p>Issues an HTTP PUT request for full resource updates.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;form hx-put=&quot;/Artists/5?handler=Update&quot; 
+      hx-target=&quot;#artist-row-5&quot;&gt;
+    @Html.AntiForgeryToken()
+    &lt;input type=&quot;text&quot; name=&quot;name&quot; value=&quot;@Model.Name&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Update&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-patch">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-patch">#</doc-anchor-trigger>
+        <span>hx-patch</span>
+    </h3>
+</doc-anchor-target>
+<p>Issues an HTTP PATCH request for partial resource updates.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-patch=&quot;/Artists/5?handler=ToggleActive&quot; 
+        hx-target=&quot;#artist-row-5&quot;&gt;
+    Toggle Status
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-delete">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-delete">#</doc-anchor-trigger>
+        <span>hx-delete</span>
+    </h3>
+</doc-anchor-target>
+<p>Issues an HTTP DELETE request.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-delete=&quot;/Artists/5&quot; 
+        hx-target=&quot;#artist-row-5&quot; 
+        hx-swap=&quot;delete&quot;
+        hx-confirm=&quot;Delete this artist?&quot;&gt;
+    Delete
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public IActionResult OnDelete(int id)
+{
+    _artistService.Delete(id);
+    return Content(&quot;&quot;); // Empty response for delete swap
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="url-patterns">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#url-patterns">#</doc-anchor-trigger>
+        <span>URL Patterns</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Relative</td>
+<td><code v-pre>/Artists</code></td>
+<td>Relative to current origin</td>
+</tr>
+<tr>
+<td>With handler</td>
+<td><code v-pre>/Artists?handler=List</code></td>
+<td>Razor Pages handler</td>
+</tr>
+<tr>
+<td>With parameters</td>
+<td><code v-pre>/Artists?handler=Edit&amp;id=5</code></td>
+<td>Handler with parameters</td>
+</tr>
+<tr>
+<td>Absolute</td>
+<td><code v-pre>https://api.example.com/data</code></td>
+<td>Full URL (CORS required)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="a2-targeting-and-swapping">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a2-targeting-and-swapping">#</doc-anchor-trigger>
+        <span>A.2 Targeting and Swapping</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="hx-target">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-target">#</doc-anchor-trigger>
+        <span>hx-target</span>
+    </h3>
+</doc-anchor-target>
+<p>Specifies the element to update with the response. Accepts CSS selectors.</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CSS selector</td>
+<td>Target by selector</td>
+<td><code v-pre>hx-target=&quot;#results&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>this</code></td>
+<td>The triggering element</td>
+<td><code v-pre>hx-target=&quot;this&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>closest &lt;selector&gt;</code></td>
+<td>Closest ancestor</td>
+<td><code v-pre>hx-target=&quot;closest tr&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>find &lt;selector&gt;</code></td>
+<td>First descendant</td>
+<td><code v-pre>hx-target=&quot;find .content&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>next</code></td>
+<td>Next sibling</td>
+<td><code v-pre>hx-target=&quot;next&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>next &lt;selector&gt;</code></td>
+<td>Next matching sibling</td>
+<td><code v-pre>hx-target=&quot;next .item&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>previous</code></td>
+<td>Previous sibling</td>
+<td><code v-pre>hx-target=&quot;previous&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>previous &lt;selector&gt;</code></td>
+<td>Previous matching sibling</td>
+<td><code v-pre>hx-target=&quot;previous .item&quot;</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Target by ID --&gt;
+&lt;button hx-get=&quot;/data&quot; hx-target=&quot;#content&quot;&gt;Load&lt;/button&gt;
+
+&lt;!-- Target closest table row --&gt;
+&lt;button hx-get=&quot;/edit&quot; hx-target=&quot;closest tr&quot;&gt;Edit&lt;/button&gt;
+
+&lt;!-- Target the button itself --&gt;
+&lt;button hx-get=&quot;/status&quot; hx-target=&quot;this&quot;&gt;Refresh&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-swap">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-swap">#</doc-anchor-trigger>
+        <span>hx-swap</span>
+    </h3>
+</doc-anchor-target>
+<p>Specifies how the response content is swapped into the target.</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>innerHTML</code></td>
+<td>Replace inner HTML (default)</td>
+</tr>
+<tr>
+<td><code v-pre>outerHTML</code></td>
+<td>Replace entire element</td>
+</tr>
+<tr>
+<td><code v-pre>beforebegin</code></td>
+<td>Insert before target</td>
+</tr>
+<tr>
+<td><code v-pre>afterbegin</code></td>
+<td>Insert at start of target</td>
+</tr>
+<tr>
+<td><code v-pre>beforeend</code></td>
+<td>Insert at end of target</td>
+</tr>
+<tr>
+<td><code v-pre>afterend</code></td>
+<td>Insert after target</td>
+</tr>
+<tr>
+<td><code v-pre>delete</code></td>
+<td>Delete target element</td>
+</tr>
+<tr>
+<td><code v-pre>none</code></td>
+<td>No swap (use for side effects)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Replace content inside #list --&gt;
+&lt;button hx-get=&quot;/items&quot; hx-target=&quot;#list&quot; hx-swap=&quot;innerHTML&quot;&gt;
+    Load
+&lt;/button&gt;
+
+&lt;!-- Replace entire row --&gt;
+&lt;button hx-get=&quot;/edit/5&quot; hx-target=&quot;#row-5&quot; hx-swap=&quot;outerHTML&quot;&gt;
+    Edit
+&lt;/button&gt;
+
+&lt;!-- Append to list --&gt;
+&lt;button hx-get=&quot;/more&quot; hx-target=&quot;#list&quot; hx-swap=&quot;beforeend&quot;&gt;
+    Load More
+&lt;/button&gt;
+
+&lt;!-- Delete row after successful delete --&gt;
+&lt;button hx-delete=&quot;/items/5&quot; hx-target=&quot;closest tr&quot; hx-swap=&quot;delete&quot;&gt;
+    Delete
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="swap-modifiers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-modifiers">#</doc-anchor-trigger>
+        <span>Swap Modifiers</span>
+    </h3>
+</doc-anchor-target>
+<p>Add modifiers to <code v-pre>hx-swap</code> to control timing and scrolling.</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Modifier</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>swap:&lt;time&gt;</code></td>
+<td>Delay before swap</td>
+<td><code v-pre>hx-swap=&quot;innerHTML swap:500ms&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>settle:&lt;time&gt;</code></td>
+<td>Delay before settle</td>
+<td><code v-pre>hx-swap=&quot;innerHTML settle:100ms&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>scroll:&lt;target&gt;</code></td>
+<td>Scroll after swap</td>
+<td><code v-pre>hx-swap=&quot;innerHTML scroll:top&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>show:&lt;target&gt;</code></td>
+<td>Show element</td>
+<td><code v-pre>hx-swap=&quot;innerHTML show:top&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>focus-scroll:&lt;bool&gt;</code></td>
+<td>Scroll focused element</td>
+<td><code v-pre>hx-swap=&quot;innerHTML focus-scroll:true&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>transition:&lt;bool&gt;</code></td>
+<td>Enable view transitions</td>
+<td><code v-pre>hx-swap=&quot;innerHTML transition:true&quot;</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Swap with animation delay --&gt;
+&lt;div hx-get=&quot;/content&quot; hx-swap=&quot;innerHTML swap:300ms settle:100ms&quot;&gt;
+
+&lt;!-- Scroll to top after swap --&gt;
+&lt;div hx-get=&quot;/page/2&quot; hx-swap=&quot;innerHTML scroll:top&quot;&gt;
+
+&lt;!-- Show bottom of target --&gt;
+&lt;div hx-get=&quot;/messages&quot; hx-swap=&quot;beforeend show:bottom&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-swap-oob">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-swap-oob">#</doc-anchor-trigger>
+        <span>hx-swap-oob</span>
+    </h3>
+</doc-anchor-target>
+<p>Enables out-of-band swaps. The response can update multiple elements.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- In response HTML --&gt;
+&lt;div id=&quot;main-content&quot;&gt;Main content here&lt;/div&gt;
+
+&lt;div id=&quot;stats&quot; hx-swap-oob=&quot;true&quot;&gt;
+    Updated stats: 42 items
+&lt;/div&gt;
+
+&lt;div id=&quot;notification&quot; hx-swap-oob=&quot;innerHTML&quot;&gt;
+    Operation successful!
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p>OOB swap strategies:</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>true</code></td>
+<td>Use outerHTML swap</td>
+</tr>
+<tr>
+<td><code v-pre>innerHTML</code></td>
+<td>Replace inner content</td>
+</tr>
+<tr>
+<td><code v-pre>outerHTML</code></td>
+<td>Replace entire element</td>
+</tr>
+<tr>
+<td><code v-pre>beforebegin</code></td>
+<td>Insert before</td>
+</tr>
+<tr>
+<td><code v-pre>afterbegin</code></td>
+<td>Insert at start</td>
+</tr>
+<tr>
+<td><code v-pre>beforeend</code></td>
+<td>Insert at end</td>
+</tr>
+<tr>
+<td><code v-pre>afterend</code></td>
+<td>Insert after</td>
+</tr>
+<tr>
+<td><code v-pre>delete</code></td>
+<td>Remove element</td>
+</tr>
+<tr>
+<td><code v-pre>none</code></td>
+<td>No action</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="hx-select">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-select">#</doc-anchor-trigger>
+        <span>hx-select</span>
+    </h3>
+</doc-anchor-target>
+<p>Selects a portion of the response to swap.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Only swap the #results portion of the response --&gt;
+&lt;button hx-get=&quot;/search&quot; 
+        hx-target=&quot;#output&quot; 
+        hx-select=&quot;#results&quot;&gt;
+    Search
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-select-oob">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-select-oob">#</doc-anchor-trigger>
+        <span>hx-select-oob</span>
+    </h3>
+</doc-anchor-target>
+<p>Selects elements from response for out-of-band swaps.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/data&quot; 
+        hx-target=&quot;#main&quot;
+        hx-select-oob=&quot;#sidebar,#footer&quot;&gt;
+    Load
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a3-triggering-requests">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a3-triggering-requests">#</doc-anchor-trigger>
+        <span>A.3 Triggering Requests</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="hx-trigger">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-trigger">#</doc-anchor-trigger>
+        <span>hx-trigger</span>
+    </h3>
+</doc-anchor-target>
+<p>Specifies the event that triggers the request.</p>
+<p><strong>Standard DOM Events:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Click (default for buttons) --&gt;
+&lt;button hx-get=&quot;/data&quot; hx-trigger=&quot;click&quot;&gt;Click Me&lt;/button&gt;
+
+&lt;!-- Change (default for inputs/selects) --&gt;
+&lt;select hx-get=&quot;/filter&quot; hx-trigger=&quot;change&quot;&gt;...&lt;/select&gt;
+
+&lt;!-- Submit (default for forms) --&gt;
+&lt;form hx-post=&quot;/save&quot; hx-trigger=&quot;submit&quot;&gt;...&lt;/form&gt;
+
+&lt;!-- Keyboard events --&gt;
+&lt;input hx-get=&quot;/search&quot; hx-trigger=&quot;keyup&quot;&gt;
+
+&lt;!-- Mouse events --&gt;
+&lt;div hx-get=&quot;/preview&quot; hx-trigger=&quot;mouseenter&quot;&gt;Hover me&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Special Triggers:</strong></p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>load</code></td>
+<td>On element load</td>
+<td><code v-pre>hx-trigger=&quot;load&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>revealed</code></td>
+<td>When scrolled into view</td>
+<td><code v-pre>hx-trigger=&quot;revealed&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>intersect</code></td>
+<td>Intersection observer</td>
+<td><code v-pre>hx-trigger=&quot;intersect&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>every &lt;time&gt;</code></td>
+<td>Polling interval</td>
+<td><code v-pre>hx-trigger=&quot;every 5s&quot;</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Load on page render --&gt;
+&lt;div hx-get=&quot;/stats&quot; hx-trigger=&quot;load&quot;&gt;Loading...&lt;/div&gt;
+
+&lt;!-- Infinite scroll --&gt;
+&lt;div hx-get=&quot;/more&quot; hx-trigger=&quot;revealed&quot; hx-swap=&quot;afterend&quot;&gt;
+    Loading more...
+&lt;/div&gt;
+
+&lt;!-- Poll every 30 seconds --&gt;
+&lt;div hx-get=&quot;/notifications&quot; hx-trigger=&quot;every 30s&quot;&gt;
+    Checking...
+&lt;/div&gt;
+
+&lt;!-- Intersection with threshold --&gt;
+&lt;div hx-get=&quot;/lazy&quot; hx-trigger=&quot;intersect threshold:0.5&quot;&gt;
+    Lazy content
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="trigger-modifiers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#trigger-modifiers">#</doc-anchor-trigger>
+        <span>Trigger Modifiers</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Modifier</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>once</code></td>
+<td>Trigger only once</td>
+<td><code v-pre>hx-trigger=&quot;click once&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>changed</code></td>
+<td>Only if value changed</td>
+<td><code v-pre>hx-trigger=&quot;keyup changed&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>delay:&lt;time&gt;</code></td>
+<td>Debounce</td>
+<td><code v-pre>hx-trigger=&quot;keyup delay:300ms&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>throttle:&lt;time&gt;</code></td>
+<td>Throttle</td>
+<td><code v-pre>hx-trigger=&quot;scroll throttle:500ms&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>from:&lt;selector&gt;</code></td>
+<td>Listen on another element</td>
+<td><code v-pre>hx-trigger=&quot;click from:body&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>target:&lt;selector&gt;</code></td>
+<td>Filter by event target</td>
+<td><code v-pre>hx-trigger=&quot;click target:.btn&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>consume</code></td>
+<td>Stop event propagation</td>
+<td><code v-pre>hx-trigger=&quot;click consume&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>queue:&lt;strategy&gt;</code></td>
+<td>Queue behavior</td>
+<td><code v-pre>hx-trigger=&quot;click queue:last&quot;</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Debounced search (wait 300ms after typing stops) --&gt;
+&lt;input type=&quot;text&quot; 
+       hx-get=&quot;/search&quot; 
+       hx-trigger=&quot;keyup changed delay:300ms&quot;
+       hx-target=&quot;#results&quot;&gt;
+
+&lt;!-- Fire only once --&gt;
+&lt;button hx-get=&quot;/init&quot; hx-trigger=&quot;click once&quot;&gt;Initialize&lt;/button&gt;
+
+&lt;!-- Listen to events from document body --&gt;
+&lt;div hx-get=&quot;/refresh&quot; hx-trigger=&quot;refreshData from:body&quot;&gt;
+    Data content
+&lt;/div&gt;
+
+&lt;!-- Queue only the last request --&gt;
+&lt;input hx-get=&quot;/autocomplete&quot; 
+       hx-trigger=&quot;keyup delay:100ms queue:last&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Queue Strategies:</strong></p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>first</code></td>
+<td>Queue first, ignore rest</td>
+</tr>
+<tr>
+<td><code v-pre>last</code></td>
+<td>Queue last, ignore previous</td>
+</tr>
+<tr>
+<td><code v-pre>all</code></td>
+<td>Queue all requests</td>
+</tr>
+<tr>
+<td><code v-pre>none</code></td>
+<td>Drop if request in flight</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="multiple-triggers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#multiple-triggers">#</doc-anchor-trigger>
+        <span>Multiple Triggers</span>
+    </h3>
+</doc-anchor-target>
+<p>Separate multiple triggers with commas:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input hx-get=&quot;/validate&quot; 
+       hx-trigger=&quot;change, keyup delay:500ms changed&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-confirm">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-confirm">#</doc-anchor-trigger>
+        <span>hx-confirm</span>
+    </h3>
+</doc-anchor-target>
+<p>Shows a confirmation dialog before the request.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-delete=&quot;/items/5&quot; 
+        hx-confirm=&quot;Are you sure you want to delete this item?&quot;&gt;
+    Delete
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-prompt">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-prompt">#</doc-anchor-trigger>
+        <span>hx-prompt</span>
+    </h3>
+</doc-anchor-target>
+<p>Shows a prompt dialog and sends the input value.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-post=&quot;/rename&quot; 
+        hx-prompt=&quot;Enter new name:&quot;
+        hx-vals='{&quot;id&quot;: 5}'&gt;
+    Rename
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>The prompt value is sent in the <code v-pre>HX-Prompt</code> header.</p>
+<hr>
+<doc-anchor-target id="a4-request-modifiers">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a4-request-modifiers">#</doc-anchor-trigger>
+        <span>A.4 Request Modifiers</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="hx-include">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-include">#</doc-anchor-trigger>
+        <span>hx-include</span>
+    </h3>
+</doc-anchor-target>
+<p>Includes additional element values in the request.</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CSS selector</td>
+<td>Include matching elements</td>
+</tr>
+<tr>
+<td><code v-pre>this</code></td>
+<td>Include triggering element</td>
+</tr>
+<tr>
+<td><code v-pre>closest &lt;selector&gt;</code></td>
+<td>Include closest ancestor</td>
+</tr>
+<tr>
+<td><code v-pre>find &lt;selector&gt;</code></td>
+<td>Include descendants</td>
+</tr>
+<tr>
+<td><code v-pre>next &lt;selector&gt;</code></td>
+<td>Include next sibling</td>
+</tr>
+<tr>
+<td><code v-pre>previous &lt;selector&gt;</code></td>
+<td>Include previous sibling</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Include search input value --&gt;
+&lt;button hx-get=&quot;/search&quot; 
+        hx-include=&quot;[name='query']&quot;&gt;
+    Search
+&lt;/button&gt;
+
+&lt;!-- Include all form inputs --&gt;
+&lt;button hx-get=&quot;/filter&quot; 
+        hx-include=&quot;closest form&quot;&gt;
+    Apply Filters
+&lt;/button&gt;
+
+&lt;!-- Include multiple elements --&gt;
+&lt;button hx-get=&quot;/report&quot; 
+        hx-include=&quot;#startDate, #endDate, #category&quot;&gt;
+    Generate
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-params">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-params">#</doc-anchor-trigger>
+        <span>hx-params</span>
+    </h3>
+</doc-anchor-target>
+<p>Filters which parameters are submitted.</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>*</code></td>
+<td>All parameters (default)</td>
+</tr>
+<tr>
+<td><code v-pre>none</code></td>
+<td>No parameters</td>
+</tr>
+<tr>
+<td><code v-pre>not &lt;list&gt;</code></td>
+<td>Exclude listed parameters</td>
+</tr>
+<tr>
+<td><code v-pre>&lt;list&gt;</code></td>
+<td>Only listed parameters</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Send only specific parameters --&gt;
+&lt;form hx-post=&quot;/save&quot; hx-params=&quot;name, email&quot;&gt;
+    &lt;input name=&quot;name&quot; /&gt;
+    &lt;input name=&quot;email&quot; /&gt;
+    &lt;input name=&quot;internal_id&quot; /&gt; &lt;!-- Not sent --&gt;
+&lt;/form&gt;
+
+&lt;!-- Exclude parameters --&gt;
+&lt;form hx-post=&quot;/save&quot; hx-params=&quot;not csrf_token&quot;&gt;
+    ...
+&lt;/form&gt;
+
+&lt;!-- Send no parameters --&gt;
+&lt;button hx-post=&quot;/ping&quot; hx-params=&quot;none&quot;&gt;Ping&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-vals">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-vals">#</doc-anchor-trigger>
+        <span>hx-vals</span>
+    </h3>
+</doc-anchor-target>
+<p>Adds additional values to the request as JSON.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Static values --&gt;
+&lt;button hx-post=&quot;/action&quot; 
+        hx-vals='{&quot;type&quot;: &quot;archive&quot;, &quot;notify&quot;: true}'&gt;
+    Archive
+&lt;/button&gt;
+
+&lt;!-- Dynamic values with JavaScript --&gt;
+&lt;button hx-post=&quot;/save&quot; 
+        hx-vals='js:{timestamp: Date.now()}'&gt;
+    Save
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-headers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-headers">#</doc-anchor-trigger>
+        <span>hx-headers</span>
+    </h3>
+</doc-anchor-target>
+<p>Adds custom HTTP headers to the request.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/api/data&quot; 
+        hx-headers='{&quot;X-Custom-Header&quot;: &quot;value&quot;}'&gt;
+    Load
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p>For anti-forgery tokens in ASP.NET Core:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// In site.js - add to all requests
+document.body.addEventListener('htmx:configRequest', function(event) {
+    const token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]')?.value;
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token;
+    }
+});</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-sync">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-sync">#</doc-anchor-trigger>
+        <span>hx-sync</span>
+    </h3>
+</doc-anchor-target>
+<p>Synchronizes requests to prevent race conditions.</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>drop</code></td>
+<td>Drop new request if one in flight</td>
+</tr>
+<tr>
+<td><code v-pre>abort</code></td>
+<td>Abort current request for new one</td>
+</tr>
+<tr>
+<td><code v-pre>replace</code></td>
+<td>Abort current, queue new</td>
+</tr>
+<tr>
+<td><code v-pre>queue</code></td>
+<td>Queue all requests</td>
+</tr>
+<tr>
+<td><code v-pre>queue first</code></td>
+<td>Queue first, drop rest</td>
+</tr>
+<tr>
+<td><code v-pre>queue last</code></td>
+<td>Queue last, drop previous</td>
+</tr>
+<tr>
+<td><code v-pre>queue all</code></td>
+<td>Queue all</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Only allow one search at a time --&gt;
+&lt;input hx-get=&quot;/search&quot; 
+       hx-sync=&quot;closest form:abort&quot;&gt;
+
+&lt;!-- Queue form submissions --&gt;
+&lt;form hx-post=&quot;/save&quot; hx-sync=&quot;this:queue&quot;&gt;
+    ...
+&lt;/form&gt;
+
+&lt;!-- Drop duplicate clicks --&gt;
+&lt;button hx-post=&quot;/action&quot; hx-sync=&quot;this:drop&quot;&gt;
+    Submit
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-encoding">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-encoding">#</doc-anchor-trigger>
+        <span>hx-encoding</span>
+    </h3>
+</doc-anchor-target>
+<p>Sets the encoding type for the request.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- For file uploads --&gt;
+&lt;form hx-post=&quot;/upload&quot; hx-encoding=&quot;multipart/form-data&quot;&gt;
+    &lt;input type=&quot;file&quot; name=&quot;file&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Upload&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a5-history-and-navigation">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a5-history-and-navigation">#</doc-anchor-trigger>
+        <span>A.5 History and Navigation</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="hx-push-url">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-push-url">#</doc-anchor-trigger>
+        <span>hx-push-url</span>
+    </h3>
+</doc-anchor-target>
+<p>Pushes a URL to the browser history.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Push the request URL --&gt;
+&lt;a hx-get=&quot;/page/2&quot; hx-push-url=&quot;true&quot;&gt;Page 2&lt;/a&gt;
+
+&lt;!-- Push a custom URL --&gt;
+&lt;button hx-get=&quot;/search?q=test&quot; hx-push-url=&quot;/search/test&quot;&gt;
+    Search
+&lt;/button&gt;
+
+&lt;!-- Disable URL push --&gt;
+&lt;a hx-get=&quot;/modal&quot; hx-push-url=&quot;false&quot;&gt;Open Modal&lt;/a&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-replace-url">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-replace-url">#</doc-anchor-trigger>
+        <span>hx-replace-url</span>
+    </h3>
+</doc-anchor-target>
+<p>Replaces the current URL in history (no new history entry).</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/tab/details&quot; hx-replace-url=&quot;true&quot;&gt;
+    Details Tab
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-history">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-history">#</doc-anchor-trigger>
+        <span>hx-history</span>
+    </h3>
+</doc-anchor-target>
+<p>Controls whether the element&#x27;s innerHTML is saved to history cache.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Don't save this element to history --&gt;
+&lt;div hx-history=&quot;false&quot;&gt;
+    Sensitive content not cached
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-history-elt">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-history-elt">#</doc-anchor-trigger>
+        <span>hx-history-elt</span>
+    </h3>
+</doc-anchor-target>
+<p>Specifies which element&#x27;s content to snapshot for history.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;body hx-history-elt&gt;
+    &lt;!-- Only body content is cached, not full page --&gt;
+&lt;/body&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a6-indicators-and-feedback">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a6-indicators-and-feedback">#</doc-anchor-trigger>
+        <span>A.6 Indicators and Feedback</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="hx-indicator">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-indicator">#</doc-anchor-trigger>
+        <span>hx-indicator</span>
+    </h3>
+</doc-anchor-target>
+<p>Specifies an element to show during the request.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/data&quot; hx-indicator=&quot;#spinner&quot;&gt;
+    Load Data
+&lt;/button&gt;
+&lt;span id=&quot;spinner&quot; class=&quot;htmx-indicator&quot;&gt;Loading...&lt;/span&gt;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">/* htmx automatically adds this, but you can customize */
+.htmx-indicator {
+    display: none;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    display: inline;
+}</code></pre>
+</doc-codeblock></div>
+<p>Multiple indicators:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/data&quot; hx-indicator=&quot;#spinner, #overlay&quot;&gt;
+    Load
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-disabled-elt">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-disabled-elt">#</doc-anchor-trigger>
+        <span>hx-disabled-elt</span>
+    </h3>
+</doc-anchor-target>
+<p>Disables elements during the request.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Disable the button itself --&gt;
+&lt;button hx-post=&quot;/save&quot; hx-disabled-elt=&quot;this&quot;&gt;
+    Save
+&lt;/button&gt;
+
+&lt;!-- Disable multiple elements --&gt;
+&lt;form hx-post=&quot;/submit&quot; hx-disabled-elt=&quot;find input, find button&quot;&gt;
+    &lt;input name=&quot;data&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;!-- Disable closest form --&gt;
+&lt;button hx-post=&quot;/save&quot; hx-disabled-elt=&quot;closest form&quot;&gt;
+    Save
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="css-classes-applied-by-htmx">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#css-classes-applied-by-htmx">#</doc-anchor-trigger>
+        <span>CSS Classes Applied by htmx</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Class</th>
+<th>Applied When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>.htmx-request</code></td>
+<td>Request in progress</td>
+</tr>
+<tr>
+<td><code v-pre>.htmx-settling</code></td>
+<td>During settle phase</td>
+</tr>
+<tr>
+<td><code v-pre>.htmx-swapping</code></td>
+<td>During swap phase</td>
+</tr>
+<tr>
+<td><code v-pre>.htmx-added</code></td>
+<td>Element just added to DOM</td>
+</tr>
+<tr>
+<td><code v-pre>.htmx-indicator</code></td>
+<td>Indicator elements</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">/* Show loading state */
+.htmx-request {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Fade in new content */
+.htmx-added {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Indicator styling */
+.htmx-indicator {
+    display: none;
+}
+.htmx-request .htmx-indicator {
+    display: inline-flex;
+}</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a7-inheritance-and-scope">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a7-inheritance-and-scope">#</doc-anchor-trigger>
+        <span>A.7 Inheritance and Scope</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="hx-boost">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-boost">#</doc-anchor-trigger>
+        <span>hx-boost</span>
+    </h3>
+</doc-anchor-target>
+<p>Converts standard anchors and forms to use AJAX.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Boost all links and forms in this container --&gt;
+&lt;div hx-boost=&quot;true&quot;&gt;
+    &lt;a href=&quot;/page/2&quot;&gt;Page 2&lt;/a&gt; &lt;!-- Now uses AJAX --&gt;
+    &lt;form action=&quot;/search&quot; method=&quot;get&quot;&gt;...&lt;/form&gt; &lt;!-- Now uses AJAX --&gt;
+&lt;/div&gt;
+
+&lt;!-- Disable boost for specific elements --&gt;
+&lt;div hx-boost=&quot;true&quot;&gt;
+    &lt;a href=&quot;/page/2&quot;&gt;AJAX Link&lt;/a&gt;
+    &lt;a href=&quot;/download.pdf&quot; hx-boost=&quot;false&quot;&gt;Normal Link&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-inherit">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-inherit">#</doc-anchor-trigger>
+        <span>hx-inherit</span>
+    </h3>
+</doc-anchor-target>
+<p>Controls which attributes are inherited from ancestors.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Only inherit hx-target --&gt;
+&lt;div hx-target=&quot;#output&quot; hx-swap=&quot;innerHTML&quot;&gt;
+    &lt;button hx-get=&quot;/a&quot; hx-inherit=&quot;hx-target&quot;&gt;A&lt;/button&gt;
+    &lt;button hx-get=&quot;/b&quot; hx-inherit=&quot;hx-target&quot;&gt;B&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-disinherit">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-disinherit">#</doc-anchor-trigger>
+        <span>hx-disinherit</span>
+    </h3>
+</doc-anchor-target>
+<p>Prevents attribute inheritance.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-target=&quot;#main&quot; hx-confirm=&quot;Are you sure?&quot;&gt;
+    &lt;!-- This button won't inherit hx-confirm --&gt;
+    &lt;button hx-get=&quot;/safe&quot; hx-disinherit=&quot;hx-confirm&quot;&gt;
+        Safe Action
+    &lt;/button&gt;
+    
+    &lt;!-- This button inherits everything --&gt;
+    &lt;button hx-delete=&quot;/dangerous&quot;&gt;
+        Dangerous Action
+    &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Disinherit all attributes --&gt;
+&lt;button hx-get=&quot;/standalone&quot; hx-disinherit=&quot;*&quot;&gt;
+    Standalone
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-preserve">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-preserve">#</doc-anchor-trigger>
+        <span>hx-preserve</span>
+    </h3>
+</doc-anchor-target>
+<p>Preserves an element across swaps (useful for video, audio, iframes).</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div id=&quot;content&quot;&gt;
+    &lt;video id=&quot;player&quot; hx-preserve=&quot;true&quot; src=&quot;video.mp4&quot;&gt;&lt;/video&gt;
+    &lt;div id=&quot;info&quot;&gt;Info that gets swapped&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a8-extensions">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a8-extensions">#</doc-anchor-trigger>
+        <span>A.8 Extensions</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="hx-ext">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-ext">#</doc-anchor-trigger>
+        <span>hx-ext</span>
+    </h3>
+</doc-anchor-target>
+<p>Enables htmx extensions for an element and its descendants.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Enable single extension --&gt;
+&lt;body hx-ext=&quot;json-enc&quot;&gt;
+    ...
+&lt;/body&gt;
+
+&lt;!-- Enable multiple extensions --&gt;
+&lt;body hx-ext=&quot;json-enc, loading-states&quot;&gt;
+    ...
+&lt;/body&gt;
+
+&lt;!-- Disable inherited extension --&gt;
+&lt;div hx-ext=&quot;ignore:json-enc&quot;&gt;
+    ...
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="built-in-extensions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#built-in-extensions">#</doc-anchor-trigger>
+        <span>Built-in Extensions</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Extension</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>json-enc</code></td>
+<td>Send request body as JSON</td>
+</tr>
+<tr>
+<td><code v-pre>morphdom-swap</code></td>
+<td>Use morphdom for DOM diffing</td>
+</tr>
+<tr>
+<td><code v-pre>alpine-morph</code></td>
+<td>Use Alpine.js morph</td>
+</tr>
+<tr>
+<td><code v-pre>client-side-templates</code></td>
+<td>Mustache/Handlebars templates</td>
+</tr>
+<tr>
+<td><code v-pre>path-deps</code></td>
+<td>Refresh on path dependencies</td>
+</tr>
+<tr>
+<td><code v-pre>class-tools</code></td>
+<td>Advanced class manipulation</td>
+</tr>
+<tr>
+<td><code v-pre>loading-states</code></td>
+<td>Enhanced loading indicators</td>
+</tr>
+<tr>
+<td><code v-pre>preload</code></td>
+<td>Preload on hover/focus</td>
+</tr>
+<tr>
+<td><code v-pre>remove-me</code></td>
+<td>Auto-remove elements</td>
+</tr>
+<tr>
+<td><code v-pre>response-targets</code></td>
+<td>Multiple response targets</td>
+</tr>
+<tr>
+<td><code v-pre>head-support</code></td>
+<td>Process head elements</td>
+</tr>
+<tr>
+<td><code v-pre>multi-swap</code></td>
+<td>Multiple swap targets</td>
+</tr>
+<tr>
+<td><code v-pre>debug</code></td>
+<td>Debug logging</td>
+</tr>
+<tr>
+<td><code v-pre>event-header</code></td>
+<td>Include triggering event</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="hx-ws-websocket">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-ws-websocket">#</doc-anchor-trigger>
+        <span>hx-ws (WebSocket)</span>
+    </h3>
+</doc-anchor-target>
+<p>Establishes a WebSocket connection.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-ws=&quot;connect:/chat&quot;&gt;
+    &lt;div id=&quot;messages&quot;&gt;&lt;/div&gt;
+    &lt;form hx-ws=&quot;send&quot;&gt;
+        &lt;input name=&quot;message&quot; /&gt;
+        &lt;button&gt;Send&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>connect:&lt;url&gt;</code></td>
+<td>Connect to WebSocket URL</td>
+</tr>
+<tr>
+<td><code v-pre>send</code></td>
+<td>Send form data over WebSocket</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="hx-sse-server-sent-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-sse-server-sent-events">#</doc-anchor-trigger>
+        <span>hx-sse (Server-Sent Events)</span>
+    </h3>
+</doc-anchor-target>
+<p>Connects to a Server-Sent Events endpoint.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;div hx-sse=&quot;connect:/events&quot;&gt;
+    &lt;div hx-sse=&quot;swap:message&quot;&gt;
+        &lt;!-- Updated when 'message' event received --&gt;
+    &lt;/div&gt;
+    &lt;div hx-sse=&quot;swap:notification&quot;&gt;
+        &lt;!-- Updated when 'notification' event received --&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</doc-codeblock></div>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>connect:&lt;url&gt;</code></td>
+<td>Connect to SSE endpoint</td>
+</tr>
+<tr>
+<td><code v-pre>swap:&lt;event&gt;</code></td>
+<td>Swap content on event</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<doc-anchor-target id="a9-request-headers">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a9-request-headers">#</doc-anchor-trigger>
+        <span>A.9 Request Headers</span>
+    </h2>
+</doc-anchor-target>
+<p>Headers automatically sent by htmx with each request:</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Header</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>HX-Request</code></td>
+<td><code v-pre>true</code></td>
+<td>Identifies request as htmx</td>
+</tr>
+<tr>
+<td><code v-pre>HX-Target</code></td>
+<td>Element ID</td>
+<td>Target element ID</td>
+</tr>
+<tr>
+<td><code v-pre>HX-Trigger</code></td>
+<td>Element ID</td>
+<td>Triggering element ID</td>
+</tr>
+<tr>
+<td><code v-pre>HX-Trigger-Name</code></td>
+<td>Name attribute</td>
+<td>Name of triggering element</td>
+</tr>
+<tr>
+<td><code v-pre>HX-Current-URL</code></td>
+<td>URL</td>
+<td>Current page URL</td>
+</tr>
+<tr>
+<td><code v-pre>HX-Prompt</code></td>
+<td>String</td>
+<td>User input from hx-prompt</td>
+</tr>
+<tr>
+<td><code v-pre>HX-Boosted</code></td>
+<td><code v-pre>true</code></td>
+<td>If request is boosted</td>
+</tr>
+<tr>
+<td><code v-pre>HX-History-Restore-Request</code></td>
+<td><code v-pre>true</code></td>
+<td>If restoring from history</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="detecting-htmx-requests-in-aspnet-core">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#detecting-htmx-requests-in-aspnet-core">#</doc-anchor-trigger>
+        <span>Detecting htmx Requests in ASP.NET Core</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// In a Razor Page or Controller
+public IActionResult OnGet()
+{
+    if (Request.Headers.ContainsKey(&quot;HX-Request&quot;))
+    {
+        // htmx request - return partial
+        return Partial(&quot;_Content&quot;, model);
+    }
+    
+    // Regular request - return full page
+    return Page();
+}
+
+// Extension method for cleaner code
+public static class HttpRequestExtensions
+{
+    public static bool IsHtmx(this HttpRequest request)
+    {
+        return request.Headers.ContainsKey(&quot;HX-Request&quot;);
+    }
+    
+    public static string? HxTarget(this HttpRequest request)
+    {
+        return request.Headers[&quot;HX-Target&quot;].FirstOrDefault();
+    }
+    
+    public static string? HxTrigger(this HttpRequest request)
+    {
+        return request.Headers[&quot;HX-Trigger&quot;].FirstOrDefault();
+    }
+}
+
+// Usage
+if (Request.IsHtmx())
+{
+    var target = Request.HxTarget();
+}</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a10-response-headers">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a10-response-headers">#</doc-anchor-trigger>
+        <span>A.10 Response Headers</span>
+    </h2>
+</doc-anchor-target>
+<p>Headers the server can send to control htmx behavior:</p>
+<doc-anchor-target id="hx-location">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-location">#</doc-anchor-trigger>
+        <span>HX-Location</span>
+    </h3>
+</doc-anchor-target>
+<p>Triggers client-side redirect without full page reload.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Simple redirect
+Response.Headers.Append(&quot;HX-Location&quot;, &quot;/new-page&quot;);
+
+// With options
+Response.Headers.Append(&quot;HX-Location&quot;, 
+    JsonSerializer.Serialize(new {
+        path = &quot;/new-page&quot;,
+        target = &quot;#content&quot;,
+        swap = &quot;innerHTML&quot;
+    }));</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-push-url-1">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-push-url-1">#</doc-anchor-trigger>
+        <span>HX-Push-Url</span>
+    </h3>
+</doc-anchor-target>
+<p>Pushes URL to browser history.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Push-Url&quot;, &quot;/artists/5&quot;);
+
+// Prevent URL push
+Response.Headers.Append(&quot;HX-Push-Url&quot;, &quot;false&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-replace-url-1">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-replace-url-1">#</doc-anchor-trigger>
+        <span>HX-Replace-Url</span>
+    </h3>
+</doc-anchor-target>
+<p>Replaces current URL in history.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Replace-Url&quot;, &quot;/current-state&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-redirect">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-redirect">#</doc-anchor-trigger>
+        <span>HX-Redirect</span>
+    </h3>
+</doc-anchor-target>
+<p>Triggers full page redirect.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Redirect&quot;, &quot;/login&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-refresh">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-refresh">#</doc-anchor-trigger>
+        <span>HX-Refresh</span>
+    </h3>
+</doc-anchor-target>
+<p>Triggers full page refresh.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Refresh&quot;, &quot;true&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-retarget">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-retarget">#</doc-anchor-trigger>
+        <span>HX-Retarget</span>
+    </h3>
+</doc-anchor-target>
+<p>Changes the target element.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Retarget to error container on validation failure
+if (!ModelState.IsValid)
+{
+    Response.Headers.Append(&quot;HX-Retarget&quot;, &quot;#error-container&quot;);
+    Response.Headers.Append(&quot;HX-Reswap&quot;, &quot;innerHTML&quot;);
+    return Partial(&quot;_ValidationErrors&quot;, ModelState);
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-reswap">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-reswap">#</doc-anchor-trigger>
+        <span>HX-Reswap</span>
+    </h3>
+</doc-anchor-target>
+<p>Changes the swap method.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Reswap&quot;, &quot;outerHTML&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-reselect">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-reselect">#</doc-anchor-trigger>
+        <span>HX-Reselect</span>
+    </h3>
+</doc-anchor-target>
+<p>Changes which part of response to select.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Reselect&quot;, &quot;#main-content&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-trigger-1">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-trigger-1">#</doc-anchor-trigger>
+        <span>HX-Trigger</span>
+    </h3>
+</doc-anchor-target>
+<p>Triggers client-side events after response is received.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">// Simple event
+Response.Headers.Append(&quot;HX-Trigger&quot;, &quot;showMessage&quot;);
+
+// Event with data
+Response.Headers.Append(&quot;HX-Trigger&quot;, 
+    JsonSerializer.Serialize(new {
+        showToast = new { message = &quot;Saved!&quot;, type = &quot;success&quot; }
+    }));
+
+// Multiple events
+Response.Headers.Append(&quot;HX-Trigger&quot;,
+    JsonSerializer.Serialize(new {
+        showToast = new { message = &quot;Created!&quot; },
+        refreshList = true,
+        closeModal = true
+    }));</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-trigger-after-settle">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-trigger-after-settle">#</doc-anchor-trigger>
+        <span>HX-Trigger-After-Settle</span>
+    </h3>
+</doc-anchor-target>
+<p>Triggers events after the settle phase.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Trigger-After-Settle&quot;, &quot;initComponents&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="hx-trigger-after-swap">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#hx-trigger-after-swap">#</doc-anchor-trigger>
+        <span>HX-Trigger-After-Swap</span>
+    </h3>
+</doc-anchor-target>
+<p>Triggers events after the swap phase.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">Response.Headers.Append(&quot;HX-Trigger-After-Swap&quot;, &quot;highlightNew&quot;);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="response-header-helper-class">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#response-header-helper-class">#</doc-anchor-trigger>
+        <span>Response Header Helper Class</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-csharp"><code v-pre class="language-csharp">public static class HtmxResponseExtensions
+{
+    public static void HxTrigger(this HttpResponse response, string eventName)
+    {
+        response.Headers.Append(&quot;HX-Trigger&quot;, eventName);
+    }
+    
+    public static void HxTrigger(this HttpResponse response, object events)
+    {
+        response.Headers.Append(&quot;HX-Trigger&quot;, JsonSerializer.Serialize(events));
+    }
+    
+    public static void HxRedirect(this HttpResponse response, string url)
+    {
+        response.Headers.Append(&quot;HX-Redirect&quot;, url);
+    }
+    
+    public static void HxRefresh(this HttpResponse response)
+    {
+        response.Headers.Append(&quot;HX-Refresh&quot;, &quot;true&quot;);
+    }
+    
+    public static void HxRetarget(this HttpResponse response, string selector)
+    {
+        response.Headers.Append(&quot;HX-Retarget&quot;, selector);
+    }
+    
+    public static void HxReswap(this HttpResponse response, string swapStyle)
+    {
+        response.Headers.Append(&quot;HX-Reswap&quot;, swapStyle);
+    }
+    
+    public static void HxPushUrl(this HttpResponse response, string url)
+    {
+        response.Headers.Append(&quot;HX-Push-Url&quot;, url);
+    }
+    
+    public static void HxReplaceUrl(this HttpResponse response, string url)
+    {
+        response.Headers.Append(&quot;HX-Replace-Url&quot;, url);
+    }
+}
+
+// Usage
+Response.HxTrigger(new { 
+    showToast = new { message = &quot;Success!&quot;, type = &quot;success&quot; },
+    closeModal = true 
+});</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a11-events">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a11-events">#</doc-anchor-trigger>
+        <span>A.11 Events</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="request-lifecycle-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#request-lifecycle-events">#</doc-anchor-trigger>
+        <span>Request Lifecycle Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Event</th>
+<th>When Fired</th>
+<th>Detail Properties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>htmx:configRequest</code></td>
+<td>Before request config</td>
+<td><code v-pre>parameters</code>, <code v-pre>headers</code>, <code v-pre>target</code>, <code v-pre>verb</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:beforeRequest</code></td>
+<td>Before request sent</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:beforeSend</code></td>
+<td>Just before XHR send</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:xhr:loadstart</code></td>
+<td>XHR load started</td>
+<td><code v-pre>xhr</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:xhr:progress</code></td>
+<td>XHR progress</td>
+<td><code v-pre>xhr</code>, <code v-pre>loaded</code>, <code v-pre>total</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:xhr:loadend</code></td>
+<td>XHR load ended</td>
+<td><code v-pre>xhr</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterRequest</code></td>
+<td>After response received</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code>, <code v-pre>successful</code>, <code v-pre>failed</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:responseError</code></td>
+<td>HTTP error (4xx, 5xx)</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:sendError</code></td>
+<td>Network error</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:timeout</code></td>
+<td>Request timeout</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="swap-and-settle-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-and-settle-events">#</doc-anchor-trigger>
+        <span>Swap and Settle Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Event</th>
+<th>When Fired</th>
+<th>Detail Properties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>htmx:beforeSwap</code></td>
+<td>Before content swap</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code>, <code v-pre>shouldSwap</code>, <code v-pre>serverResponse</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSwap</code></td>
+<td>After content swap</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:beforeSettle</code></td>
+<td>Before settle phase</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSettle</code></td>
+<td>After settle phase</td>
+<td><code v-pre>xhr</code>, <code v-pre>target</code>, <code v-pre>requestConfig</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:oobBeforeSwap</code></td>
+<td>Before OOB swap</td>
+<td><code v-pre>fragment</code>, <code v-pre>target</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:oobAfterSwap</code></td>
+<td>After OOB swap</td>
+<td><code v-pre>fragment</code>, <code v-pre>target</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="other-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#other-events">#</doc-anchor-trigger>
+        <span>Other Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Event</th>
+<th>When Fired</th>
+<th>Detail Properties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>htmx:load</code></td>
+<td>Element added to DOM</td>
+<td><code v-pre>elt</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:confirm</code></td>
+<td>Before confirmation</td>
+<td><code v-pre>question</code>, <code v-pre>triggeringEvent</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:prompt</code></td>
+<td>Before prompt</td>
+<td><code v-pre>question</code>, <code v-pre>triggeringEvent</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:beforeHistoryUpdate</code></td>
+<td>Before history update</td>
+<td><code v-pre>history</code>, <code v-pre>navigator</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:pushedIntoHistory</code></td>
+<td>After history push</td>
+<td><code v-pre>path</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:historyCacheMiss</code></td>
+<td>History cache miss</td>
+<td><code v-pre>path</code>, <code v-pre>xhr</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:historyCacheMissLoad</code></td>
+<td>After cache miss load</td>
+<td><code v-pre>path</code>, <code v-pre>xhr</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:historyRestore</code></td>
+<td>History restored</td>
+<td><code v-pre>path</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:validation:validate</code></td>
+<td>Form validation</td>
+<td><code v-pre>elt</code></td>
+</tr>
+<tr>
+<td><code v-pre>htmx:validation:failed</code></td>
+<td>Validation failed</td>
+<td><code v-pre>elt</code>, <code v-pre>message</code>, <code v-pre>validity</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="event-handling-examples">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#event-handling-examples">#</doc-anchor-trigger>
+        <span>Event Handling Examples</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Add anti-forgery token to all requests
+document.body.addEventListener('htmx:configRequest', function(event) {
+    const token = document.querySelector('input[name=&quot;__RequestVerificationToken&quot;]')?.value;
+    if (token) {
+        event.detail.headers['RequestVerificationToken'] = token;
+    }
+});
+
+// Handle custom events from HX-Trigger header
+document.body.addEventListener('showToast', function(event) {
+    const { message, type } = event.detail;
+    showToast(message, type);
+});
+
+document.body.addEventListener('closeModal', function() {
+    document.querySelector('.modal')?.remove();
+});
+
+// Cancel request conditionally
+document.body.addEventListener('htmx:confirm', function(event) {
+    if (!confirm(event.detail.question)) {
+        event.preventDefault();
+    }
+});
+
+// Modify swap behavior
+document.body.addEventListener('htmx:beforeSwap', function(event) {
+    // Handle 404 errors
+    if (event.detail.xhr.status === 404) {
+        event.detail.shouldSwap = true;
+        event.detail.target = document.getElementById('error-container');
+    }
+});
+
+// Handle errors globally
+document.body.addEventListener('htmx:responseError', function(event) {
+    console.error('Request failed:', event.detail.xhr.status);
+    showToast('An error occurred', 'error');
+});
+
+document.body.addEventListener('htmx:sendError', function(event) {
+    showToast('Network error. Please check your connection.', 'error');
+});
+
+// Initialize components after swap
+document.body.addEventListener('htmx:afterSettle', function(event) {
+    // Re-initialize any JavaScript components in swapped content
+    initializeComponents(event.detail.target);
+});
+
+// Log all htmx activity (debugging)
+document.body.addEventListener('htmx:afterRequest', function(event) {
+    console.log('Request completed:', {
+        url: event.detail.requestConfig.path,
+        successful: event.detail.successful,
+        status: event.detail.xhr.status
+    });
+});</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a12-javascript-api">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a12-javascript-api">#</doc-anchor-trigger>
+        <span>A.12 JavaScript API</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="htmxajax">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#htmxajax">#</doc-anchor-trigger>
+        <span>htmx.ajax()</span>
+    </h3>
+</doc-anchor-target>
+<p>Programmatically issue an htmx request.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Simple GET
+htmx.ajax('GET', '/api/data', '#target');
+
+// With options
+htmx.ajax('POST', '/api/save', {
+    target: '#result',
+    swap: 'innerHTML',
+    values: { name: 'John', age: 30 },
+    headers: { 'X-Custom': 'value' }
+});
+
+// Returns a Promise
+htmx.ajax('GET', '/data', '#output')
+    .then(() =&gt; console.log('Request complete'));</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="dom-manipulation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#dom-manipulation">#</doc-anchor-trigger>
+        <span>DOM Manipulation</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Find elements
+const el = htmx.find('#myId');
+const els = htmx.findAll('.myClass');
+const parent = htmx.closest(el, '.container');
+
+// Class manipulation with transitions
+htmx.addClass(el, 'active');           // Add class
+htmx.removeClass(el, 'active');        // Remove class
+htmx.toggleClass(el, 'active');        // Toggle class
+htmx.takeClass(el, 'active');          // Take from siblings
+
+// Remove element with transition
+htmx.remove(el);
+
+// Swap content manually
+htmx.swap('#target', '&lt;p&gt;New content&lt;/p&gt;', { swapStyle: 'innerHTML' });</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#events">#</doc-anchor-trigger>
+        <span>Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Add event listener
+htmx.on('htmx:afterSwap', function(event) {
+    console.log('Swapped:', event.detail.target);
+});
+
+// Remove event listener
+htmx.off('htmx:afterSwap', handler);
+
+// Trigger event
+htmx.trigger(el, 'customEvent', { data: 'value' });
+
+// Trigger htmx request on element
+htmx.trigger(el, 'click');</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="processing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#processing">#</doc-anchor-trigger>
+        <span>Processing</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Process htmx attributes on dynamically added content
+const newContent = document.createElement('div');
+newContent.innerHTML = '&lt;button hx-get=&quot;/data&quot;&gt;Load&lt;/button&gt;';
+document.body.appendChild(newContent);
+htmx.process(newContent);</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="utilities">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#utilities">#</doc-anchor-trigger>
+        <span>Utilities</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Parse time strings
+htmx.parseInterval('500ms');  // 500
+htmx.parseInterval('2s');     // 2000
+htmx.parseInterval('1m');     // 60000
+
+// Get htmx version
+console.log(htmx.version);    // &quot;1.9.10&quot;
+
+// Set logger for debugging
+htmx.logger = function(elt, event, data) {
+    console.log(event, elt, data);
+};</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="extensions">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#extensions">#</doc-anchor-trigger>
+        <span>Extensions</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Define custom extension
+htmx.defineExtension('my-extension', {
+    onEvent: function(name, event) {
+        if (name === 'htmx:configRequest') {
+            event.detail.headers['X-My-Header'] = 'value';
+        }
+    },
+    transformResponse: function(text, xhr, elt) {
+        return text.toUpperCase();
+    },
+    isInlineSwap: function(swapStyle) {
+        return swapStyle === 'my-swap';
+    },
+    handleSwap: function(swapStyle, target, fragment, settleInfo) {
+        // Custom swap logic
+        return true; // Return true if handled
+    }
+});
+
+// Remove extension
+htmx.removeExtension('my-extension');</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="a13-configuration">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a13-configuration">#</doc-anchor-trigger>
+        <span>A.13 Configuration</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="configuration-options">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#configuration-options">#</doc-anchor-trigger>
+        <span>Configuration Options</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>historyEnabled</code></td>
+<td><code v-pre>true</code></td>
+<td>Enable history support</td>
+</tr>
+<tr>
+<td><code v-pre>historyCacheSize</code></td>
+<td><code v-pre>10</code></td>
+<td>Number of pages to cache</td>
+</tr>
+<tr>
+<td><code v-pre>refreshOnHistoryMiss</code></td>
+<td><code v-pre>false</code></td>
+<td>Full refresh on cache miss</td>
+</tr>
+<tr>
+<td><code v-pre>defaultSwapStyle</code></td>
+<td><code v-pre>innerHTML</code></td>
+<td>Default swap method</td>
+</tr>
+<tr>
+<td><code v-pre>defaultSwapDelay</code></td>
+<td><code v-pre>0</code></td>
+<td>Default swap delay (ms)</td>
+</tr>
+<tr>
+<td><code v-pre>defaultSettleDelay</code></td>
+<td><code v-pre>20</code></td>
+<td>Default settle delay (ms)</td>
+</tr>
+<tr>
+<td><code v-pre>includeIndicatorStyles</code></td>
+<td><code v-pre>true</code></td>
+<td>Include default indicator CSS</td>
+</tr>
+<tr>
+<td><code v-pre>indicatorClass</code></td>
+<td><code v-pre>htmx-indicator</code></td>
+<td>Class for indicators</td>
+</tr>
+<tr>
+<td><code v-pre>requestClass</code></td>
+<td><code v-pre>htmx-request</code></td>
+<td>Class during request</td>
+</tr>
+<tr>
+<td><code v-pre>addedClass</code></td>
+<td><code v-pre>htmx-added</code></td>
+<td>Class for new elements</td>
+</tr>
+<tr>
+<td><code v-pre>settlingClass</code></td>
+<td><code v-pre>htmx-settling</code></td>
+<td>Class during settle</td>
+</tr>
+<tr>
+<td><code v-pre>swappingClass</code></td>
+<td><code v-pre>htmx-swapping</code></td>
+<td>Class during swap</td>
+</tr>
+<tr>
+<td><code v-pre>allowEval</code></td>
+<td><code v-pre>true</code></td>
+<td>Allow eval (for hx-on)</td>
+</tr>
+<tr>
+<td><code v-pre>allowScriptTags</code></td>
+<td><code v-pre>true</code></td>
+<td>Process script tags</td>
+</tr>
+<tr>
+<td><code v-pre>inlineScriptNonce</code></td>
+<td><code v-pre>''</code></td>
+<td>Nonce for inline scripts</td>
+</tr>
+<tr>
+<td><code v-pre>useTemplateFragments</code></td>
+<td><code v-pre>false</code></td>
+<td>Use template for parsing</td>
+</tr>
+<tr>
+<td><code v-pre>wsReconnectDelay</code></td>
+<td><code v-pre>full-jitter</code></td>
+<td>WebSocket reconnect strategy</td>
+</tr>
+<tr>
+<td><code v-pre>wsBinaryType</code></td>
+<td><code v-pre>blob</code></td>
+<td>WebSocket binary type</td>
+</tr>
+<tr>
+<td><code v-pre>disableSelector</code></td>
+<td><code v-pre>[hx-disable], [data-hx-disable]</code></td>
+<td>Selector for disabled elements</td>
+</tr>
+<tr>
+<td><code v-pre>withCredentials</code></td>
+<td><code v-pre>false</code></td>
+<td>Send credentials cross-origin</td>
+</tr>
+<tr>
+<td><code v-pre>timeout</code></td>
+<td><code v-pre>0</code></td>
+<td>Request timeout (ms, 0=none)</td>
+</tr>
+<tr>
+<td><code v-pre>scrollBehavior</code></td>
+<td><code v-pre>smooth</code></td>
+<td>Scroll behavior</td>
+</tr>
+<tr>
+<td><code v-pre>defaultFocusScroll</code></td>
+<td><code v-pre>false</code></td>
+<td>Scroll to focused element</td>
+</tr>
+<tr>
+<td><code v-pre>getCacheBusterParam</code></td>
+<td><code v-pre>false</code></td>
+<td>Add cache buster param</td>
+</tr>
+<tr>
+<td><code v-pre>globalViewTransitions</code></td>
+<td><code v-pre>false</code></td>
+<td>Enable view transitions</td>
+</tr>
+<tr>
+<td><code v-pre>methodsThatUseUrlParams</code></td>
+<td><code v-pre>[&quot;get&quot;]</code></td>
+<td>Methods using URL params</td>
+</tr>
+<tr>
+<td><code v-pre>selfRequestsOnly</code></td>
+<td><code v-pre>false</code></td>
+<td>Only allow same-origin</td>
+</tr>
+<tr>
+<td><code v-pre>ignoreTitle</code></td>
+<td><code v-pre>false</code></td>
+<td>Ignore title tag updates</td>
+</tr>
+<tr>
+<td><code v-pre>scrollIntoViewOnBoost</code></td>
+<td><code v-pre>true</code></td>
+<td>Scroll on boosted navigation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="setting-configuration">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#setting-configuration">#</doc-anchor-trigger>
+        <span>Setting Configuration</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Via JavaScript:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">htmx.config.historyCacheSize = 20;
+htmx.config.defaultSwapDelay = 100;
+htmx.config.timeout = 30000;</code></pre>
+</doc-codeblock></div>
+<p><strong>Via meta tag:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;meta name=&quot;htmx-config&quot; content='{
+    &quot;historyCacheSize&quot;: 20,
+    &quot;defaultSwapDelay&quot;: 100,
+    &quot;timeout&quot;: 30000,
+    &quot;selfRequestsOnly&quot;: true
+}'&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="common-configuration-patterns">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-configuration-patterns">#</doc-anchor-trigger>
+        <span>Common Configuration Patterns</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;!-- Production security settings --&gt;
+&lt;meta name=&quot;htmx-config&quot; content='{
+    &quot;selfRequestsOnly&quot;: true,
+    &quot;allowEval&quot;: false,
+    &quot;timeout&quot;: 30000
+}'&gt;
+
+&lt;!-- SPA-like history handling --&gt;
+&lt;meta name=&quot;htmx-config&quot; content='{
+    &quot;historyCacheSize&quot;: 50,
+    &quot;refreshOnHistoryMiss&quot;: false,
+    &quot;scrollIntoViewOnBoost&quot;: true
+}'&gt;
+
+&lt;!-- Performance tuning --&gt;
+&lt;meta name=&quot;htmx-config&quot; content='{
+    &quot;defaultSwapDelay&quot;: 0,
+    &quot;defaultSettleDelay&quot;: 10,
+    &quot;getCacheBusterParam&quot;: true
+}'&gt;</code></pre>
+</doc-codeblock></div>
+<hr>
+<doc-anchor-target id="quick-reference-card">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#quick-reference-card">#</doc-anchor-trigger>
+        <span>Quick Reference Card</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="most-used-attributes">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#most-used-attributes">#</doc-anchor-trigger>
+        <span>Most-Used Attributes</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>hx-get</code></td>
+<td>GET request</td>
+<td><code v-pre>hx-get=&quot;/data&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>hx-post</code></td>
+<td>POST request</td>
+<td><code v-pre>hx-post=&quot;/save&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>hx-target</code></td>
+<td>Target element</td>
+<td><code v-pre>hx-target=&quot;#output&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>hx-swap</code></td>
+<td>Swap method</td>
+<td><code v-pre>hx-swap=&quot;outerHTML&quot;</code></td>
+</tr>
+<tr>
+<td><code v-pre>hx-trigger</code></td>
+<td>Trigger event</td>
+<td><code v-pre>hx-trigger=&quot;click&quot;</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="common-patterns">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-patterns">#</doc-anchor-trigger>
+        <span>Common Patterns</span>
+    </h3>
+</doc-anchor-target>
+<p><strong>Debounced Search:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;input hx-get=&quot;/search&quot; 
+       hx-target=&quot;#results&quot; 
+       hx-trigger=&quot;keyup changed delay:300ms&quot;&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Inline Edit:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/edit/5&quot; 
+        hx-target=&quot;closest tr&quot; 
+        hx-swap=&quot;outerHTML&quot;&gt;
+    Edit
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Modal Form:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-get=&quot;/form&quot; 
+        hx-target=&quot;#modal-container&quot;&gt;
+    Open Form
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<p><strong>Delete with Confirmation:</strong></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-markup"><code v-pre class="language-markup">&lt;button hx-delete=&quot;/items/5&quot; 
+        hx-target=&quot;closest tr&quot; 
+        hx-swap=&quot;delete&quot;
+        hx-confirm=&quot;Delete this item?&quot;&gt;
+    Delete
+&lt;/button&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="key-response-headers">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#key-response-headers">#</doc-anchor-trigger>
+        <span>Key Response Headers</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Header</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>HX-Trigger</code></td>
+<td>Trigger events</td>
+<td><code v-pre>{&quot;showToast&quot;: {&quot;message&quot;: &quot;Saved&quot;}}</code></td>
+</tr>
+<tr>
+<td><code v-pre>HX-Retarget</code></td>
+<td>Change target</td>
+<td><code v-pre>#error-container</code></td>
+</tr>
+<tr>
+<td><code v-pre>HX-Reswap</code></td>
+<td>Change swap</td>
+<td><code v-pre>innerHTML</code></td>
+</tr>
+<tr>
+<td><code v-pre>HX-Redirect</code></td>
+<td>Full redirect</td>
+<td><code v-pre>/login</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="essential-css">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#essential-css">#</doc-anchor-trigger>
+        <span>Essential CSS</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-css"><code v-pre class="language-css">.htmx-indicator { display: none; }
+.htmx-request .htmx-indicator { display: inline; }
+.htmx-request { opacity: 0.5; }</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="key-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#key-events">#</doc-anchor-trigger>
+        <span>Key Events</span>
+    </h3>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Event</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code v-pre>htmx:configRequest</code></td>
+<td>Add headers</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:afterSwap</code></td>
+<td>Post-swap init</td>
+</tr>
+<tr>
+<td><code v-pre>htmx:responseError</code></td>
+<td>Error handling</td>
+</tr>
+<tr>
+<td>Custom events</td>
+<td>HX-Trigger response</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<p><em>For detailed examples and explanations, refer to the relevant chapters in the main text.</em></p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -268,6 +2723,27 @@
                                     </a>
                                 </div>
                             
+                                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../chapter23/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                                <span class="block mt-1">Chap 23 - Deploying htmx Applications on Azure</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../appendix/htmx-extensions/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                                <span class="block mt-1">Appendix B - htmx Command Extensions</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
                             </footer>
                         </main>
                 
@@ -326,6 +2802,6 @@
 
     <div id="retype-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Appendix A - htmx Command Reference", level: 2, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Appendix A - htmx Command Reference", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
