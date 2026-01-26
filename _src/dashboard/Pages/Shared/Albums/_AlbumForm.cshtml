@@ -1,0 +1,71 @@
+@model Album
+@{
+    var artists = ViewData["Artists"] as IEnumerable<Artist> ?? Enumerable.Empty<Artist>();
+}
+
+<div class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40"
+     _="on click trigger closeModal"></div>
+     
+<div class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="modal-content bg-white rounded-lg shadow-xl max-w-md w-full"
+         _="on closeModal remove .modal-backdrop from previous <div/> then remove closest .modal">
+        
+        <div class="px-6 py-4 border-b">
+            <h3 class="text-lg font-semibold text-gray-900">
+                @(Model.Id == 0 ? "Add New Album" : "Edit Album")
+            </h3>
+        </div>
+        
+        <form hx-post="/Albums?handler=@(Model.Id == 0 ? "Create" : $"Update&id={Model.Id}")"
+              hx-target="@(Model.Id == 0 ? "#album-grid" : $"#album-card-{Model.Id}")"
+              hx-swap="@(Model.Id == 0 ? "afterbegin" : "outerHTML")"
+              class="p-6">
+            @Html.AntiForgeryToken()
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-1">
+                        Album Title
+                    </label>
+                    <input type="text"
+                           id="title"
+                           name="title"
+                           value="@Model.Title"
+                           class="input w-full"
+                           placeholder="Enter album title"
+                           required
+                           autofocus />
+                </div>
+                
+                <div>
+                    <label for="artistId" class="block text-sm font-medium text-gray-700 mb-1">
+                        Artist
+                    </label>
+                    <select id="artistId"
+                            name="artistId"
+                            class="input w-full"
+                            required>
+                        <option value="">Select an artist</option>
+                        @foreach (var artist in artists)
+                        {
+                            <option value="@artist.Id" selected="@(artist.Id == Model.ArtistId)">
+                                @artist.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button"
+                        class="btn btn-secondary"
+                        _="on click trigger closeModal">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    @(Model.Id == 0 ? "Create Album" : "Save Changes")
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

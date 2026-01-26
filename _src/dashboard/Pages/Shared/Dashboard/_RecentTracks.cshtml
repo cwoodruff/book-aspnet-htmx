@@ -1,0 +1,30 @@
+@model IEnumerable<TrackSummary>
+
+<div class="bg-white rounded-lg shadow-sm p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Tracks</h2>
+    
+    @if (Model.Any())
+    {
+        <div class="divide-y divide-gray-100">
+            @foreach (var track in Model)
+            {
+                <div class="py-3 flex items-center justify-between">
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-medium text-gray-900 truncate">@track.Name</p>
+                        <p class="text-xs text-gray-500 truncate">@track.ArtistName - @track.AlbumTitle</p>
+                    </div>
+                    <div class="ml-4 flex items-center gap-4">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                            @track.GenreName
+                        </span>
+                        <span class="text-sm text-gray-500">@track.Duration</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-500 text-center py-4">No recent tracks</p>
+    }
+</div>

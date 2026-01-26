@@ -1,0 +1,87 @@
+@model dynamic
+@{
+    var baseUrl = ViewData["BaseUrl"]?.ToString() ?? "";
+    var targetId = ViewData["TargetId"]?.ToString() ?? "";
+    var pageIndex = (int)Model.PageIndex;
+    var totalPages = (int)Model.TotalPages;
+    var hasPreviousPage = (bool)Model.HasPreviousPage;
+    var hasNextPage = (bool)Model.HasNextPage;
+}
+
+@if (totalPages > 1)
+{
+    <nav class="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 bg-white rounded-b-lg">
+        <div class="flex-1 flex justify-between sm:hidden">
+            @if (hasPreviousPage)
+            {
+                <a href="#"
+                   hx-get="@baseUrl&page=@(pageIndex - 1)"
+                   hx-target="#@targetId"
+                   hx-swap="outerHTML"
+                   class="btn btn-secondary">
+                    Previous
+                </a>
+            }
+            @if (hasNextPage)
+            {
+                <a href="#"
+                   hx-get="@baseUrl&page=@(pageIndex + 1)"
+                   hx-target="#@targetId"
+                   hx-swap="outerHTML"
+                   class="btn btn-secondary ml-3">
+                    Next
+                </a>
+            }
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700">
+                    Page <span class="font-medium">@pageIndex</span> of <span class="font-medium">@totalPages</span>
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                    @if (hasPreviousPage)
+                    {
+                        <a href="#"
+                           hx-get="@baseUrl&page=@(pageIndex - 1)"
+                           hx-target="#@targetId"
+                           hx-swap="outerHTML"
+                           class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Previous</span>
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                    }
+
+                    @for (int i = Math.Max(1, pageIndex - 2); i <= Math.Min(totalPages, pageIndex + 2); i++)
+                    {
+                        var isCurrentPage = i == pageIndex;
+                        <a href="#"
+                           hx-get="@baseUrl&page=@i"
+                           hx-target="#@targetId"
+                           hx-swap="outerHTML"
+                           class="@(isCurrentPage ? "z-10 bg-blue-50 border-blue-500 text-blue-600" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50") relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                            @i
+                        </a>
+                    }
+
+                    @if (hasNextPage)
+                    {
+                        <a href="#"
+                           hx-get="@baseUrl&page=@(pageIndex + 1)"
+                           hx-target="#@targetId"
+                           hx-swap="outerHTML"
+                           class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Next</span>
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                    }
+                </nav>
+            </div>
+        </div>
+    </nav>
+}

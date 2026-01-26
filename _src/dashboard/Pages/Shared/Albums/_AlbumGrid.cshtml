@@ -1,0 +1,26 @@
+@model PaginatedList<Album>
+
+@if (Model.Any())
+{
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @foreach (var album in Model)
+        {
+            <partial name="Albums/_AlbumCard" model="album" />
+        }
+    </div>
+
+    {
+        ViewData["BaseUrl"] = "/Albums?handler=Grid";
+        ViewData["TargetId"] = "album-grid";
+    }
+    <div class="mt-6">
+        <partial name="Components/_Pagination" model="Model" />
+    </div>
+}
+else
+{
+    <div class="bg-white rounded-lg shadow-sm">
+        <partial name="Components/_EmptyState" 
+                 model='("No albums found", "Try adjusting your search or add a new album.", "Add Album", "/Albums")' />
+    </div>
+}

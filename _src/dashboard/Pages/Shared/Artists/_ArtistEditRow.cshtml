@@ -1,0 +1,44 @@
+@model Artist
+
+<tr id="artist-row-@Model.Id" class="bg-blue-50">
+    <td class="px-6 py-4" colspan="2">
+        <form hx-post="/Artists?handler=Update&id=@Model.Id"
+              hx-target="#artist-row-@Model.Id"
+              hx-swap="outerHTML"
+              class="flex items-center gap-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div class="flex-1">
+                <input type="text"
+                       name="name"
+                       value="@Model.Name"
+                       class="input w-full"
+                       placeholder="Artist name"
+                       required
+                       autofocus
+                       _="on keyup[key is 'Escape'] trigger click on #cancel-edit-@Model.Id" />
+            </div>
+        </form>
+    </td>
+    <td class="px-6 py-4 whitespace-nowrap text-right">
+        <div class="flex justify-end gap-2">
+            <button type="submit"
+                    class="btn btn-primary btn-sm"
+                    form="artist-edit-form-@Model.Id"
+                    hx-post="/Artists?handler=Update&id=@Model.Id"
+                    hx-target="#artist-row-@Model.Id"
+                    hx-swap="outerHTML"
+                    hx-include="closest tr">
+                Save
+            </button>
+            <button type="button"
+                    id="cancel-edit-@Model.Id"
+                    class="btn btn-secondary btn-sm"
+                    hx-get="/Artists?handler=CancelEdit&id=@Model.Id"
+                    hx-target="#artist-row-@Model.Id"
+                    hx-swap="outerHTML">
+                Cancel
+            </button>
+        </div>
+    </td>
+</tr>

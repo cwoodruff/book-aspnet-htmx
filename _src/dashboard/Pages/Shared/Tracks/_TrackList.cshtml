@@ -1,0 +1,62 @@
+@model PaginatedList<Track>
+
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    @if (Model.Any())
+    {
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="w-10 px-4 py-3">
+                        <input type="checkbox" 
+                               class="rounded border-gray-300" 
+                               _="on change 
+                                  set checkboxes to <input[type='checkbox'][name='selectedTracks']/> in closest <table/>
+                                  repeat for cb in checkboxes
+                                    set cb.checked to my.checked
+                                  end
+                                  if my.checked
+                                    remove .hidden from #bulk-actions
+                                  else
+                                    add .hidden to #bulk-actions
+                                  end" />
+                    </th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Track
+                    </th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Artist / Album
+                    </th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Genre
+                    </th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Duration
+                    </th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Price
+                    </th>
+                    <th scope="col" class="relative px-4 py-3">
+                        <span class="sr-only">Actions</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach (var track in Model)
+                {
+                    <partial name="Tracks/_TrackRow" model="track" />
+                }
+            </tbody>
+        </table>
+
+        {
+            ViewData["BaseUrl"] = "/Tracks?handler=List";
+            ViewData["TargetId"] = "track-list";
+        }
+        <partial name="Components/_Pagination" model="Model" />
+    }
+    else
+    {
+        <partial name="Components/_EmptyState" 
+                 model='("No tracks found", "Try adjusting your filters or add a new track.", "Add Track", "/Tracks")' />
+    }
+</div>

@@ -1,0 +1,24 @@
+@model ChinookDashboard.Pages.Tracks.IndexModel
+
+<div class="flex flex-wrap gap-2">
+    <button type="button"
+            class="genre-tab @(Model.GenreId == null ? "active" : "")"
+            hx-get="/Tracks?handler=List"
+            hx-target="#track-list"
+            hx-include="[name='search']"
+            _="on click remove .active from .genre-tab then add .active to me">
+        All Genres
+    </button>
+    
+    @foreach (var genre in Model.Genres)
+    {
+        <button type="button"
+                class="genre-tab @(Model.GenreId == genre.Id ? "active" : "")"
+                hx-get="/Tracks?handler=List&genreId=@genre.Id"
+                hx-target="#track-list"
+                hx-include="[name='search']"
+                _="on click remove .active from .genre-tab then add .active to me">
+            @genre.Name
+        </button>
+    }
+</div>

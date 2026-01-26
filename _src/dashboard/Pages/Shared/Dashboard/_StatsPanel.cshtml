@@ -1,0 +1,10 @@
+@model DashboardStats
+
+<div id="stats-panel" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <partial name="Dashboard/_StatCard" model='new { Title = "Artists", Value = Model.TotalArtists.ToString("N0"), Icon = "users", Color = "blue" }' />
+    <partial name="Dashboard/_StatCard" model='new { Title = "Albums", Value = Model.TotalAlbums.ToString("N0"), Icon = "collection", Color = "purple" }' />
+    <partial name="Dashboard/_StatCard" model='new { Title = "Tracks", Value = Model.TotalTracks.ToString("N0"), Icon = "music", Color = "green" }' />
+    <partial name="Dashboard/_StatCard" model='new { Title = "Genres", Value = Model.TotalGenres.ToString("N0"), Icon = "tag", Color = "yellow" }' />
+    <partial name="Dashboard/_StatCard" model='new { Title = "Duration", Value = Model.TotalDuration, Icon = "clock", Color = "red" }' />
+    <partial name="Dashboard/_StatCard" model='new { Title = "Value", Value = Model.TotalValue.ToString("C0"), Icon = "currency", Color = "indigo" }' />
+</div>

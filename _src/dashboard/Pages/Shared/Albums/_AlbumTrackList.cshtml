@@ -1,0 +1,35 @@
+@model Album
+
+<div>
+    <h4 class="text-sm font-medium text-gray-900 mb-3">Tracks</h4>
+    
+    @if (Model.Tracks.Any())
+    {
+        <div class="divide-y divide-gray-100 border rounded-lg overflow-hidden">
+            @foreach (var track in Model.Tracks.OrderBy(t => t.Name))
+            {
+                <div class="px-4 py-3 flex items-center justify-between hover:bg-gray-50">
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-medium text-gray-900 truncate">@track.Name</p>
+                        <p class="text-xs text-gray-500">
+                            @(track.Genre?.Name ?? "Unknown genre") · @track.Duration
+                        </p>
+                    </div>
+                    <span class="ml-2 text-sm text-gray-500">@track.UnitPrice.ToString("C")</span>
+                </div>
+            }
+        </div>
+        
+        <div class="mt-4 text-sm text-gray-500">
+            Total: @Model.Tracks.Count tracks · 
+            @TimeSpan.FromMilliseconds(Model.Tracks.Sum(t => t.Milliseconds)).ToString(@"h\:mm\:ss") · 
+            @Model.Tracks.Sum(t => t.UnitPrice).ToString("C")
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-6 bg-gray-50 rounded-lg">
+            <p class="text-sm text-gray-500">No tracks in this album</p>
+        </div>
+    }
+</div>

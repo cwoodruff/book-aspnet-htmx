@@ -1,0 +1,52 @@
+@page
+@model ChinookDashboard.Pages.Artists.IndexModel
+@{
+    ViewData["Title"] = "Artists";
+}
+
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-900">Artists</h1>
+        <button type="button"
+                class="btn btn-primary"
+                hx-get="/Artists?handler=CreateForm"
+                hx-target="#modal-container"
+                hx-swap="innerHTML">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Artist
+        </button>
+    </div>
+
+    <!-- Search -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+        <div class="flex gap-4">
+            <div class="flex-1">
+                <input type="text"
+                       name="search"
+                       value="@Model.Search"
+                       placeholder="Search artists..."
+                       class="input w-full"
+                       hx-get="/Artists?handler=List"
+                       hx-target="#artist-list"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-include="[name='search']"
+                       hx-indicator="#search-spinner" />
+            </div>
+            <div id="search-spinner" class="htmx-indicator flex items-center">
+                <partial name="Components/_LoadingSpinner" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Artist Count -->
+    <div id="artist-count" class="text-sm text-gray-600">
+        Showing @Model.Artists.StartItem to @Model.Artists.EndItem of @Model.Artists.TotalCount artists
+    </div>
+
+    <!-- Artist List -->
+    <div id="artist-list">
+        <partial name="Artists/_ArtistList" model="Model.Artists" />
+    </div>
+</div>

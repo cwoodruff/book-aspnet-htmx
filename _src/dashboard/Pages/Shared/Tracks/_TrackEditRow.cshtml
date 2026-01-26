@@ -1,0 +1,76 @@
+@model Track
+@{
+    var genres = ViewData["Genres"] as IEnumerable<Genre> ?? Enumerable.Empty<Genre>();
+}
+
+<tr id="track-row-@Model.Id" class="bg-blue-50">
+    <td class="px-4 py-3" colspan="7">
+        <form hx-post="/Tracks?handler=Update&id=@Model.Id"
+              hx-target="#track-row-@Model.Id"
+              hx-swap="outerHTML"
+              class="grid grid-cols-6 gap-4 items-end">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="hidden" name="albumId" value="@Model.AlbumId" />
+            
+            <div class="col-span-2">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Name</label>
+                <input type="text"
+                       name="name"
+                       value="@Model.Name"
+                       class="input w-full"
+                       required
+                       autofocus
+                       _="on keyup[key is 'Escape'] trigger click on #cancel-edit-track-@Model.Id" />
+            </div>
+            
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Genre</label>
+                <select name="genreId" class="input w-full">
+                    <option value="">None</option>
+                    @foreach (var genre in genres)
+                    {
+                        <option value="@genre.Id" selected="@(genre.Id == Model.GenreId)">@genre.Name</option>
+                    }
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Duration (ms)</label>
+                <input type="number"
+                       name="milliseconds"
+                       value="@Model.Milliseconds"
+                       class="input w-full"
+                       min="0"
+                       required />
+            </div>
+            
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Price</label>
+                <input type="number"
+                       name="unitPrice"
+                       value="@Model.UnitPrice"
+                       class="input w-full"
+                       step="0.01"
+                       min="0"
+                       required />
+            </div>
+            
+            <div class="flex gap-2 justify-end">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    Save
+                </button>
+                <button type="button"
+                        id="cancel-edit-track-@Model.Id"
+                        class="btn btn-secondary btn-sm"
+                        hx-get="/Tracks?handler=CancelEdit&id=@Model.Id"
+                        hx-target="#track-row-@Model.Id"
+                        hx-swap="outerHTML">
+                    Cancel
+                </button>
+            </div>
+            
+            <input type="hidden" name="composer" value="@Model.Composer" />
+        </form>
+    </td>
+</tr>

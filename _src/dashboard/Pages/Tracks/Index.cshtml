@@ -1,0 +1,61 @@
+@page
+@model ChinookDashboard.Pages.Tracks.IndexModel
+@{
+    ViewData["Title"] = "Tracks";
+}
+
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-900">Tracks</h1>
+        <button type="button"
+                class="btn btn-primary"
+                hx-get="/Tracks?handler=CreateForm"
+                hx-target="#modal-container"
+                hx-swap="innerHTML">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Track
+        </button>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+        <div class="flex gap-4 items-end">
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <input type="text"
+                       name="search"
+                       value="@Model.Search"
+                       placeholder="Search tracks..."
+                       class="input w-full"
+                       hx-get="/Tracks?handler=List"
+                       hx-target="#track-list"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-include="[name='search'], [name='genreId']"
+                       hx-indicator="#search-spinner" />
+            </div>
+            <div id="search-spinner" class="htmx-indicator">
+                <partial name="Components/_LoadingSpinner" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Genre Tabs -->
+    <partial name="Tracks/_GenreTabs" model="Model" />
+
+    <!-- Bulk Actions -->
+    <div id="bulk-actions" class="hidden">
+        <partial name="Tracks/_BulkActions" model="Model.Genres" />
+    </div>
+
+    <!-- Track Count -->
+    <div id="track-count" class="text-sm text-gray-600">
+        Showing @Model.Tracks.StartItem to @Model.Tracks.EndItem of @Model.Tracks.TotalCount tracks
+    </div>
+
+    <!-- Track List -->
+    <div id="track-list">
+        <partial name="Tracks/_TrackList" model="Model.Tracks" />
+    </div>
+</div>

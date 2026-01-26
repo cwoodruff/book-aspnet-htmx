@@ -1,0 +1,71 @@
+@page
+@model ChinookDashboard.Pages.Albums.IndexModel
+@{
+    ViewData["Title"] = "Albums";
+}
+
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-900">Albums</h1>
+        <button type="button"
+                class="btn btn-primary"
+                hx-get="/Albums?handler=CreateForm"
+                hx-target="#modal-container"
+                hx-swap="innerHTML">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Album
+        </button>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+        <div class="flex gap-4 items-end">
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <input type="text"
+                       name="search"
+                       value="@Model.Search"
+                       placeholder="Search albums or artists..."
+                       class="input w-full"
+                       hx-get="/Albums?handler=Grid"
+                       hx-target="#album-grid"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-include="[name='search'], [name='artistId']"
+                       hx-indicator="#search-spinner" />
+            </div>
+            <div class="w-64">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Artist</label>
+                <select name="artistId"
+                        class="input w-full"
+                        hx-get="/Albums?handler=Grid"
+                        hx-target="#album-grid"
+                        hx-trigger="change"
+                        hx-include="[name='search'], [name='artistId']">
+                    <option value="">All Artists</option>
+                    @foreach (var artist in Model.AllArtists)
+                    {
+                        <option value="@artist.Id" selected="@(Model.ArtistId == artist.Id)">@artist.Name</option>
+                    }
+                </select>
+            </div>
+            <div id="search-spinner" class="htmx-indicator">
+                <partial name="Components/_LoadingSpinner" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Album Count -->
+    <div id="album-count" class="text-sm text-gray-600">
+        Showing @Model.Albums.StartItem to @Model.Albums.EndItem of @Model.Albums.TotalCount albums
+    </div>
+
+    <!-- Album Grid -->
+    <div id="album-grid">
+        <partial name="Albums/_AlbumGrid" model="Model.Albums" />
+    </div>
+</div>
+
+<!-- Album Detail Panel -->
+<div id="album-detail"></div>

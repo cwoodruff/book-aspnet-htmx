@@ -1,0 +1,63 @@
+@model Album
+
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40" _="on click trigger closeDetail"></div>
+
+<div class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-xl z-50 overflow-y-auto"
+     _="on closeDetail remove previous <div/> then remove me">
+    
+    <div class="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-900">Album Details</h2>
+        <button type="button" 
+                class="text-gray-400 hover:text-gray-600"
+                _="on click trigger closeDetail">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+    
+    <div class="p-6">
+        <!-- Album Header -->
+        <div class="flex items-start gap-4 mb-6">
+            <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-12 h-12 text-white opacity-75" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-gray-900">@Model.Title</h3>
+                <p class="text-gray-600">@Model.Artist.Name</p>
+                <p class="text-sm text-gray-500 mt-1">@Model.Tracks.Count tracks</p>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex gap-2 mb-6">
+            <button type="button"
+                    class="btn btn-secondary btn-sm"
+                    hx-get="/Albums?handler=EditForm&id=@Model.Id"
+                    hx-target="#modal-container"
+                    hx-swap="innerHTML">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Edit
+            </button>
+            <button type="button"
+                    class="btn btn-danger btn-sm"
+                    hx-delete="/Albums?handler=&id=@Model.Id"
+                    hx-target="#album-card-@Model.Id"
+                    hx-swap="delete"
+                    hx-confirm="Are you sure you want to delete this album?"
+                    _="on htmx:afterRequest trigger closeDetail">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Delete
+            </button>
+        </div>
+        
+        <!-- Track List -->
+        <partial name="Albums/_AlbumTrackList" model="Model" />
+    </div>
+</div>

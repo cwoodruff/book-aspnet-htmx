@@ -1,0 +1,39 @@
+@model PaginatedList<Artist>
+
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    @if (Model.Any())
+    {
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Name
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Albums
+                    </th>
+                    <th scope="col" class="relative px-6 py-3">
+                        <span class="sr-only">Actions</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach (var artist in Model)
+                {
+                    <partial name="Artists/_ArtistRow" model="artist" />
+                }
+            </tbody>
+        </table>
+
+        {
+            ViewData["BaseUrl"] = "/Artists?handler=List";
+            ViewData["TargetId"] = "artist-list";
+        }
+        <partial name="Components/_Pagination" model="Model" />
+    }
+    else
+    {
+        <partial name="Components/_EmptyState" 
+                 model='("No artists found", "Try adjusting your search or add a new artist.", "Add Artist", "/Artists")' />
+    }
+</div>

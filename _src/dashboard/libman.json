@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "htmx.org@1.9.10",
+      "destination": "wwwroot/lib/htmx/",
+      "files": [
+        "dist/htmx.min.js",
+        "dist/htmx.js"
+      ]
+    },
+    {
+      "library": "hyperscript.org@0.9.12",
+      "destination": "wwwroot/lib/hyperscript/",
+      "files": [
+        "dist/_hyperscript.min.js",
+        "dist/_hyperscript.js"
+      ]
+    }
+  ]
+}

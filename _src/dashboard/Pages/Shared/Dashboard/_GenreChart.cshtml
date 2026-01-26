@@ -1,0 +1,32 @@
+@model IEnumerable<GenreDistribution>
+
+<div class="bg-white rounded-lg shadow-sm p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Genre Distribution</h2>
+    
+    @if (Model.Any())
+    {
+        <div class="space-y-3">
+            @foreach (var genre in Model)
+            {
+                <div class="flex items-center">
+                    <div class="w-24 text-sm text-gray-600 truncate" title="@genre.GenreName">@genre.GenreName</div>
+                    <div class="flex-1 mx-4">
+                        <div class="h-4 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-500"
+                                 style="width: @(genre.Percentage)%; background-color: @genre.Color;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-20 text-right">
+                        <span class="text-sm font-medium text-gray-900">@genre.TrackCount</span>
+                        <span class="text-xs text-gray-500">(@genre.Percentage%)</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-500 text-center py-4">No genre data available</p>
+    }
+</div>

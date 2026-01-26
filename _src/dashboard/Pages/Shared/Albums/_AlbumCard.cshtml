@@ -1,0 +1,51 @@
+@model Album
+
+<div id="album-card-@Model.Id" 
+     class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+     hx-get="/Albums?handler=Detail&id=@Model.Id"
+     hx-target="#album-detail"
+     hx-swap="innerHTML">
+    
+    <div class="aspect-square bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+        <svg class="w-16 h-16 text-white opacity-75" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+        </svg>
+    </div>
+    
+    <div class="p-4">
+        <h3 class="font-medium text-gray-900 truncate" title="@Model.Title">
+            @Model.Title
+        </h3>
+        <p class="text-sm text-gray-500 truncate" title="@Model.Artist.Name">
+            @Model.Artist.Name
+        </p>
+        <div class="mt-2 flex items-center justify-between">
+            <span class="text-xs text-gray-400">@Model.Tracks.Count tracks</span>
+            <div class="flex gap-1">
+                <button type="button"
+                        class="btn-icon text-blue-600 hover:text-blue-800"
+                        hx-get="/Albums?handler=EditForm&id=@Model.Id"
+                        hx-target="#modal-container"
+                        hx-swap="innerHTML"
+                        title="Edit"
+                        _="on click halt">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                </button>
+                <button type="button"
+                        class="btn-icon text-red-600 hover:text-red-800"
+                        hx-delete="/Albums?handler=&id=@Model.Id"
+                        hx-target="#album-card-@Model.Id"
+                        hx-swap="delete"
+                        hx-confirm="Are you sure you want to delete this album?"
+                        title="Delete"
+                        _="on click halt">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
