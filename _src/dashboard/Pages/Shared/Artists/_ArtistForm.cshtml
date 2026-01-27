@@ -1,11 +1,10 @@
 @model Artist
 
 <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40"
-     _="on click trigger closeModal"></div>
+     _="on click send closeModal to body"></div>
      
 <div class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="modal-content bg-white rounded-lg shadow-xl max-w-md w-full"
-         _="on closeModal remove .modal-backdrop from previous <div/> then remove closest .modal">
+    <div class="modal-content bg-white rounded-lg shadow-xl max-w-md w-full">
         
         <div class="px-6 py-4 border-b">
             <h3 class="text-lg font-semibold text-gray-900">
@@ -38,7 +37,7 @@
             <div class="mt-6 flex justify-end gap-3">
                 <button type="button"
                         class="btn btn-secondary"
-                        _="on click trigger closeModal">
+                        _="on click send closeModal to body">
                     Cancel
                 </button>
                 <button type="submit" class="btn btn-primary">

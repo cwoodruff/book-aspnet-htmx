@@ -68,8 +68,7 @@
 }
 
 .htmx-request {
-    opacity: 0.8;
-    pointer-events: none;
+    @apply opacity-80;
 }
 
 /* Modal animations */

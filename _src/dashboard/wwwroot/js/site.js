@@ -15,10 +15,13 @@ document.body.addEventListener('showToast', function(event) {
 
 // Handle modal close from HX-Trigger header
 document.body.addEventListener('closeModal', function() {
-    const backdrop = document.querySelector('.modal-backdrop');
-    const modal = document.querySelector('.modal');
-    if (backdrop) backdrop.remove();
-    if (modal) modal.remove();
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    const modals = document.querySelectorAll('.modal');
+    backdrops.forEach(el => el.remove());
+    modals.forEach(el => el.remove());
+    // Also clear the container if it was innerHTML-swapped
+    const container = document.getElementById('modal-container');
+    if (container) container.innerHTML = '';
 });
 
 // Handle artist count updates

@@ -1,11 +1,10 @@
 @model Artist
 
 <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40"
-     _="on click trigger closeModal"></div>
+     _="on click send closeModal to body"></div>
      
 <div class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="modal-content bg-white rounded-lg shadow-xl max-w-md w-full"
-         _="on closeModal remove .modal-backdrop from previous <div/> then remove closest .modal">
+    <div class="modal-content bg-white rounded-lg shadow-xl max-w-md w-full">
         
         <div class="p-6">
             <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
@@ -30,7 +29,7 @@
             <div class="flex justify-center gap-3">
                 <button type="button"
                         class="btn btn-secondary"
-                        _="on click trigger closeModal">
+                        _="on click send closeModal to body">
                     Cancel
                 </button>
                 <button type="button"
@@ -38,7 +37,7 @@
                         hx-delete="/Artists?handler=&id=@Model.Id"
                         hx-target="#artist-row-@Model.Id"
                         hx-swap="delete"
-                        _="on htmx:afterRequest trigger closeModal">
+                        _="on htmx:afterRequest send closeModal to body">
                     Delete Artist
                 </button>
             </div>

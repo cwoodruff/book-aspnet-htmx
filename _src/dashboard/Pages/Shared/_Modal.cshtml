@@ -1,9 +1,8 @@
 @* Modal wrapper - content is passed via htmx *@
 <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40"
-     _="on click if event.target is me trigger closeModal">
+     _="on click if event.target is me send closeModal to body">
 </div>
-<div class="modal fixed inset-0 z-50 flex items-center justify-center p-4"
-     _="on closeModal remove .modal-backdrop from previous <div/> then remove me">
+<div class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="modal-content bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
          _="on click halt the event's bubbling">
         <partial name="@ViewData["PartialName"]?.ToString()" model="Model" />
